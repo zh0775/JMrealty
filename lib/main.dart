@@ -61,23 +61,21 @@ class _HomeBodyWidgetState extends State<HomeBodyWidget> {
           ),
         ]),
         body: Container(
-            key: Key('333'),
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(color: Colors.grey),
-            child: Container(
-              key: Key('123'),
-              height: 100,
-              color: Colors.red,
-            )
-            // BannerWidget(
-            //   widgetHeight,
-            //   bannerList,
-            //   bannerPress: (post, item) {
-            //     print('window.innerHeight == ${MediaQuery.of(context).size}');
-            //     print('post === $post --- item === $item');
-            //   },
-            // ),
-            ));
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(color: Colors.grey),
+          child: Column(
+            children: [
+              BannerWidget(
+                widgetHeight,
+                bannerList,
+                bannerPress: (post, item) {
+                  print('window.innerHeight == ${MediaQuery.of(context).size}');
+                  print('post === $post --- item === $item');
+                },
+              ),
+            ],
+          ),
+        ));
   }
 }
