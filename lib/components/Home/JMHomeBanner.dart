@@ -25,24 +25,24 @@ class BannerWidget extends StatefulWidget {
   final Color textBackgroundColor;
   final bool isHorizontal;
 
-  OnBannerItemClick bannerPress;
-  CustomBuild build;
+  final OnBannerItemClick bannerPress;
+  final CustomBuild build;
 
-  BannerWidget(double this.height, List<BannerItem> this.datas,
+  BannerWidget(this.height, this.datas,
       {Key key,
-      int this.duration = 5000,
-      double this.pointRadius = 3.0,
-      Color this.selectedColor = Colors.red,
-      Color this.unSelectedColor = Colors.white,
-      Color this.textBackgroundColor = const Color(0x99000000),
-      bool this.isHorizontal = true,
-      OnBannerItemClick this.bannerPress,
-      CustomBuild this.build})
+      this.duration = 5000,
+      this.pointRadius = 3.0,
+      this.selectedColor = Colors.red,
+      this.unSelectedColor = Colors.white,
+      this.textBackgroundColor = const Color(0x99000000),
+      this.isHorizontal = true,
+      this.bannerPress,
+      this.build})
       : super(key: key);
 
   @override
   BannerState createState() {
-    return new BannerState();
+    return BannerState();
   }
 }
 
@@ -96,13 +96,13 @@ class BannerState extends State<BannerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
+    return Container(
       height: widget.height,
       color: Colors.black12,
       child: Stack(
         children: <Widget>[
           getViewPager(),
-          new Align(
+          Align(
             alignment: Alignment.bottomCenter,
             child: IntrinsicHeight(
               child: Container(
@@ -148,8 +148,8 @@ class BannerState extends State<BannerWidget> {
 
   Widget getBannerTextInfoWidget() {
     if (widget.isHorizontal) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      return Column(
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           new Expanded(
             flex: 1,
@@ -208,9 +208,9 @@ class BannerItem {
   Widget itemText;
 
   static BannerItem defaultBannerItem(String image, String text) {
-    BannerItem item = new BannerItem();
+    BannerItem item = BannerItem();
     item.itemImagePath = image;
-    Text textWidget = new Text(
+    Text textWidget = Text(
       text,
       softWrap: true,
       maxLines: 3,
