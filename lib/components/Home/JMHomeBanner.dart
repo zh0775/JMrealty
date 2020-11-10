@@ -24,6 +24,7 @@ class BannerWidget extends StatefulWidget {
   final Color unSelectedColor;
   final Color textBackgroundColor;
   final bool isHorizontal;
+  final bool haveText;
 
   final OnBannerItemClick bannerPress;
   final CustomBuild build;
@@ -35,9 +36,11 @@ class BannerWidget extends StatefulWidget {
       this.selectedColor = Colors.red,
       this.unSelectedColor = Colors.white,
       this.textBackgroundColor = const Color(0x99000000),
+      // this.textBackgroundColor = Colors.transparent,
       this.isHorizontal = true,
       this.bannerPress,
-      this.build})
+      this.build,
+      this.haveText = false})
       : super(key: key);
 
   @override
@@ -107,7 +110,9 @@ class BannerState extends State<BannerWidget> {
             child: IntrinsicHeight(
               child: Container(
                 padding: EdgeInsets.all(6.0),
-                color: widget.textBackgroundColor,
+                color: widget.haveText
+                    ? widget.textBackgroundColor
+                    : Colors.transparent,
                 child: getBannerTextInfoWidget(),
               ),
             ),
@@ -146,12 +151,12 @@ class BannerState extends State<BannerWidget> {
         : Text('');
   }
 
-  Widget getBannerTextInfoWidget() {
-    if (widget.isHorizontal) {
+  Widget bottomWidget() {
+    if (widget.haveText) {
       return Column(
-        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          new Expanded(
+          Expanded(
             flex: 1,
             child: getSelectedIndexTextWidget(),
           ),
@@ -164,6 +169,23 @@ class BannerState extends State<BannerWidget> {
           ),
         ],
       );
+    } else {
+      return Column(
+        children: <Widget>[
+          Container(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: circle(),
+            ),
+          ),
+        ],
+      );
+    }
+  }
+
+  Widget getBannerTextInfoWidget() {
+    if (widget.isHorizontal) {
+      return bottomWidget();
     } else {
       return new Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -207,20 +229,23 @@ class BannerItem {
   String itemImagePath;
   Widget itemText;
 
-  static BannerItem defaultBannerItem(String image, String text) {
+  static BannerItem defaultBannerItem(String image, {String text = ''}) {
     BannerItem item = BannerItem();
     item.itemImagePath = image;
-    Text textWidget = Text(
-      text,
-      softWrap: true,
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-          color: Colors.white, fontSize: 12.0, decoration: TextDecoration.none),
-    );
+    if (text != '') {
+      Text textWidget = Text(
+        text,
+        softWrap: true,
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 12.0,
+            decoration: TextDecoration.none),
+      );
 
-    item.itemText = textWidget;
-
+      item.itemText = textWidget;
+    }
     return item;
   }
 }
