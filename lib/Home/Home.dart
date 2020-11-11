@@ -5,6 +5,7 @@ import '../Project/Project.dart';
 import '../Client/Client.dart';
 import '../Message/Message.dart';
 import '../Mine/Mine.dart';
+import '../services/HomeService.dart';
 
 class HomeBodyWidget extends StatefulWidget {
   @override
@@ -45,27 +46,20 @@ class _HomeBodyWidgetState extends State<HomeBodyWidget> {
 }
 
 class Home extends StatefulWidget {
+  final d = '123';
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
   List<BannerItem> bannerList = [];
-
   @override
   void initState() {
-    BannerItem item = BannerItem.defaultBannerItem(
-        '''http://n.sinaimg.cn/news/1_img/vcg/2b0c102b/64/w1024h640/20181024/wBkr-hmuuiyw6863395.jpg''');
-    bannerList.add(item);
-    item = BannerItem.defaultBannerItem(
-        '''http://n.sinaimg.cn/news/1_img/vcg/2b0c102b/99/w1024h675/20181024/FGXD-hmuuiyw6863401.jpg''');
-    bannerList.add(item);
-    item = BannerItem.defaultBannerItem(
-        '''http://n.sinaimg.cn/news/1_img/vcg/2b0c102b/107/w1024h683/20181024/kZj2-hmuuiyw6863420.jpg''');
-    bannerList.add(item);
-    item = BannerItem.defaultBannerItem(
-        '''http://n.sinaimg.cn/news/1_img/vcg/2b0c102b/105/w1024h681/20181024/tOiL-hmuuiyw6863462.jpg''');
-    bannerList.add(item);
+    HomeService().getHomeBanner().then((value) {
+      if (value['code'] == 0) {
+        this.initBannerData(value);
+      }
+    });
     super.initState();
   }
 
@@ -100,5 +94,15 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
+  }
+
+  void initBannerData(value) {
+    for (var i = 0; i < value['data'].length; i++) {
+      var data = value['data'][i];
+      BannerItem item = BannerItem.defaultBannerItem(data['imgUrl']);
+      setState(() {
+        bannerList.add(item);
+      });
+    }
   }
 }
