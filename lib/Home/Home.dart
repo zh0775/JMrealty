@@ -6,6 +6,7 @@ import '../Client/Client.dart';
 import '../Message/Message.dart';
 import '../Mine/Mine.dart';
 import '../services/HomeService.dart';
+import '../utils/sizeConfig.dart';
 
 class HomeBodyWidget extends StatefulWidget {
   @override
@@ -66,33 +67,59 @@ class _HomeState extends State<Home> {
   double widgetHeight = 180.0;
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    print(SizeConfig.screenWidth - 40);
     return Container(
       width: double.infinity,
       height: double.infinity,
-      decoration: BoxDecoration(color: Colors.grey),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                height: widgetHeight,
-                width: double.infinity,
-                child: BannerWidget(
-                  widgetHeight,
-                  bannerList,
-                  bannerPress: (post, item) {
-                    print(
-                        'window.innerHeight == ${MediaQuery.of(context).size}');
-                    print('post === $post --- item === $item');
-                  },
-                ),
-              ),
-            ),
-          ),
-        ],
+      // decoration: BoxDecoration(color: Colors.grey),
+      child: Align(
+        child: Container(
+          height: 100.0,
+          width: 200.0,
+          // margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
+          child: Text('data'),
+          color: Colors.red,
+        ),
       ),
+      // child: Column(
+      //   children: [
+      //     Container(
+      //       width: double.infinity,
+      //       height: 200,
+      //       color: Colors.red,
+      //       child: SizedOverflowBox(
+      //         // width: double.infinity,
+      //         // height: 200,
+      //         // color: Colors.grey,
+      //         size: Size(double.infinity, 300),
+      //         child: Padding(
+      //           padding: const EdgeInsets.fromLTRB(20, 100, 20, 0),
+      //           child: SizedBox(
+      //             width: double.infinity,
+      //             height: 200,
+      //             child: ClipRRect(
+      //               borderRadius: BorderRadius.circular(10),
+      //               child: Container(
+      //                 height: widgetHeight,
+      //                 width: double.infinity,
+      //                 child: BannerWidget(
+      //                   widgetHeight,
+      //                   bannerList,
+      //                   bannerPress: (post, item) {
+      //                     print(
+      //                         'window.innerHeight == ${MediaQuery.of(context).size}');
+      //                     print('post === $post --- item === $item');
+      //                   },
+      //                 ),
+      //               ),
+      //             ),
+      //           ),
+      //         ),
+      //       ),
+      //     ),
+      //   ],
+      // ),
     );
   }
 
