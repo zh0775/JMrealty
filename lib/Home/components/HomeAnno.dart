@@ -7,6 +7,12 @@ class HomeAnno extends StatefulWidget {
 
 class _HomeAnnoState extends State<HomeAnno> {
   double announcementHeght = 45.0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Align(

@@ -1,6 +1,8 @@
 import 'package:JMrealty/Home/components/HomeAnno.dart';
 import 'package:JMrealty/Home/components/HomeGoodDeed.dart';
 import 'package:JMrealty/Home/components/HomeNaviBar.dart';
+import 'package:JMrealty/Home/components/HomeScheduleToDo.dart';
+import 'package:JMrealty/services/HomeService.dart';
 import 'package:flutter/material.dart';
 import '../tabbar.dart';
 import '../Project/Project.dart';
@@ -38,8 +40,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  var homeScheduleToDoData = [];
+  var bannerList = [];
   @override
   void initState() {
+    this.getBanner();
+    this.getScheData();
     super.initState();
   }
 
@@ -51,8 +57,36 @@ class _HomeState extends State<Home> {
       removeTop: true,
       context: context,
       child: ListView(
-        children: [HomeNaviBar(), HomeAnno(), HomeGoodDeed()],
+        children: [
+          HomeNaviBar(
+            images: bannerList,
+          ),
+          HomeAnno(),
+          HomeGoodDeed(),
+          HomeScheduleToDo(
+            data: homeScheduleToDoData,
+          )
+        ],
       ),
     );
+  }
+
+  void getScheData() {
+    Map value = HomeService().getHomeSchedule();
+    if (value['code'] == 0) {
+      this.setState(() {
+        this.homeScheduleToDoData = value['data'];
+      });
+    }
+  }
+
+  void getBanner() {
+    Map value = HomeService().getHomeBanner();
+    if (value['code'] == 0) {
+      this.setState(() {
+        this.bannerList = value['data'];
+      });
+      // this.initBannerData(value);
+    }
   }
 }

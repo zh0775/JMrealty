@@ -1,6 +1,6 @@
 class HomeService {
   String url() => null;
-  Future<dynamic> getHomeBanner() async {
+  Map getHomeBanner() {
     return Map.of({
       'code': 0,
       'data': [
@@ -19,6 +19,39 @@ class HomeService {
         {
           'imgUrl':
               'http://n.sinaimg.cn/news/1_img/vcg/2b0c102b/105/w1024h681/20181024/tOiL-hmuuiyw6863462.jpg'
+        }
+      ]
+    });
+  }
+
+  Map getHomeSchedule() {
+    return Map.of({
+      'code': 0,
+      'data': [
+        {
+          'date': '2020-11-10',
+          'scheduleList': [
+            {'title': '会议', 'time': '9:30 - 10:30'},
+            {'title': '会议', 'time': '9:30 - 10:30'},
+            {'title': '会议', 'time': '9:30 - 10:30'},
+            {'title': '会议', 'time': '9:30 - 10:30'},
+            {'title': '会议', 'time': '9:30 - 10:30'},
+            {'title': '会议', 'time': '9:30 - 10:30'},
+            {'title': '会议', 'time': '9:30 - 10:30'},
+            {'title': '会议', 'time': '9:30 - 10:30'},
+            {'title': '会议', 'time': '9:30 - 10:30'},
+            {'title': '会议', 'time': '9:30 - 10:30'},
+            {'title': '会议', 'time': '9:30 - 10:30'},
+            {'title': '会议', 'time': '9:30 - 10:30'}
+          ]
+        },
+        {
+          'date': '2020-11-14',
+          'scheduleList': [
+            {'title': '会议', 'time': '9:30 - 10:30'},
+            {'title': '会议', 'time': '9:30 - 10:30'},
+            {'title': '会议', 'time': '9:30 - 10:30'}
+          ]
         }
       ]
     });

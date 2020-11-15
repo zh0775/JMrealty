@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import './JMHomeBanner.dart';
-import '../../services/HomeService.dart';
 
 class HomeNaviBar extends StatefulWidget {
+  final images;
+  const HomeNaviBar({this.images});
   @override
   _HomeNaviBarState createState() => _HomeNaviBarState();
 }
 
 class _HomeNaviBarState extends State<HomeNaviBar> {
+  List<BannerItem> bannerList = [];
   @override
   void initState() {
-    HomeService().getHomeBanner().then((value) {
-      if (value['code'] == 0) {
-        this.initBannerData(value);
-      }
-    });
+    if (widget.images != null) {
+      // print('widget.images === ${widget.images}');
+      setState(() {
+        this.bannerList = this.initBannerData(widget.images);
+      });
+    }
     super.initState();
   }
 
-  List<BannerItem> bannerList = [];
   double widgetHeight = 280.0;
   @override
   Widget build(BuildContext context) {
@@ -77,13 +79,13 @@ class _HomeNaviBarState extends State<HomeNaviBar> {
     ]);
   }
 
-  void initBannerData(value) {
-    for (var i = 0; i < value['data'].length; i++) {
-      var data = value['data'][i];
+  List<BannerItem> initBannerData(value) {
+    List<BannerItem> list = [];
+    for (var i = 0; i < value.length; i++) {
+      var data = value[i];
       BannerItem item = BannerItem.defaultBannerItem(data['imgUrl']);
-      setState(() {
-        bannerList.add(item);
-      });
+      list.add(item);
     }
+    return list;
   }
 }
