@@ -21,7 +21,7 @@ class _HomeNaviBarState extends State<HomeNaviBar> {
     super.initState();
   }
 
-  double widgetHeight = 280.0;
+  double widgetHeight = 260.0;
   @override
   Widget build(BuildContext context) {
     return Stack(children: [

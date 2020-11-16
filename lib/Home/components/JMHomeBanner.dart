@@ -138,7 +138,7 @@ class BannerState extends State<BannerWidget> {
                     placeholder: kTransparentImage,
                     image:
                         widget.datas[index % widget.datas.length].itemImagePath,
-                    fit: BoxFit.cover)
+                    fit: BoxFit.fill)
                 : widget.build(
                     index, widget.datas[index % widget.datas.length]));
       },

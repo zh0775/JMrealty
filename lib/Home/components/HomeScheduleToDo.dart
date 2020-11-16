@@ -21,33 +21,35 @@ class _HomeScheduleToDoState extends State<HomeScheduleToDo> {
     }
     for (var i = 0; i < 7; i++) {
       DateTime iTime = date.subtract(Duration(days: date.weekday - 1 - i));
-      dateButtonList.add(DateButton(
-        index: i,
-        seleted: dateButtonIndex == i ? true : false,
-        date: iTime,
-        enable: !iTime.isBefore(date),
-        havePoint: true,
-        dateButtonClick: (index) {
-          setState(() {
-            dateButtonIndex = index;
-          });
-        },
-      ));
+      bool havePoint = false;
       if (widget.data != null && widget.data.length > 0) {
         for (var j = 0; j < widget.data.length; j++) {
           var sche = widget.data[j];
           // print((iTime.toString().split(' '))[0]);
           if ((iTime.toString().split(' '))[0] == sche['date']) {
             scheData[i] = sche['scheduleList'];
+            havePoint = true;
           }
         }
       }
+      dateButtonList.add(DateButton(
+        index: i,
+        seleted: dateButtonIndex == i ? true : false,
+        date: iTime,
+        enable: !iTime.isBefore(date),
+        havePoint: havePoint,
+        dateButtonClick: (index) {
+          setState(() {
+            dateButtonIndex = index;
+          });
+        },
+      ));
     }
-    print(scheData);
+    double top = -5;
     return Container(
         width: double.infinity,
-        height: 200,
-        margin: EdgeInsets.only(top: 20),
+        height: 185,
+        margin: EdgeInsets.only(top: 15),
         decoration: BoxDecoration(
             // color: Colors.red,
             border: Border(
@@ -58,14 +60,14 @@ class _HomeScheduleToDoState extends State<HomeScheduleToDo> {
           children: [
             Positioned(
                 left: 20,
-                top: 20,
+                top: top + 10,
                 height: 20,
                 child: Text(
                   '日程待办',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 )),
             Positioned(
-                top: 10,
+                top: top,
                 right: 10,
                 // width: 80,
                 child: Container(
@@ -93,9 +95,8 @@ class _HomeScheduleToDoState extends State<HomeScheduleToDo> {
                 left: 20,
                 right: 20,
                 height: 80,
-                top: 50,
+                top: top + 40,
                 child: Container(
-                  // color: Colors.red,
                   child: Row(
                     children: dateButtonList,
                   ),
@@ -103,13 +104,39 @@ class _HomeScheduleToDoState extends State<HomeScheduleToDo> {
             Positioned(
                 left: 20,
                 right: 0,
-                top: 125,
+                top: top + 115,
                 height: 60,
                 child: Container(
-                  color: Colors.red,
-                ))
+                    // color: Colors.red,
+                    child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: scheData[dateButtonIndex].length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return scheduRow(index, scheData[dateButtonIndex]);
+                        })))
           ],
         ));
+  }
+
+  Widget scheduRow(index, data) {
+    // print('data === ${(data[index])['title']}');
+    return Container(
+      margin: EdgeInsets.only(right: 10),
+      padding: EdgeInsets.only(top: 5, left: 10, right: 10),
+      decoration: BoxDecoration(
+          color: Colors.grey,
+          borderRadius: BorderRadius.all(Radius.circular(10))),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text((data[index])['title']),
+          SizedBox(
+            height: 5,
+          ),
+          Text((data[index])['time']),
+        ],
+      ),
+    );
   }
 }
 
@@ -161,6 +188,11 @@ class _DateButtonState extends State<DateButton> {
       selectedColor = Color(0xffe5b763);
     } else {
       selectedColor = Colors.transparent;
+    }
+    if (widget.havePoint) {
+      pointColor = Color(0xffd9b76c);
+    } else {
+      pointColor = Colors.transparent;
     }
     switch (widget.date.weekday) {
       case 1:
