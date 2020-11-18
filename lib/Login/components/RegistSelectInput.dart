@@ -9,10 +9,17 @@ class RegistSelectInput extends StatefulWidget {
   final List dataList;
   final SelectedChange selectedChange;
   final int defaultSelect;
+  final double height;
+  final Border border;
   RegistSelectInput(
       {@required this.dataList,
       @required this.selectedChange,
       @required this.title,
+      this.height = 50,
+      this.border = const Border(
+        top: BorderSide(width: 0.5, color: Color.fromRGBO(0, 0, 0, 0.2)),
+        bottom: BorderSide(width: 0.5, color: Color.fromRGBO(0, 0, 0, 0.2)),
+      ),
       this.defaultSelect = 0});
   @override
   _RegistSelectInputState createState() => _RegistSelectInputState();
@@ -53,30 +60,29 @@ class _RegistSelectInputState extends State<RegistSelectInput> {
       },
       child: Container(
         width: SizeConfig.screenWidth,
-        height: 50,
-        constraints: BoxConstraints(maxHeight: 50),
-        decoration: BoxDecoration(
-            border: Border(
-          top: BorderSide(width: 0.5, color: Color.fromRGBO(0, 0, 0, 0.2)),
-          bottom: BorderSide(width: 0.5, color: Color.fromRGBO(0, 0, 0, 0.2)),
-        )),
+        height: widget.height,
+        constraints: BoxConstraints(maxHeight: widget.height),
+        decoration: BoxDecoration(border: widget.border),
         child: Row(
           children: [
             SizedBox(
-              width: 20,
+              width: 30,
             ),
-            Text(widget.title),
-            SizedBox(
-              width: 40,
+            Container(
+              width: SizeConfig.blockSizeHorizontal * 30 - 30,
+              child: Text(widget.title),
             ),
-            Text(
-              text,
-              style: textStyle,
+            Container(
+              width: SizeConfig.blockSizeHorizontal * 70 - 40,
+              child: Text(
+                text,
+                style: textStyle,
+              ),
             ),
-            Icon(Icons.keyboard_arrow_right),
-            SizedBox(
-              width: 20,
-            )
+            Icon(
+              Icons.keyboard_arrow_right,
+              size: 25,
+            ),
           ],
         ),
       ),

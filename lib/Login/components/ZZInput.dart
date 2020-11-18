@@ -12,15 +12,16 @@ class ZZInput extends StatefulWidget {
   final ZZinputValueChange valueChange;
   final Color backgroundColor;
   final bool needCleanButton;
-  ZZInput(
-      {this.width = 100,
-      this.height = 50,
-      this.textStyle = const TextStyle(fontSize: 16),
-      this.borderRadius = const BorderRadius.all(Radius.circular(8)),
-      this.hintText = '',
-      this.valueChange,
-      this.backgroundColor = const Color.fromRGBO(0, 0, 0, 0.1),
-      this.needCleanButton = false});
+  ZZInput({
+    this.width = 100,
+    this.height = 50,
+    this.textStyle = const TextStyle(fontSize: 16),
+    this.borderRadius = const BorderRadius.all(Radius.circular(8)),
+    this.hintText = '',
+    this.valueChange,
+    this.backgroundColor = const Color.fromRGBO(0, 0, 0, 0.1),
+    this.needCleanButton = false,
+  });
   @override
   _ZZInputState createState() => _ZZInputState();
 }
@@ -51,34 +52,36 @@ class _ZZInputState extends State<ZZInput> {
         constraints: BoxConstraints(maxHeight: widget.height),
         child: Stack(
           children: [
-            TextField(
-                controller: phoneCtr,
-                maxLines: 1,
-                style: widget.textStyle,
-                onChanged: (value) {
-                  widget.valueChange(value);
-                  if (widget.needCleanButton) {
-                    bool needClear = false;
-                    if (value.length > 0) {
-                      needClear = true;
+            Container(
+              child: TextField(
+                  controller: phoneCtr,
+                  maxLines: 1,
+                  style: widget.textStyle,
+                  onChanged: (value) {
+                    widget.valueChange(value);
+                    if (widget.needCleanButton) {
+                      bool needClear = false;
+                      if (value.length > 0) {
+                        needClear = true;
+                      }
+                      if (phoneNeedClean != needClear) {
+                        setState(() {
+                          phoneNeedClean = needClear;
+                        });
+                      }
                     }
-                    if (phoneNeedClean != needClear) {
-                      setState(() {
-                        phoneNeedClean = needClear;
-                      });
-                    }
-                  }
-                },
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.fromLTRB(20, 0, rightPadding, 0),
-                  border: OutlineInputBorder(
-                      borderRadius: widget.borderRadius,
-                      borderSide: BorderSide.none),
-                  fillColor: widget.backgroundColor,
-                  // contentPadding: EdgeInsets.all(20.0),
-                  hintText: widget.hintText,
-                  filled: true,
-                )),
+                  },
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.fromLTRB(20, 0, rightPadding, 0),
+                    border: OutlineInputBorder(
+                        borderRadius: widget.borderRadius,
+                        borderSide: BorderSide.none),
+                    fillColor: widget.backgroundColor,
+                    // contentPadding: EdgeInsets.all(20.0),
+                    hintText: widget.hintText,
+                    filled: true,
+                  )),
+            ),
             phoneNeedClean == true
                 ? Positioned(
                     width: 48,

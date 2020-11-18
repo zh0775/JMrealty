@@ -313,6 +313,19 @@ class _LoginState extends State<Login> {
                       servicePointData = {'value': value, 'title': data};
                     },
                   ),
+                  Container(
+                    child: Row(
+                      children: [
+                        Text('姓名'),
+                        ZZInput(
+                          height: 50,
+                          width: SizeConfig.screenWidth - 200,
+                          backgroundColor: Colors.transparent,
+                          needCleanButton: true,
+                        )
+                      ],
+                    ),
+                  ),
                 ],
               ))
         ]));
