@@ -4,6 +4,8 @@ import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:JMrealty/Login/components/RegistSelectInput.dart';
+import 'package:JMrealty/Login/components/ZZInput.dart';
+import 'package:JMrealty/Login/components/ZZSendCodeButton.dart';
 
 class Login extends StatefulWidget {
   final bool isLogin;
@@ -12,41 +14,24 @@ class Login extends StatefulWidget {
   _LoginState createState() => _LoginState();
 }
 
-enum CodeButtonState { normal, send, wait }
-
 class _LoginState extends State<Login> {
-  TextEditingController phoneCtr; // 登录手机号输入框controller
-  TextEditingController codeCtr; // 登录验证码输入框controller
-  CodeButtonState codeButtonState; //登录验证码状态枚举
-  bool phoneNeedClean; // 登录页手机号输入框清空标记
-  int codeNextTime; // 登录页验证码倒计日
-  Timer codeTimer; // 登录页验证码按钮倒计时定时器
-  Timer sendTimer; // 登录页验证码按钮模拟网络请求定时器
+  String phoneNumString;
+  String codeNumString;
+  bool isLoginSend;
   bool isLogin; // 登录或注册
   Map organData;
   Map servicePointData;
   @override
   void dispose() {
-    if (codeTimer != null) {
-      codeTimer.cancel();
-    }
-    if (sendTimer != null) {
-      sendTimer.cancel();
-    }
-    phoneCtr.dispose();
-    codeCtr.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
+    isLoginSend = false;
     organData = null;
+    phoneNumString = '';
     servicePointData = null;
-    phoneCtr = TextEditingController();
-    codeCtr = TextEditingController();
-    codeButtonState = CodeButtonState.normal;
-    phoneNeedClean = false;
-    codeNextTime = 60;
     isLogin = widget.isLogin;
     super.initState();
   }
@@ -161,145 +146,70 @@ class _LoginState extends State<Login> {
 
   // 登录页验证码按钮
   Widget getCodeButton(context) {
-    String text;
-    Color buttonColor;
-    Function pressed;
-    if (codeButtonState == CodeButtonState.normal) {
-      text = '获取验证码';
-      buttonColor = Color(0xff404351);
-      pressed = () {
-        if (codeButtonState == CodeButtonState.normal) {
-          setState(() {
-            codeButtonState = CodeButtonState.send;
-          });
-          sendTimer = Timer(Duration(seconds: 2), () {
-            sendCodeRequest();
-          });
-        }
-      };
-    } else if (codeButtonState == CodeButtonState.send) {
-      text = '获取中...';
-      buttonColor = Color.fromRGBO(227, 229, 233, 1);
-      pressed = null;
-    } else if (codeButtonState == CodeButtonState.wait) {
-      text = '重新获取 ' + codeNextTime.toString();
-      buttonColor = Color.fromRGBO(227, 229, 233, 1);
-      pressed = null;
-    }
-
-    return Container(
-      width: 100,
-      height: 48,
-      decoration: BoxDecoration(
-          color: buttonColor,
-          borderRadius: BorderRadius.horizontal(right: Radius.circular(8))),
-      child: TextButton(
-        onPressed: pressed,
-        child: Text(
-          text,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
-        ),
-      ),
+    return ZZSendCodeButton(
+      buttonText: '发送验证码',
+      sending: isLoginSend,
+      codeButtonClick: () {
+        sendCodeRequest();
+      },
+      codeButtonTimeOver: () {
+        setState(() {
+          isLoginSend = false;
+        });
+      },
     );
   }
 
   // 登录页 验证码输入框
   Widget authCodeInput(context) {
-    return Container(
+    return ZZInput(
       width: SizeConfig.screenWidth - 80 - 100,
-      child: TextField(
-          controller: codeCtr,
-          decoration: InputDecoration(
-            contentPadding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.horizontal(left: Radius.circular(8)),
-                borderSide: BorderSide.none),
-            fillColor: Color.fromRGBO(0, 0, 0, 0.1),
-            // contentPadding: EdgeInsets.all(20.0),
-            hintText: "验证码",
-            filled: true,
-          )),
+      height: 48,
+      hintText: '验证码',
+      borderRadius: BorderRadius.horizontal(left: Radius.circular(8)),
+      valueChange: (String value) {
+        codeNumString = value;
+      },
     );
   }
 
   // 登录页 手机号输入框
   Widget phoneInput(context) {
-    return Container(
-        width: SizeConfig.screenWidth - 80,
-        constraints: BoxConstraints(maxHeight: 48),
-        child: Stack(
-          children: [
-            TextField(
-                controller: phoneCtr,
-                maxLines: 1,
-                style: TextStyle(fontSize: 16),
-                onChanged: (value) {
-                  bool needClear = false;
-                  if (value.length > 0) {
-                    needClear = true;
-                  }
-                  if (phoneNeedClean != needClear) {
-                    setState(() {
-                      phoneNeedClean = needClear;
-                    });
-                  }
-                },
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.fromLTRB(20, 0, 80, 0),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none),
-                  fillColor: Color.fromRGBO(0, 0, 0, 0.1),
-                  // contentPadding: EdgeInsets.all(20.0),
-                  hintText: "请输入手机号",
-                  filled: true,
-                )),
-            phoneNeedClean == true
-                ? Positioned(
-                    width: 48,
-                    height: 48,
-                    right: 0,
-                    top: 0,
-                    child: TextButton(
-                        onPressed: () {
-                          phoneCtr.clear();
-                          setState(() {
-                            phoneNeedClean = false;
-                          });
-                        },
-                        child: Icon(
-                          Icons.close,
-                          size: 20,
-                          color: Colors.black,
-                        )))
-                : SizedBox(
-                    height: 0,
-                    width: 0,
-                  )
-          ],
-        ));
+    return ZZInput(
+      width: SizeConfig.screenWidth - 80,
+      height: 48,
+      hintText: '请输入手机号',
+      needCleanButton: true,
+      valueChange: (String value) {
+        // setState(() {
+        phoneNumString = value;
+        // });
+      },
+    );
   }
 
   // 模拟发送验证码网络请求
   void sendCodeRequest() {
-    codeNextTime = 60;
-
-    codeTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (codeNextTime <= 1) {
-        timer.cancel();
-        setState(() {
-          codeButtonState = CodeButtonState.normal;
-        });
-      } else {
-        setState(() {
-          codeButtonState = CodeButtonState.wait;
-          codeNextTime--;
-        });
-      }
+    Timer((Duration(milliseconds: 1500)), () {
+      setState(() {
+        isLoginSend = true;
+      });
     });
+    // codeNextTime = 60;
+
+    // codeTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+    //   if (codeNextTime <= 1) {
+    //     timer.cancel();
+    //     setState(() {
+    //       codeButtonState = CodeButtonState.normal;
+    //     });
+    //   } else {
+    //     setState(() {
+    //       codeButtonState = CodeButtonState.wait;
+    //       codeNextTime--;
+    //     });
+    //   }
+    // });
   }
 
   // 注册页主页面
@@ -329,12 +239,6 @@ class _LoginState extends State<Login> {
               right: 0,
               child: TextButton(
                   onPressed: () {
-                    if (codeTimer != null) {
-                      codeTimer.cancel();
-                    }
-                    if (sendTimer != null) {
-                      sendTimer.cancel();
-                    }
                     Navigator.of(context).pop();
                   },
                   child: Icon(
