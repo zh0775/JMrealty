@@ -457,7 +457,7 @@ class _LoginState extends State<Login> {
                       )),
                   Container(
                       // 注册回到登录
-                      width: SizeConfig.screenWidth - 80 - 200,
+                      width: SizeConfig.screenWidth - 80 - 150,
                       height: 50,
                       child: TextButton(
                         onPressed: () {

@@ -1,8 +1,8 @@
-
+import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 
-enum waitFollowLevel { A ,B ,C }
+enum waitFollowLevel { A, B, C }
 
 class WaitFollowUpCell extends StatefulWidget {
   @override
@@ -15,8 +15,11 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
     SizeConfig().init(context);
     return Container(
       width: 100,
-      height: 100,
-      color: Colors.red,
+      height: 200,
+      decoration: BoxDecoration(
+          border: Border(
+        bottom: BorderSide(color: jm_line_color, width: 0.5),
+      )),
     );
   }
 }

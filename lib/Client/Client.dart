@@ -3,13 +3,12 @@ import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 
-
 class Client extends StatefulWidget {
   @override
   _ClientState createState() => _ClientState();
 }
 
-class _ClientState extends State<Client>{
+class _ClientState extends State<Client> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -38,26 +37,36 @@ class _ClientState extends State<Client>{
             indicatorWeight: 2.0,
             indicatorPadding: EdgeInsets.only(bottom: 5),
             tabs: [
-              Tab(child: Text('待跟进',style: TextStyle(
-                fontSize: 14,
-                color: Colors.white
-              ),),),
-              Tab(child: Text('已带看',style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white
-              ),),),
-              Tab(child: Text('已预约',style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white
-              ),),),
-              Tab(child: Text('已成交',style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white
-              ),),),
-              Tab(child: Text('水客',style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white
-              ),),)
+              Tab(
+                child: Text(
+                  '待跟进',
+                  style: TextStyle(fontSize: 14, color: Colors.white),
+                ),
+              ),
+              Tab(
+                child: Text(
+                  '已带看',
+                  style: TextStyle(fontSize: 14, color: Colors.white),
+                ),
+              ),
+              Tab(
+                child: Text(
+                  '已预约',
+                  style: TextStyle(fontSize: 14, color: Colors.white),
+                ),
+              ),
+              Tab(
+                child: Text(
+                  '已成交',
+                  style: TextStyle(fontSize: 14, color: Colors.white),
+                ),
+              ),
+              Tab(
+                child: Text(
+                  '水客',
+                  style: TextStyle(fontSize: 14, color: Colors.white),
+                ),
+              )
             ],
           ),
         ),
@@ -65,7 +74,7 @@ class _ClientState extends State<Client>{
         body: TabBarView(
           children: [
             ListView.builder(
-              itemCount: 5,
+              itemCount: 1,
               itemBuilder: (context, index) {
                 return WaitFollowUpCell();
               },
