@@ -66,14 +66,14 @@ class _RegistSelectInputState extends State<RegistSelectInput> {
         child: Row(
           children: [
             SizedBox(
-              width: 30,
+              width: 20,
             ),
             Container(
-              width: SizeConfig.blockSizeHorizontal * 30 - 30,
+              width: SizeConfig.blockSizeHorizontal * 30 - 20,
               child: Text(widget.title),
             ),
             Container(
-              width: SizeConfig.blockSizeHorizontal * 70 - 40,
+              width: SizeConfig.blockSizeHorizontal * 70 - 55,
               child: Text(
                 text,
                 style: textStyle,

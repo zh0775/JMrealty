@@ -58,7 +58,7 @@ class _ZZInputState extends State<ZZInput> {
                   maxLines: 1,
                   style: widget.textStyle,
                   onChanged: (value) {
-                    widget.valueChange(value);
+                    if (widget.valueChange != null) widget.valueChange(value);
                     if (widget.needCleanButton) {
                       bool needClear = false;
                       if (value.length > 0) {
@@ -91,7 +91,9 @@ class _ZZInputState extends State<ZZInput> {
                     child: TextButton(
                         onPressed: () {
                           phoneCtr.clear();
-                          widget.valueChange('');
+                          if (widget.valueChange != null) {
+                            widget.valueChange('');
+                          }
                           setState(() {
                             phoneNeedClean = false;
                           });

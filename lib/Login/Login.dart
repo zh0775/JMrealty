@@ -17,10 +17,13 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   String phoneNumString;
   String codeNumString;
+  String registCodeNumString;
   bool isLoginSend;
+  bool isRegistSend;
   bool isLogin; // 登录或注册
   Map organData;
   Map servicePointData;
+  bool registIsMan;
   @override
   void dispose() {
     super.dispose();
@@ -28,14 +31,19 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
+    registIsMan = false;
     isLoginSend = false;
+    isRegistSend = false;
     organData = null;
     phoneNumString = '';
+    codeNumString = '';
+    registCodeNumString = '';
     servicePointData = null;
     isLogin = widget.isLogin;
     super.initState();
   }
 
+  double lineHeight = 60;
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -99,7 +107,7 @@ class _LoginState extends State<Login> {
                       SizedBox(
                         width: 40,
                       ),
-                      authCodeInput(context),
+                      authCodeInput(context, SizeConfig.screenWidth - 80 - 100),
                       getCodeButton(context)
                     ],
                   ),
@@ -144,31 +152,31 @@ class _LoginState extends State<Login> {
     );
   }
 
-  // 登录页验证码按钮
+  // 登录页 注册页 验证码按钮
   Widget getCodeButton(context) {
     return ZZSendCodeButton(
       buttonText: '发送验证码',
-      sending: isLoginSend,
+      sending: isLogin ? isLoginSend : isRegistSend,
       codeButtonClick: () {
         sendCodeRequest();
       },
       codeButtonTimeOver: () {
         setState(() {
-          isLoginSend = false;
+          isLogin ? isLoginSend = false : isRegistSend = false;
         });
       },
     );
   }
 
-  // 登录页 验证码输入框
-  Widget authCodeInput(context) {
+  // 登录页 注册页 验证码输入框
+  Widget authCodeInput(context, width) {
     return ZZInput(
-      width: SizeConfig.screenWidth - 80 - 100,
+      width: width,
       height: 48,
       hintText: '验证码',
       borderRadius: BorderRadius.horizontal(left: Radius.circular(8)),
       valueChange: (String value) {
-        codeNumString = value;
+        isLogin ? codeNumString = value : registCodeNumString = value;
       },
     );
   }
@@ -192,24 +200,9 @@ class _LoginState extends State<Login> {
   void sendCodeRequest() {
     Timer((Duration(milliseconds: 1500)), () {
       setState(() {
-        isLoginSend = true;
+        isLogin ? isLoginSend = true : isRegistSend = true;
       });
     });
-    // codeNextTime = 60;
-
-    // codeTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-    //   if (codeNextTime <= 1) {
-    //     timer.cancel();
-    //     setState(() {
-    //       codeButtonState = CodeButtonState.normal;
-    //     });
-    //   } else {
-    //     setState(() {
-    //       codeButtonState = CodeButtonState.wait;
-    //       codeNextTime--;
-    //     });
-    //   }
-    // });
   }
 
   // 注册页主页面
@@ -228,7 +221,6 @@ class _LoginState extends State<Login> {
       {'id': 4, 'title': '服务点4'},
       {'id': 5, 'title': '服务点5'}
     ];
-
     return Container(
         height: SizeConfig.screenHeight,
         width: SizeConfig.screenWidth,
@@ -292,42 +284,226 @@ class _LoginState extends State<Login> {
                         ),
                       )),
                   SizedBox(
-                    height: 20,
+                    height: 40,
                   ),
-                  // 组织级别选择
+                  // 注册组织级别选择
                   RegistSelectInput(
                     title: '组织级别',
                     dataList: zizhiList,
+                    height: lineHeight,
+                    border: Border(
+                        top: BorderSide(
+                            width: 0.5, color: Color.fromRGBO(0, 0, 0, 0.2))),
                     selectedChange: (value, data) {
                       print('value == $value --- data == $data');
                       organData = {'value': value, 'title': data};
                     },
                   ),
-                  SizedBox(
-                    height: 20,
+                  Container(
+                    // line
+                    width: SizeConfig.screenWidth - 40,
+                    height: 0.5,
+                    // margin: EdgeInsets.only(left: 0),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                                width: 0.5,
+                                color: Color.fromRGBO(0, 0, 0, 0.2)))),
                   ),
                   RegistSelectInput(
+                    //注册服务点选择
                     title: '服务点',
+                    height: lineHeight,
                     dataList: fuwuList,
+                    border: Border.all(style: BorderStyle.none),
                     selectedChange: (value, data) {
                       servicePointData = {'value': value, 'title': data};
                     },
                   ),
                   Container(
+                    // line
+                    width: SizeConfig.screenWidth - 40,
+                    height: 0.5,
+                    // margin: EdgeInsets.only(left: 0),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                                width: 0.5,
+                                color: Color.fromRGBO(0, 0, 0, 0.2)))),
+                  ),
+                  Container(
+                    // 注册姓名
+                    width: SizeConfig.screenWidth,
+                    margin: EdgeInsets.only(left: 20),
+                    height: lineHeight,
                     child: Row(
                       children: [
-                        Text('姓名'),
+                        Container(
+                          width: SizeConfig.blockSizeHorizontal * 30 - 40,
+                          child: Text('姓名'),
+                        ),
                         ZZInput(
-                          height: 50,
-                          width: SizeConfig.screenWidth - 200,
+                          height: lineHeight,
+                          width: SizeConfig.blockSizeHorizontal * 70 + 5,
                           backgroundColor: Colors.transparent,
                           needCleanButton: true,
+                          valueChange: (value) {},
                         )
                       ],
                     ),
                   ),
+                  Container(
+                    // line
+                    width: SizeConfig.screenWidth - 40,
+                    height: 0.5,
+                    // margin: EdgeInsets.only(left: 0),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                                width: 0.5,
+                                color: Color.fromRGBO(0, 0, 0, 0.2)))),
+                  ),
+                  Container(
+                    // 注册性别
+                    width: SizeConfig.screenWidth,
+                    margin: EdgeInsets.only(left: 20),
+                    height: lineHeight,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: SizeConfig.blockSizeHorizontal * 30 - 20,
+                          child: Text('性别'),
+                        ),
+                        sexButton(context, true),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        sexButton(context, false),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    // line
+                    width: SizeConfig.screenWidth - 40,
+                    height: 0.5,
+                    // margin: EdgeInsets.only(left: 0),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                                width: 0.5,
+                                color: Color.fromRGBO(0, 0, 0, 0.2)))),
+                  ),
+                  Container(
+                    //注册手机号
+                    width: SizeConfig.screenWidth,
+                    margin: EdgeInsets.only(left: 20),
+                    height: lineHeight,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: SizeConfig.blockSizeHorizontal * 30 - 40,
+                          child: Text('手机号'),
+                        ),
+                        ZZInput(
+                          height: lineHeight,
+                          width: SizeConfig.blockSizeHorizontal * 70 + 5,
+                          backgroundColor: Colors.transparent,
+                          needCleanButton: true,
+                          valueChange: (value) {},
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    // line
+                    width: SizeConfig.screenWidth - 40,
+                    height: 0.5,
+                    // margin: EdgeInsets.only(left: 0),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                                width: 0.5,
+                                color: Color.fromRGBO(0, 0, 0, 0.2)))),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    //注册验证码
+                    children: [
+                      SizedBox(
+                        width: 20,
+                      ),
+                      authCodeInput(context, SizeConfig.screenWidth - 100 - 40),
+                      getCodeButton(context)
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                      // 提交注册按钮
+                      width: SizeConfig.screenWidth - 40,
+                      height: 48,
+                      decoration: BoxDecoration(
+                          color: Color(0xfff1daaf),
+                          borderRadius: BorderRadius.all(Radius.circular(8))),
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          '提交注册',
+                          style: TextStyle(fontSize: 15, color: Colors.white),
+                        ),
+                      )),
+                  Container(
+                      // 注册回到登录
+                      width: SizeConfig.screenWidth - 80 - 200,
+                      height: 50,
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            isLogin = true;
+                          });
+                        },
+                        child: Text(
+                          '已有帐号？去登录',
+                          style:
+                              TextStyle(fontSize: 14, color: Color(0xff4c4f5c)),
+                        ),
+                      )),
                 ],
               ))
         ]));
+  }
+
+  Widget sexButton(BuildContext context, bool sex) {
+    double sexButtonHeight = lineHeight * 0.7;
+    return Container(
+      width: 70,
+      height: sexButtonHeight,
+      decoration: BoxDecoration(
+          border: Border.all(width: 0.5, color: Color.fromRGBO(64, 67, 82, 1)),
+          color:
+              sex == registIsMan ? Color.fromRGBO(64, 67, 82, 1) : Colors.white,
+          borderRadius: BorderRadius.circular(sexButtonHeight / 2)),
+      child: TextButton(
+        onPressed: () {
+          if (sex != registIsMan) {
+            setState(() {
+              registIsMan = sex;
+            });
+          }
+        },
+        child: Text(
+          sex ? '男' : '女',
+          style: TextStyle(
+              textBaseline: TextBaseline.alphabetic,
+              fontSize: 17,
+              color: sex != registIsMan
+                  ? Color.fromRGBO(64, 67, 82, 1)
+                  : Colors.white),
+        ),
+      ),
+    );
   }
 }

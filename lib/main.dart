@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'Home/Home.dart';
+import 'package:JMrealty/const/Default.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,11 +11,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: HomeBodyWidget(),
-        theme: ThemeData(
-            primaryColor: Colors.red,
-            splashColor: Colors.white70,
-            highlightColor: Colors.red,
-            accentColor: Colors.red));
+        home: HomeBodyWidget(), theme: ThemeData(primaryColor: jm_appTheme));
   }
 }

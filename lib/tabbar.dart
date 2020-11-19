@@ -21,7 +21,7 @@ class _JMTabBarState extends State<JMTabBar> {
       items: [
         createItem('cookie', '首页'),
         createItem('pudding', '项目'),
-        createItem('cake', '资产'),
+        createItem('cake', '客户'),
         createItem('avocado', '消息'),
         createItem('doughnut', '我的')
       ],
