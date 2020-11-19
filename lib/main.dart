@@ -11,6 +11,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: HomeBodyWidget(), theme: ThemeData(primaryColor: jm_appTheme));
+        home: HomeBodyWidget(), theme: ThemeData(primaryColor: jm_appTheme,
+    splashColor: jm_appTheme,
+    highlightColor: Color.fromRGBO(255, 255, 255, 0.5),
+    textButtonTheme:TextButtonThemeData(style: ButtonStyle(overlayColor:MaterialStateProperty.all(jm_appTheme_splash))) ));
   }
 }
