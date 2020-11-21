@@ -12,12 +12,12 @@ import '../Client/Client.dart';
 import '../Message/Message.dart';
 import '../Mine/Mine.dart';
 
-class HomeBodyWidget extends StatefulWidget {
+class MainPageWidget extends StatefulWidget {
   @override
-  _HomeBodyWidgetState createState() => _HomeBodyWidgetState();
+  _MainPageWidgetState createState() => _MainPageWidgetState();
 }
 
-class _HomeBodyWidgetState extends State<HomeBodyWidget> {
+class _MainPageWidgetState extends State<MainPageWidget> {
   int _tabbarIndex = 0;
   @override
   Widget build(BuildContext context) {
