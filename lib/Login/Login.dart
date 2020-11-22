@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
+import 'package:JMrealty/base/base_viewmodel.dart';
+import 'package:JMrealty/base/provider_widget.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -154,16 +157,27 @@ class _LoginState extends State<Login> {
 
   // 登录页 注册页 验证码按钮
   Widget getCodeButton(context) {
-    return ZZSendCodeButton(
-      buttonText: '发送验证码',
-      sending: isLogin ? isLoginSend : isRegistSend,
-      codeButtonClick: () {
-        sendCodeRequest();
-      },
-      codeButtonTimeOver: () {
-        setState(() {
+    return ProviderWidget<LoginViewModel>(
+      model: LoginViewModel(),
+      builder: (context, value, child) {
+        print('ZZSendCodeButton state ==== ${value.state}');
+        if (value.state == BaseState.CONTENT) {
+          isLogin ? isLoginSend = true : isRegistSend = true;
+        } else if (value.state == BaseState.FAIL || value.state == null) {
           isLogin ? isLoginSend = false : isRegistSend = false;
-        });
+        }
+        return ZZSendCodeButton(
+          buttonText: '发送验证码',
+          sending: isLogin ? isLoginSend : isRegistSend,
+          codeButtonClick: () {
+            value.loadPhoneCode(phoneNumString);
+          },
+          codeButtonTimeOver: () {
+            setState(() {
+              isLogin ? isLoginSend = false : isRegistSend = false;
+            });
+          },
+        );
       },
     );
   }

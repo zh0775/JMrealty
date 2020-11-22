@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'http_config.dart';
 
@@ -20,34 +22,62 @@ class Http {
   }
 
   Dio createDio() {
-    BaseOptions baseOptions =
-        BaseOptions(baseUrl: BASE_URL, connectTimeout: TIMEOUT);
+    BaseOptions baseOptions = BaseOptions(
+        baseUrl: BASE_URL,
+        connectTimeout: CONNECT_TIMEOUT,
+        receiveTimeout: RECEIVE_TIMEOUT);
     return Dio(baseOptions);
   }
 
   Future<void> get(String url, Map<String, dynamic> params,
-      {Success success, Fail fail, After after}) {
-    _dio.get(url, queryParameters: params).then((response) {
-      if (response.statusCode == 200) {
-        if (success != null) {
-          success(response.data);
+      {Success success, Fail fail, After after}) async {
+    try {
+      await _dio.get(url, queryParameters: params).then((response) {
+        if (response.statusCode == 200) {
+          if (success != null) {
+            success(response.data);
+          }
+        } else {
+          if (fail != null) {
+            fail(response.statusMessage, response.statusCode);
+          }
         }
-      } else {
-        if (fail != null) {
-          fail(response.statusMessage, response.statusCode);
+        if (after != null) {
+          after();
         }
+      });
+    } catch (e) {
+      if (fail != null) {
+        fail('网络发生错误', -1);
       }
-      if (after != null) {
-        after();
-      }
-    });
+    }
     return Future.value();
   }
 
-  static Future<Response> post(String url, Map<String, dynamic> params) {
-    return _dio.post(url, queryParameters: params);
+  Future<void> post(String url, Map<String, dynamic> params,
+      {Success success, Fail fail, After after}) async {
+    try {
+      await _dio.post(url, data: json.encode(params)).then((response) {
+        if (response.statusCode == 200) {
+          if (success != null) {
+            success(response.data);
+          }
+        } else {
+          if (fail != null) {
+            fail(response.statusMessage, response.statusCode);
+          }
+        }
+        if (after != null) {
+          after();
+        }
+      });
+    } catch (e) {
+      if (fail != null) {
+        fail('网络发生错误', -1);
+      }
+    }
+    return Future.value();
   }
-
   // void request(String url,
   //     {String method = 'get', Map<String, dynamic> params}) {
   //   BaseOptions baseOptions =

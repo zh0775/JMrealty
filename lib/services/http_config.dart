@@ -1,2 +1,3 @@
 const BASE_URL = 'http://local.gxidt.cn/';
-const TIMEOUT = 20000;
+const CONNECT_TIMEOUT = 20000;
+const RECEIVE_TIMEOUT = 5000;

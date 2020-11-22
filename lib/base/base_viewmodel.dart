@@ -1,3 +1,12 @@
 import 'package:flutter/cupertino.dart';
 
-class BaseViewModel extends ChangeNotifier {}
+enum BaseState {
+  LOADING,
+  EMPTY,
+  CONTENT,
+  FAIL,
+}
+
+class BaseViewModel extends ChangeNotifier {
+  BaseState state;
+}
