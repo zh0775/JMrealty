@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class ProviderWidget<T extends ChangeNotifier> extends StatefulWidget {
@@ -7,14 +7,19 @@ class ProviderWidget<T extends ChangeNotifier> extends StatefulWidget {
   final Widget child;
   final Function(T) onReady;
 
-  ProviderWidget({this.model, this.builder, this.child, this.onReady});
+  ProviderWidget({
+    this.model,
+    this.child,
+    this.onReady,
+    this.builder,
+  });
 
   @override
-  _ProviderWidgetState createState() => _ProviderWidgetState();
+  _ProviderWidgetState<T> createState() => _ProviderWidgetState<T>();
 }
 
 class _ProviderWidgetState<T extends ChangeNotifier>
-    extends State<ProviderWidget> {
+    extends State<ProviderWidget<T>> {
   @override
   void initState() {
     super.initState();
@@ -25,7 +30,7 @@ class _ProviderWidgetState<T extends ChangeNotifier>
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
+    return ChangeNotifierProvider<T>(
       create: (_) => widget.model,
       child: Consumer<T>(
         builder: widget.builder,

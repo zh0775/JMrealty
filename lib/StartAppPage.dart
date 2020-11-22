@@ -1,3 +1,5 @@
+import 'package:JMrealty/base/appstart_viewmodel.dart';
+import 'package:JMrealty/base/provider_widget.dart';
 import 'package:JMrealty/const/Routes.dart';
 import 'package:flutter/material.dart';
 
@@ -17,8 +19,16 @@ class _StartAppPageState extends State<StartAppPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.pink,
+    return ProviderWidget<AppStartViewModel>(
+      model: AppStartViewModel(),
+      onReady: (model) {
+        model.load();
+      },
+      builder: (context, model, child) {
+        return Container(
+          color: Colors.pink,
+        );
+      },
     );
   }
 }
