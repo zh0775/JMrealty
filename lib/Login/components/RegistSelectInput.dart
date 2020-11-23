@@ -1,3 +1,5 @@
+import 'package:JMrealty/Login/model/PostListModel.dart';
+import 'package:JMrealty/components/TreeSelectView.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:JMrealty/Login/components/BottomSelect.dart';
@@ -11,10 +13,12 @@ class RegistSelectInput extends StatefulWidget {
   final int defaultSelect;
   final double height;
   final Border border;
+  final bool showTree;
   RegistSelectInput(
       {@required this.dataList,
       @required this.selectedChange,
       @required this.title,
+      this.showTree = false,
       this.height = 50,
       this.border = const Border(
         top: BorderSide(width: 0.5, color: Color.fromRGBO(0, 0, 0, 0.2)),
@@ -47,8 +51,22 @@ class _RegistSelectInputState extends State<RegistSelectInput> {
       textStyle = TextStyle(color: Color.fromRGBO(0, 0, 0, 0.2), fontSize: 14);
       text = '请选择组织级别';
     }
-    return GestureDetector(
-      onTap: () {
+    void Function() cellTap;
+    if (widget.showTree) {
+      cellTap = () {
+        showGeneralDialog(
+            context: context,
+            barrierDismissible:true,
+            barrierLabel: '123',
+            transitionDuration: Duration(milliseconds: 200),
+            barrierColor: Colors.black.withOpacity(.5),
+            pageBuilder: (BuildContext context, Animation<double> animation,
+                Animation<double> secondaryAnimation) {
+              return TreeSelectView(size: Size(SizeConfig.blockSizeHorizontal*80, SizeConfig.blockSizeVertical*80),treeData: widget.dataList,);
+            });
+      };
+    } else {
+      cellTap = () {
         BottomSelect(
             pickerChildren: widget.dataList,
             selectedChange: (value, data) {
@@ -57,7 +75,10 @@ class _RegistSelectInputState extends State<RegistSelectInput> {
                 callBackData = {'value': value, 'title': data};
               });
             }).didClickSelectedGender(context);
-      },
+      };
+    }
+    return GestureDetector(
+      onTap: cellTap,
       child: Container(
         width: SizeConfig.screenWidth,
         height: widget.height,

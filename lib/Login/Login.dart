@@ -308,13 +308,13 @@ class _LoginState extends State<Login> {
                     builder: (context,model,child){
                       return RegistSelectInput(
                         title: '组织级别',
-                        dataList: zizhiList,
+                        dataList: model.postDataList,
                         height: lineHeight,
                         border: Border(
                             top: BorderSide(
                                 width: 0.5, color: Color.fromRGBO(0, 0, 0, 0.2))),
                         selectedChange: (value, data) {
-                          print('value == $value --- data == $data');
+                          // print('value == $value --- data == $data');
                           organData = {'value': value, 'title': data};
                         },
                       );
@@ -331,14 +331,23 @@ class _LoginState extends State<Login> {
                                 width: 0.5,
                                 color: Color.fromRGBO(0, 0, 0, 0.2)))),
                   ),
-                  RegistSelectInput(
-                    //注册服务点选择
-                    title: '服务点',
-                    height: lineHeight,
-                    dataList: fuwuList,
-                    border: Border.all(style: BorderStyle.none),
-                    selectedChange: (value, data) {
-                      servicePointData = {'value': value, 'title': data};
+                  ProviderWidget<LoginViewModel>(
+                    model: LoginViewModel(),
+                    onReady: (vm) {
+                      vm.loadRegistDeptSelectList();
+                    },
+                    builder: (context,model,child){
+                      return RegistSelectInput(
+                        //注册服务点选择
+                        title: '服务点',
+                        height: lineHeight,
+                        dataList: model.depTreeDataList,
+                        border: Border.all(style: BorderStyle.none),
+                        showTree: true,
+                        selectedChange: (value, data) {
+                          servicePointData = {'value': value, 'title': data};
+                        },
+                      );
                     },
                   ),
                   Container(
