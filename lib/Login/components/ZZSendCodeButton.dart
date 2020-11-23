@@ -66,6 +66,8 @@ class _ZZSendCodeButtonState extends State<ZZSendCodeButton> {
     Function pressed;
     if (widget.sending) {
       codeButtonWait();
+    } else {
+      codeButtonState = CodeButtonState.normal;
     }
     if (codeButtonState == CodeButtonState.normal) {
       text = widget.buttonText;

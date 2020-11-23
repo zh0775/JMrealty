@@ -160,7 +160,6 @@ class _LoginState extends State<Login> {
     return ProviderWidget<LoginViewModel>(
       model: LoginViewModel(),
       builder: (context, value, child) {
-        print('ZZSendCodeButton state ==== ${value.state}');
         if (value.state == BaseState.CONTENT) {
           isLogin ? isLoginSend = true : isRegistSend = true;
         } else if (value.state == BaseState.FAIL || value.state == null) {
@@ -301,16 +300,24 @@ class _LoginState extends State<Login> {
                     height: 40,
                   ),
                   // 注册组织级别选择
-                  RegistSelectInput(
-                    title: '组织级别',
-                    dataList: zizhiList,
-                    height: lineHeight,
-                    border: Border(
-                        top: BorderSide(
-                            width: 0.5, color: Color.fromRGBO(0, 0, 0, 0.2))),
-                    selectedChange: (value, data) {
-                      print('value == $value --- data == $data');
-                      organData = {'value': value, 'title': data};
+                  ProviderWidget<LoginViewModel>(
+                  model: LoginViewModel(),
+                    onReady: (model) {
+                      model.loadRegistPostSelectList();
+                    },
+                    builder: (context,model,child){
+                      return RegistSelectInput(
+                        title: '组织级别',
+                        dataList: zizhiList,
+                        height: lineHeight,
+                        border: Border(
+                            top: BorderSide(
+                                width: 0.5, color: Color.fromRGBO(0, 0, 0, 0.2))),
+                        selectedChange: (value, data) {
+                          print('value == $value --- data == $data');
+                          organData = {'value': value, 'title': data};
+                        },
+                      );
                     },
                   ),
                   Container(
