@@ -55,6 +55,7 @@ flutter:
     - assets/images/tabbar/food-doughnut.png
     - assets/images/tabbar/food-pudding.png
     - assets/images/tabbar/food-cookie.png
+    - assets/images/arrow_right.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
