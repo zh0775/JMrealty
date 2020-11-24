@@ -1,4 +1,5 @@
 import 'package:JMrealty/Login/model/PostListModel.dart';
+import 'package:JMrealty/components/TreeNode.dart';
 import 'package:JMrealty/components/TreeSelectView.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
@@ -14,10 +15,14 @@ class RegistSelectInput extends StatefulWidget {
   final double height;
   final Border border;
   final bool showTree;
+  final void Function(TreeNode node) nodeSelected;
+  final void Function(List<TreeNode> nodes) nodesSelected;
   RegistSelectInput(
       {@required this.dataList,
-      @required this.selectedChange,
       @required this.title,
+      this.selectedChange,
+      this.nodeSelected,
+      this.nodesSelected,
       this.showTree = false,
       this.height = 50,
       this.border = const Border(
@@ -62,7 +67,21 @@ class _RegistSelectInputState extends State<RegistSelectInput> {
             barrierColor: Colors.black.withOpacity(.5),
             pageBuilder: (BuildContext context, Animation<double> animation,
                 Animation<double> secondaryAnimation) {
-              return TreeSelectView(size: Size(SizeConfig.blockSizeHorizontal*80, SizeConfig.blockSizeVertical*80),treeData: widget.dataList,);
+              return TreeSelectView(size: Size(SizeConfig.blockSizeHorizontal*80, SizeConfig.blockSizeVertical*80),
+                treeData: widget.dataList,
+                nodeSelected: (node) {
+                  if(widget.nodeSelected != null) {
+                    widget.nodeSelected(node);
+                  }
+                  setState(() {
+                    callBackData = {'value': node.id, 'title': node.label};
+                  });
+                },
+                nodesSelected: (nodes) {
+                  if (widget.nodesSelected != null) {
+                    widget.nodesSelected(nodes);
+                  }
+                },);
             });
       };
     } else {
@@ -70,7 +89,9 @@ class _RegistSelectInputState extends State<RegistSelectInput> {
         BottomSelect(
             pickerChildren: widget.dataList,
             selectedChange: (value, data) {
-              widget.selectedChange(value, data);
+              if (widget.selectedChange != null) {
+                widget.selectedChange(value, data);
+              }
               setState(() {
                 callBackData = {'value': value, 'title': data};
               });

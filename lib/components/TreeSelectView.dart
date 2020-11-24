@@ -9,11 +9,15 @@ class TreeSelectView extends StatefulWidget {
   final Size size;
   final needSelected;
   final bool singleSelect;
+  final void Function(TreeNode node) nodeSelected;
+  final void Function(List<TreeNode> nodes) nodesSelected;
   TreeSelectView(
       {this.treeData = const [],
       this.size = const Size(double.infinity, double.infinity),
       this.needSelected = false,
-      this.singleSelect = true});
+      this.singleSelect = true,
+      this.nodeSelected,
+      this.nodesSelected});
   @override
   _TreeSelectViewState createState() => _TreeSelectViewState();
 }
@@ -21,6 +25,14 @@ class TreeSelectView extends StatefulWidget {
 class _TreeSelectViewState extends State<TreeSelectView> {
   double selfWidth;
   List<TreeNode> seletedNodes;
+  @override
+  void dispose() {
+    seletedNodes.forEach((element) {
+      element.selected = false;
+    });
+    seletedNodes = null;
+    super.dispose();
+  }
   @override
   void initState() {
     seletedNodes = [];
@@ -50,6 +62,15 @@ class _TreeSelectViewState extends State<TreeSelectView> {
                 left: (widget.size.width - 90) / 2,
                 child: TextButton(
                   onPressed: () {
+                    if (widget.singleSelect) {
+                      if (widget.nodeSelected != null && seletedNodes.length > 0) {
+                        widget.nodeSelected(seletedNodes[0]);
+                      }
+                    } else {
+                      if (widget.nodesSelected != null && seletedNodes.length > 0) {
+                        widget.nodesSelected(seletedNodes);
+                      }
+                    }
                     Navigator.of(context).pop();
                   },
                   child: Container(
@@ -136,88 +157,96 @@ class _TreeSelectViewState extends State<TreeSelectView> {
         });
       }
     });
-    print('nodes.length === ${nodes.length}');
-    return Column(
+    // print('nodes.length === ${nodes.length}');
+    return ListView(
       children: nodes,
     );
   }
 
   Widget getOneNode(TreeNode node) {
     double blockWidth = selfWidth / 100;
-    double levelSpace = blockWidth * 8;
-
+    double levelSpace = blockWidth * 3;
+    Size imageSize = Size(blockWidth * 10, blockWidth * 10);
     Widget image;
     TextStyle textStyle;
-    if (node.expand) {
-      image = Transform.rotate(
-        angle: math.pi / 2,
-        child: Image.asset('assets/images/arrow_right.png',
-            width: blockWidth * 10, height: blockWidth * 10),
-      );
+    if (node.children != null && node.children.length > 0) {
+      if (node.expand) {
+        image = GestureDetector(
+          onTap: () {
+            setState(() {
+              node.expand = !node.expand;
+            });
+          },
+          child: Transform.rotate(
+            angle: math.pi / 2,
+            child: Image.asset('assets/images/arrow_right.png',
+                width: imageSize.width, height: imageSize.height),
+          )
+        );
+      } else {
+        image = GestureDetector(
+          onTap: () {
+            setState(() {
+              node.expand = !node.expand;
+            });
+          },
+          child: Image.asset(
+            'assets/images/arrow_right.png',
+            width: imageSize.width,
+            height: imageSize.height,
+          ),
+        );
+      }
     } else {
-      image = Image.asset(
-        'assets/images/arrow_right.png',
-        width: blockWidth * 10,
-        height: blockWidth * 10,
-      );
+      image = SizedBox(width: imageSize.width, height: imageSize.height);
     }
     if (node.selected) {
       textStyle = TextStyle(
-        fontSize: 13,
+        fontSize: 15,
         color: jm_appTheme,
         decoration: TextDecoration.none,
       );
     } else {
       textStyle = TextStyle(
-        fontSize: 13,
+        fontSize: 15,
         color: Color(0xff333333),
         decoration: TextDecoration.none,
       );
     }
 
-    return Container(
-      width: selfWidth,
-      height: 50,
-      // color: Color.fromRGBO(
-      //     node.treeLevel * 13, node.treeLevel * 13, node.treeLevel * 13, 1),
-      child: Row(
-        children: [
-          SizedBox(
-            width: levelSpace * node.treeLevel,
-          ),
-          // image,
-          // Text(
-          //   node.label,
-          //   style: textStyle,
-          // )
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                node.expand = !node.expand;
-              });
-            },
-            child: image,
-          ),
-          // SizedBox(
-          //   width: blockWidth * 5,
-          // ),
-          GestureDetector(
-            onTap: () {
-              node.selected = !node.selected;
-              if (node.selected) {
-                if (widget.singleSelect) {}
-                seletedNodes.add(node);
-              } else {
-                seletedNodes.remove(node);
-              }
-              setState(() {});
-            },
-            child: Text(
+    return GestureDetector(
+      onTap: () {
+        node.selected = !node.selected;
+        if (node.selected) {
+          if (widget.singleSelect) {
+            seletedNodes.forEach((element) {
+              element.selected = false;
+            });
+            seletedNodes = [];
+          }
+          seletedNodes.add(node);
+
+        } else {
+          seletedNodes.remove(node);
+        }
+        setState(() {});
+      },
+      child: Container(
+        width: selfWidth,
+        height: 55,
+        color: Colors.white,
+        child: Row(
+          children: [
+            SizedBox(
+              width: levelSpace * node.treeLevel,
+            ),
+            image,
+            Text(
               node.label,
               style: textStyle,
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

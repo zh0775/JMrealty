@@ -18,20 +18,21 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  String phoneNumString;
-  String codeNumString;
-  String registCodeNumString;
+  String phoneNumString; // 登录手机号
+  String codeNumString; //登录验证码
+  String registCodeNumString; // 注册验证码
   bool isLoginSend;
   bool isRegistSend;
   bool isLogin; // 登录或注册
-  Map organData;
-  Map servicePointData;
-  bool registIsMan;
+  Map organData; // 注册组织级别数据
+  Map servicePointData; // 注册服务点数据
+  bool registIsMan; // 注册性别
+  String registName; // 注册姓名
+  String registPhone; // 注册手机号
   @override
   void dispose() {
     super.dispose();
   }
-
   @override
   void initState() {
     registIsMan = false;
@@ -220,20 +221,6 @@ class _LoginState extends State<Login> {
 
   // 注册页主页面
   Widget registWidget(context) {
-    List zizhiList = [
-      {'id': 1, 'title': '组织1'},
-      {'id': 2, 'title': '组织2'},
-      {'id': 3, 'title': '组织3'},
-      {'id': 4, 'title': '组织4'},
-      {'id': 5, 'title': '组织5'}
-    ];
-    List fuwuList = [
-      {'id': 1, 'title': '服务点1'},
-      {'id': 2, 'title': '服务点2'},
-      {'id': 3, 'title': '服务点3'},
-      {'id': 4, 'title': '服务点4'},
-      {'id': 5, 'title': '服务点5'}
-    ];
     return Container(
         height: SizeConfig.screenHeight,
         width: SizeConfig.screenWidth,
@@ -344,9 +331,9 @@ class _LoginState extends State<Login> {
                         dataList: model.depTreeDataList,
                         border: Border.all(style: BorderStyle.none),
                         showTree: true,
-                        selectedChange: (value, data) {
-                          servicePointData = {'value': value, 'title': data};
-                        },
+                        nodeSelected: (node) {
+                          servicePointData = {'value': node.id, 'title': node.label};
+                        }
                       );
                     },
                   ),
@@ -377,7 +364,9 @@ class _LoginState extends State<Login> {
                           width: SizeConfig.blockSizeHorizontal * 70 + 5,
                           backgroundColor: Colors.transparent,
                           needCleanButton: true,
-                          valueChange: (value) {},
+                          valueChange: (value) {
+                            registName = value;
+                          },
                         )
                       ],
                     ),
@@ -439,7 +428,9 @@ class _LoginState extends State<Login> {
                           width: SizeConfig.blockSizeHorizontal * 70 + 5,
                           backgroundColor: Colors.transparent,
                           needCleanButton: true,
-                          valueChange: (value) {},
+                          valueChange: (value) {
+                            registPhone = value;
+                          },
                         )
                       ],
                     ),
