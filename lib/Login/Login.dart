@@ -1,9 +1,14 @@
 import 'dart:async';
-
+import 'package:JMrealty/Login/model/login_model.dart';
 import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
+import 'package:JMrealty/components/SelectImageView.dart';
+import 'package:JMrealty/services/Urls.dart';
+import 'package:JMrealty/services/http.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/tTools.dart';
+import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:JMrealty/Login/components/RegistSelectInput.dart';
@@ -18,6 +23,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  String headImgPath; // 头像路径
+  dynamic headImg;
   String phoneNumString; // 登录手机号
   String codeNumString; //登录验证码
   String registCodeNumString; // 注册验证码
@@ -29,16 +36,30 @@ class _LoginState extends State<Login> {
   bool registIsMan; // 注册性别
   String registName; // 注册姓名
   String registPhone; // 注册手机号
+
+  SelectImageView imgSelectV; // 选择图片视图
+
   @override
   void dispose() {
     super.dispose();
   }
+
   @override
   void initState() {
+    imgSelectV = SelectImageView(
+      imageSelected: (image) {
+        setState(() {
+          headImg = image;
+        });
+      },
+    );
+    ShowToast.normal('登录账号');
     registIsMan = false;
     isLoginSend = false;
     isRegistSend = false;
     organData = null;
+    headImg = null;
+    headImgPath = '';
     phoneNumString = '';
     codeNumString = '';
     registCodeNumString = '';
@@ -124,12 +145,38 @@ class _LoginState extends State<Login> {
                       decoration: BoxDecoration(
                           color: Color(0xfff1daaf),
                           borderRadius: BorderRadius.all(Radius.circular(8))),
-                      child: TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          '确认登录',
-                          style: TextStyle(fontSize: 15, color: Colors.white),
-                        ),
+                      child: ProviderWidget<LoginViewModel>(
+                        model: LoginViewModel(),
+                        builder: (context, value, child) {
+                          return TextButton(
+                            onPressed: () {
+                              if (!strNoEmpty(phoneNumString)) {
+                                ShowToast.normal('请输入您的手机号码');
+                                return;
+                              }
+                              if (!isMobilePhoneNumber(phoneNumString)) {
+                                ShowToast.normal('请输入正确的的手机号码');
+                                return;
+                              }
+                              if (!strNoEmpty(codeNumString)) {
+                                ShowToast.normal('请输入验证码');
+                                return;
+                              }
+                              value.requestLogin(phoneNumString, codeNumString,
+                                  () {
+                                ShowToast.normal('登录成功');
+                                Future.delayed(Duration(seconds: 1), () {
+                                  Navigator.pop(context);
+                                });
+                              });
+                            },
+                            child: Text(
+                              '确认登录',
+                              style:
+                                  TextStyle(fontSize: 15, color: Colors.white),
+                            ),
+                          );
+                        },
                       )),
                   SizedBox(
                     height: 10,
@@ -170,7 +217,16 @@ class _LoginState extends State<Login> {
           buttonText: '发送验证码',
           sending: isLogin ? isLoginSend : isRegistSend,
           codeButtonClick: () {
-            value.loadPhoneCode(phoneNumString);
+            String phone = isLogin ? phoneNumString : registPhone;
+            if (!strNoEmpty(phone)) {
+              ShowToast.normal('请输入手机号码');
+              return;
+            }
+            if (!isMobilePhoneNumber(phone)) {
+              ShowToast.normal('请输入正确的手机号码');
+              return;
+            }
+            value.loadPhoneCode(phone);
           },
           codeButtonTimeOver: () {
             setState(() {
@@ -246,60 +302,40 @@ class _LoginState extends State<Login> {
               child: Column(
                 children: [
                   // 头像按钮
-                  Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                          color: Color.fromRGBO(240, 242, 245, 1),
-                          borderRadius: BorderRadius.all(Radius.circular(50))),
-                      child: ClipRRect(
-                        borderRadius:
-                            BorderRadius.vertical(bottom: Radius.circular(50)),
-                        child: Stack(
-                          overflow: Overflow.clip,
-                          children: [
-                            Positioned(
-                                top: 10,
-                                left: 10,
-                                child: Icon(
-                                  Icons.account_circle,
-                                  size: 60,
-                                  color: Color.fromRGBO(0, 0, 0, 0.1),
-                                )),
-                            Positioned(
-                                left: 0,
-                                bottom: 0,
-                                child: Container(
-                                  height: 25,
-                                  width: 80,
-                                  color: Color.fromRGBO(0, 0, 0, 0.1),
-                                  child: Text(
-                                    '编辑',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 13, color: Colors.black),
-                                  ),
-                                ))
-                          ],
-                        ),
-                      )),
+                  GestureDetector(
+                      onTap: () {
+                        imgSelectV.showImage(context);
+                      },
+                      child: headImg != null
+                          ? ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(40)),
+                              child: Image.file(
+                                headImg,
+                                fit: BoxFit.cover,
+                                height: 80,
+                                width: 80,
+                              ),
+                            )
+                          : selectHead(context)),
                   SizedBox(
                     height: 40,
                   ),
                   // 注册组织级别选择
                   ProviderWidget<LoginViewModel>(
-                  model: LoginViewModel(),
+                    model: LoginViewModel(),
                     onReady: (model) {
                       model.loadRegistPostSelectList();
                     },
-                    builder: (context,model,child){
+                    builder: (context, model, child) {
                       return RegistSelectInput(
                         title: '组织级别',
                         dataList: model.postDataList,
                         height: lineHeight,
                         border: Border(
                             top: BorderSide(
-                                width: 0.5, color: Color.fromRGBO(0, 0, 0, 0.2))),
+                                width: 0.5,
+                                color: Color.fromRGBO(0, 0, 0, 0.2))),
                         selectedChange: (value, data) {
                           // print('value == $value --- data == $data');
                           organData = {'value': value, 'title': data};
@@ -323,18 +359,20 @@ class _LoginState extends State<Login> {
                     onReady: (vm) {
                       vm.loadRegistDeptSelectList();
                     },
-                    builder: (context,model,child){
+                    builder: (context, model, child) {
                       return RegistSelectInput(
-                        //注册服务点选择
-                        title: '服务点',
-                        height: lineHeight,
-                        dataList: model.depTreeDataList,
-                        border: Border.all(style: BorderStyle.none),
-                        showTree: true,
-                        nodeSelected: (node) {
-                          servicePointData = {'value': node.id, 'title': node.label};
-                        }
-                      );
+                          //注册服务点选择
+                          title: '服务点',
+                          height: lineHeight,
+                          dataList: model.depTreeDataList,
+                          border: Border.all(style: BorderStyle.none),
+                          showTree: true,
+                          nodeSelected: (node) {
+                            servicePointData = {
+                              'value': node.id,
+                              'title': node.label
+                            };
+                          });
                     },
                   ),
                   Container(
@@ -470,7 +508,9 @@ class _LoginState extends State<Login> {
                           color: Color(0xfff1daaf),
                           borderRadius: BorderRadius.all(Radius.circular(8))),
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          sendRegist();
+                        },
                         child: Text(
                           '提交注册',
                           style: TextStyle(fontSize: 15, color: Colors.white),
@@ -497,6 +537,7 @@ class _LoginState extends State<Login> {
         ]));
   }
 
+  // 性别按钮
   Widget sexButton(BuildContext context, bool sex) {
     double sexButtonHeight = lineHeight * 0.7;
     return Container(
@@ -526,5 +567,114 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+
+  Widget selectHead(BuildContext context) {
+    return Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+            color: Color.fromRGBO(240, 242, 245, 1),
+            borderRadius: BorderRadius.all(Radius.circular(50))),
+        child: ClipRRect(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(50)),
+          child: Stack(
+            overflow: Overflow.clip,
+            children: [
+              Positioned(
+                  top: 10,
+                  left: 10,
+                  child: Icon(
+                    Icons.account_circle,
+                    size: 60,
+                    color: Color.fromRGBO(0, 0, 0, 0.1),
+                  )),
+              Positioned(
+                  left: 0,
+                  bottom: 0,
+                  child: Container(
+                    height: 25,
+                    width: 80,
+                    color: Color.fromRGBO(0, 0, 0, 0.1),
+                    child: Text(
+                      '编辑',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 13, color: Colors.black),
+                    ),
+                  ))
+            ],
+          ),
+        ));
+  }
+
+  requestRegist(RegistModel model) {
+    Map<String, dynamic> params = {
+      'deptId': model.deptId,
+      'nickName': model.nickName,
+      'sex': model.sex,
+      'phonenumber': model.phonenumber,
+      'position': model.position,
+      'code': model.code
+    };
+    if (model.avatar != null) {
+      params['avatar'] = model.avatar;
+    }
+
+    Http().post(
+      Urls.userRegister,
+      params,
+      success: (json) {
+        if (json['code'] == 200) {
+          ShowToast.normal('注册成功');
+          Future.delayed(Duration(seconds: 1), () {
+            setState(() {
+              isLogin = true;
+            });
+          });
+        }
+        print('userRegister-success === $json');
+      },
+      fail: (reason, code) {
+        print('userRegister-fail === $reason --- code === $code');
+      },
+      after: () {},
+    );
+  }
+
+  void sendRegist() {
+    RegistModel model = RegistModel();
+    if (organData == null || organData.isEmpty || organData['value'] == null) {
+      ShowToast.normal('请选择组织级别');
+      return;
+    }
+    model.position = organData['value'];
+    if (servicePointData == null ||
+        servicePointData.isEmpty ||
+        servicePointData['value'] == null) {
+      ShowToast.normal('请选择服务点');
+      return;
+    }
+    model.deptId = servicePointData['value'];
+    if (!strNoEmpty(registName)) {
+      ShowToast.normal('请输入您的姓名');
+      return;
+    }
+    model.nickName = registName;
+    if (!strNoEmpty(registPhone)) {
+      ShowToast.normal('请输入您的手机号码');
+      return;
+    }
+    if (!isMobilePhoneNumber(registPhone)) {
+      ShowToast.normal('请输入正确的的手机号码');
+      return;
+    }
+    model.phonenumber = registPhone;
+    if (!strNoEmpty(registCodeNumString)) {
+      ShowToast.normal('请输入验证码');
+      return;
+    }
+    model.code = registCodeNumString;
+    model.sex = registIsMan ? 1 : 2;
+    requestRegist(model);
   }
 }

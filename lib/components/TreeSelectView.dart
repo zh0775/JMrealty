@@ -33,6 +33,7 @@ class _TreeSelectViewState extends State<TreeSelectView> {
     seletedNodes = null;
     super.dispose();
   }
+
   @override
   void initState() {
     seletedNodes = [];
@@ -42,7 +43,6 @@ class _TreeSelectViewState extends State<TreeSelectView> {
 
   @override
   Widget build(BuildContext context) {
-    print('treeData === ${widget.treeData}');
     SizeConfig().init(context);
     return Align(
       child: Container(
@@ -63,11 +63,13 @@ class _TreeSelectViewState extends State<TreeSelectView> {
                 child: TextButton(
                   onPressed: () {
                     if (widget.singleSelect) {
-                      if (widget.nodeSelected != null && seletedNodes.length > 0) {
+                      if (widget.nodeSelected != null &&
+                          seletedNodes.length > 0) {
                         widget.nodeSelected(seletedNodes[0]);
                       }
                     } else {
-                      if (widget.nodesSelected != null && seletedNodes.length > 0) {
+                      if (widget.nodesSelected != null &&
+                          seletedNodes.length > 0) {
                         widget.nodesSelected(seletedNodes);
                       }
                     }
@@ -172,17 +174,16 @@ class _TreeSelectViewState extends State<TreeSelectView> {
     if (node.children != null && node.children.length > 0) {
       if (node.expand) {
         image = GestureDetector(
-          onTap: () {
-            setState(() {
-              node.expand = !node.expand;
-            });
-          },
-          child: Transform.rotate(
-            angle: math.pi / 2,
-            child: Image.asset('assets/images/arrow_right.png',
-                width: imageSize.width, height: imageSize.height),
-          )
-        );
+            onTap: () {
+              setState(() {
+                node.expand = !node.expand;
+              });
+            },
+            child: Transform.rotate(
+              angle: math.pi / 2,
+              child: Image.asset('assets/images/arrow_right.png',
+                  width: imageSize.width, height: imageSize.height),
+            ));
       } else {
         image = GestureDetector(
           onTap: () {
@@ -203,11 +204,13 @@ class _TreeSelectViewState extends State<TreeSelectView> {
     if (node.selected) {
       textStyle = TextStyle(
         fontSize: 15,
+        fontWeight: FontWeight.w400,
         color: jm_appTheme,
         decoration: TextDecoration.none,
       );
     } else {
       textStyle = TextStyle(
+        fontWeight: FontWeight.w400,
         fontSize: 15,
         color: Color(0xff333333),
         decoration: TextDecoration.none,
@@ -225,7 +228,6 @@ class _TreeSelectViewState extends State<TreeSelectView> {
             seletedNodes = [];
           }
           seletedNodes.add(node);
-
         } else {
           seletedNodes.remove(node);
         }

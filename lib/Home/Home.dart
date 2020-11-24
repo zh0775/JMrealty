@@ -72,11 +72,13 @@ class _HomeState extends State<Home> {
           ),
           buttons((int buttonIndex, Map buttonData) {
             if (buttonIndex == 0) {
-              Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                return Login(
-                  isLogin: true,
-                );
-              }));
+              Navigator.of(context).push(CupertinoPageRoute(
+                  builder: (_) {
+                    return Login(
+                      isLogin: true,
+                    );
+                  },
+                  fullscreenDialog: true));
             }
             print(
                 'buttonIndex === $buttonIndex --- buttonData === $buttonData');
