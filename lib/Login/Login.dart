@@ -16,6 +16,7 @@ import 'package:JMrealty/Login/components/RegistSelectInput.dart';
 import 'package:JMrealty/Login/components/ZZInput.dart';
 import 'package:JMrealty/Login/components/ZZSendCodeButton.dart';
 import 'package:image_picker/image_picker.dart';
+
 class Login extends StatefulWidget {
   final bool isLogin;
   const Login({this.isLogin = true});
@@ -74,14 +75,20 @@ class _LoginState extends State<Login> {
     super.initState();
   }
 
-  double lineHeight = 60;
+  double lineHeight = 50;
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
         // 修复弹出键盘后高度不够报错的bug 套一层SingleChildScrollView
-        body: SingleChildScrollView(
-      child: isLogin ? loginWidget(context) : registWidget(context),
+        body: GestureDetector(
+      onTap: () {
+        // 收起键盘
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: SingleChildScrollView(
+        child: isLogin ? loginWidget(context) : registWidget(context),
+      ),
     ));
   }
 
@@ -107,7 +114,7 @@ class _LoginState extends State<Login> {
                   ))),
           Positioned(
               top: 100,
-              bottom: 100,
+              // bottom: 100,
               left: 0,
               right: 0,
               child: Column(
@@ -191,6 +198,7 @@ class _LoginState extends State<Login> {
                       width: SizeConfig.screenWidth - 80 - 200,
                       height: 48,
                       child: TextButton(
+                        key: ValueKey('toRegistTextButton'),
                         onPressed: () {
                           setState(() {
                             isLogin = false;
@@ -289,7 +297,7 @@ class _LoginState extends State<Login> {
         // color: Colors.blue,
         child: Stack(children: [
           Positioned(
-              top: 60,
+              top: 50,
               right: 0,
               child: TextButton(
                   onPressed: () {
@@ -301,8 +309,8 @@ class _LoginState extends State<Login> {
                     color: Color.fromRGBO(65, 68, 83, 1),
                   ))),
           Positioned(
-              top: 100,
-              bottom: 100,
+              top: 80,
+              // bottom: 100,
               left: 0,
               right: 0,
               child: Column(
@@ -527,6 +535,7 @@ class _LoginState extends State<Login> {
                       width: SizeConfig.screenWidth - 80 - 150,
                       height: 50,
                       child: TextButton(
+                        key: ValueKey('toLoginTextButton'),
                         onPressed: () {
                           setState(() {
                             isLogin = true;
@@ -566,7 +575,7 @@ class _LoginState extends State<Login> {
           sex ? '男' : '女',
           style: TextStyle(
               textBaseline: TextBaseline.alphabetic,
-              fontSize: 17,
+              fontSize: 16,
               color: sex != registIsMan
                   ? Color.fromRGBO(64, 67, 82, 1)
                   : Colors.white),
