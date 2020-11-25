@@ -1,4 +1,6 @@
 import 'package:JMrealty/Client/components/WaitFollowUpCell.dart';
+import 'package:JMrealty/Client/viewModel/ClientViewModel.dart';
+import 'package:JMrealty/base/provider_widget.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
@@ -74,36 +76,82 @@ class _ClientState extends State<Client> {
         backgroundColor: Colors.white,
         body: TabBarView(
           children: [
-            ListView.builder(
-              itemCount: 1,
-              itemBuilder: (context, index) {
-                return WaitFollowUpCell();
-              },
-            ),
-            ListView.builder(
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return WaitFollowUpCell();
-              },
-            ),
-            ListView.builder(
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return WaitFollowUpCell();
-              },
-            ),
-            ListView.builder(
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return WaitFollowUpCell();
-              },
-            ),
-            ListView.builder(
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return WaitFollowUpCell();
-              },
-            )
+            ProviderWidget<ClientViewModel>(
+                model: ClientViewModel(),
+                onReady: (model) {
+                  model.loadClientListFromStatus(ClientStatus.wait);
+                },
+                builder: (ctx, model, child) {
+                  return ListView.builder(
+                    itemCount: model.clientList.length,
+                    itemBuilder: (context, index) {
+                      return WaitFollowUpCell(
+                        model: model.clientList[index],
+                      );
+                    },
+                  );
+                }),
+            ProviderWidget<ClientViewModel>(
+                model: ClientViewModel(),
+                onReady: (model) {
+                  model.loadClientListFromStatus(ClientStatus.wait);
+                },
+                builder: (ctx, model, child) {
+                  return ListView.builder(
+                    itemCount: model.clientList.length,
+                    itemBuilder: (context, index) {
+                      return WaitFollowUpCell(
+                        model: model.clientList[index],
+                      );
+                    },
+                  );
+                }),
+            ProviderWidget<ClientViewModel>(
+                model: ClientViewModel(),
+                onReady: (model) {
+                  model.loadClientListFromStatus(ClientStatus.wait);
+                },
+                builder: (ctx, model, child) {
+                  return ListView.builder(
+                    itemCount: model.clientList.length,
+                    itemBuilder: (context, index) {
+                      return WaitFollowUpCell(
+                        model: model.clientList[index],
+                      );
+                    },
+                  );
+                }),
+            ProviderWidget<ClientViewModel>(
+                model: ClientViewModel(),
+                onReady: (model) {
+                  model.loadClientListFromStatus(ClientStatus.wait);
+                },
+                builder: (ctx, model, child) {
+                  print('build');
+                  return ListView.builder(
+                    itemCount: model.clientList.length,
+                    itemBuilder: (context, index) {
+                      return WaitFollowUpCell(
+                        model: model.clientList[index],
+                      );
+                    },
+                  );
+                }),
+            ProviderWidget<ClientViewModel>(
+                model: ClientViewModel(),
+                onReady: (model) {
+                  model.loadClientListFromStatus(ClientStatus.wait);
+                },
+                builder: (ctx, model, child) {
+                  return ListView.builder(
+                    itemCount: model.clientList.length,
+                    itemBuilder: (context, index) {
+                      return WaitFollowUpCell(
+                        model: model.clientList[index],
+                      );
+                    },
+                  );
+                })
           ],
         ),
       ),

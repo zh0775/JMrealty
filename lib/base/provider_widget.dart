@@ -30,8 +30,9 @@ class _ProviderWidgetState<T extends ChangeNotifier>
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<T>(
-      create: (_) => widget.model,
+    return ChangeNotifierProvider<T>.value(
+      // create: (_) => widget.model,
+      value: widget.model,
       child: Consumer<T>(
         builder: widget.builder,
         child: widget.child,

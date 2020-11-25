@@ -1,10 +1,11 @@
+import 'package:JMrealty/Client/model/ClientModel.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 
-enum waitFollowLevel { A, B, C }
-
 class WaitFollowUpCell extends StatefulWidget {
+  final ClientModel model;
+  WaitFollowUpCell({this.model});
   // final waitFollowLevel level;
   // final String name;
   // final String sex;
