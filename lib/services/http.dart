@@ -86,4 +86,31 @@ class Http {
   //   Options options = Options(method: method);
   //   dio.request(url, queryParameters: params, options: options);
   // }
+
+  Future<void> custom(String url, Map<String, dynamic> params,
+      {Success success, Fail fail, After after,int timeOut, method}) async {
+    try {
+      await _dio.post(url, data: json.encode(params)).then((response) {
+        if (response.statusCode == 200) {
+          if (success != null) {
+            success(response.data);
+          }
+        } else {
+          if (fail != null) {
+            fail(response.statusMessage, response.statusCode);
+          }
+        }
+        if (after != null) {
+          after();
+        }
+      });
+    } catch (e) {
+      if (fail != null) {
+        fail('网络发生错误', -1);
+      }
+    }
+    return Future.value();
+  }
 }
+
+

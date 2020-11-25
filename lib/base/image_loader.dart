@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class ImageLoader extends StatelessWidget {
   final String imgUrl;
@@ -11,7 +12,8 @@ class ImageLoader extends StatelessWidget {
   Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: imgUrl,
-      height: height,
+      placeholder: (context,url)=> Container(color: Colors.white,),
+      // height: height,
       fit: BoxFit.cover,
     );
   }

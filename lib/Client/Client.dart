@@ -18,6 +18,7 @@ class _ClientState extends State<Client> {
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: jm_appTheme,
+          automaticallyImplyLeading: false,
           title: Text(
             '客户',
             style: TextStyle(color: Colors.white, fontSize: 22),

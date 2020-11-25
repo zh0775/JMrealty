@@ -14,9 +14,9 @@ class _MineState extends State<Mine> {
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(seconds: 0), () {
-      toLogin(context);
-    });
+    // Future.delayed(Duration(seconds: 0), () {
+    //   toLogin(context);
+    // });
     return GestureDetector(
       onTap: () {},
       child: Container(

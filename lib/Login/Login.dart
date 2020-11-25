@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:JMrealty/Login/model/login_model.dart';
 import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
@@ -14,7 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:JMrealty/Login/components/RegistSelectInput.dart';
 import 'package:JMrealty/Login/components/ZZInput.dart';
 import 'package:JMrealty/Login/components/ZZSendCodeButton.dart';
-
+import 'package:image_picker/image_picker.dart';
 class Login extends StatefulWidget {
   final bool isLogin;
   const Login({this.isLogin = true});
@@ -48,8 +49,13 @@ class _LoginState extends State<Login> {
   void initState() {
     imgSelectV = SelectImageView(
       imageSelected: (image) {
+        print('image === ${image.runtimeType.toString()}');
         setState(() {
-          headImg = image;
+          if (image != null) {
+            headImg = File(image.path);
+          } else {
+            print('No image selected.');
+          }
         });
       },
     );

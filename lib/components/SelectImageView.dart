@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 
 class SelectImageView {
   void Function(dynamic image) imageSelected;
-
+  final _picker = ImagePicker();
   SelectImageView({@required this.imageSelected});
   double selfHeight = 200.0;
   void showImage(BuildContext context) {
@@ -48,13 +48,13 @@ class SelectImageView {
   //拍照
   Future _getImageFromCamera() async {
     var image =
-        await ImagePicker().getImage(source: ImageSource.camera, maxWidth: 400);
+        await _picker.getImage(source: ImageSource.camera, maxWidth: 400);
     imageSelected(image);
   }
 
   //相册选择
   Future _getImageFromGallery() async {
-    var image = await ImagePicker().getImage(source: ImageSource.gallery);
+    var image = await _picker.getImage(source: ImageSource.gallery);
 
     imageSelected(image);
   }
