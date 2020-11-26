@@ -1,4 +1,5 @@
 import 'package:JMrealty/Client/components/WaitFollowUpCell.dart';
+import 'package:JMrealty/Client/model/ClientModel.dart';
 import 'package:JMrealty/Client/viewModel/ClientViewModel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
 import 'package:JMrealty/const/Default.dart';
@@ -11,6 +12,9 @@ class Client extends StatefulWidget {
 }
 
 class _ClientState extends State<Client> {
+  SelectedForRowAtIndex selectedForRowAtIndex = (ClientStatus status, int index, ClientModel model) {
+    print('status === $status --- index === $index --- model === $model');
+  };
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -76,85 +80,51 @@ class _ClientState extends State<Client> {
         backgroundColor: Colors.white,
         body: TabBarView(
           children: [
-            ProviderWidget<ClientViewModel>(
-                model: ClientViewModel(),
-                onReady: (model) {
-                  model.loadClientListFromStatus(ClientStatus.wait);
-                },
-                builder: (ctx, model, child) {
-                  return ListView.builder(
-                    itemCount: model.clientList.length,
-                    itemBuilder: (context, index) {
-                      return WaitFollowUpCell(
-                        model: model.clientList[index],
-                      );
-                    },
-                  );
-                }),
-            ProviderWidget<ClientViewModel>(
-                model: ClientViewModel(),
-                onReady: (model) {
-                  model.loadClientListFromStatus(ClientStatus.wait);
-                },
-                builder: (ctx, model, child) {
-                  return ListView.builder(
-                    itemCount: model.clientList.length,
-                    itemBuilder: (context, index) {
-                      return WaitFollowUpCell(
-                        model: model.clientList[index],
-                      );
-                    },
-                  );
-                }),
-            ProviderWidget<ClientViewModel>(
-                model: ClientViewModel(),
-                onReady: (model) {
-                  model.loadClientListFromStatus(ClientStatus.wait);
-                },
-                builder: (ctx, model, child) {
-                  return ListView.builder(
-                    itemCount: model.clientList.length,
-                    itemBuilder: (context, index) {
-                      return WaitFollowUpCell(
-                        model: model.clientList[index],
-                      );
-                    },
-                  );
-                }),
-            ProviderWidget<ClientViewModel>(
-                model: ClientViewModel(),
-                onReady: (model) {
-                  model.loadClientListFromStatus(ClientStatus.wait);
-                },
-                builder: (ctx, model, child) {
-                  print('build');
-                  return ListView.builder(
-                    itemCount: model.clientList.length,
-                    itemBuilder: (context, index) {
-                      return WaitFollowUpCell(
-                        model: model.clientList[index],
-                      );
-                    },
-                  );
-                }),
-            ProviderWidget<ClientViewModel>(
-                model: ClientViewModel(),
-                onReady: (model) {
-                  model.loadClientListFromStatus(ClientStatus.wait);
-                },
-                builder: (ctx, model, child) {
-                  return ListView.builder(
-                    itemCount: model.clientList.length,
-                    itemBuilder: (context, index) {
-                      return WaitFollowUpCell(
-                        model: model.clientList[index],
-                      );
-                    },
-                  );
-                })
+            ClientList(status: ClientStatus.wait, selectedForRowAtIndex: selectedForRowAtIndex,),
+            ClientList(status: ClientStatus.already, selectedForRowAtIndex: selectedForRowAtIndex),
+            ClientList(status: ClientStatus.order, selectedForRowAtIndex: selectedForRowAtIndex),
+            ClientList(status: ClientStatus.deal, selectedForRowAtIndex: selectedForRowAtIndex),
+            ClientList(status: ClientStatus.water, selectedForRowAtIndex: selectedForRowAtIndex),
           ],
         ),
       ),
     );
+  }
+}
+
+
+class ClientList extends StatefulWidget {
+  final ClientStatus status;
+  final SelectedForRowAtIndex selectedForRowAtIndex;
+  ClientList({@required this.status,this.selectedForRowAtIndex});
+  @override
+  _ClientListState createState() => _ClientListState();
+}
+
+class _ClientListState extends State<ClientList> {
+  @override
+  Widget build(BuildContext context) {
+    return  ProviderWidget<ClientViewModel>(
+        model: ClientViewModel(),
+        onReady: (model) {
+          model.loadClientListFromStatus(widget.status);
+        },
+        builder: (ctx, model, child) {
+          return ListView.builder(
+            itemCount: model.clientList.length,
+            itemBuilder: (context, index) {
+              return WaitFollowUpCell(
+                model: model.clientList[index],
+                status: widget.status,
+                index: index,
+                selectedForRowAtIndex: widget.selectedForRowAtIndex,
+              );
+            },
+          );
+        });
+  }
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

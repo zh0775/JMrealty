@@ -22,6 +22,7 @@ class ClientViewModel extends BaseViewModel {
       ClientModel clientModel = ClientModel();
       clientModel.level = 2;
       clientModel.sex = 1;
+      clientModel.name = '杨酱紫';
       clientModel.houseType = '新房';
       clientModel.roomCount = '3室';
       clientModel.houseSize = '80m - 100m';
