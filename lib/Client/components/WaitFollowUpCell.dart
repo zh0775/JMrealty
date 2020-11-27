@@ -58,23 +58,19 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
       name = model.name;
     }
     if (model.sex != null) {
-      if (model.sex == 1) {
-        sex = '先生';
-      } else if (model.sex == 2) {
-        sex = '女士';
-      }
+      sex = model.sex.value;
     }
-    if (model.houseType != null) {
-      houseType = model.houseType;
+    if (model.intentionProductType != null) {
+      houseType = model.intentionProductType.value;
     }
     if (model.roomCount != null) {
       roomCount = model.roomCount;
     }
-    if (model.houseSize != null) {
-      houseSize = model.houseSize;
+    if (model.intentionArea != null) {
+      houseSize = model.intentionArea.value;
     }
-    if (model.housePrice != null) {
-      housePrice = model.housePrice;
+    if (model.intentionPrice != null) {
+      housePrice = model.intentionPrice.value;
     }
     if (model.newFollowTime != null) {
       newFollowTime = model.newFollowTime;

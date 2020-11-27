@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:JMrealty/utils/toast.dart';
+import 'package:JMrealty/utils/user_default.dart';
 import 'package:dio/dio.dart';
 import 'http_config.dart';
 
@@ -31,9 +33,18 @@ class Http {
 
   Future<void> get(String url, Map<String, dynamic> params,
       {Success success, Fail fail, After after}) async {
+    Dio dio = _dio;
+    dynamic token = await UserDefault.get('access_token');
+    if(token != null){
+      dio.options.headers['Authorization'] = token;
+    }
     try {
-      await _dio.get(url, queryParameters: params).then((response) {
+      dio.get(url, queryParameters: params).then((response) {
         if (response.statusCode == 200) {
+          Map<String, dynamic> data = response.data;
+          if (data['code'] != 200) {
+            ShowToast.normal(data['msg']);
+          }
           if (success != null) {
             success(response.data);
           }
@@ -56,9 +67,18 @@ class Http {
 
   Future<void> post(String url, Map<String, dynamic> params,
       {Success success, Fail fail, After after}) async {
+    Dio dio = _dio;
+    dynamic token = await UserDefault.get('access_token');
+    if(token != null){
+      dio.options.headers['Authorization'] = token;
+    }
     try {
-      await _dio.post(url, data: json.encode(params)).then((response) {
+      await dio.post(url, data: json.encode(params)).then((response) {
         if (response.statusCode == 200) {
+          Map<String, dynamic> data = response.data;
+          if (data['code'] != 200) {
+            ShowToast.normal(data['msg']);
+          }
           if (success != null) {
             success(response.data);
           }
@@ -89,9 +109,18 @@ class Http {
 
   Future<void> custom(String url, Map<String, dynamic> params,
       {Success success, Fail fail, After after,int timeOut, method}) async {
+    Dio dio = _dio;
+    dynamic token = await UserDefault.get('access_token');
+    if(token != null){
+      dio.options.headers['Authorization'] = token;
+    }
     try {
-      await _dio.post(url, data: json.encode(params)).then((response) {
+      await dio.post(url, data: json.encode(params)).then((response) {
         if (response.statusCode == 200) {
+          Map<String, dynamic> data = response.data;
+          if (data['code'] != 200) {
+            ShowToast.normal(data['msg']);
+          }
           if (success != null) {
             success(response.data);
           }

@@ -6,12 +6,13 @@ typedef void SelectedChange(int index, String data);
 class BottomSelect {
   SelectedChange selectedChange;
   List pickerChildren;
-  int defaultSelect = 0;
+  int defaultSelect;
   BottomSelect({
     @required this.selectedChange,
     @required this.pickerChildren,
-    this.defaultSelect,
+    this.defaultSelect = 0,
   });
+
 
   void didClickSelectedGender(context) {
     showCupertinoModalPopup(
@@ -21,24 +22,28 @@ class BottomSelect {
             height: 250,
             child: Column(
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    FlatButton(
-                      color: Colors.white,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text("Cancle"),
-                    ),
-                    FlatButton(
-                      color: Colors.white,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text("OK"),
-                    ),
-                  ],
+                Container(
+                  color: Colors.white,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      FlatButton(
+                        color: Colors.white,
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text("取消"),
+                      ),
+                      FlatButton(
+                        color: Colors.white,
+                        onPressed: () {
+                          selectedChange(defaultSelect, (pickerChildren[defaultSelect])['title']);
+                          Navigator.pop(context);
+                        },
+                        child: Text("确定"),
+                      ),
+                    ],
+                  ),
                 ),
                 Expanded(
                   child: DefaultTextStyle(
@@ -57,9 +62,10 @@ class BottomSelect {
 
   Widget _buildGenderPicker() {
     return CupertinoPicker(
+      backgroundColor: Colors.white,
       itemExtent: 40,
       onSelectedItemChanged: (value) {
-        selectedChange(value, (pickerChildren[value])['title']);
+        defaultSelect = value;
       },
       children: pickerChildren.map((data) {
         return Text(data['title']);

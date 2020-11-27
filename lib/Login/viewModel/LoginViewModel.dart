@@ -5,6 +5,7 @@ import 'package:JMrealty/components/TreeNode.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
 import 'package:JMrealty/utils/toast.dart';
+import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/foundation.dart';
 
 class LoginViewModel extends BaseViewModel {
@@ -246,9 +247,14 @@ class LoginViewModel extends BaseViewModel {
       Urls.userLogin,
       {'phonenumber': phone, 'code': code},
       success: (json) {
-        print('json ==== $json');
-        state = BaseState.CONTENT;
-        success();
+        Map<String, dynamic> data = json['data'];
+        if (data['access_token'] == 200 && data['access_token'] != null) {
+          state = BaseState.CONTENT;
+          UserDefault.saveStr('access_token', data['access_token']);
+          success();
+        } else {
+          state = BaseState.FAIL;
+        }
         notifyListeners();
       },
       fail: (reason, code) {

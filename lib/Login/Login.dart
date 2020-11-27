@@ -5,6 +5,7 @@ import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
 import 'package:JMrealty/components/SelectImageView.dart';
+import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -15,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:JMrealty/Login/components/RegistSelectInput.dart';
 import 'package:JMrealty/Login/components/ZZInput.dart';
 import 'package:JMrealty/Login/components/ZZSendCodeButton.dart';
-import 'package:image_picker/image_picker.dart';
 
 class Login extends StatefulWidget {
   final bool isLogin;
@@ -60,7 +60,6 @@ class _LoginState extends State<Login> {
         });
       },
     );
-    ShowToast.normal('登录账号');
     registIsMan = false;
     isLoginSend = false;
     isRegistSend = false;
@@ -156,13 +155,14 @@ class _LoginState extends State<Login> {
                       width: SizeConfig.screenWidth - 80,
                       height: 48,
                       decoration: BoxDecoration(
-                          color: Color(0xfff1daaf),
+                          color: jm_appTheme,
                           borderRadius: BorderRadius.all(Radius.circular(8))),
                       child: ProviderWidget<LoginViewModel>(
                         model: LoginViewModel(),
                         builder: (context, value, child) {
                           return TextButton(
                             onPressed: () {
+                              FocusScope.of(context).requestFocus(FocusNode());
                               if (!strNoEmpty(phoneNumString)) {
                                 ShowToast.normal('请输入您的手机号码');
                                 return;
@@ -179,6 +179,7 @@ class _LoginState extends State<Login> {
                                   () {
                                 ShowToast.normal('登录成功');
                                 Future.delayed(Duration(seconds: 1), () {
+                                  FocusScope.of(context).requestFocus(FocusNode());
                                   Navigator.pop(context);
                                 });
                               });
@@ -519,10 +520,11 @@ class _LoginState extends State<Login> {
                       width: SizeConfig.screenWidth - 40,
                       height: 48,
                       decoration: BoxDecoration(
-                          color: Color(0xfff1daaf),
+                          color: jm_appTheme,
                           borderRadius: BorderRadius.all(Radius.circular(8))),
                       child: TextButton(
                         onPressed: () {
+                          FocusScope.of(context).requestFocus(FocusNode());
                           sendRegist();
                         },
                         child: Text(

@@ -1,9 +1,11 @@
+import 'package:JMrealty/Client/AddClientVC.dart';
 import 'package:JMrealty/Client/components/WaitFollowUpCell.dart';
 import 'package:JMrealty/Client/model/ClientModel.dart';
 import 'package:JMrealty/Client/viewModel/ClientViewModel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Client extends StatefulWidget {
@@ -36,7 +38,12 @@ class _ClientState extends State<Client> {
                   color: Colors.white,
                   size: 30,
                 ),
-                onPressed: () {})
+                onPressed: () {
+                  Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (_) {
+                        return AddClientVC();
+                      }));
+                })
           ],
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.label,
