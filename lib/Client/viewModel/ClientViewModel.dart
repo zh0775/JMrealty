@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:JMrealty/Client/model/ClientModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
+import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
+import 'package:JMrealty/utils/toast.dart';
 
 enum ClientStatus {
   wait, // 待跟进
@@ -16,9 +18,7 @@ class ClientViewModel extends BaseViewModel {
   // ClientModel clientModel;
   List<ClientModel> clientList = [];
   loadClientListFromStatus(ClientStatus status) {
-    if (status.index == 0) {
-
-    }
+    if (status.index == 0) {}
     int count = Random().nextInt(15) + 1;
     print('count === $count');
     for (var i = 0; i < count; i++) {
@@ -26,9 +26,10 @@ class ClientViewModel extends BaseViewModel {
       clientModel.level = 2;
       clientModel.sex = Sex(id: 1, value: '女士');
       clientModel.name = '杨酱紫';
-      clientModel.intentionProductType = IntentionProductType(id: 0, value: '新房');
+      clientModel.intentionProductType =
+          IntentionProductType(id: 0, value: '新房');
       clientModel.roomCount = '3室';
-      clientModel.intentionArea = IntentionArea(id: 1, value: '80m - 100m') ;
+      clientModel.intentionArea = IntentionArea(id: 1, value: '80m - 100m');
       clientModel.intentionPrice = IntentionPrice(id: 1, value: '100万-180万');
       clientModel.newFollowTime = '最新跟进 2020.12.12';
       clientModel.clientIntention = '客户已确定意向，准备签约';
@@ -36,6 +37,30 @@ class ClientViewModel extends BaseViewModel {
       clientList.add(clientModel);
     }
     notifyListeners();
+  }
+
+  loadAddSelect() {
+    state = BaseState.LOADING;
+    notifyListeners();
+    Http().get(
+      Urls.allTypeByCostomer,
+      {},
+      success: (json) {
+        Map<String, dynamic> data = json['data'];
+        if (json['code'] == 200) {
+          state = BaseState.CONTENT;
+        } else {
+          state = BaseState.FAIL;
+        }
+        notifyListeners();
+      },
+      fail: (reason, code) {
+        state = BaseState.FAIL;
+        notifyListeners();
+        ShowToast.normal(reason);
+      },
+      after: () {},
+    );
   }
 
   @override

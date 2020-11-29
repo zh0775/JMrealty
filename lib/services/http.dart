@@ -20,6 +20,7 @@ class Http {
   Http() {
     if (_dio == null) {
       _dio = createDio();
+      log(_dio);
     }
   }
 
@@ -34,12 +35,16 @@ class Http {
   Future<void> get(String url, Map<String, dynamic> params,
       {Success success, Fail fail, After after}) async {
     Dio dio = _dio;
+
     dynamic token = await UserDefault.get('access_token');
-    if(token != null){
+    if (token != null) {
       dio.options.headers['Authorization'] = token;
     }
     try {
       dio.get(url, queryParameters: params).then((response) {
+        // print('dio.options.baseUrl == ${dio.options.baseUrl}');
+        // print('url === $url');
+        // print(response);
         if (response.statusCode == 200) {
           Map<String, dynamic> data = response.data;
           if (data['code'] != 200) {
@@ -69,7 +74,7 @@ class Http {
       {Success success, Fail fail, After after}) async {
     Dio dio = _dio;
     dynamic token = await UserDefault.get('access_token');
-    if(token != null){
+    if (token != null) {
       dio.options.headers['Authorization'] = token;
     }
     try {
@@ -108,10 +113,10 @@ class Http {
   // }
 
   Future<void> custom(String url, Map<String, dynamic> params,
-      {Success success, Fail fail, After after,int timeOut, method}) async {
+      {Success success, Fail fail, After after, int timeOut, method}) async {
     Dio dio = _dio;
     dynamic token = await UserDefault.get('access_token');
-    if(token != null){
+    if (token != null) {
       dio.options.headers['Authorization'] = token;
     }
     try {
@@ -140,6 +145,31 @@ class Http {
     }
     return Future.value();
   }
+
+  void log(Dio _dio) {
+    _dio.interceptors
+        .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
+      print(
+          "\n================================= 请求数据 =================================");
+      print("method = ${options.method.toString()}");
+      print("url = ${options.uri.toString()}");
+      print("headers = ${options.headers}");
+      print("params = ${options.queryParameters}");
+      print("params = ${options.data}");
+    }, onResponse: (Response response) {
+      print(
+          "\n================================= 响应数据开始 =================================");
+      print("code = ${response.statusCode}");
+      print("data = ${response.data}");
+      print(
+          "================================= 响应数据结束 =================================\n");
+    }, onError: (DioError e) {
+      print(
+          "\n=================================错误响应数据 =================================");
+      print("type = ${e.type}");
+      print("message = ${e.message}");
+      // print("stackTrace = ${e.}");
+      print("\n");
+    }));
+  }
 }
-
-

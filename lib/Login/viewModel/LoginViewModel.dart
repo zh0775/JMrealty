@@ -248,7 +248,7 @@ class LoginViewModel extends BaseViewModel {
       {'phonenumber': phone, 'code': code},
       success: (json) {
         Map<String, dynamic> data = json['data'];
-        if (data['access_token'] == 200 && data['access_token'] != null) {
+        if (json['code'] == 200 && data['access_token'] != null) {
           state = BaseState.CONTENT;
           UserDefault.saveStr('access_token', data['access_token']);
           success();
@@ -258,7 +258,7 @@ class LoginViewModel extends BaseViewModel {
         notifyListeners();
       },
       fail: (reason, code) {
-        print('reason ==== $reason --- code === $code');
+        // print('reason ==== $reason --- code === $code');
         state = BaseState.FAIL;
         notifyListeners();
       },

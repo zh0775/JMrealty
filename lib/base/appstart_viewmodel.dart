@@ -10,13 +10,12 @@ class AppStartViewModel extends BaseViewModel {
   String startImgUrl;
 
   load() {
-
     state = BaseState.LOADING;
     notifyListeners();
     Http().get(Urls.appStartImg, {}, success: (json) {
-      print(jsonEncode(json).toString());
+      // print(jsonEncode(json).toString());
       String imgUrl = (json['data'])['pictureUrl'];
-      print('imgUrl === $imgUrl');
+      // print('imgUrl === $imgUrl');
       if (imgUrl != null) {
         startImgUrl = imgUrl;
         state = BaseState.CONTENT;
@@ -27,7 +26,7 @@ class AppStartViewModel extends BaseViewModel {
     }, fail: (reason, code) {
       state = BaseState.FAIL;
       notifyListeners();
-      print(reason);
+      // print(reason);
     }, after: () {});
   }
 
