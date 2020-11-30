@@ -1,14 +1,14 @@
 import 'package:JMrealty/Client/model/ClientModel.dart';
+import 'package:JMrealty/Client/viewModel/ClientListViewModel.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:JMrealty/Client/viewModel/ClientViewModel.dart';
 
-typedef void SelectedForRowAtIndex(ClientStatus status, int index, ClientModel model);
+typedef void SelectedForRowAtIndex(ClientStatus status, int index, Map model);
 
 class WaitFollowUpCell extends StatefulWidget {
-  final ClientModel model;
+  final Map model;
   final int index;
   final ClientStatus status;
   final SelectedForRowAtIndex selectedForRowAtIndex;
@@ -19,12 +19,16 @@ class WaitFollowUpCell extends StatefulWidget {
 
 class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
   @override
+  void initState() {
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     double lineHeight = 35;
     double cellHeight = 200;
     double cellWidth = SizeConfig.screenWidth;
-    ClientModel model = widget.model;
+    Map model = widget.model;
 
     String level = '';
     String name = '';
@@ -38,9 +42,9 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
     String clientPhoneNum = '';
 
     Color levelColor = Colors.transparent;
-    if(model.level != null) {
-      switch (model.level) {
-        case 1:
+    if(model['desireId'] != null) {
+      switch (model['desireId']) {
+        case 3:
           level = 'A级';
           levelColor = Color.fromRGBO(233,193,112, 1);
           break;
@@ -48,39 +52,39 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
           level = 'B级';
           levelColor = Color.fromRGBO(91,93,106, 1);
           break;
-        case 3:
+        case 1:
           level = 'C级';
           levelColor = Color.fromRGBO(40,143,255, 1);
           break;
       }
     }
-    if (model.name != null) {
-      name = model.name;
+    if (model['name'] != null) {
+      name = model['name'];
     }
-    if (model.sex != null) {
-      sex = model.sex.value;
+    if (model['sex'] != null) {
+      sex = model['sex'] == 0 ? '先生': '女士';
     }
-    if (model.intentionProductType != null) {
-      houseType = model.intentionProductType.value;
+    if (model['type'] != null) {
+      houseType = model['type'];
     }
-    if (model.roomCount != null) {
-      roomCount = model.roomCount;
+    // if (model.roomCount != null) {
+    //   roomCount = model.roomCount;
+    // }
+    if (model['area'] != null) {
+      houseSize = model['area'];
     }
-    if (model.intentionArea != null) {
-      houseSize = model.intentionArea.value;
+    if (model['paymentsBudget'] != null) {
+      housePrice = model['paymentsBudget'];
     }
-    if (model.intentionPrice != null) {
-      housePrice = model.intentionPrice.value;
+    if (model['visitDate'] != null) {
+      newFollowTime = '最新跟进  ' + model['visitDate'];
     }
-    if (model.newFollowTime != null) {
-      newFollowTime = model.newFollowTime;
+    if (model['result'] != null) {
+      clientIntention = model['result'];
     }
-    if (model.clientIntention != null) {
-      clientIntention = model.clientIntention;
-    }
-    if (model.clientPhoneNum != null) {
-      clientPhoneNum = model.clientPhoneNum;
-    }
+    // if (model.clientPhoneNum != null) {
+    //   clientPhoneNum = model.clientPhoneNum;
+    // }
 
     return GestureDetector(
       onTap: () {
@@ -119,8 +123,9 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
                     ),),
                   ),
                 ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * 2),
                 // 客户姓名
-                frameText(name,width: SizeConfig.blockSizeHorizontal * 17,height: lineHeight - 10,fontSize: 16,textColor: Colors.black),
+                frameText(name,width: SizeConfig.blockSizeHorizontal * 23,height: lineHeight - 10,fontSize: 16,textColor: Colors.black),
                 // 客户性别
                 Container(
                   decoration: BoxDecoration(
@@ -138,7 +143,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
                   ),
                   child: frameText(houseType,width: SizeConfig.blockSizeHorizontal * 12,height: lineHeight - 10,fontSize: 13,textColor: Colors.black),
                 ),
-                SizedBox(width: SizeConfig.blockSizeHorizontal * 18,),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * 10,),
                 // 联系电话
                 GestureDetector(
                   onTap: () {
@@ -157,8 +162,8 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
               child: Row(children: [
                 SizedBox(width: SizeConfig.blockSizeHorizontal * 14,),
                 // 房间数量
-                frameText(roomCount, height: lineHeight - 10, width: SizeConfig.blockSizeHorizontal * 10, textColor: Color.fromRGBO(98,103,125, 1), fontSize: 14),
-                Container(width: 1, height: lineHeight - 28, color: Color.fromRGBO(98,103,125, 1),),
+                roomCount != '' ? frameText(roomCount, height: lineHeight - 10, width: SizeConfig.blockSizeHorizontal * 10, textColor: Color.fromRGBO(98,103,125, 1), fontSize: 14) : SizedBox(),
+                roomCount != '' ? Container(width: 1, height: lineHeight - 28, color: Color.fromRGBO(98,103,125, 1),) : SizedBox(),
                 // frameText(roomCount, height: lineHeight - 10, width: SizeConfig.blockSizeHorizontal * 10, textColor: Color.fromRGBO(98,103,125, 1), fontSize: 14),
                 SizedBox(width: SizeConfig.blockSizeHorizontal * 2,),
                 // 房子大小

@@ -37,7 +37,9 @@ class BottomSelect {
                       FlatButton(
                         color: Colors.white,
                         onPressed: () {
-                          selectedChange(defaultSelect, (pickerChildren[defaultSelect])['title']);
+                          if (selectedChange != null && pickerChildren.length > 0) {
+                            selectedChange(defaultSelect, (pickerChildren[defaultSelect])['title']);
+                          }
                           Navigator.pop(context);
                         },
                         child: Text("确定"),

@@ -12,6 +12,8 @@ class ZZInput extends StatefulWidget {
   final ZZinputValueChange valueChange;
   final Color backgroundColor;
   final bool needCleanButton;
+  final TextInputType keyboardType;
+  final double leftPadding;
   ZZInput({
     this.width = 100,
     this.height = 50,
@@ -21,6 +23,8 @@ class ZZInput extends StatefulWidget {
     this.valueChange,
     this.backgroundColor = const Color.fromRGBO(0, 0, 0, 0.1),
     this.needCleanButton = false,
+    this.keyboardType = TextInputType.text,
+    this.leftPadding = 20
   });
   @override
   _ZZInputState createState() => _ZZInputState();
@@ -54,6 +58,7 @@ class _ZZInputState extends State<ZZInput> {
           children: [
             Container(
               child: TextField(
+                  keyboardType: widget.keyboardType,
                   controller: phoneCtr,
                   maxLines: 1,
                   style: widget.textStyle,
@@ -72,7 +77,7 @@ class _ZZInputState extends State<ZZInput> {
                     }
                   },
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.fromLTRB(20, 0, rightPadding, 0),
+                    contentPadding: EdgeInsets.fromLTRB(widget.leftPadding, 0, rightPadding, 0),
                     border: OutlineInputBorder(
                         borderRadius: widget.borderRadius,
                         borderSide: BorderSide.none),

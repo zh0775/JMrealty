@@ -343,18 +343,23 @@ class _LoginState extends State<Login> {
                       model.loadRegistPostSelectList();
                     },
                     builder: (context, model, child) {
-                      return RegistSelectInput(
-                        title: '组织级别',
-                        dataList: model.postDataList,
-                        height: lineHeight,
-                        border: Border(
-                            top: BorderSide(
-                                width: 0.5,
-                                color: Color.fromRGBO(0, 0, 0, 0.2))),
-                        selectedChange: (value, data) {
-                          // print('value == $value --- data == $data');
-                          organData = {'value': value, 'title': data};
-                        },
+                      return Padding(
+                        padding: const EdgeInsets.only(left:  20),
+                        child: RegistSelectInput(
+                          width: SizeConfig.screenWidth - 40,
+                          title: '组织级别',
+                          dataList: model.postDataList,
+                          hintText: '请选择组织级别',
+                          height: lineHeight,
+                          border: Border(
+                              top: BorderSide(
+                                  width: 0.5,
+                                  color: Color.fromRGBO(0, 0, 0, 0.2))),
+                          selectedChange: (value, data) {
+                            // print('value == $value --- data == $data');
+                            organData = {'value': value, 'title': data};
+                          },
+                        ),
                       );
                     },
                   ),
@@ -375,19 +380,24 @@ class _LoginState extends State<Login> {
                       vm.loadRegistDeptSelectList();
                     },
                     builder: (context, model, child) {
-                      return RegistSelectInput(
-                          //注册服务点选择
-                          title: '服务点',
-                          height: lineHeight,
-                          dataList: model.depTreeDataList,
-                          border: Border.all(style: BorderStyle.none),
-                          showTree: true,
-                          nodeSelected: (node) {
-                            servicePointData = {
-                              'value': node.id,
-                              'title': node.label
-                            };
-                          });
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 20.0),
+                        child: RegistSelectInput(
+                            //注册服务点选择
+                            width: SizeConfig.screenWidth - 40,
+                            hintText: '请选择服务点',
+                            title: '服务点',
+                            height: lineHeight,
+                            dataList: model.depTreeDataList,
+                            border: Border.all(style: BorderStyle.none),
+                            showTree: true,
+                            nodeSelected: (node) {
+                              servicePointData = {
+                                'value': node.id,
+                                'title': node.label
+                              };
+                            }),
+                      );
                     },
                   ),
                   Container(

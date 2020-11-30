@@ -13,10 +13,13 @@ class RegistSelectInput extends StatefulWidget {
   final SelectedChange selectedChange;
   final int defaultSelect;
   final double height;
+  final double width;
+  final double labelWidth;
   final Border border;
   final bool showTree;
   final void Function(TreeNode node) nodeSelected;
   final void Function(List<TreeNode> nodes) nodesSelected;
+  final String hintText;
   RegistSelectInput(
       {@required this.dataList,
       @required this.title,
@@ -25,18 +28,22 @@ class RegistSelectInput extends StatefulWidget {
       this.nodesSelected,
       this.showTree = false,
       this.height = 50,
+      this.width,
+      this.labelWidth,
       this.border = const Border(
         top: BorderSide(width: 0.5, color: Color.fromRGBO(0, 0, 0, 0.2)),
         bottom: BorderSide(width: 0.5, color: Color.fromRGBO(0, 0, 0, 0.2)),
       ),
-      this.defaultSelect = 0});
+      this.defaultSelect = 0,
+      this.hintText = ''});
   @override
   _RegistSelectInputState createState() => _RegistSelectInputState();
 }
 
 class _RegistSelectInputState extends State<RegistSelectInput> {
   Map callBackData;
-
+  double width;
+  double labelWidth;
   @override
   void initState() {
     callBackData = null;
@@ -46,7 +53,8 @@ class _RegistSelectInputState extends State<RegistSelectInput> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-
+    widget.width != null ? width = widget.width : width = SizeConfig.screenWidth;
+    widget.labelWidth != null ? labelWidth = widget.labelWidth : labelWidth = SizeConfig.blockSizeHorizontal * 30 - 20;
     TextStyle textStyle;
     String text;
     if (callBackData != null) {
@@ -54,7 +62,7 @@ class _RegistSelectInputState extends State<RegistSelectInput> {
       text = callBackData['title'];
     } else {
       textStyle = TextStyle(color: Color.fromRGBO(0, 0, 0, 0.2), fontSize: 14);
-      text = '请选择组织级别';
+      text = widget.hintText;
     }
     void Function() cellTap;
     if (widget.showTree) {
@@ -62,7 +70,7 @@ class _RegistSelectInputState extends State<RegistSelectInput> {
         showGeneralDialog(
             context: context,
             barrierDismissible:true,
-            barrierLabel: '123',
+            barrierLabel: '',
             transitionDuration: Duration(milliseconds: 200),
             barrierColor: Colors.black.withOpacity(.5),
             pageBuilder: (BuildContext context, Animation<double> animation,
@@ -107,15 +115,15 @@ class _RegistSelectInputState extends State<RegistSelectInput> {
         decoration: BoxDecoration(border: widget.border),
         child: Row(
           children: [
-            SizedBox(
-              width: 20,
-            ),
+            // SizedBox(
+            //   width: 20,
+            // ),
             Container(
-              width: SizeConfig.blockSizeHorizontal * 30 - 20,
+              width: labelWidth,
               child: Text(widget.title),
             ),
             Container(
-              width: SizeConfig.blockSizeHorizontal * 70 - 55,
+              width: width - labelWidth - 25,
               child: Text(
                 text,
                 style: textStyle,

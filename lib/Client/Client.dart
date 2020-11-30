@@ -1,6 +1,7 @@
 import 'package:JMrealty/Client/AddClientVC.dart';
 import 'package:JMrealty/Client/components/WaitFollowUpCell.dart';
 import 'package:JMrealty/Client/model/ClientModel.dart';
+import 'package:JMrealty/Client/viewModel/ClientListViewModel.dart';
 import 'package:JMrealty/Client/viewModel/ClientViewModel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
 import 'package:JMrealty/const/Default.dart';
@@ -14,9 +15,13 @@ class Client extends StatefulWidget {
 }
 
 class _ClientState extends State<Client> {
-  SelectedForRowAtIndex selectedForRowAtIndex = (ClientStatus status, int index, ClientModel model) {
+  SelectedForRowAtIndex selectedForRowAtIndex = (ClientStatus status, int index, Map model) {
     print('status === $status --- index === $index --- model === $model');
   };
+  @override
+  void initState() {
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -85,15 +90,16 @@ class _ClientState extends State<Client> {
           ),
         ),
         backgroundColor: Colors.white,
-        body: TabBarView(
-          children: [
-            ClientList(status: ClientStatus.wait, selectedForRowAtIndex: selectedForRowAtIndex,),
-            ClientList(status: ClientStatus.already, selectedForRowAtIndex: selectedForRowAtIndex),
-            ClientList(status: ClientStatus.order, selectedForRowAtIndex: selectedForRowAtIndex),
-            ClientList(status: ClientStatus.deal, selectedForRowAtIndex: selectedForRowAtIndex),
-            ClientList(status: ClientStatus.water, selectedForRowAtIndex: selectedForRowAtIndex),
-          ],
-        ),
+        body:
+            TabBarView(
+              children: [
+                ClientList(status: ClientStatus.wait, selectedForRowAtIndex: selectedForRowAtIndex,),
+                ClientList(status: ClientStatus.already, selectedForRowAtIndex: selectedForRowAtIndex),
+                ClientList(status: ClientStatus.order, selectedForRowAtIndex: selectedForRowAtIndex),
+                ClientList(status: ClientStatus.deal, selectedForRowAtIndex: selectedForRowAtIndex),
+                ClientList(status: ClientStatus.water, selectedForRowAtIndex: selectedForRowAtIndex),
+              ],
+            ),
       ),
     );
   }
@@ -111,17 +117,18 @@ class ClientList extends StatefulWidget {
 class _ClientListState extends State<ClientList> {
   @override
   Widget build(BuildContext context) {
-    return  ProviderWidget<ClientViewModel>(
-        model: ClientViewModel(),
+    return  ProviderWidget<ClientListViewModel>(
+        model: ClientListViewModel(),
         onReady: (model) {
-          model.loadClientListFromStatus(widget.status);
+          model.loadClientList(widget.status);
         },
         builder: (ctx, model, child) {
+          print('model.listData[widget.status.index] === ${model.listData[widget.status.index.toString()]}');
           return ListView.builder(
-            itemCount: model.clientList.length,
+            itemCount: model.listData[widget.status.index.toString()] == null ? 0 : model.listData[widget.status.index.toString()].length,
             itemBuilder: (context, index) {
               return WaitFollowUpCell(
-                model: model.clientList[index],
+                model: (model.listData[widget.status.index.toString()])[index],
                 status: widget.status,
                 index: index,
                 selectedForRowAtIndex: widget.selectedForRowAtIndex,
