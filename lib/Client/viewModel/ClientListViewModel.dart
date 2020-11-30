@@ -1,8 +1,6 @@
 import 'package:JMrealty/base/base_viewmodel.dart';
-import 'package:JMrealty/Client/model/ClientModel.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
-import 'package:JMrealty/utils/tTools.dart';
 import 'package:JMrealty/utils/toast.dart';
 
 enum ClientStatus {
@@ -15,10 +13,12 @@ enum ClientStatus {
 
 class ClientListViewModel extends BaseViewModel {
   Map listData = {};
-  loadClientList (ClientStatus status) {
+  loadClientList(ClientStatus status) {
     state = BaseState.LOADING;
     notifyListeners();
-    Http().get(Urls.clientList, {'status': status.index},
+    Http().get(
+      Urls.clientList,
+      {'status': status.index},
       success: (json) {
         Map<String, dynamic> data = json['data'];
         if (json['code'] == 200) {
@@ -34,8 +34,7 @@ class ClientListViewModel extends BaseViewModel {
         notifyListeners();
         ShowToast.normal(reason);
       },
-      after: () {},);
+      after: () {},
+    );
   }
-
-
 }

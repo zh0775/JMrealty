@@ -63,7 +63,7 @@ class _AddClientVCState extends State<AddClientVC> {
         ),
         title: Text(
           '录入客源',
-          style: TextStyle(color: Colors.white, fontSize: 20),
+          style: TextStyle(color: Colors.white, fontSize: 18),
         ),
       ),
       body: ProviderWidget<ClientViewModel>(
@@ -73,24 +73,35 @@ class _AddClientVCState extends State<AddClientVC> {
         },
         builder: (ctx, model, child) {
           if (firstBuild && model.state == BaseState.CONTENT) {
-            if (model.listData['sex'] != null && model.listData['sex'] is List && model.listData['sex'].length > 1) {
-              addClientParams['sex'] =
-              clientIsMan ? ((model.listData['sex'])[0])['value'] :
-              ((model.listData['sex'])[1])['value'];
+            if (model.listData['sex'] != null &&
+                model.listData['sex'] is List &&
+                model.listData['sex'].length > 1) {
+              addClientParams['sex'] = clientIsMan
+                  ? ((model.listData['sex'])[0])['value']
+                  : ((model.listData['sex'])[1])['value'];
             }
-            if (model.listData['sensitive'] != null && model.listData['sensitive'] is List && model.listData['sensitive'].length > 1) {
-              addClientParams['isSensitive'] = sensitive ?  ((model.listData['sensitive'])[0])['value'] : ((model.listData['sensitive'])[1])['value'];
+            if (model.listData['sensitive'] != null &&
+                model.listData['sensitive'] is List &&
+                model.listData['sensitive'].length > 1) {
+              addClientParams['isSensitive'] = sensitive
+                  ? ((model.listData['sensitive'])[0])['value']
+                  : ((model.listData['sensitive'])[1])['value'];
             }
-            if (model.listData['desireGrade'] != null && model.listData['desireGrade'] is List && model.listData['desireGrade'].length > 2) {
+            if (model.listData['desireGrade'] != null &&
+                model.listData['desireGrade'] is List &&
+                model.listData['desireGrade'].length > 2) {
               switch (clientYY) {
                 case 1:
-                  addClientParams['desireId'] = ((model.listData['desireGrade'])[2])['value'];
+                  addClientParams['desireId'] =
+                      ((model.listData['desireGrade'])[2])['value'];
                   break;
                 case 2:
-                  addClientParams['desireId'] = ((model.listData['desireGrade'])[1])['value'];
+                  addClientParams['desireId'] =
+                      ((model.listData['desireGrade'])[1])['value'];
                   break;
                 case 3:
-                  addClientParams['desireId'] = ((model.listData['desireGrade'])[0])['value'];
+                  addClientParams['desireId'] =
+                      ((model.listData['desireGrade'])[0])['value'];
                   break;
               }
             }
@@ -143,8 +154,8 @@ class _AddClientVCState extends State<AddClientVC> {
                                 ),
                                 Text(
                                   '通讯录导入',
-                                  style:
-                                  TextStyle(fontSize: 14, color: jm_text_black),
+                                  style: TextStyle(
+                                      fontSize: 14, color: jm_text_black),
                                 )
                               ],
                             ),
@@ -163,8 +174,11 @@ class _AddClientVCState extends State<AddClientVC> {
                 // 性别按钮
                 lineContent(true, '性别', [
                   sexButton(context, true, (sex) {
-                    if (model.listData['sex'] != null && model.listData['sex'] is List && model.listData['sex'].length > 1) {
-                      addClientParams['sex'] = ((model.listData['sex'])[0])['value'];
+                    if (model.listData['sex'] != null &&
+                        model.listData['sex'] is List &&
+                        model.listData['sex'].length > 1) {
+                      addClientParams['sex'] =
+                          ((model.listData['sex'])[0])['value'];
                     }
                     setState(() {
                       clientIsMan = sex;
@@ -174,8 +188,11 @@ class _AddClientVCState extends State<AddClientVC> {
                     width: 20,
                   ),
                   sexButton(context, false, (sex) {
-                    if (model.listData['sex'] != null && model.listData['sex'] is List && model.listData['sex'].length > 1) {
-                      addClientParams['sex'] = ((model.listData['sex'])[1])['value'];
+                    if (model.listData['sex'] != null &&
+                        model.listData['sex'] is List &&
+                        model.listData['sex'].length > 1) {
+                      addClientParams['sex'] =
+                          ((model.listData['sex'])[1])['value'];
                     }
                     setState(() {
                       clientIsMan = sex;
@@ -198,8 +215,14 @@ class _AddClientVCState extends State<AddClientVC> {
                         CupertinoSwitch(
                             value: sensitive,
                             onChanged: (bool value) {
-                              if (model.listData['sensitive'] != null && model.listData['sensitive'] is List && model.listData['sensitive'].length > 1) {
-                                addClientParams['isSensitive'] = sensitive ?  ((model.listData['sensitive'])[0])['value'] : ((model.listData['sensitive'])[1])['value'];
+                              if (model.listData['sensitive'] != null &&
+                                  model.listData['sensitive'] is List &&
+                                  model.listData['sensitive'].length > 1) {
+                                addClientParams['isSensitive'] = sensitive
+                                    ? ((model
+                                        .listData['sensitive'])[0])['value']
+                                    : ((model
+                                        .listData['sensitive'])[1])['value'];
                               }
                               setState(() {
                                 sensitive = value;
@@ -233,7 +256,8 @@ class _AddClientVCState extends State<AddClientVC> {
                                 // 通讯录导入
                               },
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Icon(
                                     Icons.add_circle_outline,
@@ -245,8 +269,8 @@ class _AddClientVCState extends State<AddClientVC> {
                                   // ),
                                   Text(
                                     '+86',
-                                    style:
-                                    TextStyle(fontSize: 14, color: jm_text_black),
+                                    style: TextStyle(
+                                        fontSize: 14, color: jm_text_black),
                                   ),
                                   Icon(
                                     Icons.arrow_drop_down,
@@ -334,7 +358,12 @@ class _AddClientVCState extends State<AddClientVC> {
                 // line
                 getLine(true, height: 8, color: Color(0xfff0f2f5)),
                 // 客户职业
-                getSelect('客户职业', (model.state == BaseState.CONTENT && model.listData['customersOccupation'] != null) ? model.listData['customersOccupation'] : [], (value, data) {
+                getSelect(
+                    '客户职业',
+                    (model.state == BaseState.CONTENT &&
+                            model.listData['customersOccupation'] != null)
+                        ? model.listData['customersOccupation']
+                        : [], (value, data) {
                   // print('客户职业 value == $value --- data == $data');
                   addClientParams['occupationId'] = value;
                   addClientParams['occupation'] = data;
@@ -342,7 +371,12 @@ class _AddClientVCState extends State<AddClientVC> {
                 // line
                 getLine(false),
                 // 用途
-                getSelect('用途', (model.state == BaseState.CONTENT && model.listData['intentionProductType'] != null) ? model.listData['intentionProductType'] : [], (value, data) {
+                getSelect(
+                    '用途',
+                    (model.state == BaseState.CONTENT &&
+                            model.listData['intentionProductType'] != null)
+                        ? model.listData['intentionProductType']
+                        : [], (value, data) {
                   // print('用途 value == $value --- data == $data');
                   addClientParams['typeId'] = value;
                   addClientParams['type'] = data;
@@ -350,7 +384,12 @@ class _AddClientVCState extends State<AddClientVC> {
                 // line
                 getLine(false),
                 // 意向面积
-                getSelect('意向面积', (model.state == BaseState.CONTENT && model.listData['intentionArea'] != null) ? model.listData['intentionArea'] : [], (value, data) {
+                getSelect(
+                    '意向面积',
+                    (model.state == BaseState.CONTENT &&
+                            model.listData['intentionArea'] != null)
+                        ? model.listData['intentionArea']
+                        : [], (value, data) {
                   // print('意向面积 value == $value --- data == $data');
                   addClientParams['areaId'] = value;
                   addClientParams['area'] = data;
@@ -361,18 +400,23 @@ class _AddClientVCState extends State<AddClientVC> {
                 getInput('几次置业', (value) {
                   // print('几次置业 value === $value');
                   addClientParams['shopTimes'] = value;
-                },hintText: '几次置业',keyboardType: TextInputType.number),
+                }, hintText: '几次置业', keyboardType: TextInputType.number),
                 // line
                 getLine(false),
                 // 意向楼层
                 getInput('意向楼层', (value) {
                   // print('意向楼层 value === $value');
                   addClientParams['floor'] = value;
-                },hintText: '意向楼层',keyboardType: TextInputType.number),
+                }, hintText: '意向楼层', keyboardType: TextInputType.number),
                 // line
                 getLine(false),
                 // 决策人
-                getSelect('决策人', (model.state == BaseState.CONTENT && model.listData['decisionMaker'] != null) ? model.listData['decisionMaker'] : [], (value, data) {
+                getSelect(
+                    '决策人',
+                    (model.state == BaseState.CONTENT &&
+                            model.listData['decisionMaker'] != null)
+                        ? model.listData['decisionMaker']
+                        : [], (value, data) {
                   // print('决策人 value == $value --- data == $data');
                   addClientParams['policymakerId'] = value;
                   addClientParams['policymaker'] = data;
@@ -382,18 +426,23 @@ class _AddClientVCState extends State<AddClientVC> {
                 // 首付预算
                 getInput('首付预算·万', (value) {
                   print('首付预算 value === $value');
-                },hintText: '请输入首付预算',keyboardType: TextInputType.number),
+                }, hintText: '请输入首付预算', keyboardType: TextInputType.number),
                 // line
                 getLine(false),
                 // 看房时间
                 getInput('看房时间', (value) {
                   // print('看房时间 value === $value');
                   addClientParams['seeTime'] = value;
-                },hintText: '请输入看房时间'),
+                }, hintText: '请输入看房时间'),
                 // line
                 getLine(false),
                 // 客户来源
-                getSelect('客户来源', (model.state == BaseState.CONTENT && model.listData['customersOfSource'] != null) ? model.listData['customersOfSource'] : [], (value, data) {
+                getSelect(
+                    '客户来源',
+                    (model.state == BaseState.CONTENT &&
+                            model.listData['customersOfSource'] != null)
+                        ? model.listData['customersOfSource']
+                        : [], (value, data) {
                   // print('客户来源 value == $value --- data == $data');
                   addClientParams['sourceId'] = value;
                   addClientParams['source'] = data;
@@ -404,7 +453,7 @@ class _AddClientVCState extends State<AddClientVC> {
                 getInput('意向楼盘', (value) {
                   // print('意向楼盘 value === $value');
                   addClientParams['region'] = value;
-                },hintText: '请输入客户意向楼盘'),
+                }, hintText: '请输入客户意向楼盘'),
                 // line
                 getLine(false),
                 // 特殊要求
@@ -412,28 +461,43 @@ class _AddClientVCState extends State<AddClientVC> {
                   height: lineHeight,
                   margin: EdgeInsets.only(left: marginSpace),
                   alignment: Alignment.centerLeft,
-                  child: Text('特殊要求',style: labelStyle,),
+                  child: Text(
+                    '特殊要求',
+                    style: labelStyle,
+                  ),
                 ),
                 Container(
-                  constraints: BoxConstraints(
-                    maxHeight: 90,
-                    minHeight: 90
-                  ),
+                  constraints: BoxConstraints(maxHeight: 90, minHeight: 90),
                   width: SizeConfig.screenWidth - marginSpace * 2,
-                  padding: EdgeInsets.fromLTRB(marginSpace, 10, marginSpace, 10),
+                  padding:
+                      EdgeInsets.fromLTRB(marginSpace, 10, marginSpace, 10),
                   child: TextField(
                     maxLines: 10,
                     minLines: 3,
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none),
-                      fillColor: Color.fromRGBO(247,248,251, 1),
-                      // contentPadding: EdgeInsets.all(20.0),
-                      hintText: '请输入',
-                      filled: true,
-                    ),
+                        contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        // border: OutlineInputBorder(
+                        //     borderRadius: BorderRadius.circular(10),
+                        //     borderSide:
+                        //         BorderSide(width: 0.1, color: Colors.red)),
+                        // fillColor: Color(0xfff7f8fb),
+                        // contentPadding: EdgeInsets.all(20.0),
+                        hintText: '请输入',
+                        filled: true,
+                        enabledBorder: OutlineInputBorder(
+                          //未选中时候的颜色
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            color: jm_line_color,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          //选中时外边框颜色
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            color: jm_line_color,
+                          ),
+                        )),
                     onChanged: (value) {
                       // print('特殊要求 value === $value');
                       addClientParams['remarks'] = value;
@@ -444,21 +508,25 @@ class _AddClientVCState extends State<AddClientVC> {
                 Container(
                   width: SizeConfig.screenWidth,
                   height: lineHeight * 0.6,
-                  child: TextButton(onPressed: (){},
+                  child: TextButton(
+                    onPressed: () {},
                     child: RichText(
-                        text:TextSpan(text:'请保护用户隐私，确保遵守',
-                            style: TextStyle(fontSize: 12,color: Color.fromRGBO(133,133,134, 1)),
+                        text: TextSpan(
+                            text: '请保护用户隐私，确保遵守',
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: Color.fromRGBO(133, 133, 134, 1)),
                             children: <TextSpan>[
-                              TextSpan(
-                                text: '《客源录入合规告知书》',
-                                style: TextStyle(fontSize: 12,color: Colors.red),
-                              )
-                              ])),
+                          TextSpan(
+                            text: '《客源录入合规告知书》',
+                            style: TextStyle(fontSize: 12, color: Colors.red),
+                          )
+                        ])),
                   ),
                 ),
                 Align(
                   child: Container(
-                    // 提交注册按钮
+                      // 提交注册按钮
                       width: SizeConfig.screenWidth - marginSpace * 2,
                       height: lineHeight,
                       margin: EdgeInsets.only(bottom: 50),
@@ -469,9 +537,10 @@ class _AddClientVCState extends State<AddClientVC> {
                         onPressed: () {
                           FocusScope.of(context).requestFocus(FocusNode());
                           // sendRegist();
-                          model.sendAddClientRequest(addClientParams, (bool success) {
+                          model.sendAddClientRequest(addClientParams,
+                              (bool success) {
                             if (success) {
-                              Future.delayed(Duration(seconds: 1),() {
+                              Future.delayed(Duration(seconds: 1), () {
                                 Navigator.pop(context);
                               });
                             }
@@ -492,7 +561,9 @@ class _AddClientVCState extends State<AddClientVC> {
   }
 
   Widget getInput(String title, Function(String value) valueChange,
-      {String hintText = '', bool must = false,TextInputType keyboardType = TextInputType.text}) {
+      {String hintText = '',
+      bool must = false,
+      TextInputType keyboardType = TextInputType.text}) {
     return Align(
       child: Container(
         width: SizeConfig.screenWidth - marginSpace * 2,
@@ -610,7 +681,8 @@ class _AddClientVCState extends State<AddClientVC> {
     ));
   }
 
-  Widget getSelect (String title,List dataList, Function(int value,dynamic data) selectValueChange) {
+  Widget getSelect(String title, List dataList,
+      Function(int value, dynamic data) selectValueChange) {
     return Padding(
       padding: EdgeInsets.only(left: marginSpace),
       child: RegistSelectInput(
@@ -625,19 +697,26 @@ class _AddClientVCState extends State<AddClientVC> {
       ),
     );
   }
-  void setClientYY (int value, ClientViewModel model) {
+
+  void setClientYY(int value, ClientViewModel model) {
     clientYY = value;
-    if (model.state == BaseState.CONTENT && model.listData['desireGrade'] != null && model.listData['desireGrade'] is List && model.listData['desireGrade'].length > 0) {
+    if (model.state == BaseState.CONTENT &&
+        model.listData['desireGrade'] != null &&
+        model.listData['desireGrade'] is List &&
+        model.listData['desireGrade'].length > 0) {
       // addClientParams['desireId'] = ((model.listData['desireGrade'])[value - 1])['value'];
       switch (clientYY) {
         case 1:
-          addClientParams['desireId'] = ((model.listData['desireGrade'])[2])['value'];
+          addClientParams['desireId'] =
+              ((model.listData['desireGrade'])[2])['value'];
           break;
         case 2:
-          addClientParams['desireId'] = ((model.listData['desireGrade'])[1])['value'];
+          addClientParams['desireId'] =
+              ((model.listData['desireGrade'])[1])['value'];
           break;
         case 3:
-          addClientParams['desireId'] = ((model.listData['desireGrade'])[0])['value'];
+          addClientParams['desireId'] =
+              ((model.listData['desireGrade'])[0])['value'];
           break;
       }
     }
