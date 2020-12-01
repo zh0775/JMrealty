@@ -2,6 +2,7 @@ import 'package:JMrealty/Client/AddClientVC.dart';
 import 'package:JMrealty/Client/ClientDetail.dart';
 import 'package:JMrealty/Client/components/WaitFollowUpCell.dart';
 import 'package:JMrealty/Client/components/writeFollow.dart';
+import 'package:JMrealty/Client/viewModel/ClientListSelectViewModel.dart';
 import 'package:JMrealty/Client/viewModel/ClientListViewModel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
 import 'package:JMrealty/const/Default.dart';
@@ -262,27 +263,11 @@ class _ClientListState extends State<ClientList> {
           )),
       selectExpand
           ? Positioned(
-              top: 40,
-              left: 0,
-              child: selectList(data, (Map item) {
-                // print('item === $item');
-                // currentData = item;
-                switch (currentSelectIndex) {
-                  case 1:
-                    value1 = item;
-                    break;
-                  case 2:
-                    value2 = item;
-                    break;
-                  case 3:
-                    value3 = item;
-                    break;
-                }
-                setState(() {
-                  selectExpand = false;
-                });
-              }))
-          : SizedBox()
+          top: 40,
+          left: 0,
+          child: getProVider(widget.status.index))
+          : Container(width: 0.0, height: 0.0)
+
     ]);
   }
 
@@ -349,6 +334,143 @@ class _ClientListState extends State<ClientList> {
         ),
       ),
     );
+  }
+
+  Widget getProVider(index) {
+    ProviderWidget widget;
+    switch (index) {
+      case 0:
+        widget = ProviderWidget<ClientListSelect1ViewModel>(
+          onReady: (model) {
+            model.loadSelectData();
+          },
+          model: ClientListSelect1ViewModel(),
+          builder: (ctx, model, child) {
+            return selectList(data, (Map item) {
+              switch (currentSelectIndex) {
+                case 1:
+                  value1 = item;
+                  break;
+                case 2:
+                  value2 = item;
+                  break;
+                case 3:
+                  value3 = item;
+                  break;
+              }
+              setState(() {
+                selectExpand = false;
+              });
+            });
+          },
+        );
+        break;
+      case 1:
+        widget = ProviderWidget<ClientListSelect2ViewModel>(
+          onReady: (model) {
+            model.loadSelectData();
+          },
+          model: ClientListSelect2ViewModel(),
+          builder: (ctx, model, child) {
+            return selectList(data, (Map item) {
+              switch (currentSelectIndex) {
+                case 1:
+                  value1 = item;
+                  break;
+                case 2:
+                  value2 = item;
+                  break;
+                case 3:
+                  value3 = item;
+                  break;
+              }
+              setState(() {
+                selectExpand = false;
+              });
+            });
+          },
+        );
+        break;
+      case 2:
+        widget = ProviderWidget<ClientListSelect3ViewModel>(
+          onReady: (model) {
+            model.loadSelectData();
+          },
+          model: ClientListSelect3ViewModel(),
+          builder: (ctx, model, child) {
+            return selectList(data, (Map item) {
+              switch (currentSelectIndex) {
+                case 1:
+                  value1 = item;
+                  break;
+                case 2:
+                  value2 = item;
+                  break;
+                case 3:
+                  value3 = item;
+                  break;
+              }
+              setState(() {
+                selectExpand = false;
+              });
+            });
+          },
+        );
+        break;
+      case 3:
+        widget = ProviderWidget<ClientListSelect4ViewModel>(
+          onReady: (model) {
+            model.loadSelectData();
+          },
+          model: ClientListSelect4ViewModel(),
+          builder: (ctx, model, child) {
+            return selectList(data, (Map item) {
+              switch (currentSelectIndex) {
+                case 1:
+                  value1 = item;
+                  break;
+                case 2:
+                  value2 = item;
+                  break;
+                case 3:
+                  value3 = item;
+                  break;
+              }
+              setState(() {
+                selectExpand = false;
+              });
+            });
+          },
+        );
+        break;
+      case 4:
+        widget = ProviderWidget<ClientListSelect5ViewModel>(
+          onReady: (model) {
+            model.loadSelectData();
+          },
+          model: ClientListSelect5ViewModel(),
+          builder: (ctx, model, child) {
+            return selectList(data, (Map item) {
+              switch (currentSelectIndex) {
+                case 1:
+                  value1 = item;
+                  break;
+                case 2:
+                  value2 = item;
+                  break;
+                case 3:
+                  value3 = item;
+                  break;
+              }
+              setState(() {
+                selectExpand = false;
+              });
+            });
+          },
+        );
+        break;
+    }
+    return widget;
   }
 
   @override
