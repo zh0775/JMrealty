@@ -157,7 +157,7 @@ class ClientListSelect4ViewModel extends BaseViewModel{
       {'dictId':'104'},
       success: (json) {
         // Map<String, dynamic> data = json['data'];
-
+        print('json');
       },
       fail: (reason, code) {},
       after: () {});
@@ -205,6 +205,7 @@ class ClientListSelect5ViewModel extends BaseViewModel{
       after: () {});
 
   loadSelectData() async{
+    print('222');
     state = BaseState.LOADING;
     notifyListeners();
     await Future.wait<dynamic>([dic1,dic2,dic3]).then((e){

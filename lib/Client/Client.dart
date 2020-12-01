@@ -16,6 +16,8 @@ class Client extends StatefulWidget {
 }
 
 class _ClientState extends State<Client> {
+
+
   SelectedForRowAtIndex selectedForRowAtIndex =
       (ClientStatus status, int index, Map model, BuildContext context) {
     Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
@@ -157,6 +159,12 @@ class ClientList extends StatefulWidget {
 }
 
 class _ClientListState extends State<ClientList> {
+  // ClientListSelect1ViewModel selectVM1;
+  // ClientListSelect2ViewModel selectVM2;
+  // ClientListSelect3ViewModel selectVM3;
+  // ClientListSelect4ViewModel selectVM4;
+  // ClientListSelect5ViewModel selectVM5;
+  // Widget selectPullWidget;
   List currentList;
   Map currentData;
   int currentSelectIndex;
@@ -177,6 +185,16 @@ class _ClientListState extends State<ClientList> {
   ];
   @override
   void initState() {
+    // selectVM1 = ClientListSelect1ViewModel();
+    // selectVM2 = ClientListSelect2ViewModel();
+    // selectVM3 = ClientListSelect3ViewModel();
+    // selectVM4 = ClientListSelect4ViewModel();
+    // selectVM5 = ClientListSelect5ViewModel();
+    // selectVM1.loadSelectData();
+    // selectVM2.loadSelectData();
+    // selectVM3.loadSelectData();
+    // selectVM4.loadSelectData();
+    // selectVM5.loadSelectData();
     value1 = {'title': '级别', 'value': '9'};
     value2 = {'title': '类型', 'value': '9'};
     value3 = {'title': '面积', 'value': '9'};
@@ -337,6 +355,7 @@ class _ClientListState extends State<ClientList> {
   }
 
   Widget getProVider(index) {
+    print('123');
     ProviderWidget widget;
     switch (index) {
       case 0:

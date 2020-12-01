@@ -41,7 +41,7 @@ class Http {
       dio.options.headers['Authorization'] = token;
     }
     try {
-      dio.get(url, queryParameters: params).then((response) {
+      return dio.get(url, queryParameters: params).then((response) {
         // print('dio.options.baseUrl == ${dio.options.baseUrl}');
         // print('url === $url');
         // print(response);
@@ -67,7 +67,6 @@ class Http {
         fail('网络发生错误', -1);
       }
     }
-    return Future.value();
   }
 
   Future<void> post(String url, Map<String, dynamic> params,
@@ -78,7 +77,7 @@ class Http {
       dio.options.headers['Authorization'] = token;
     }
     try {
-      await dio.post(url, data: json.encode(params)).then((response) {
+      return await dio.post(url, data: json.encode(params)).then((response) {
         if (response.statusCode == 200) {
           Map<String, dynamic> data = response.data;
           if (data['code'] != 200) {
@@ -101,7 +100,7 @@ class Http {
         fail('网络发生错误', -1);
       }
     }
-    return Future.value();
+    // return Future.value();
   }
   // void request(String url,
   //     {String method = 'get', Map<String, dynamic> params}) {
@@ -120,7 +119,7 @@ class Http {
       dio.options.headers['Authorization'] = token;
     }
     try {
-      await dio.post(url, data: json.encode(params)).then((response) {
+      return await dio.post(url, data: json.encode(params)).then((response) {
         if (response.statusCode == 200) {
           Map<String, dynamic> data = response.data;
           if (data['code'] != 200) {
@@ -143,7 +142,7 @@ class Http {
         fail('网络发生错误', -1);
       }
     }
-    return Future.value();
+    // return Future.value();
   }
 
   void log(Dio _dio) {
