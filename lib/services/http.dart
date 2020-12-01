@@ -31,11 +31,13 @@ class Http {
         receiveTimeout: RECEIVE_TIMEOUT);
     return Dio(baseOptions);
   }
+  Dio getDio() {
+    return _dio;
+  }
 
   Future<void> get(String url, Map<String, dynamic> params,
       {Success success, Fail fail, After after}) async {
     Dio dio = _dio;
-
     dynamic token = await UserDefault.get('access_token');
     if (token != null) {
       dio.options.headers['Authorization'] = token;

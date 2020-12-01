@@ -4,6 +4,7 @@ import 'package:JMrealty/Client/components/WaitFollowUpCell.dart';
 import 'package:JMrealty/Client/components/writeFollow.dart';
 import 'package:JMrealty/Client/viewModel/ClientListSelectViewModel.dart';
 import 'package:JMrealty/Client/viewModel/ClientListViewModel.dart';
+import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -355,7 +356,6 @@ class _ClientListState extends State<ClientList> {
   }
 
   Widget getProVider(index) {
-    print('123');
     ProviderWidget widget;
     switch (index) {
       case 0:
@@ -365,7 +365,19 @@ class _ClientListState extends State<ClientList> {
           },
           model: ClientListSelect1ViewModel(),
           builder: (ctx, model, child) {
-            return selectList(data, (Map item) {
+            String key;
+            switch (currentSelectIndex) {
+              case 0:
+                key = 'jb';
+                break;
+              case 1:
+                key = 'lx';
+                break;
+              case 2:
+                key = 'mj';
+                break;
+            }
+            return selectList(model.state == BaseState.CONTENT ? model.selectData[key] : [], (Map item) {
               switch (currentSelectIndex) {
                 case 1:
                   value1 = item;
@@ -391,7 +403,19 @@ class _ClientListState extends State<ClientList> {
           },
           model: ClientListSelect2ViewModel(),
           builder: (ctx, model, child) {
-            return selectList(data, (Map item) {
+            String key;
+            switch (currentSelectIndex) {
+              case 0:
+                key = 'jb';
+                break;
+              case 1:
+                key = 'lx';
+                break;
+              case 2:
+                key = 'mj';
+                break;
+            }
+            return selectList(model.state == BaseState.CONTENT ? model.selectData[key] : [], (Map item) {
               switch (currentSelectIndex) {
                 case 1:
                   value1 = item;
@@ -417,7 +441,19 @@ class _ClientListState extends State<ClientList> {
           },
           model: ClientListSelect3ViewModel(),
           builder: (ctx, model, child) {
-            return selectList(data, (Map item) {
+            String key;
+            switch (currentSelectIndex) {
+              case 0:
+                key = 'jb';
+                break;
+              case 1:
+                key = 'lx';
+                break;
+              case 2:
+                key = 'mj';
+                break;
+            }
+            return selectList(model.state == BaseState.CONTENT ? model.selectData[key] : [], (Map item) {
               switch (currentSelectIndex) {
                 case 1:
                   value1 = item;
@@ -443,7 +479,19 @@ class _ClientListState extends State<ClientList> {
           },
           model: ClientListSelect4ViewModel(),
           builder: (ctx, model, child) {
-            return selectList(data, (Map item) {
+            String key;
+            switch (currentSelectIndex) {
+              case 0:
+                key = 'jb';
+                break;
+              case 1:
+                key = 'lx';
+                break;
+              case 2:
+                key = 'mj';
+                break;
+            }
+            return selectList(model.state == BaseState.CONTENT ? model.selectData[key] : [], (Map item) {
               switch (currentSelectIndex) {
                 case 1:
                   value1 = item;
@@ -469,7 +517,19 @@ class _ClientListState extends State<ClientList> {
           },
           model: ClientListSelect5ViewModel(),
           builder: (ctx, model, child) {
-            return selectList(data, (Map item) {
+            String key;
+            switch (currentSelectIndex) {
+              case 0:
+                key = 'jb';
+                break;
+              case 1:
+                key = 'lx';
+                break;
+              case 2:
+                key = 'mj';
+                break;
+            }
+            return selectList(model.state == BaseState.CONTENT ? model.selectData[key] : [], (Map item) {
               switch (currentSelectIndex) {
                 case 1:
                   value1 = item;
