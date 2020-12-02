@@ -250,8 +250,13 @@ class LoginViewModel extends BaseViewModel {
         Map<String, dynamic> data = json['data'];
         if (json['code'] == 200 && data['access_token'] != null) {
           state = BaseState.CONTENT;
-          UserDefault.saveStr('access_token', data['access_token']);
-          success();
+          UserDefault.saveStr('access_token', data['access_token'])
+              .then((bool value) {
+            if (value) {
+              success();
+              print('access_token === $value');
+            }
+          });
         } else {
           state = BaseState.FAIL;
         }

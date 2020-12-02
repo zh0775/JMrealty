@@ -17,8 +17,6 @@ class Client extends StatefulWidget {
 }
 
 class _ClientState extends State<Client> {
-
-
   SelectedForRowAtIndex selectedForRowAtIndex =
       (ClientStatus status, int index, Map model, BuildContext context) {
     Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
@@ -282,20 +280,17 @@ class _ClientListState extends State<ClientList> {
           )),
       selectExpand
           ? Positioned(
-          top: 40,
-          left: 0,
-          child: getProVider(widget.status.index))
+              top: 40, left: 0, child: getProVider(widget.status.index))
           : Container(width: 0.0, height: 0.0)
-
     ]);
   }
 
   Widget selectList(List data, void Function(Map value) itemClick) {
     List textButtons = [];
-    double buttonHeight = 30;
+    double buttonHeight = 40;
     double cHeight = data.length % 2 == 0
         ? (data.length / 2) * buttonHeight
-        : (data.length / 2 + 1) * buttonHeight;
+        : (data.length ~/ 2 + 1) * buttonHeight;
     for (var i = 0; i < data.length; i++) {
       Map e = data[i];
       Widget button = TextButton(
@@ -321,7 +316,7 @@ class _ClientListState extends State<ClientList> {
         //一行的Widget数量
         crossAxisCount: 2,
         //子Widget宽高比例
-        childAspectRatio: SizeConfig.screenWidth / 2 / buttonHeight,
+        childAspectRatio: SizeConfig.screenWidth / 2.0 / buttonHeight,
         //子Widget列表
         children: [...textButtons],
       ),
@@ -367,17 +362,19 @@ class _ClientListState extends State<ClientList> {
           builder: (ctx, model, child) {
             String key;
             switch (currentSelectIndex) {
-              case 0:
+              case 1:
                 key = 'jb';
                 break;
-              case 1:
+              case 2:
                 key = 'lx';
                 break;
-              case 2:
+              case 3:
                 key = 'mj';
                 break;
             }
-            return selectList(model.state == BaseState.CONTENT ? model.selectData[key] : [], (Map item) {
+            return selectList(
+                model.state == BaseState.CONTENT ? model.selectData[key] : [],
+                (Map item) {
               switch (currentSelectIndex) {
                 case 1:
                   value1 = item;
@@ -405,17 +402,19 @@ class _ClientListState extends State<ClientList> {
           builder: (ctx, model, child) {
             String key;
             switch (currentSelectIndex) {
-              case 0:
+              case 1:
                 key = 'jb';
                 break;
-              case 1:
+              case 2:
                 key = 'lx';
                 break;
-              case 2:
+              case 3:
                 key = 'mj';
                 break;
             }
-            return selectList(model.state == BaseState.CONTENT ? model.selectData[key] : [], (Map item) {
+            return selectList(
+                model.state == BaseState.CONTENT ? model.selectData[key] : [],
+                (Map item) {
               switch (currentSelectIndex) {
                 case 1:
                   value1 = item;
@@ -443,17 +442,19 @@ class _ClientListState extends State<ClientList> {
           builder: (ctx, model, child) {
             String key;
             switch (currentSelectIndex) {
-              case 0:
+              case 1:
                 key = 'jb';
                 break;
-              case 1:
+              case 2:
                 key = 'lx';
                 break;
-              case 2:
+              case 3:
                 key = 'mj';
                 break;
             }
-            return selectList(model.state == BaseState.CONTENT ? model.selectData[key] : [], (Map item) {
+            return selectList(
+                model.state == BaseState.CONTENT ? model.selectData[key] : [],
+                (Map item) {
               switch (currentSelectIndex) {
                 case 1:
                   value1 = item;
@@ -481,17 +482,19 @@ class _ClientListState extends State<ClientList> {
           builder: (ctx, model, child) {
             String key;
             switch (currentSelectIndex) {
-              case 0:
+              case 1:
                 key = 'jb';
                 break;
-              case 1:
+              case 2:
                 key = 'lx';
                 break;
-              case 2:
+              case 3:
                 key = 'mj';
                 break;
             }
-            return selectList(model.state == BaseState.CONTENT ? model.selectData[key] : [], (Map item) {
+            return selectList(
+                model.state == BaseState.CONTENT ? model.selectData[key] : [],
+                (Map item) {
               switch (currentSelectIndex) {
                 case 1:
                   value1 = item;
@@ -519,17 +522,19 @@ class _ClientListState extends State<ClientList> {
           builder: (ctx, model, child) {
             String key;
             switch (currentSelectIndex) {
-              case 0:
+              case 1:
                 key = 'jb';
                 break;
-              case 1:
+              case 2:
                 key = 'lx';
                 break;
-              case 2:
+              case 3:
                 key = 'mj';
                 break;
             }
-            return selectList(model.state == BaseState.CONTENT ? model.selectData[key] : [], (Map item) {
+            return selectList(
+                model.state == BaseState.CONTENT ? model.selectData[key] : [],
+                (Map item) {
               switch (currentSelectIndex) {
                 case 1:
                   value1 = item;

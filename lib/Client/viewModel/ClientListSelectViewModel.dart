@@ -4,16 +4,20 @@ import 'package:JMrealty/services/http.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:dio/dio.dart';
 
-class ClientListSelect1ViewModel extends BaseViewModel{
-  Map selectData = {'jb': [],'lx': [],'mj': []};
+class ClientListSelect1ViewModel extends BaseViewModel {
+  Map selectData = {'jb': [], 'lx': [], 'mj': []};
 
-  loadSelectData() async{
+  loadSelectData() async {
+    if ((selectData['jb']).length > 0) {
+      return;
+    }
     state = BaseState.LOADING;
     notifyListeners();
     await Future.wait([
-      Http().getDio().get(Urls.searchDic,queryParameters: {'dictId':'102'}),
-      Http().getDio().get(Urls.searchDic,queryParameters: {'dictId':'103'}),
-      Http().getDio().get(Urls.searchDic,queryParameters: {'dictId':'104'})]).then((List<Response<dynamic>> e){
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
+    ]).then((List<Response<dynamic>> e) {
       // print('e111 ==== $e');//[true,true,false]
       for (var i = 0; i < e.length; i++) {
         String key;
@@ -28,41 +32,55 @@ class ClientListSelect1ViewModel extends BaseViewModel{
             key = 'mj';
             break;
         }
-        Map res = (e[i]).data;
-        print('res === $res');
-        if(res['code'] == 200) {
-          List reList = res['data'];
-          print('reList === $reList');
-          selectData[key] = [{'title':'全部','value': '-1'}];
+        Map res = new Map<String, dynamic>.from((e[i]).data);
+        // print('res === $res');
+        if (res['code'] == 200) {
+          List reList = (res['data']).map((value) {
+            return value;
+          }).toList();
+          // print('reList === $reList');
+          selectData[key] = <Map<String, dynamic>>[
+            {'title': '全部', 'value': '-1'}
+          ];
           reList.forEach((element) {
-            selectData[key].add({'title': element['dictLabel'], 'value': element['dictValue']});
+            Map<String, dynamic> e = Map<String, dynamic>.from(element);
+            (selectData[key])
+                .add({'title': e['dictLabel'], 'value': e['dictValue']});
+            // List list = selectData[key];
+            // print('list === ${list.runtimeType}');
+            // list.add(Map<String, dynamic>.from(element));
           });
-          print('selectData === $selectData');
-          state = BaseState.CONTENT;
-          notifyListeners();
+          // print('selectData === $selectData');
         } else {
           state = BaseState.FAIL;
           notifyListeners();
+          return;
         }
       }
-    }).catchError((e){
+      state = BaseState.CONTENT;
+      notifyListeners();
+    }).catchError((e) {
       state = BaseState.FAIL;
       notifyListeners();
-      print('error ==== $e');//[
+      print('error 11==== $e'); //[
     });
   }
 }
 
-class ClientListSelect2ViewModel extends BaseViewModel{
-  Map selectData = {'jb': [],'lx': [],'mj': []};
+class ClientListSelect2ViewModel extends BaseViewModel {
+  Map selectData = {'jb': [], 'lx': [], 'mj': []};
 
-  loadSelectData() async{
+  loadSelectData() async {
+    if ((selectData['jb']).length > 0) {
+      return;
+    }
     state = BaseState.LOADING;
     notifyListeners();
     await Future.wait([
-      Http().getDio().get(Urls.searchDic,queryParameters: {'dictId':'102'}),
-      Http().getDio().get(Urls.searchDic,queryParameters: {'dictId':'103'}),
-      Http().getDio().get(Urls.searchDic,queryParameters: {'dictId':'104'})]).then((List<Response<dynamic>> e){
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
+    ]).then((List<Response<dynamic>> e) {
       // print('e111 ==== $e');//[true,true,false]
       for (var i = 0; i < e.length; i++) {
         String key;
@@ -77,39 +95,55 @@ class ClientListSelect2ViewModel extends BaseViewModel{
             key = 'mj';
             break;
         }
-        Map res = ((e[i]).data)['data'];
-        if(res['code'] == 200) {
-          List reList = res['data'];
-          selectData[key] = [{'title':'全部','value': '-1'}];
+        Map res = new Map<String, dynamic>.from((e[i]).data);
+        // print('res === $res');
+        if (res['code'] == 200) {
+          List reList = (res['data']).map((value) {
+            return value;
+          }).toList();
+          // print('reList === $reList');
+          selectData[key] = <Map<String, dynamic>>[
+            {'title': '全部', 'value': '-1'}
+          ];
           reList.forEach((element) {
-            selectData[key].add({'title': element['dictLabel'], 'value': element['dictValue']});
+            Map<String, dynamic> e = Map<String, dynamic>.from(element);
+            (selectData[key])
+                .add({'title': e['dictLabel'], 'value': e['dictValue']});
+            // List list = selectData[key];
+            // print('list === ${list.runtimeType}');
+            // list.add(Map<String, dynamic>.from(element));
           });
-          print('selectData === $selectData');
-          state = BaseState.CONTENT;
-          notifyListeners();
+          // print('selectData === $selectData');
         } else {
           state = BaseState.FAIL;
           notifyListeners();
+          break;
         }
       }
-    }).catchError((e){
+      state = BaseState.CONTENT;
+      notifyListeners();
+    }).catchError((e) {
       state = BaseState.FAIL;
       notifyListeners();
-      print('error ==== $e');//[
+      print('error 11==== $e'); //[
     });
   }
 }
 
-class ClientListSelect3ViewModel extends BaseViewModel{
-  Map selectData = {'jb': [],'lx': [],'mj': []};
+class ClientListSelect3ViewModel extends BaseViewModel {
+  Map selectData = {'jb': [], 'lx': [], 'mj': []};
 
-  loadSelectData() async{
+  loadSelectData() async {
+    if ((selectData['jb']).length > 0) {
+      return;
+    }
     state = BaseState.LOADING;
     notifyListeners();
     await Future.wait([
-      Http().getDio().get(Urls.searchDic,queryParameters: {'dictId':'102'}),
-      Http().getDio().get(Urls.searchDic,queryParameters: {'dictId':'103'}),
-      Http().getDio().get(Urls.searchDic,queryParameters: {'dictId':'104'})]).then((List<Response<dynamic>> e){
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
+    ]).then((List<Response<dynamic>> e) {
       // print('e111 ==== $e');//[true,true,false]
       for (var i = 0; i < e.length; i++) {
         String key;
@@ -124,38 +158,55 @@ class ClientListSelect3ViewModel extends BaseViewModel{
             key = 'mj';
             break;
         }
-        Map res = ((e[i]).data)['data'];
-        if(res['code'] == 200) {
-          List reList = res['data'];
-          selectData[key] = [{'title':'全部','value': '-1'}];
+        Map res = new Map<String, dynamic>.from((e[i]).data);
+        // print('res === $res');
+        if (res['code'] == 200) {
+          List reList = (res['data']).map((value) {
+            return value;
+          }).toList();
+          // print('reList === $reList');
+          selectData[key] = <Map<String, dynamic>>[
+            {'title': '全部', 'value': '-1'}
+          ];
           reList.forEach((element) {
-            selectData[key].add({'title': element['dictLabel'], 'value': element['dictValue']});
+            Map<String, dynamic> e = Map<String, dynamic>.from(element);
+            (selectData[key])
+                .add({'title': e['dictLabel'], 'value': e['dictValue']});
+            // List list = selectData[key];
+            // print('list === ${list.runtimeType}');
+            // list.add(Map<String, dynamic>.from(element));
           });
-          state = BaseState.CONTENT;
-          notifyListeners();
+          // print('selectData === $selectData');
         } else {
           state = BaseState.FAIL;
           notifyListeners();
+          break;
         }
       }
-    }).catchError((e){
+      state = BaseState.CONTENT;
+      notifyListeners();
+    }).catchError((e) {
       state = BaseState.FAIL;
       notifyListeners();
-      print('error ==== $e');//[
+      print('error 11==== $e'); //[
     });
   }
 }
 
-class ClientListSelect4ViewModel extends BaseViewModel{
-  Map selectData = {'jb': [],'lx': [],'mj': []};
+class ClientListSelect4ViewModel extends BaseViewModel {
+  Map selectData = {'jb': [], 'lx': [], 'mj': []};
 
-  loadSelectData() async{
+  loadSelectData() async {
+    if ((selectData['jb']).length > 0) {
+      return;
+    }
     state = BaseState.LOADING;
     notifyListeners();
     await Future.wait([
-      Http().getDio().get(Urls.searchDic,queryParameters: {'dictId':'102'}),
-      Http().getDio().get(Urls.searchDic,queryParameters: {'dictId':'103'}),
-      Http().getDio().get(Urls.searchDic,queryParameters: {'dictId':'104'})]).then((List<Response<dynamic>> e){
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
+    ]).then((List<Response<dynamic>> e) {
       // print('e111 ==== $e');//[true,true,false]
       for (var i = 0; i < e.length; i++) {
         String key;
@@ -170,38 +221,55 @@ class ClientListSelect4ViewModel extends BaseViewModel{
             key = 'mj';
             break;
         }
-        Map res = ((e[i]).data)['data'];
-        if(res['code'] == 200) {
-          List reList = res['data'];
-          selectData[key] = [{'title':'全部','value': '-1'}];
+        Map res = new Map<String, dynamic>.from((e[i]).data);
+        // print('res === $res');
+        if (res['code'] == 200) {
+          List reList = (res['data']).map((value) {
+            return value;
+          }).toList();
+          // print('reList === $reList');
+          selectData[key] = <Map<String, dynamic>>[
+            {'title': '全部', 'value': '-1'}
+          ];
           reList.forEach((element) {
-            selectData[key].add({'title': element['dictLabel'], 'value': element['dictValue']});
+            Map<String, dynamic> e = Map<String, dynamic>.from(element);
+            (selectData[key])
+                .add({'title': e['dictLabel'], 'value': e['dictValue']});
+            // List list = selectData[key];
+            // print('list === ${list.runtimeType}');
+            // list.add(Map<String, dynamic>.from(element));
           });
-          state = BaseState.CONTENT;
-          notifyListeners();
+          // print('selectData === $selectData');
         } else {
           state = BaseState.FAIL;
           notifyListeners();
+          break;
         }
       }
-    }).catchError((e){
+      state = BaseState.CONTENT;
+      notifyListeners();
+    }).catchError((e) {
       state = BaseState.FAIL;
       notifyListeners();
-      print('error ==== $e');//[
+      print('error 11==== $e'); //[
     });
   }
 }
 
-class ClientListSelect5ViewModel extends BaseViewModel{
-  Map selectData = {'jb': [],'lx': [],'mj': []};
+class ClientListSelect5ViewModel extends BaseViewModel {
+  Map selectData = {'jb': [], 'lx': [], 'mj': []};
 
-  loadSelectData() async{
+  loadSelectData() async {
+    if ((selectData['jb']).length > 0) {
+      return;
+    }
     state = BaseState.LOADING;
     notifyListeners();
     await Future.wait([
-      Http().getDio().get(Urls.searchDic,queryParameters: {'dictId':'102'}),
-      Http().getDio().get(Urls.searchDic,queryParameters: {'dictId':'103'}),
-      Http().getDio().get(Urls.searchDic,queryParameters: {'dictId':'104'})]).then((List<Response<dynamic>> e){
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
+    ]).then((List<Response<dynamic>> e) {
       // print('e111 ==== $e');//[true,true,false]
       for (var i = 0; i < e.length; i++) {
         String key;
@@ -216,24 +284,37 @@ class ClientListSelect5ViewModel extends BaseViewModel{
             key = 'mj';
             break;
         }
-        Map res = ((e[i]).data)['data'];
-        if(res['code'] == 200) {
-          List reList = res['data'];
-          selectData[key] = [{'title':'全部','value': '-1'}];
+        Map res = new Map<String, dynamic>.from((e[i]).data);
+        // print('res === $res');
+        if (res['code'] == 200) {
+          List reList = (res['data']).map((value) {
+            return value;
+          }).toList();
+          // print('reList === $reList');
+          selectData[key] = <Map<String, dynamic>>[
+            {'title': '全部', 'value': '-1'}
+          ];
           reList.forEach((element) {
-            selectData[key].add({'title': element['dictLabel'], 'value': element['dictValue']});
+            Map<String, dynamic> e = Map<String, dynamic>.from(element);
+            (selectData[key])
+                .add({'title': e['dictLabel'], 'value': e['dictValue']});
+            // List list = selectData[key];
+            // print('list === ${list.runtimeType}');
+            // list.add(Map<String, dynamic>.from(element));
           });
-          state = BaseState.CONTENT;
-          notifyListeners();
+          // print('selectData === $selectData');
         } else {
           state = BaseState.FAIL;
           notifyListeners();
+          break;
         }
       }
-    }).catchError((e){
+      state = BaseState.CONTENT;
+      notifyListeners();
+    }).catchError((e) {
       state = BaseState.FAIL;
       notifyListeners();
-      print('error ==== $e');//[
+      print('error 11==== $e'); //[
     });
   }
 }
