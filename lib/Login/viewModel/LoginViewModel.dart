@@ -254,6 +254,7 @@ class LoginViewModel extends BaseViewModel {
               .then((bool value) {
             if (value) {
               success();
+              UserDefault.get('access_token');
               print('access_token === $value');
             }
           });

@@ -2,7 +2,7 @@ import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
 import 'package:JMrealty/utils/toast.dart';
-import 'package:dio/dio.dart';
+// import 'package:dio/dio.dart';
 
 class ClientListSelect1ViewModel extends BaseViewModel {
   Map selectData = {'jb': [], 'lx': [], 'mj': []};
@@ -17,7 +17,7 @@ class ClientListSelect1ViewModel extends BaseViewModel {
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
-    ]).then((List<Response<dynamic>> e) {
+    ]).then((List e) {
       // print('e111 ==== $e');//[true,true,false]
       for (var i = 0; i < e.length; i++) {
         String key;
@@ -80,7 +80,7 @@ class ClientListSelect2ViewModel extends BaseViewModel {
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
-    ]).then((List<Response<dynamic>> e) {
+    ]).then((List e) {
       // print('e111 ==== $e');//[true,true,false]
       for (var i = 0; i < e.length; i++) {
         String key;
@@ -143,7 +143,7 @@ class ClientListSelect3ViewModel extends BaseViewModel {
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
-    ]).then((List<Response<dynamic>> e) {
+    ]).then((List e) {
       // print('e111 ==== $e');//[true,true,false]
       for (var i = 0; i < e.length; i++) {
         String key;
@@ -206,7 +206,10 @@ class ClientListSelect4ViewModel extends BaseViewModel {
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
-    ]).then((List<Response<dynamic>> e) {
+      // Http().get(Urls.searchDic, {'dictId': '102'}),
+      // Http().get(Urls.searchDic, {'dictId': '103'}),
+      // Http().get(Urls.searchDic, {'dictId': '104'}),
+    ]).then((List e) {
       // print('e111 ==== $e');//[true,true,false]
       for (var i = 0; i < e.length; i++) {
         String key;
@@ -269,7 +272,7 @@ class ClientListSelect5ViewModel extends BaseViewModel {
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
-    ]).then((List<Response<dynamic>> e) {
+    ]).then((List e) {
       // print('e111 ==== $e');//[true,true,false]
       for (var i = 0; i < e.length; i++) {
         String key;
