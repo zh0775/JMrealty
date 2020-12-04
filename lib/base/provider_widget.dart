@@ -23,7 +23,7 @@ class _ProviderWidgetState<T extends ChangeNotifier>
   @override
   void initState() {
     super.initState();
-    if (widget.onReady != null) {
+    if (widget.onReady != null) { 
       widget.onReady(widget.model);
     }
   }

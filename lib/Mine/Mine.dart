@@ -1,4 +1,5 @@
 import 'package:JMrealty/Login/Login.dart';
+import 'package:JMrealty/const/Default.dart';
 import 'package:flutter/material.dart';
 
 class Mine extends StatefulWidget {
@@ -23,15 +24,5 @@ class _MineState extends State<Mine> {
         color: Colors.blue,
       ),
     );
-  }
-
-  void toLogin(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) {
-          return Login(
-            isLogin: true,
-          );
-        },
-        fullscreenDialog: true));
   }
 }

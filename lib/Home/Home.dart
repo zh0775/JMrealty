@@ -1,9 +1,11 @@
+import 'package:JMrealty/Follow/Follow.dart';
 import 'package:JMrealty/Home/components/HomeAnno.dart';
 import 'package:JMrealty/Home/components/HomeGoodDeed.dart';
 import 'package:JMrealty/Home/components/HomeNaviBar.dart';
 import 'package:JMrealty/Home/components/HomeScheduleToDo.dart';
-import 'package:JMrealty/Login/Login.dart';
+import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/services/HomeService.dart';
+import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../tabbar.dart';
@@ -72,14 +74,14 @@ class _HomeState extends State<Home> {
           ),
           buttons((int buttonIndex, Map buttonData) {
             if (buttonIndex == 0) {
-              Navigator.of(context).push(CupertinoPageRoute(
-                  builder: (_) {
-                    return Login(
-                      isLogin: true,
-                    );
-                  },
-                  fullscreenDialog: true));
+              Global.toLogin(isLogin: true);
+            }else if (buttonIndex == 7) {
+              Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                return Follow(
+                );
+              }));
             }
+
             print(
                 'buttonIndex === $buttonIndex --- buttonData === $buttonData');
           })
@@ -121,70 +123,123 @@ class _HomeState extends State<Home> {
         'title': 'PK赛',
         'path': 'PK赛',
         'icon': 'assets/images/tabbar/food-bread.png'
+      },
+      {
+        'title': '智能报备',
+        'path': '智能报备',
+        'icon': 'assets/images/tabbar/food-bread.png'
+      },
+      {
+        'title': '跟进进度',
+        'path': '跟进进度',
+        'icon': 'assets/images/tabbar/food-bread.png'
+      },
+      {
+        'title': 'WI分',
+        'path': 'WI分',
+        'icon': 'assets/images/tabbar/food-bread.png'
+      },
+      {
+        'title': '业绩对比',
+        'path': '业绩对比',
+        'icon': 'assets/images/tabbar/food-bread.png'
+      }
+    ],
+    [
+      {
+        'title': '客户池',
+        'path': '客户池',
+        'icon': 'assets/images/tabbar/food-bread.png'
+      },
+      {
+        'title': '我的任务',
+        'path': '我的任务',
+        'icon': 'assets/images/tabbar/food-bread.png'
+      },
+      {
+        'title': '每日总结',
+        'path': '每日总结',
+        'icon': 'assets/images/tabbar/food-bread.png'
+      },
+      {
+        'title': '破壳率',
+        'path': '破壳率',
+        'icon': 'assets/images/tabbar/food-bread.png'
+      },
+      {
+        'title': '未开发人员',
+        'path': '未开发人员',
+        'icon': 'assets/images/tabbar/food-bread.png'
       }
     ]
   ];
 
   Widget buttons(buttonClick) {
-    List<Widget> row1 = [];
-    List<Widget> row2 = [];
-    TextStyle textStyle = TextStyle(color: Color.fromRGBO(163, 164, 172, 1));
+    List<Widget> allRow = [];
+    // List<Widget> row2 = [];
+    // Column column = Column();
+    TextStyle textStyle = TextStyle(color: jm_text_black);
     for (var i = 0; i < buttonData.length; i++) {
       List rowData = buttonData[i];
+      Row row;
+      List<Widget> rowList = [];
       for (var j = 0; j < rowData.length; j++) {
         var data = rowData[j];
-        if (i == 0) {
-          row1.add(
-            TextButton(
-                onPressed: () {
-                  buttonClick(i * buttonData[0].length + j, data);
-                },
-                child: Column(
-                  children: [
-                    Image.asset(data['icon']),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      data['title'],
-                      style: textStyle,
-                    ),
-                  ],
-                )),
+        // if (i == 0) {
+        rowList.add(
+         Container(
+           width: SizeConfig.blockSizeHorizontal * 20,
+           height: 80,
+           child:  TextButton(
+               onPressed: () {
+                 buttonClick(i * buttonData[0].length + j, data);
+               },
+               child: Column(
+                 children: [
+                   Image.asset(data['icon'],height: 30,width: SizeConfig.blockSizeHorizontal * 15,),
+                   SizedBox(
+                     height: 10,
+                   ),
+                   Text(
+                     data['title'],
+                     maxLines: 1,
+                     style: textStyle,
+                   ),
+                 ],
+               )),
+         )
           );
-        } else {
-          row2.add(TextButton(
-              onPressed: () {
-                buttonClick(i * buttonData[0].length + j, data);
-              },
-              child: Column(
-                children: [
-                  Image.asset(data['icon']),
-                  Text(
-                    data['title'],
-                    style: textStyle,
-                  ),
-                ],
-              )));
-        }
+        // } else {
+        //   row.children.add(TextButton(
+        //       onPressed: () {
+        //         buttonClick(i * buttonData[0].length + j, data);
+        //       },
+        //       child: Column(
+        //         children: [
+        //           Image.asset(data['icon']),
+        //           Text(
+        //             data['title'],
+        //             style: textStyle,
+        //           ),
+        //         ],
+        //       )));
+        // }
       }
+      row = Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+        ...rowList,
+      ]);
+      allRow.add(row);
+      // column.children.add(Row());
+      // column.children.add(SizedBox(
+      //   width: 7,
+      // ));
     }
     return Container(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: row1,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 7,
-              ),
-              ...row2
-            ],
-          )
+          ...allRow,
         ],
       ),
     );

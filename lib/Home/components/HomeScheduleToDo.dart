@@ -1,3 +1,4 @@
+import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 
@@ -124,7 +125,7 @@ class _HomeScheduleToDoState extends State<HomeScheduleToDo> {
       margin: EdgeInsets.only(right: 10),
       padding: EdgeInsets.only(top: 5, left: 10, right: 10),
       decoration: BoxDecoration(
-          color: Colors.grey,
+          color: jm_line_color,
           borderRadius: BorderRadius.all(Radius.circular(10))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

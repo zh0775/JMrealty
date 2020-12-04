@@ -66,7 +66,7 @@ class ClientViewModel extends BaseViewModel {
       Urls.addClient,
       params,
       success: (json) {
-        Map<String, dynamic> data = json['data'];
+        // Map<String, dynamic> data = json['data'];
         if (json['code'] == 200) {
           // state = BaseState.CONTENT;
           reqSuccess(true);
@@ -74,7 +74,7 @@ class ClientViewModel extends BaseViewModel {
           // state = BaseState.FAIL;
           reqSuccess(false);
         }
-        ShowToast.normal(data['msg']);
+        ShowToast.normal(json['msg']);
         // notifyListeners();
       },
       fail: (reason, code) {

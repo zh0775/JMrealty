@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        navigatorKey: Global.navigatorKey,
         onGenerateRoute: (setting) {
           return Routes.findRoutes(setting);
         },

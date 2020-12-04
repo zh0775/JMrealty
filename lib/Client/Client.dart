@@ -171,17 +171,6 @@ class _ClientListState extends State<ClientList> {
   Map value2;
   Map value3;
   bool selectExpand;
-  List data = [
-    {'title': '222', 'value': '0'},
-    {'title': '222', 'value': '1'},
-    {'title': '222', 'value': '2'},
-    {'title': '222', 'value': '3'},
-    {'title': '222', 'value': '4'},
-    {'title': '222', 'value': '5'},
-    {'title': '222', 'value': '6'},
-    {'title': '222', 'value': '7'},
-    {'title': '222', 'value': '8'},
-  ];
   @override
   void initState() {
     // selectVM1 = ClientListSelect1ViewModel();
