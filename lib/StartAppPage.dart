@@ -30,6 +30,7 @@ class _StartAppPageState extends State<StartAppPage> {
     }
     super.dispose();
   }
+
   @override
   void initState() {
     passTimer = Timer(Duration(seconds: 2), () {
@@ -42,58 +43,78 @@ class _StartAppPageState extends State<StartAppPage> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return ProviderWidget<AppStartViewModel>(
-      model: AppStartViewModel(),
-      onReady: (model) {
-        model.load();
-      },
-      builder: (context, model, child) {
-        if (model.state == BaseState.CONTENT && model.startImgUrl != null) {
-          if (passTimer != null) {
-            passTimer.cancel();
-            passTimer = null;
-          }
-          if (imgWaitTimer == null) {
-            imgWaitTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-              setState(() {
-                waitTime--;
+        model: AppStartViewModel(),
+        onReady: (model) {
+          model.load();
+        },
+        builder: (context, model, child) {
+          if (model.state == BaseState.CONTENT && model.startImgUrl != null) {
+            if (passTimer != null) {
+              passTimer.cancel();
+              passTimer = null;
+            }
+            if (imgWaitTimer == null) {
+              imgWaitTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+                setState(() {
+                  waitTime--;
+                });
+                if (waitTime == 0) {
+                  timer.cancel();
+                  timer = null;
+                  toMain(context);
+                }
               });
-              if (waitTime == 0) {
-                timer.cancel();
-                timer = null;
-                toMain(context);
-              }
-            });
+            }
+            return Stack(
+              children: [
+                Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    child: ImageLoader(
+                        model.startImgUrl, SizeConfig.screenHeight)),
+                Positioned(
+                    right: 15,
+                    top: 30,
+                    child: TextButton(
+                      onPressed: () {
+                        if (passTimer != null) {
+                          passTimer.cancel();
+                          passTimer = null;
+                        }
+                        if (imgWaitTimer != null) {
+                          imgWaitTimer.cancel();
+                          imgWaitTimer = null;
+                        }
+                        toMain(context);
+                      },
+                      child: Container(
+                        height: 30,
+                        width: 80,
+                        decoration: BoxDecoration(
+                            color: Color.fromRGBO(0, 0, 0, 0.5),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15))),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '跳过' + '   ' + waitTime.toString(),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 13),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ))
+              ],
+            );
           }
-          return Stack(
-            children: [
-              Positioned(left: 0,right: 0,top: 0,bottom: 0, child: ImageLoader(model.startImgUrl,SizeConfig.screenHeight)),
-              Positioned( right: 15,top: 30, child: TextButton(onPressed: (){
-                toMain(context);
-              },
-              child: Container(
-                height: 30,
-                width: 80,
-                decoration: BoxDecoration(
-                  color: Color.fromRGBO(0, 0, 0, 0.5),
-                  borderRadius: BorderRadius.all(Radius.circular(15))
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('跳过' + '   ' + waitTime.toString(),style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13
-                    ),),
-                  ],
-                ),
-              ),))
-            ],
+          return Container(
+            color: Colors.white,
           );
-        }
-        return Container(
-          color: Colors.white,);
-      }
-    );
+        });
   }
 
   toMain(BuildContext context) {

@@ -29,124 +29,109 @@ class Http {
         baseUrl: BASE_URL,
         connectTimeout: CONNECT_TIMEOUT,
         receiveTimeout: RECEIVE_TIMEOUT);
-    return Dio(baseOptions);
+    Dio dio = Dio(baseOptions);
+    dio.interceptors
+        .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
+      UserDefault.get('access_token').then((token) {
+        if (token != null) {
+          options.headers['Authorization'] = token;
+        }
+        return options;
+      });
+    }, onResponse: (Response response) {
+      return response;
+    }, onError: (DioError e) {
+      return e;
+    }));
+    return dio;
   }
 
   Dio getDio() {
     return _dio;
   }
 
-  dynamic getToken() async {
-    await UserDefault.get('access_token').then((value) {
-      return value;
-    });
-  }
-
   Future<void> get(String url, Map<String, dynamic> params,
       {Success success, Fail fail, After after}) async {
-    await UserDefault.get('access_token').then((token) {
-      Dio dio = _dio;
-      if (token != null) {
-        dio.options.headers['Authorization'] = token;
-      }
-      try {
-        return dio.get(url, queryParameters: params).then((response) {
-          // print('dio.options.baseUrl == ${dio.options.baseUrl}');
-          // print('url === $url');
-          // print(response);
-          if (response.statusCode == 200) {
-            Map<String, dynamic> data = response.data;
-            if (data['code'] != 200) {
-              ShowToast.normal(data['msg']);
-            }
-            if (success != null) {
-              success(response.data);
-            }
-          } else {
-            if (fail != null) {
-              fail(response.statusMessage, response.statusCode);
-            }
+    try {
+      await _dio.get(url, queryParameters: params).then((response) {
+        if (response.statusCode == 200) {
+          Map<String, dynamic> data = response.data;
+          if (data['code'] != 200) {
+            ShowToast.normal(data['msg']);
           }
-          if (after != null) {
-            after();
+          if (success != null) {
+            success(response.data);
           }
-        });
-      } catch (e) {
-        if (fail != null) {
-          fail('网络发生错误', -1);
+        } else {
+          if (fail != null) {
+            fail(response.statusMessage, response.statusCode);
+          }
         }
+        if (after != null) {
+          after();
+        }
+      });
+    } catch (e) {
+      if (fail != null) {
+        fail('网络发生错误', -1);
       }
-    });
+    }
   }
 
   Future<void> post(String url, Map<String, dynamic> params,
       {Success success, Fail fail, After after}) async {
-    await UserDefault.get('access_token').then((token) {
-      Dio dio = _dio;
-      // print('token === $token');
-      if (token != null) {
-        dio.options.headers['Authorization'] = token;
-      }
-      try {
-        return dio.post(url, data: json.encode(params)).then((response) {
-          if (response.statusCode == 200) {
-            Map<String, dynamic> data = response.data;
-            if (data['code'] != 200) {
-              ShowToast.normal(data['msg']);
-            }
-            if (success != null) {
-              success(response.data);
-            }
-          } else {
-            if (fail != null) {
-              fail(response.statusMessage, response.statusCode);
-            }
+    try {
+      await _dio.post(url, data: json.encode(params)).then((response) {
+        if (response.statusCode == 200) {
+          Map<String, dynamic> data = response.data;
+          if (data['code'] != 200) {
+            ShowToast.normal(data['msg']);
           }
-          if (after != null) {
-            after();
+          if (success != null) {
+            success(response.data);
           }
-        });
-      } catch (e) {
-        if (fail != null) {
-          fail('网络发生错误', -1);
+        } else {
+          if (fail != null) {
+            fail(response.statusMessage, response.statusCode);
+          }
         }
+        if (after != null) {
+          after();
+        }
+      });
+    } catch (e) {
+      if (fail != null) {
+        fail('网络发生错误', -1);
       }
-    });
+    }
   }
 
   Future<void> custom(String url, Map<String, dynamic> params,
       {Success success, Fail fail, After after, int timeOut, method}) async {
-    await UserDefault.get('access_token').then((token) {
-      Dio dio = _dio;
-      // print('token === $token');
-      if (token != null) {
-        dio.options.headers['Authorization'] = token;
-      }
-      try {
-        return dio.post(url, data: json.encode(params)).then((response) {
-          if (response.statusCode == 200) {
-            Map<String, dynamic> data = response.data;
-            if (data['code'] != 200) {
-              ShowToast.normal(data['msg']);
-            }
-            if (success != null) {
-              success(response.data);
-            }
-          } else {
-            if (fail != null) {
-              fail(response.statusMessage, response.statusCode);
-            }
+    try {
+      await _dio.post(url, data: json.encode(params)).then((response) {
+        if (response.statusCode == 200) {
+          Map<String, dynamic> data = response.data;
+          if (data['code'] != 200) {
+            ShowToast.normal(data['msg']);
           }
-          if (after != null) {
-            after();
+          if (success != null) {
+            success(response.data);
           }
-        });
-      } catch (e) {
-        if (fail != null) {
-          fail('网络发生错误', -1);
+        } else {
+          if (fail != null) {
+            fail(response.statusMessage, response.statusCode);
+          }
         }
+        if (after != null) {
+          after();
+        }
+      });
+    } catch (e) {
+      if (fail != null) {
+        fail('网络发生错误', -1);
       }
-    });
+    }
   }
 
   void log(Dio _dio) {

@@ -14,6 +14,8 @@ class Urls {
   static const String userRegister = '/system/user/register';
   // 登录接口
   static const String userLogin = '/auth/app/login';
+  // 获取当前用户信息
+  static const String getUserInfo = '/system/user/findUserInfo';
 
   // 客户
   // 新增接口下拉数据接口
@@ -27,11 +29,16 @@ class Urls {
   // 查询字典数据
   static const String searchDic = '/system/dict/type/typeId';
   // 客户详情
-  static const String findClientById = '/customer/findById';
+  static const String findClientById = '/customer/customer/findById';
   // 获取下次跟进的时间
-  static const String findExpectTime = '/customer/findExpectTime';
+  static const String findExpectTime = '/customer/customer/findExpectTime';
   // 新增跟进
-  static const String addFlow = '/customer/progress/insert';
+  static const String addFollow = '/customer/progress/insert';
   // 跟进token获取用户信息
   static const String findUserInfo = '/system/user/findUserInfo';
+  // 获取客户池信息
+  static const String findCustomerPoolInfo =
+      '/customer/customer/findCustomerPoolInfo';
+  // 从客户池添加客户到我的客户列表
+  static const String takeCustomerInPool = '/customer/customer/customerPool';
 }

@@ -1,10 +1,69 @@
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/services/Urls.dart';
+import 'package:JMrealty/services/http.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/toast.dart';
+import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'dart:convert' as convert;
 
 class WriteFollow {
-  Map clientData;
-  WriteFollow({this.clientData});
+  Map<String, dynamic> clientData;
+  void Function() addFollowConfirm;
+  WriteFollow({@required this.clientData, this.addFollowConfirm});
+  String _followDetail;
+  int expectTime;
+  String expectTimeFormat;
+  Map userInfo;
+  void loadNextFollow() {
+    UserDefault.get('userInfo').then((value) {
+      userInfo = convert.jsonDecode(value);
+      Http().get(
+        Urls.findExpectTime,
+        {'id': clientData['id']},
+        success: (json) {
+          print('loadNextFollow === $json');
+          if (json['code'] == 200) {
+            expectTime = (json['data'])['expectTime'];
+            DateTime date = DateTime.fromMillisecondsSinceEpoch(expectTime);
+            var formatter = new DateFormat('yyyy-MM-dd');
+            expectTimeFormat = formatter.format(date);
+            showContent(Global.navigatorKey.currentState.context);
+          } else {
+            ShowToast.normal(json['msg']);
+          }
+        },
+        fail: (reason, code) {
+          ShowToast.normal(reason);
+        },
+        after: () {},
+      );
+    });
+  }
+
+  setClientFollow(BuildContext context) {
+    DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
+    Http().post(Urls.addFollow, {
+      'customerId': clientData['id'],
+      'expect':
+          dateFormat.format(DateTime.fromMillisecondsSinceEpoch(expectTime)),
+      'postId': 0,
+      'postName': clientData['psotName'],
+      'result': _followDetail,
+      'visitDate': dateFormat.format(DateTime.now()),
+    }, success: (json) {
+      if (json['code'] == 200) {
+        if (addFollowConfirm != null) {
+          addFollowConfirm();
+          Navigator.pop(context);
+        }
+      }
+      ShowToast.normal(json['msg']);
+    }, fail: (reason, code) {
+      ShowToast.normal(reason);
+    });
+  }
 
   void showContent(BuildContext context) {
     SizeConfig().init(context);
@@ -44,7 +103,7 @@ class WriteFollow {
                                 width: margin,
                               ),
                               Text(
-                                '王超',
+                                clientData['name'],
                                 style: TextStyle(
                                     fontSize: 17,
                                     color: jm_text_black,
@@ -54,7 +113,7 @@ class WriteFollow {
                                 width: 8,
                               ),
                               Text(
-                                '15300088668',
+                                clientData['phone'],
                                 style: TextStyle(
                                     fontSize: 17,
                                     color: jm_text_black,
@@ -89,7 +148,7 @@ class WriteFollow {
                             width: 8,
                           ),
                           Text(
-                            '2020-11-10 12:33',
+                            clientData['visitDate'],
                             style:
                                 TextStyle(fontSize: 13, color: jm_text_black),
                           ),
@@ -131,6 +190,7 @@ class WriteFollow {
                               ),
                             )),
                         onChanged: (value) {
+                          _followDetail = value;
                           // print('特殊要求 value === $value');
                           // addClientParams['remarks'] = value;
                         },
@@ -157,7 +217,7 @@ class WriteFollow {
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                '2020-11-16',
+                                expectTimeFormat,
                                 style: TextStyle(
                                     fontSize: 14, color: jm_text_black),
                               ),
@@ -209,7 +269,7 @@ class WriteFollow {
                                 borderRadius: BorderRadius.circular(6)),
                             child: TextButton(
                                 onPressed: () {
-                                  Navigator.pop(context);
+                                  setClientFollow(context);
                                 },
                                 child: Text(
                                   '确定',

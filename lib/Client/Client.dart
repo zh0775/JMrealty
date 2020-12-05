@@ -1,7 +1,7 @@
 import 'package:JMrealty/Client/AddClientVC.dart';
 import 'package:JMrealty/Client/ClientDetail.dart';
 import 'package:JMrealty/Client/components/WaitFollowUpCell.dart';
-import 'package:JMrealty/Client/components/writeFollow.dart';
+import 'package:JMrealty/Client/components/WriteFollow.dart';
 import 'package:JMrealty/Client/viewModel/ClientListSelectViewModel.dart';
 import 'package:JMrealty/Client/viewModel/ClientListViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
@@ -28,7 +28,7 @@ class _ClientState extends State<Client> {
   };
   WriteFollowClick writeFollowClick =
       (ClientStatus status, int index, Map model, BuildContext context) {
-    WriteFollow(clientData: model).showContent(context);
+    WriteFollow(clientData: model).loadNextFollow();
     print(
         'writeFollowClick status === $status --- index === $index --- model === $model');
   };
@@ -164,8 +164,6 @@ class _ClientListState extends State<ClientList> {
   // ClientListSelect4ViewModel selectVM4;
   // ClientListSelect5ViewModel selectVM5;
   // Widget selectPullWidget;
-  List currentList;
-  Map currentData;
   int currentSelectIndex;
   Map value1;
   Map value2;

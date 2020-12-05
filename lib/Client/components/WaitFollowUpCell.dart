@@ -11,6 +11,8 @@ typedef void WriteFollowClick(
 typedef void CellReportClick(
     ClientStatus status, int index, Map model, BuildContext context);
 
+typedef void TakeOrderClick(Map model);
+
 class WaitFollowUpCell extends StatefulWidget {
   final Map model;
   final int index;
@@ -18,41 +20,51 @@ class WaitFollowUpCell extends StatefulWidget {
   final SelectedForRowAtIndex selectedForRowAtIndex;
   final WriteFollowClick writeFollowClick;
   final CellReportClick cellReportClick;
+  final TakeOrderClick takeOrderClick;
+  final bool pool;
   WaitFollowUpCell(
       {this.model,
       this.selectedForRowAtIndex,
       this.index,
       this.status,
       this.writeFollowClick,
-      this.cellReportClick});
+      this.cellReportClick,
+      this.takeOrderClick,
+      this.pool = false});
   @override
   _WaitFollowUpCellState createState() => _WaitFollowUpCellState();
 }
 
 class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
+  double lineHeight;
+  double cellHeight;
+  double cellWidth;
+  String level = '';
+  String name = '';
+  String sex = '';
+  String houseType = '';
+  String roomCount = '';
+  String houseSize = '';
+  String housePrice = '';
+  String newFollowTime = '';
+  String clientIntention = '';
+  String clientPhoneNum = '';
+  Map model;
   @override
   void initState() {
+    lineHeight = 35;
+    cellHeight = 200;
+    if (widget.pool) {
+      cellHeight = 140;
+    }
+    model = widget.model;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    double lineHeight = 35;
-    double cellHeight = 200;
-    double cellWidth = SizeConfig.screenWidth;
-    Map model = widget.model;
-
-    String level = '';
-    String name = '';
-    String sex = '';
-    String houseType = '';
-    String roomCount = '';
-    String houseSize = '';
-    String housePrice = '';
-    String newFollowTime = '';
-    String clientIntention = '';
-    String clientPhoneNum = '';
+    cellWidth = SizeConfig.screenWidth;
 
     Color levelColor = Colors.transparent;
     if (model['desireId'] != null) {
@@ -251,144 +263,197 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
                 ],
               ),
             ),
-            Container(
-              height: lineHeight - 15,
-              width: cellWidth,
-              margin: EdgeInsets.only(bottom: 8),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: SizeConfig.blockSizeHorizontal * 16,
-                  ),
-                  // 最新跟进进展信息
-                  Text(newFollowTime,
-                      style: TextStyle(
-                          color: Color.fromRGBO(172, 176, 187, 1),
-                          fontSize: 14))
-                ],
-              ),
-            ),
-            Container(
-              height: lineHeight,
-              width: cellWidth,
-              child: Row(
-                children: [
-                  // 客户意向
-                  Container(
-                    margin: EdgeInsets.only(
-                        left: SizeConfig.blockSizeHorizontal * 16),
-                    padding: EdgeInsets.only(
-                        left: SizeConfig.blockSizeHorizontal * 3),
-                    height: lineHeight,
-                    width: SizeConfig.blockSizeHorizontal * 80,
-                    decoration: BoxDecoration(
-                        color: Color.fromRGBO(247, 248, 251, 1),
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(clientIntention,
-                          style: TextStyle(
-                              color: Color.fromRGBO(55, 58, 73, 1),
-                              fontSize: 15)),
-                    ),
-                  )
-                ],
-              ),
-            ),
+            ...followInfoWidget(),
             Container(
               margin: EdgeInsets.only(top: 13),
               height: lineHeight - 5,
               width: cellWidth,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                      width: SizeConfig.blockSizeHorizontal * 20,
-                      height: lineHeight - 5,
-                      child: RawMaterialButton(
-                        highlightElevation: 0,
-                        elevation: 0,
-                        fillColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                              width: 0.5,
-                              color: Color.fromRGBO(87, 93, 116, 1)),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        onPressed: () {
-                          if (widget.writeFollowClick != null) {
-                            widget.writeFollowClick(widget.status, widget.index,
-                                widget.model, context);
-                          }
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.create,
-                              size: 15,
-                              color: Color.fromRGBO(87, 93, 116, 1),
-                            ),
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Text(
-                              '写跟进',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Color.fromRGBO(87, 93, 116, 1)),
-                            )
-                          ],
-                        ),
-                      )),
-                  SizedBox(
-                    width: SizeConfig.blockSizeHorizontal * 3,
-                  ),
-                  Container(
-                      width: SizeConfig.blockSizeHorizontal * 16,
-                      height: lineHeight - 5,
-                      child: RawMaterialButton(
-                        highlightElevation: 0,
-                        elevation: 0,
-                        fillColor: Color.fromRGBO(230, 184, 92, 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        onPressed: () {
-                          if (widget.cellReportClick != null) {
-                            widget.cellReportClick(widget.status, widget.index,
-                                widget.model, context);
-                          }
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.assignment,
-                              size: 15,
-                              color: Colors.white,
-                            ),
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Text(
-                              '报备',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.white),
-                            )
-                          ],
-                        ),
-                      )),
-                  SizedBox(
-                    width: SizeConfig.blockSizeHorizontal * 4,
-                  )
-                ],
+                children: [...buttons()],
               ),
             )
           ],
         ),
       ),
     );
+  }
+
+  List<Widget> buttons() {
+    if (widget.pool) {
+      return [
+        Container(
+            width: SizeConfig.blockSizeHorizontal * 25,
+            height: lineHeight - 5,
+            child: RawMaterialButton(
+              highlightElevation: 0,
+              elevation: 0,
+              fillColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(
+                    width: 0.5, color: Color.fromRGBO(87, 93, 116, 1)),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              onPressed: () {
+                if (widget.takeOrderClick != null) {
+                  widget.takeOrderClick(widget.model);
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.create,
+                    size: 15,
+                    color: Color.fromRGBO(87, 93, 116, 1),
+                  ),
+                  SizedBox(
+                    width: 6,
+                  ),
+                  Text(
+                    '我来跟进',
+                    style: TextStyle(
+                        fontSize: 14, color: Color.fromRGBO(87, 93, 116, 1)),
+                  )
+                ],
+              ),
+            )),
+        SizedBox(
+          width: SizeConfig.blockSizeHorizontal * 4,
+        ),
+      ];
+    } else {
+      return [
+        Container(
+            width: SizeConfig.blockSizeHorizontal * 20,
+            height: lineHeight - 5,
+            child: RawMaterialButton(
+              highlightElevation: 0,
+              elevation: 0,
+              fillColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(
+                    width: 0.5, color: Color.fromRGBO(87, 93, 116, 1)),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              onPressed: () {
+                if (widget.writeFollowClick != null) {
+                  widget.writeFollowClick(
+                      widget.status, widget.index, widget.model, context);
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.create,
+                    size: 15,
+                    color: Color.fromRGBO(87, 93, 116, 1),
+                  ),
+                  SizedBox(
+                    width: 6,
+                  ),
+                  Text(
+                    '写跟进',
+                    style: TextStyle(
+                        fontSize: 14, color: Color.fromRGBO(87, 93, 116, 1)),
+                  )
+                ],
+              ),
+            )),
+        SizedBox(
+          width: SizeConfig.blockSizeHorizontal * 3,
+        ),
+        Container(
+            width: SizeConfig.blockSizeHorizontal * 16,
+            height: lineHeight - 5,
+            child: RawMaterialButton(
+              highlightElevation: 0,
+              elevation: 0,
+              fillColor: Color.fromRGBO(230, 184, 92, 1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+              onPressed: () {
+                if (widget.cellReportClick != null) {
+                  widget.cellReportClick(
+                      widget.status, widget.index, widget.model, context);
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.assignment,
+                    size: 15,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 6,
+                  ),
+                  Text(
+                    '报备',
+                    style: TextStyle(fontSize: 14, color: Colors.white),
+                  )
+                ],
+              ),
+            )),
+        SizedBox(
+          width: SizeConfig.blockSizeHorizontal * 4,
+        )
+      ];
+    }
+  }
+
+  List<Widget> followInfoWidget() {
+    if (widget.pool) {
+      return [Container(width: 0.0, height: 0.0)];
+    } else {
+      return [
+        Container(
+          height: lineHeight - 15,
+          width: cellWidth,
+          margin: EdgeInsets.only(bottom: 8),
+          child: Row(
+            children: [
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal * 16,
+              ),
+              // 最新跟进进展信息
+              Text(newFollowTime,
+                  style: TextStyle(
+                      color: Color.fromRGBO(172, 176, 187, 1), fontSize: 14))
+            ],
+          ),
+        ),
+        Container(
+          height: lineHeight,
+          width: cellWidth,
+          child: Row(
+            children: [
+              // 客户意向
+              Container(
+                margin:
+                    EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 16),
+                padding:
+                    EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 3),
+                height: lineHeight,
+                width: SizeConfig.blockSizeHorizontal * 80,
+                decoration: BoxDecoration(
+                    color: Color.fromRGBO(247, 248, 251, 1),
+                    borderRadius: BorderRadius.circular(8)),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(clientIntention,
+                      style: TextStyle(
+                          color: Color.fromRGBO(55, 58, 73, 1), fontSize: 15)),
+                ),
+              )
+            ],
+          ),
+        ),
+      ];
+    }
   }
 
   Widget frameText(text,

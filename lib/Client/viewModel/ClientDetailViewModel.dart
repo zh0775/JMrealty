@@ -3,38 +3,39 @@ import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
 import 'package:JMrealty/utils/toast.dart';
 
-enum ClientStatus {
-  wait, // 待跟进
-  already, // 已带看
-  order, // 已预约
-  deal, // 已成交
-  water // 水客
-}
+class ClientDetailViewModel extends BaseViewModel {
+  Map clientData;
 
-class ClientListViewModel extends BaseViewModel {
-  Map listData = {};
-  loadClientList(ClientStatus status) {
+  loadClientDetail(int id) {
     state = BaseState.LOADING;
     notifyListeners();
     Http().get(
-      Urls.clientList,
-      {'status': status.index + 1},
+      Urls.findClientById,
+      {'id': id},
       success: (json) {
-        Map<String, dynamic> data = json['data'];
         if (json['code'] == 200) {
-          listData[status.index.toString()] = data['rows'];
+          clientData = json['data'];
           state = BaseState.CONTENT;
+          notifyListeners();
         } else {
+          if (json['msg'] != null) {
+            ShowToast.normal(json['msg']);
+          }
           state = BaseState.FAIL;
+          notifyListeners();
         }
-        notifyListeners();
       },
       fail: (reason, code) {
+        ShowToast.normal(reason);
         state = BaseState.FAIL;
         notifyListeners();
-        ShowToast.normal(reason);
       },
       after: () {},
     );
+
+    // Http().getDio().get(Urls.findClientById, queryParameters: {'id': id}).then(
+    //     (Response response) {
+    //   clientData = response.data;
+    // });
   }
 }
