@@ -30,7 +30,7 @@ class _AddClientVCState extends State<AddClientVC> {
   @override
   void initState() {
     firstBuild = true;
-    labelStyle = TextStyle(color: jm_text_black, fontSize: 14);
+    labelStyle = jm_text_black_style14;
     clientYY = 1;
     clientIsMan = false;
     sensitive = false;

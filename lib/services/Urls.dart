@@ -41,4 +41,14 @@ class Urls {
       '/customer/customer/findCustomerPoolInfo';
   // 从客户池添加客户到我的客户列表
   static const String takeCustomerInPool = '/customer/customer/customerPool';
+
+  // 报备
+  // 项目名称模糊查询
+  static const String projectFuzzySearch = '/customer/project/fuzzySearch';
+  // 根据名字模糊搜索客户经理
+  static const String agentFuzzySearch = '/system/user/vagueUserName';
+  // 模糊搜索客户
+  static const String clientFuzzySearch = '/customer/customer/search';
+  // 新增报备
+  static const String addReport = '/customer/report/insert';
 }

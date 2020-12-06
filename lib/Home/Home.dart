@@ -6,6 +6,8 @@ import 'package:JMrealty/Home/components/HomeGoodDeed.dart';
 import 'package:JMrealty/Home/components/HomeNaviBar.dart';
 import 'package:JMrealty/Home/components/HomeScheduleToDo.dart';
 import 'package:JMrealty/Home/viewModel/HomeViewModel.dart';
+import 'package:JMrealty/Report/AddReport.dart';
+import 'package:JMrealty/Report/Report.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/services/HomeService.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -91,7 +93,13 @@ class _HomeState extends State<Home> {
           ),
           buttons((int buttonIndex, Map buttonData) {
             if (buttonIndex == 0) {
-              Global.toLogin(isLogin: true);
+              Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                return AddReport();
+              }));
+            } else if (buttonIndex == 1) {
+              Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                return Report();
+              }));
             } else if (buttonIndex == 7) {
               UserDefault.get('access_token').then((token) {
                 if (token != null) {
@@ -119,7 +127,10 @@ class _HomeState extends State<Home> {
               Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
                 return ClientPool();
               }));
+            } else {
+              Global.toLogin(isLogin: true);
             }
+
             print(
                 'buttonIndex === $buttonIndex --- buttonData === $buttonData');
           })

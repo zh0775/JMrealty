@@ -14,18 +14,21 @@ class ZZInput extends StatefulWidget {
   final bool needCleanButton;
   final TextInputType keyboardType;
   final double leftPadding;
-  ZZInput({
-    this.width = 100,
-    this.height = 50,
-    this.textStyle = const TextStyle(fontSize: 16),
-    this.borderRadius = const BorderRadius.all(Radius.circular(8)),
-    this.hintText = '',
-    this.valueChange,
-    this.backgroundColor = const Color.fromRGBO(0, 0, 0, 0.1),
-    this.needCleanButton = false,
-    this.keyboardType = TextInputType.text,
-    this.leftPadding = 20
-  });
+  final String text;
+  final bool enable;
+  ZZInput(
+      {this.width = 100,
+      this.height = 50,
+      this.textStyle = const TextStyle(fontSize: 16),
+      this.borderRadius = const BorderRadius.all(Radius.circular(8)),
+      this.hintText = '',
+      this.valueChange,
+      this.backgroundColor = const Color.fromRGBO(0, 0, 0, 0.1),
+      this.needCleanButton = false,
+      this.keyboardType = TextInputType.text,
+      this.leftPadding = 20,
+      this.text = '',
+      this.enable = true});
   @override
   _ZZInputState createState() => _ZZInputState();
 }
@@ -39,6 +42,12 @@ class _ZZInputState extends State<ZZInput> {
     phoneCtr = TextEditingController();
     phoneNeedClean = false;
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant ZZInput oldWidget) {
+    phoneCtr.text = widget.text;
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -58,6 +67,8 @@ class _ZZInputState extends State<ZZInput> {
           children: [
             Container(
               child: TextField(
+                  // textAlignVertical: TextAlignVertical.bottom,
+                  enabled: widget.enable,
                   keyboardType: widget.keyboardType,
                   controller: phoneCtr,
                   maxLines: 1,
@@ -77,10 +88,21 @@ class _ZZInputState extends State<ZZInput> {
                     }
                   },
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.fromLTRB(widget.leftPadding, 0, rightPadding, 0),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(width: 0, color: Colors.transparent)),
+                    disabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(width: 0, color: Colors.transparent)),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(width: 0, color: Colors.transparent)),
+                    contentPadding: EdgeInsets.fromLTRB(
+                        widget.leftPadding, 0, rightPadding, 0),
                     border: OutlineInputBorder(
                         borderRadius: widget.borderRadius,
                         borderSide: BorderSide.none),
+
                     fillColor: widget.backgroundColor,
                     // contentPadding: EdgeInsets.all(20.0),
                     hintText: widget.hintText,
@@ -89,8 +111,8 @@ class _ZZInputState extends State<ZZInput> {
             ),
             phoneNeedClean == true
                 ? Positioned(
-                    width: 48,
-                    height: 48,
+                    width: widget.height,
+                    height: widget.height,
                     right: 0,
                     top: 0,
                     child: TextButton(

@@ -1,6 +1,6 @@
-import 'package:JMrealty/Login/model/PostListModel.dart';
 import 'package:JMrealty/components/TreeNode.dart';
 import 'package:JMrealty/components/TreeSelectView.dart';
+import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:JMrealty/Login/components/BottomSelect.dart';
@@ -20,6 +20,7 @@ class RegistSelectInput extends StatefulWidget {
   final void Function(TreeNode node) nodeSelected;
   final void Function(List<TreeNode> nodes) nodesSelected;
   final String hintText;
+  final TextStyle labelStyle;
   RegistSelectInput(
       {@required this.dataList,
       @required this.title,
@@ -34,8 +35,9 @@ class RegistSelectInput extends StatefulWidget {
         top: BorderSide(width: 0.5, color: Color.fromRGBO(0, 0, 0, 0.2)),
         bottom: BorderSide(width: 0.5, color: Color.fromRGBO(0, 0, 0, 0.2)),
       ),
-      this.defaultSelect = 0,
-      this.hintText = ''});
+      this.defaultSelect,
+      this.hintText = '',
+      this.labelStyle = jm_text_black_style14});
   @override
   _RegistSelectInputState createState() => _RegistSelectInputState();
 }
@@ -53,12 +55,16 @@ class _RegistSelectInputState extends State<RegistSelectInput> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    widget.width != null ? width = widget.width : width = SizeConfig.screenWidth;
-    widget.labelWidth != null ? labelWidth = widget.labelWidth : labelWidth = SizeConfig.blockSizeHorizontal * 30 - 20;
+    widget.width != null
+        ? width = widget.width
+        : width = SizeConfig.screenWidth;
+    widget.labelWidth != null
+        ? labelWidth = widget.labelWidth
+        : labelWidth = SizeConfig.blockSizeHorizontal * 30 - 20;
     TextStyle textStyle;
     String text;
     if (callBackData != null) {
-      textStyle = TextStyle(color: Colors.black, fontSize: 14);
+      textStyle = widget.labelStyle;
       text = callBackData['title'];
     } else {
       textStyle = TextStyle(color: Color.fromRGBO(0, 0, 0, 0.2), fontSize: 14);
@@ -69,16 +75,18 @@ class _RegistSelectInputState extends State<RegistSelectInput> {
       cellTap = () {
         showGeneralDialog(
             context: context,
-            barrierDismissible:true,
+            barrierDismissible: true,
             barrierLabel: '',
             transitionDuration: Duration(milliseconds: 200),
             barrierColor: Colors.black.withOpacity(.5),
             pageBuilder: (BuildContext context, Animation<double> animation,
                 Animation<double> secondaryAnimation) {
-              return TreeSelectView(size: Size(SizeConfig.blockSizeHorizontal*80, SizeConfig.blockSizeVertical*80),
+              return TreeSelectView(
+                size: Size(SizeConfig.blockSizeHorizontal * 80,
+                    SizeConfig.blockSizeVertical * 80),
                 treeData: widget.dataList,
                 nodeSelected: (node) {
-                  if(widget.nodeSelected != null) {
+                  if (widget.nodeSelected != null) {
                     widget.nodeSelected(node);
                   }
                   setState(() {
@@ -89,7 +97,8 @@ class _RegistSelectInputState extends State<RegistSelectInput> {
                   if (widget.nodesSelected != null) {
                     widget.nodesSelected(nodes);
                   }
-                },);
+                },
+              );
             });
       };
     } else {
