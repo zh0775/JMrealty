@@ -103,7 +103,7 @@ class ReportViewModel extends BaseViewModel {
     print('data === $data');
     Http().post(
       Urls.addReport,
-      params,
+      Map<String, dynamic>.from(params),
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
