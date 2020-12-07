@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 typedef void ZZinputValueChange(String value);
 
 class ZZInput extends StatefulWidget {
+  final Key key;
   final double width;
   final double height;
   final TextStyle textStyle;
@@ -17,7 +18,8 @@ class ZZInput extends StatefulWidget {
   final String text;
   final bool enable;
   ZZInput(
-      {this.width = 100,
+      {this.key,
+      this.width = 100,
       this.height = 50,
       this.textStyle = const TextStyle(fontSize: 16),
       this.borderRadius = const BorderRadius.all(Radius.circular(8)),
@@ -28,7 +30,8 @@ class ZZInput extends StatefulWidget {
       this.keyboardType = TextInputType.text,
       this.leftPadding = 20,
       this.text = '',
-      this.enable = true});
+      this.enable = true})
+      : super(key: key);
   @override
   _ZZInputState createState() => _ZZInputState();
 }
@@ -67,6 +70,7 @@ class _ZZInputState extends State<ZZInput> {
           children: [
             Container(
               child: TextField(
+                  key: widget.key ?? GlobalKey(),
                   // textAlignVertical: TextAlignVertical.bottom,
                   enabled: widget.enable,
                   keyboardType: widget.keyboardType,

@@ -51,4 +51,6 @@ class Urls {
   static const String clientFuzzySearch = '/customer/customer/search';
   // 新增报备
   static const String addReport = '/customer/report/insert';
+  // 报备记录列表
+  static const String reportRecordList = '/customer/report/Keys';
 }

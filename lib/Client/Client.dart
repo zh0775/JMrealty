@@ -28,7 +28,10 @@ class _ClientState extends State<Client> {
   };
   WriteFollowClick writeFollowClick =
       (ClientStatus status, int index, Map model, BuildContext context) {
-    WriteFollow(clientData: model).loadNextFollow();
+    WriteFollow(
+      clientData: model,
+      addFollowConfirm: () {},
+    ).loadNextFollow();
     print(
         'writeFollowClick status === $status --- index === $index --- model === $model');
   };

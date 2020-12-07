@@ -75,7 +75,7 @@ class ReportViewModel extends BaseViewModel {
     List clients = data['client'];
     Map agent = data['agent'];
     Map project = data['project'];
-
+    // print('data === $data');
     List clientsParams = [];
     Map<String, dynamic> params = {};
     clients.forEach((element) {
@@ -91,20 +91,21 @@ class ReportViewModel extends BaseViewModel {
     params = {
       'company': project['name'],
       'companyId': project['id'],
-      'employeeId': agent['id'],
+      'employeeId': agent['userId'],
       'employeeName': agent['userName'],
       'employeePhone': agent['phonenumber'],
       'projectId': project['id'],
       'projectName': project['name'],
-      'remarks': data['mark'],
+      'remarks': data['mark'] ?? '',
     };
     params['customerReport'] = clientsParams;
 
-    print('data === $data');
+    // print('data === $data');
     Http().post(
       Urls.addReport,
       Map<String, dynamic>.from(params),
       success: (json) {
+        print('json === $json');
         if (json['code'] == 200) {
           if (success != null) {
             success(true);
@@ -112,11 +113,15 @@ class ReportViewModel extends BaseViewModel {
         } else {
           success(false);
         }
-        ShowToast.normal(json['msg']);
+        if (json['msg'] != null) {
+          ShowToast.normal(json['msg']);
+        }
       },
       fail: (reason, code) {
         success(false);
-        ShowToast.normal(reason);
+        if (reason != null) {
+          ShowToast.normal(reason);
+        }
       },
     );
   }

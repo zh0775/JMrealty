@@ -127,6 +127,16 @@ class _ClientPoolState extends State<ClientPool> {
                                       actions: [
                                         TextButton(
                                             onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              '取消',
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: jm_text_black),
+                                            )),
+                                        TextButton(
+                                            onPressed: () {
                                               clientPoolVM.takeClientRequest(
                                                   data['id'], () {
                                                 Navigator.pop(context);
@@ -136,16 +146,6 @@ class _ClientPoolState extends State<ClientPool> {
                                             },
                                             child: Text(
                                               '确认',
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: jm_text_black),
-                                            )),
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(
-                                              '取消',
                                               style: TextStyle(
                                                   fontSize: 14,
                                                   color: jm_text_black),

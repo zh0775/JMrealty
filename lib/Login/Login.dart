@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:JMrealty/Login/components/RegistSelectInput.dart';
 import 'package:JMrealty/Login/components/ZZInput.dart';
 import 'package:JMrealty/Login/components/ZZSendCodeButton.dart';
+import 'package:flutter/services.dart';
 
 class Login extends StatefulWidget {
   final bool isLogin;
@@ -49,18 +50,15 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     imgSelectV = SelectImageView(
-      imageSelected: (image) {
-        print('image === ${image.runtimeType.toString()}');
+      imageSelected: (images) {
         setState(() {
-          if (image != null) {
-            headImg = File(image.path);
-          } else {
-            print('No image selected.');
+          if (images != null) {
+            headImg = images[0];
           }
         });
       },
     );
-    registIsMan = false;
+    registIsMan = true;
     isLoginSend = false;
     isRegistSend = false;
     organData = null;
@@ -179,7 +177,8 @@ class _LoginState extends State<Login> {
                                   () {
                                 ShowToast.normal('登录成功');
                                 Future.delayed(Duration(seconds: 1), () {
-                                  FocusScope.of(context).requestFocus(FocusNode());
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
                                   Navigator.pop(context);
                                 });
                               });
@@ -256,8 +255,10 @@ class _LoginState extends State<Login> {
   // 登录页 注册页 验证码输入框
   Widget authCodeInput(context, width) {
     return ZZInput(
+      key: ValueKey(isLogin ? 'authCodeInput_Login' : 'authCodeInput_regist'),
       width: width,
       height: 48,
+      keyboardType: TextInputType.number,
       hintText: '验证码',
       borderRadius: BorderRadius.horizontal(left: Radius.circular(8)),
       valueChange: (String value) {
@@ -269,10 +270,12 @@ class _LoginState extends State<Login> {
   // 登录页 手机号输入框
   Widget phoneInput(context) {
     return ZZInput(
+      key: ValueKey('login_phone_input'),
       width: SizeConfig.screenWidth - 80,
       height: 48,
       hintText: '请输入手机号',
       needCleanButton: true,
+      keyboardType: TextInputType.phone,
       valueChange: (String value) {
         // setState(() {
         phoneNumString = value;
@@ -325,12 +328,15 @@ class _LoginState extends State<Login> {
                           ? ClipRRect(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(40)),
-                              child: Image.file(
-                                headImg,
-                                fit: BoxFit.cover,
-                                height: 80,
-                                width: 80,
-                              ),
+                              // TODO 待解决BUG
+                              // child: Image.memory((getByteImg() as Uint8List))
+
+                              // Image.file(
+                              //   (headImg as Asset),
+                              //   fit: BoxFit.cover,
+                              //   height: 80,
+                              //   width: 80,
+                              // ),
                             )
                           : selectHead(context)),
                   SizedBox(
@@ -344,7 +350,7 @@ class _LoginState extends State<Login> {
                     },
                     builder: (context, model, child) {
                       return Padding(
-                        padding: const EdgeInsets.only(left:  20),
+                        padding: const EdgeInsets.only(left: 20),
                         child: RegistSelectInput(
                           width: SizeConfig.screenWidth - 40,
                           title: '组织级别',
@@ -423,6 +429,7 @@ class _LoginState extends State<Login> {
                           child: Text('姓名'),
                         ),
                         ZZInput(
+                          key: ValueKey('regist_name_input_001'),
                           height: lineHeight,
                           width: SizeConfig.blockSizeHorizontal * 70 + 5,
                           backgroundColor: Colors.transparent,
@@ -487,10 +494,12 @@ class _LoginState extends State<Login> {
                           child: Text('手机号'),
                         ),
                         ZZInput(
+                          key: ValueKey('phone_number_regist_002'),
                           height: lineHeight,
                           width: SizeConfig.blockSizeHorizontal * 70 + 5,
                           backgroundColor: Colors.transparent,
                           needCleanButton: true,
+                          keyboardType: TextInputType.phone,
                           valueChange: (value) {
                             registPhone = value;
                           },
@@ -576,6 +585,7 @@ class _LoginState extends State<Login> {
               sex == registIsMan ? Color.fromRGBO(64, 67, 82, 1) : Colors.white,
           borderRadius: BorderRadius.circular(sexButtonHeight / 2)),
       child: TextButton(
+        key: sex ? ValueKey('boy_button') : ValueKey('girl_button'),
         onPressed: () {
           if (sex != registIsMan) {
             setState(() {
@@ -703,5 +713,12 @@ class _LoginState extends State<Login> {
     model.code = registCodeNumString;
     model.sex = registIsMan ? 1 : 2;
     requestRegist(model);
+  }
+
+  // TODO
+  Future<dynamic> getByteImg() async {
+    ByteData byteData = await headImg.getByteData();
+    List<int> imageData = byteData.buffer.asUint8List();
+    return imageData;
   }
 }

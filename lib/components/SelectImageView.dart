@@ -1,10 +1,14 @@
+// import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class SelectImageView {
-  void Function(dynamic image) imageSelected;
-  final _picker = ImagePicker();
-  SelectImageView({@required this.imageSelected});
+  void Function(List<dynamic> images) imageSelected;
+  // final _picker = ImagePicker();
+  final int count;
+  SelectImageView({@required this.imageSelected, this.count = 1});
   double selfHeight = 200.0;
   void showImage(BuildContext context) {
     showModalBottomSheet(
@@ -15,10 +19,14 @@ class SelectImageView {
             child: Column(
               children: [
                 getButton('拍照', () {
-                  _getImageFromCamera();
+                  loadAssets(true);
+                  Navigator.pop(context);
+                  // _getImageFromCamera(ctx);
                 }),
                 getButton('从相册选择', () {
-                  _getImageFromGallery();
+                  loadAssets(false);
+                  Navigator.pop(context);
+                  // _getImageFromGallery(ctx);
                 }),
                 getButton('取消', () {
                   Navigator.pop(context);
@@ -45,17 +53,53 @@ class SelectImageView {
     );
   }
 
-  //拍照
-  Future _getImageFromCamera() async {
-    var image =
-        await _picker.getImage(source: ImageSource.camera, maxWidth: 400);
-    imageSelected(image);
-  }
+  // //拍照
+  // Future _getImageFromCamera(BuildContext context) async {
+  //   final pickedFile = await _picker.getImage(source: ImageSource.camera);
 
-  //相册选择
-  Future _getImageFromGallery() async {
-    var image = await _picker.getImage(source: ImageSource.gallery);
+  //   if (pickedFile != null) {
+  //     imageSelected(File(pickedFile.path));
+  //     Navigator.pop(context);
+  //   }
+  // }
 
-    imageSelected(image);
+  // //相册选择
+  // Future _getImageFromGallery(BuildContext context) async {
+  //   final pickedFile = await _picker.getImage(source: ImageSource.gallery);
+  //   if (pickedFile != null) {
+  //     imageSelected(File(pickedFile.path));
+  //     Navigator.pop(context);
+  //   }
+  // }
+
+  //
+  Future<void> loadAssets(bool isCamera) async {
+    List<Asset> resultList;
+    // String error;
+    resultList = await MultiImagePicker.pickImages(
+      maxImages: count,
+      enableCamera: isCamera,
+    );
+    if (resultList != null) {
+      imageSelected(resultList);
+    }
+    // try {
+    //   resultList = await MultiImagePicker.pickImages(
+    //     maxImages: 300,
+    //   );
+    // } on Exception catch (e) {
+    //   error = e.toString();
+    // }
+    // print('resultList == $resultList');
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    // if (!mounted) return;
+
+    // setState(() {
+    //   images = resultList;
+    //   _error = error;
+    // });
   }
 }
