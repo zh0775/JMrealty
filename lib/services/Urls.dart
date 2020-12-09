@@ -57,5 +57,6 @@ class Urls {
   static const String reportDetail = '/customer/report/findDetailsById';
   // 上传带看单
   static const String reportUploadRecord = '/customer/status/upload';
-
+  // 已成交
+  static const String reportSuccess = '/customer/shop/subscription';
 }

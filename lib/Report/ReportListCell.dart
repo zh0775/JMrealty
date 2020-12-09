@@ -1,3 +1,4 @@
+import 'package:JMrealty/Report/ReportSuccess.dart';
 import 'package:JMrealty/Report/ReportUpload.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/const/Default.dart';
@@ -35,77 +36,82 @@ class _ReportListCellState extends State<ReportListCell> {
     outMargin = widthScale * 4;
     insideMargin = widthScale * 6;
 
-    return GestureDetector(onTap: (){
-      Navigator.of(context).push(CupertinoPageRoute(
-        builder: (context) {
-          return ReportDetail(data: widget.data,);
-        },
-      ));
-    },child: Container(
-      width: SizeConfig.screenWidth,
-      height: widget.index != null && widget.index == 0
-          ? cellHeight + outMargin
-          : cellHeight,
-      decoration: BoxDecoration(
-        // border: Border(bottom: BorderSide(width: 1.5, color: Colors.black)),
-        color: Color(0xfff0f2f5),
-      ),
-      child: Align(
-        alignment: Alignment.topLeft,
-        child: Container(
-          width: SizeConfig.screenWidth - outMargin * 2,
-          height: cellHeight - outMargin,
-          margin: widget.index != null && widget.index == 0
-              ? EdgeInsets.only(top: outMargin, left: outMargin)
-              : EdgeInsets.only(left: outMargin),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: Colors.white,
-          ),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 15,
-              ),
-              // 第一行
-              getTitle(),
-              SizedBox(
-                height: 12,
-              ),
-              getProject(),
-              SizedBox(
-                height: labelSpace,
-              ),
-              getProtect(),
-              SizedBox(
-                height: labelSpace,
-              ),
-              getStatus(),
-              SizedBox(
-                height: labelSpace,
-              ),
-              getCompany(),
-              SizedBox(
-                height: labelSpace,
-              ),
-              getName(),
-              SizedBox(
-                height: labelSpace,
-              ),
-              getNum(),
-              SizedBox(
-                height: 15,
-              ),
-              JMline(width: SizeConfig.screenWidth, height: 0.5),
-              SizedBox(
-                height: 6,
-              ),
-              getButtons(),
-            ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(CupertinoPageRoute(
+          builder: (context) {
+            return ReportDetail(
+              data: widget.data,
+            );
+          },
+        ));
+      },
+      child: Container(
+        width: SizeConfig.screenWidth,
+        height: widget.index != null && widget.index == 0
+            ? cellHeight + outMargin
+            : cellHeight,
+        decoration: BoxDecoration(
+          // border: Border(bottom: BorderSide(width: 1.5, color: Colors.black)),
+          color: Color(0xfff0f2f5),
+        ),
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: Container(
+            width: SizeConfig.screenWidth - outMargin * 2,
+            height: cellHeight - outMargin,
+            margin: widget.index != null && widget.index == 0
+                ? EdgeInsets.only(top: outMargin, left: outMargin)
+                : EdgeInsets.only(left: outMargin),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Colors.white,
+            ),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 15,
+                ),
+                // 第一行
+                getTitle(),
+                SizedBox(
+                  height: 12,
+                ),
+                getProject(),
+                SizedBox(
+                  height: labelSpace,
+                ),
+                getProtect(),
+                SizedBox(
+                  height: labelSpace,
+                ),
+                getStatus(),
+                SizedBox(
+                  height: labelSpace,
+                ),
+                getCompany(),
+                SizedBox(
+                  height: labelSpace,
+                ),
+                getName(),
+                SizedBox(
+                  height: labelSpace,
+                ),
+                getNum(),
+                SizedBox(
+                  height: 15,
+                ),
+                JMline(width: SizeConfig.screenWidth, height: 0.5),
+                SizedBox(
+                  height: 6,
+                ),
+                getButtons(),
+              ],
+            ),
           ),
         ),
       ),
-    ),);
+    );
   }
 
   // 姓名电话
@@ -264,8 +270,11 @@ class _ReportListCellState extends State<ReportListCell> {
                   borderColor: Colors.red,
                   textStyle: TextStyle(color: Colors.red, fontSize: 13)),
               getTextButton('成交', () {
-
-
+                Navigator.of(context).push(CupertinoPageRoute(
+                  builder: (context) {
+                    return ReportSuccess(data: widget.data);
+                  },
+                ));
               }),
             ],
           ),

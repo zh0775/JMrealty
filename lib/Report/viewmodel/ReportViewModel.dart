@@ -72,13 +72,14 @@ class ReportViewModel extends BaseViewModel {
   }
 
   addReportRequest(Map data, Function(bool success) success) {
+    print('addReportRequest ==== $data');
     List clients = data['client'];
     Map agent = data['agent'];
     Map project = data['project'];
     // print('data === $data');
     List clientsParams = [];
     Map<String, dynamic> params = {};
-    if (clientData != null && clientData.length > 0) {
+    if (clients != null && clients.length > 0) {
       clients.forEach((element) {
         Map client = {
           'csutomerPhone': element['csutomerPhone'],

@@ -10,10 +10,10 @@ import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 
 class ReportUpload extends StatefulWidget {
-  Map data;
+  final Map data;
   ReportUpload({@required this.data});
   @override
   _ReportUploadState createState() => _ReportUploadState();
@@ -36,7 +36,7 @@ class _ReportUploadState extends State<ReportUpload> {
       count: 12,
       imageSelected: (images) {
         if (images != null) {
-          viewModel.upLoadReportImages(images,callBack: (){
+          viewModel.upLoadReportImages(images, callBack: () {
             setState(() {
               imageList.addAll(viewModel.imageDatas);
             });
@@ -53,6 +53,7 @@ class _ReportUploadState extends State<ReportUpload> {
   void dispose() {
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -144,9 +145,9 @@ class _ReportUploadState extends State<ReportUpload> {
                 imageStr = imageStr.substring(0, imageStr.length - 1);
                 mapParams['images'] = imageStr;
               }
-              print('data ==== ${widget.data}');
-              print('images ==== $mapParams');
-              print('123 === ${widget.data['status']}');
+              // print('data ==== ${widget.data}');
+              // print('images ==== $mapParams');
+              // print('123 === ${widget.data['status']}');
               if (widget.data['status'] != null) {
                 mapParams['beforeStatus'] = widget.data['status'];
               }
@@ -155,7 +156,7 @@ class _ReportUploadState extends State<ReportUpload> {
               }
               mapParams['remark'] = mark ?? '';
               viewModel.uploadReportRecord(mapParams, (success) {
-                if(success) {
+                if (success) {
                   ShowToast.normal('上传成功');
                   Future.delayed(Duration(seconds: 1)).then((value) {
                     Navigator.pop(context);
@@ -208,32 +209,32 @@ class _ReportUploadState extends State<ReportUpload> {
           ));
         } else {
           widgetRow.add(GestureDetector(
-            onTap: () {
-              checkImg(i);
-            },
-            child: Container(
-              width: widthScale * 29.3,
-              height: widthScale * 30.0,
-              child: Align(
-                child: Container(
-                  width: widthScale * 25.3,
-                  height: widthScale * 25.3,
-                  // color: jm_line_color,
-                  child: ImageLoader(imageList[i], widthScale * 25.3),
-                  // Image.memory(imageList[i].buffer.asUint8List(),fit: BoxFit.cover,height: widthScale * 25.3,width: widthScale * 25.3,)
-                //   FutureBuilder<dynamic>(
-                //       future: imageList[i].getThumbByteData((widthScale * 25.3).round(), (widthScale * 25.3).round()),
-                //       builder: (context,snapshot) {
-                //         if (snapshot.connectionState == ConnectionState.done) {
-                //           return Image.memory(snapshot.data.buffer.asUint8List(),fit: BoxFit.cover,height: widthScale * 25.3,width: widthScale * 25.3,);
-                //         } else {
-                //           return Container(width: 0.0,height: 0.0,);
-                //         }
-                //       },
-                // ),
-              ),
-            ),
-          )));
+              onTap: () {
+                checkImg(i);
+              },
+              child: Container(
+                width: widthScale * 29.3,
+                height: widthScale * 30.0,
+                child: Align(
+                  child: Container(
+                    width: widthScale * 25.3,
+                    height: widthScale * 25.3,
+                    // color: jm_line_color,
+                    child: ImageLoader(imageList[i], widthScale * 25.3),
+                    // Image.memory(imageList[i].buffer.asUint8List(),fit: BoxFit.cover,height: widthScale * 25.3,width: widthScale * 25.3,)
+                    //   FutureBuilder<dynamic>(
+                    //       future: imageList[i].getThumbByteData((widthScale * 25.3).round(), (widthScale * 25.3).round()),
+                    //       builder: (context,snapshot) {
+                    //         if (snapshot.connectionState == ConnectionState.done) {
+                    //           return Image.memory(snapshot.data.buffer.asUint8List(),fit: BoxFit.cover,height: widthScale * 25.3,width: widthScale * 25.3,);
+                    //         } else {
+                    //           return Container(width: 0.0,height: 0.0,);
+                    //         }
+                    //       },
+                    // ),
+                  ),
+                ),
+              )));
         }
 
         if ((i + 1) % lineCount == 0) {

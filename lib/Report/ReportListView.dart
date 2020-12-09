@@ -13,7 +13,8 @@ class ReportListView extends StatefulWidget {
   _ReportListViewState createState() => _ReportListViewState();
 }
 
-class _ReportListViewState extends State<ReportListView> with AutomaticKeepAliveClientMixin {
+class _ReportListViewState extends State<ReportListView>
+    with AutomaticKeepAliveClientMixin {
   ReportListViewModel reportListVM;
   EasyRefreshController easyRefreshCtr;
   // GlobalKey _easyRefreshKey = GlobalKey();
@@ -65,7 +66,7 @@ class _ReportListViewState extends State<ReportListView> with AutomaticKeepAlive
         print('onRefresh ---- loadListData');
         await reportListVM.loadListData(widget.status, success: (success) {
           // easyRefreshCtr.resetLoadState();
-          easyRefreshCtr.finishRefresh();
+          // easyRefreshCtr.finishRefresh();
           if (success) {
             setState(() {
               total = reportListVM.listData['total'];

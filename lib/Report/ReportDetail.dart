@@ -1,22 +1,20 @@
-import 'dart:io';
-
 import 'package:JMrealty/Report/viewmodel/ReportDetailViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/image_loader.dart';
 import 'package:JMrealty/base/provider_widget.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
-import 'package:JMrealty/components/CustomMarkInput.dart';
-import 'package:JMrealty/components/CustomSubmitButton.dart';
+import 'package:JMrealty/components/CustomGridImageV.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/components/ReportStatusBar.dart';
 import 'package:JMrealty/components/SelectImageView.dart';
 import 'package:JMrealty/components/ShowLoading.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/tTools.dart';
 import 'package:flutter/material.dart';
 
 class ReportDetail extends StatefulWidget {
-  Map data;
+  final Map data;
   ReportDetail({@required this.data});
   @override
   _ReportDetailState createState() => _ReportDetailState();
@@ -65,28 +63,28 @@ class _ReportDetailState extends State<ReportDetail> {
       appBar: CustomAppbar(
         title: '报备详情',
       ),
-      body:
-      ProviderWidget<ReportDetailViewModel>(
+      body: ProviderWidget<ReportDetailViewModel>(
         model: reportDetailModel,
         onReady: (model) {
           reportDetailModel.loadReportDetailRequest(widget.data['id']);
         },
-        builder: (ctx, value, child){
+        builder: (ctx, value, child) {
           // setState(() {
           //   detailData = value.reportDetailData;
           // });
           if (value.state == BaseState.CONTENT) {
-            return  getBody(context,value.reportDetailData);
+            return getBody(context, value.reportDetailData);
           } else if (value.state == BaseState.LOADING) {
-          return ShowLoading();
+            return ShowLoading();
             // return Container(width: 0.0, height: 0.0);
           } else {
-          return EmptyView();
-            return Container(width: 0.0, height: 0.0);
+            return EmptyView();
+            // return Container(width: 0.0, height: 0.0);
           }
         },
       ),
-    );}
+    );
+  }
 
   checkImg(int index) {
     print(index);
@@ -96,10 +94,12 @@ class _ReportDetailState extends State<ReportDetail> {
     imgSelectV.showImage(context);
   }
 
-  Widget getBody (BuildContext context, Map mapData) {
+  Widget getBody(BuildContext context, Map mapData) {
     return ListView(
       children: [
-        ReportStatusBar(statusNo: (mapData['reportInfoVO'])['status']??null, statusData: mapData['reportStatuses']??null),
+        ReportStatusBar(
+            statusNo: (mapData['reportInfoVO'])['status'] ?? null,
+            statusData: mapData['reportStatuses'] ?? null),
         JMline(width: SizeConfig.screenWidth, height: 0.5),
         SizedBox(
           height: 20,
@@ -137,25 +137,7 @@ class _ReportDetailState extends State<ReportDetail> {
         SizedBox(
           height: 15,
         ),
-        Padding(
-            padding: EdgeInsets.only(left: outMargin),
-            child: Text(
-              '上传资料',
-              style: jm_text_black_bold_style17,
-            )),
-        SizedBox(
-          height: 13,
-        ),
-        Align(
-          child: Container(
-            width: SizeConfig.screenWidth - outMargin * 2,
-            child: Column(
-              children: [
-                ...getImageButtons(),
-              ],
-            ),
-          ),
-        ),
+        ...getPhotoInfo(mapData['reportStatuses'] ?? [])
       ],
     );
   }
@@ -211,18 +193,18 @@ class _ReportDetailState extends State<ReportDetail> {
 
         if ((i + 1) % lineCount == 0) {
           widgetList.add(Row(
-            // mainAxisAlignment: MainAxisAlignment.spaceAround,
+              // mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List<Widget>.generate(widgetRow?.length, (int index) {
-                return widgetRow[index];
-              }, growable: true)));
+            return widgetRow[index];
+          }, growable: true)));
           widgetRow.clear();
         } else if ((imageList.length + 1) % lineCount != 0 &&
             i == imageList.length) {
           widgetList.add(Row(
-            // mainAxisAlignment: MainAxisAlignment.spaceAround,
+              // mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List<Widget>.generate(widgetRow?.length, (int index) {
-                return widgetRow[index];
-              }, growable: true)));
+            return widgetRow[index];
+          }, growable: true)));
           widgetRow.clear();
         }
       }
@@ -375,7 +357,83 @@ class _ReportDetailState extends State<ReportDetail> {
     );
   }
 
-  Widget getImageContent (Map data) {
-    return Container();
+  List<Widget> getPhotoInfo(List data) {
+    List<Widget> widgets = [];
+    if (data != null) {
+      data.forEach((element) {
+        widgets.add(getImageContent(element));
+      });
+    }
+    return widgets;
+  }
+
+  Widget getImageContent(Map data) {
+    if (data != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              SizedBox(
+                width: outMargin,
+              ),
+              Container(
+                width: widthScale * 2.5,
+                height: widthScale * 2.5,
+                color: jm_appTheme,
+              ),
+              SizedBox(
+                width: widthScale * 2,
+              ),
+              Text(
+                getStatusString(data['status'] ?? 0),
+                style: jm_text_black_bold_style15,
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: widthScale * 10.5,
+              ),
+              Text(
+                data['createTime'] ?? '',
+                style: jm_text_gray_style13,
+              ),
+              SizedBox(
+                width: widthScale * 1.5,
+              ),
+              Text(data['employeePosition'] ?? '', style: jm_text_gray_style13),
+              SizedBox(
+                width: widthScale * 1.5,
+              ),
+              Text(data['employeeName'] ?? '', style: jm_text_gray_style13),
+            ],
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: outMargin),
+            child: CustomGridImageV(
+              imageUrls: getImgUrls(data['images'] ?? ''),
+              width: SizeConfig.screenWidth - outMargin * 2,
+              needButton: false,
+            ),
+          ),
+          JMline(width: SizeConfig.screenWidth, height: 0.5)
+        ],
+      );
+    } else {
+      return Container(width: 0.0, height: 0.0);
+    }
+  }
+
+  List getImgUrls(String str) {
+    if (str == null || str.length == 0) {
+      return <String>[];
+    } else {
+      return str.split(',');
+    }
   }
 }

@@ -196,8 +196,46 @@ String timeHandle(int time) {
   return '${formatTimeStampToString(createTime) ?? '未知'}';
 }
 
-String timeToYMD (String dateStr) {
+String timeToYMD(String dateStr) {
   var date = DateTime.parse(dateStr);
   var formatter = DateFormat('yyyy-MM-dd');
   return formatter.format(date);
+}
+
+String getStatusString(int status) {
+  switch (status) {
+    case 0:
+      return '有效';
+      break;
+    case 10:
+      return '已带看';
+      break;
+    case 20:
+      return '已上传';
+      break;
+    case 21:
+      return '已预约';
+      break;
+    case 30:
+      return '已成交';
+      break;
+    case 40:
+      return '已签约';
+      break;
+    case 50:
+      return '已结款';
+      break;
+    case 60:
+      return '已结佣';
+      break;
+    case 70:
+      return '失效';
+      break;
+    case 80:
+      return '退单';
+      break;
+    default:
+      return '其他';
+      break;
+  }
 }

@@ -14,7 +14,8 @@ class AppStartViewModel extends BaseViewModel {
     notifyListeners();
     Http().get(Urls.appStartImg, {}, success: (json) {
       // print(jsonEncode(json).toString());
-      String imgUrl = (json['data'])['pictureUrl'];
+      String imgUrl =
+          (json['data']) != null ? (json['data'])['pictureUrl'] : '';
       // print('imgUrl === $imgUrl');
       if (imgUrl != null) {
         startImgUrl = imgUrl;
