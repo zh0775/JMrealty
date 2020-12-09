@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:JMrealty/Report/viewmodel/ReportDetailViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
+import 'package:JMrealty/base/image_loader.dart';
 import 'package:JMrealty/base/provider_widget.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
@@ -30,7 +31,6 @@ class _ReportDetailState extends State<ReportDetail> {
   double outMargin;
   double labelSpace;
   String mark;
-  List imageList;
   dynamic img;
   @override
   void initState() {
@@ -48,7 +48,6 @@ class _ReportDetailState extends State<ReportDetail> {
     //   },
     // );
     labelSpace = 3;
-    imageList = [];
     super.initState();
   }
 
@@ -162,12 +161,13 @@ class _ReportDetailState extends State<ReportDetail> {
   }
 
   List<Widget> getImageButtons() {
+    List imageList = [];
     int lineCount = 3;
     List<Widget> widgetList = [];
 
     if (imageList != null && imageList != []) {
       List<Widget> widgetRow = [];
-      for (var i = 0; i < (imageList.length + 1); i++) {
+      for (var i = 0; i < imageList.length; i++) {
         if (i == imageList.length) {
           widgetRow.add(GestureDetector(
             onTap: addImage,
@@ -203,16 +203,7 @@ class _ReportDetailState extends State<ReportDetail> {
                     width: widthScale * 25.3,
                     height: widthScale * 25.3,
                     // color: jm_line_color,
-                    child: FutureBuilder<dynamic>(
-                      future: imageList[i],
-                      builder: (context,snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          return Image.memory(snapshot.data.buffer.asUint8List(),fit: BoxFit.cover,height: widthScale * 25.3,width: widthScale * 25.3,);
-                        } else {
-                          return Container(width: 0.0,height: 0.0,);
-                        }
-                      },
-                    ),
+                    child: ImageLoader(imageList[i], widthScale * 25.3),
                   ),
                 ),
               )));
@@ -382,5 +373,9 @@ class _ReportDetailState extends State<ReportDetail> {
         style: jm_text_gray_style15,
       ),
     );
+  }
+
+  Widget getImageContent (Map data) {
+    return Container();
   }
 }
