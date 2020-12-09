@@ -78,6 +78,7 @@ class _ZZInputState extends State<ZZInput> {
                   maxLines: 1,
                   style: widget.textStyle,
                   onChanged: (value) {
+                    print('123123');
                     if (widget.valueChange != null) widget.valueChange(value);
                     if (widget.needCleanButton) {
                       bool needClear = false;
@@ -113,31 +114,31 @@ class _ZZInputState extends State<ZZInput> {
                     filled: true,
                   )),
             ),
-            phoneNeedClean == true
-                ? Positioned(
-                    width: widget.height,
-                    height: widget.height,
-                    right: 0,
-                    top: 0,
-                    child: TextButton(
-                        onPressed: () {
-                          phoneCtr.clear();
-                          if (widget.valueChange != null) {
-                            widget.valueChange('');
-                          }
-                          setState(() {
-                            phoneNeedClean = false;
-                          });
-                        },
-                        child: Icon(
-                          Icons.close,
-                          size: 20,
-                          color: Colors.black,
-                        )))
-                : SizedBox(
-                    height: 0,
-                    width: 0,
-                  )
+            // phoneNeedClean == true
+            //     ? Positioned(
+            //         width: widget.height,
+            //         height: widget.height,
+            //         right: 0,
+            //         top: 0,
+            //         child: TextButton(
+            //             onPressed: () {
+            //               phoneCtr.clear();
+            //               if (widget.valueChange != null) {
+            //                 widget.valueChange('');
+            //               }
+            //               setState(() {
+            //                 phoneNeedClean = false;
+            //               });
+            //             },
+            //             child: Icon(
+            //               Icons.close,
+            //               size: 20,
+            //               color: Colors.black,
+            //             )))
+            //     : Container(
+            //         height: 0.0,
+            //         width: 0.0,
+            //       )
           ],
         ));
   }

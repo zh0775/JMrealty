@@ -444,6 +444,11 @@ class _ReportSuccessState extends State<ReportSuccess> {
             imageUrls: imgUrls,
             width: SizeConfig.screenWidth - outMargin * 2,
             needButton: true,
+            addImages: (images) {
+              setState(() {
+                imgUrls.addAll(images);
+              });
+            },
           ),
         ),
       ],
