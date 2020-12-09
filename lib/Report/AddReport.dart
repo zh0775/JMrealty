@@ -2,8 +2,9 @@ import 'package:JMrealty/Report/viewmodel/ReportViewModel.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/material.dart';
-
+import 'dart:convert' as convert;
 class AddReport extends StatefulWidget {
   @override
   _AddReportState createState() => _AddReportState();
@@ -30,11 +31,23 @@ class _AddReportState extends State<AddReport> {
   Map projectData; // 项目数据
   Map agentData; // 经纪人数据
   String mark;
+  Map userInfo;
   // String jjrSearchStr;
   // String clientSearchStr;
   // String projectSearchStr;
   @override
   void initState() {
+    UserDefault.get('userInfo').then((value) {
+      userInfo = convert.jsonDecode(value);
+      setState(() {
+        agentData = {
+          'userId': userInfo['userId'],
+          'userName': userInfo['userName'],
+          'phonenumber': userInfo['phonenumber'],
+        };
+      });
+    });
+
     mark = '';
     model = ReportViewModel();
     addClientCount = 0;
@@ -87,7 +100,6 @@ class _AddReportState extends State<AddReport> {
             textStyle: jm_text_black_style15,
             title: '项目搜索',
             hintText: '请输入项目名称',
-            valueChange: (value) {},
             valueChangeAndShowList: (value, state) {
               if (value != '') {
                 model.loadProjectList(
@@ -181,8 +193,8 @@ class _AddReportState extends State<AddReport> {
             key: ValueKey('CustomInput_agent_1'),
             labelStyle: jm_text_black_bold_style14,
             textStyle: jm_text_black_style15,
-            text: agentData != null && agentData['userName'] != null
-                ? agentData['userName']
+            text: agentData != null && agentData['showName'] != null
+                ? agentData['showName']
                 : '',
             title: '搜索内容',
             hintText: '请输入名称和手机号码',
@@ -204,6 +216,7 @@ class _AddReportState extends State<AddReport> {
             showListClick: (data) {
               setState(() {
                 agentData = data;
+                agentData['showName'] = data['userName'];
               });
             },
           ),

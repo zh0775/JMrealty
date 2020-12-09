@@ -13,7 +13,7 @@ class ReportListView extends StatefulWidget {
   _ReportListViewState createState() => _ReportListViewState();
 }
 
-class _ReportListViewState extends State<ReportListView> {
+class _ReportListViewState extends State<ReportListView> with AutomaticKeepAliveClientMixin {
   ReportListViewModel reportListVM;
   EasyRefreshController easyRefreshCtr;
   // GlobalKey _easyRefreshKey = GlobalKey();
@@ -99,8 +99,8 @@ class _ReportListViewState extends State<ReportListView> {
     );
   }
 
-  // @override
-  // bool get wantKeepAlive {
-  //   return true;
-  // }
+  @override
+  bool get wantKeepAlive {
+    return true;
+  }
 }

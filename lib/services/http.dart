@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
+import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'http_config.dart';
-
+import 'package:http_parser/http_parser.dart';
 typedef Success = void Function(dynamic json);
 typedef Fail = void Function(String reason, int code);
 typedef After = void Function();
@@ -132,6 +136,62 @@ class Http {
         fail('网络发生错误', -1);
       }
     }
+  }
+
+  Future<void> UploadImages(List images,
+      {Function(List jsons) resList }) async {
+    List<Future> imagesFuture = [];
+    for (int i = 0; i < images.length; i++) {
+      Asset asset = images[i];
+      ByteData byteData = await asset.getByteData();
+      List<int> imageData = byteData.buffer.asUint8List();
+      MultipartFile multipartFile = MultipartFile.fromBytes(
+        imageData,
+        filename: asset.name,
+        contentType: MediaType.parse('application/octet-stream'),
+      );
+      FormData formData = FormData.fromMap({
+        "uploadFile": multipartFile
+      });
+      imagesFuture.add(_dio.post(
+          Urls.imgUpload,
+          data: formData
+        )
+      );
+    }
+    try {
+      Future.wait(imagesFuture).then((values) {
+        resList(values);
+        // print('images---value--- ====$value');
+      });
+    } catch (e) {
+
+    }
+
+    // try {
+    //   await _dio.post(Urls.imgUpload, data: json.encode(params)).then((response) {
+    //     if (response.statusCode == 200) {
+    //       Map<String, dynamic> data = response.data;
+    //       if (data['code'] != 200) {
+    //         ShowToast.normal(data['msg']);
+    //       }
+    //       if (success != null) {
+    //         success(response.data);
+    //       }
+    //     } else {
+    //       if (fail != null) {
+    //         fail(response.statusMessage, response.statusCode);
+    //       }
+    //     }
+    //     if (after != null) {
+    //       after();
+    //     }
+    //   });
+    // } catch (e) {
+    //   if (fail != null) {
+    //     fail('网络发生错误', -1);
+    //   }
+    // }
   }
 
   void log(Dio _dio) {

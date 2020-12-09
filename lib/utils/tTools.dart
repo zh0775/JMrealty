@@ -195,3 +195,9 @@ String timeHandle(int time) {
   int createTime = int.parse('${stringDisposeWithDouble(createTimeDouble)}');
   return '${formatTimeStampToString(createTime) ?? '未知'}';
 }
+
+String timeToYMD (String dateStr) {
+  var date = DateTime.parse(dateStr);
+  var formatter = DateFormat('yyyy-MM-dd');
+  return formatter.format(date);
+}

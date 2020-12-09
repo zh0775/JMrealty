@@ -4,12 +4,11 @@ import 'package:JMrealty/services/http.dart';
 import 'package:JMrealty/utils/toast.dart';
 
 class ReportUploadViewModel extends BaseViewModel {
-  uploadReportBills(Map params, Function(bool success) success) {
+  uploadReportRecord(Map params, Function(bool success) success) {
     Http().post(
-      Urls.addReport,
+      Urls.reportUploadRecord,
       Map<String, dynamic>.from(params),
       success: (json) {
-        print('json === $json');
         if (json['code'] == 200) {
           if (success != null) {
             success(true);
@@ -28,5 +27,28 @@ class ReportUploadViewModel extends BaseViewModel {
         }
       },
     );
+  }
+
+  List imageDatas;
+  upLoadReportImages (List images,{Function() callBack}) {
+    int total = images.length;
+    int successCount = 0;
+    Http().UploadImages(images,resList: (List images) {
+      imageDatas = [];
+      images.forEach((imgJson) {
+
+        if ((imgJson.data)['code'] == 200) {
+          successCount++;
+          imageDatas.add((imgJson.data)['data']);
+        }
+      });
+      callBack();
+      if (total != successCount) {
+        ShowToast.normal('上传成功'+ successCount.toString() +'张，失败' + (total - successCount).toString() + '张');
+      }
+      if (successCount == 0) {
+        ShowToast.normal('上传失败');
+      }
+    });
   }
 }

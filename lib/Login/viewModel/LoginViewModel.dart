@@ -1,3 +1,4 @@
+import 'package:JMrealty/Home/viewModel/HomeViewModel.dart';
 import 'package:JMrealty/Login/model/PostListModel.dart';
 import 'package:JMrealty/Login/model/login_model.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
@@ -254,8 +255,9 @@ class LoginViewModel extends BaseViewModel {
               .then((bool value) {
             if (value) {
               success();
-              UserDefault.get('access_token');
-              print('access_token === $value');
+              // UserDefault.get('access_token');
+              // print('access_token === $value');
+              HomeViewModel().loadUserInfo();
             }
           });
         } else {

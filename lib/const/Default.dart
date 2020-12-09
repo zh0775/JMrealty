@@ -192,6 +192,7 @@ class CustomInput extends StatefulWidget {
   final double otherWidth;
   final String text;
   final bool enable;
+  final Color backgroundColor;
   final TextStyle textStyle;
   final Function(Map data) showListClick;
   final Function(String value) valueChange;
@@ -212,7 +213,8 @@ class CustomInput extends StatefulWidget {
       this.enable = true,
       this.textStyle = jm_text_black_style14,
       this.valueChangeAndShowList,
-      this.showListClick})
+      this.showListClick,
+      this.backgroundColor = Colors.transparent})
       : super(key: key);
   @override
   _CustomInputState createState() => _CustomInputState();
@@ -223,7 +225,29 @@ class _CustomInputState extends State<CustomInput> {
   double lableWidth;
   OverlayEntry _overlayEntry;
   bool isShow = false;
+  TextEditingController textCtr;
   final LayerLink _layerLink = LayerLink();
+
+  @override
+  void initState() {
+    textCtr = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant CustomInput oldWidget) {
+    textCtr.text = widget.text;
+    super.didUpdateWidget(oldWidget);
+  }
+  @override
+  void dispose() {
+    if (textCtr != null) {
+      textCtr.dispose();
+      textCtr = null;
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -247,26 +271,66 @@ class _CustomInputState extends State<CustomInput> {
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: getlabel(widget.title, widget.must))),
-              ZZInput(
-                textStyle: widget.textStyle,
-                enable: widget.enable,
-                text: widget.text,
-                leftPadding: 0,
-                height: widget.lineHeight,
+              // ZZInput(
+              //   textStyle: widget.textStyle,
+              //   enable: widget.enable,
+              //   text: widget.text,
+              //   leftPadding: 0,
+              //   height: widget.lineHeight,
+              //   width: widget.otherWidth ??
+              //       SizeConfig.screenWidth - margin * 2 - lableWidth,
+              //   keyboardType: widget.keyboardType,
+              //   backgroundColor: Colors.transparent,
+              //   needCleanButton: true,
+              //   valueChange: (String value) {
+              //     if (widget.valueChange != null) {
+              //       widget.valueChange(value);
+              //     }
+              //     if (widget.valueChangeAndShowList != null) {
+              //       widget.valueChangeAndShowList(value, this);
+              //     }
+              //   },
+              //   hintText: widget.hintText,
+              // )
+              Container(
                 width: widget.otherWidth ??
-                    SizeConfig.screenWidth - margin * 2 - lableWidth,
-                keyboardType: widget.keyboardType,
-                backgroundColor: Colors.transparent,
-                needCleanButton: true,
-                valueChange: (String value) {
-                  if (widget.valueChange != null) {
-                    widget.valueChange(value);
-                  }
-                  if (widget.valueChangeAndShowList != null) {
-                    widget.valueChangeAndShowList(value, this);
-                  }
-                },
-                hintText: widget.hintText,
+                          SizeConfig.screenWidth - margin * 2 - lableWidth,
+                constraints: BoxConstraints(minHeight: widget.lineHeight,maxHeight: widget.lineHeight),
+                child: TextField(
+                  key: widget.key,
+                  controller: textCtr,
+                  enabled: widget.enable,
+                  keyboardType: widget.keyboardType,
+                  maxLines: 1,
+                  style: widget.textStyle,
+                  decoration: InputDecoration(
+                    hintText: widget.hintText,
+                    fillColor: widget.backgroundColor,
+                    focusedBorder: OutlineInputBorder(
+                        borderSide:
+                        BorderSide(width: 0, color: Colors.transparent)),
+                    disabledBorder: OutlineInputBorder(
+                        borderSide:
+                        BorderSide(width: 0, color: Colors.transparent)),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide:
+                        BorderSide(width: 0, color: Colors.transparent)),
+                    contentPadding: EdgeInsets.fromLTRB(
+                        10, 0, 10, 0),
+                    border: OutlineInputBorder(
+                        // borderRadius: widget.borderRadius,
+                        borderSide: BorderSide.none),
+                  ),
+                  onChanged: (value) {
+                    if (widget.valueChange != null) {
+                      widget.valueChange(value);
+                    }
+                    if (widget.valueChangeAndShowList != null) {
+                      widget.valueChangeAndShowList(value, this);
+                    }
+                  },
+
+                ),
               )
             ],
           ),

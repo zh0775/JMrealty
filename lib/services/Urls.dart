@@ -53,4 +53,9 @@ class Urls {
   static const String addReport = '/customer/report/insert';
   // 报备记录列表
   static const String reportRecordList = '/customer/report/Keys';
+  // 报备详情
+  static const String reportDetail = '/customer/report/findDetailsById';
+  // 上传带看单
+  static const String reportUploadRecord = '/customer/status/upload';
+
 }

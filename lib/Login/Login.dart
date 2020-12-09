@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:JMrealty/Login/model/login_model.dart';
 import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
@@ -25,6 +24,8 @@ class Login extends StatefulWidget {
   _LoginState createState() => _LoginState();
 }
 
+
+
 class _LoginState extends State<Login> {
   String headImgPath; // 头像路径
   dynamic headImg;
@@ -46,6 +47,8 @@ class _LoginState extends State<Login> {
   void dispose() {
     super.dispose();
   }
+
+
 
   @override
   void initState() {
@@ -328,15 +331,18 @@ class _LoginState extends State<Login> {
                           ? ClipRRect(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(40)),
-                              // TODO 待解决BUG
-                              // child: Image.memory((getByteImg() as Uint8List))
-
-                              // Image.file(
-                              //   (headImg as Asset),
-                              //   fit: BoxFit.cover,
-                              //   height: 80,
-                              //   width: 80,
-                              // ),
+                              child:
+                              // Image.memory(headImg.buffer.asUint8List(),fit: BoxFit.cover,height: 80,width: 80,)
+                              FutureBuilder<ByteData>(
+                                  future: headImg.getThumbByteData(80, 80),
+                                builder: (context,snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.done) {
+                                    return Image.memory(snapshot.data.buffer.asUint8List(),fit: BoxFit.cover,height: 80,width: 80,);
+                                  } else {
+                                    return Container(width: 0.0,height: 0.0,);
+                                  }
+                                },
+                              )
                             )
                           : selectHead(context)),
                   SizedBox(
@@ -716,9 +722,8 @@ class _LoginState extends State<Login> {
   }
 
   // TODO
-  Future<dynamic> getByteImg() async {
+  dynamic getByteImg() async {
     ByteData byteData = await headImg.getByteData();
-    List<int> imageData = byteData.buffer.asUint8List();
-    return imageData;
+    List<int> imageData = await byteData.buffer.asUint8List();
   }
 }

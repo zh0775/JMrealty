@@ -5,6 +5,8 @@ import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'ReportDetail.dart';
+
 class ReportListCell extends StatefulWidget {
   final Map data;
   final int index;
@@ -21,7 +23,7 @@ class _ReportListCellState extends State<ReportListCell> {
   double labelSpace;
   @override
   void initState() {
-    cellHeight = 330;
+    cellHeight = 340;
     labelSpace = 3;
     super.initState();
   }
@@ -33,7 +35,13 @@ class _ReportListCellState extends State<ReportListCell> {
     outMargin = widthScale * 4;
     insideMargin = widthScale * 6;
 
-    return Container(
+    return GestureDetector(onTap: (){
+      Navigator.of(context).push(CupertinoPageRoute(
+        builder: (context) {
+          return ReportDetail(data: widget.data,);
+        },
+      ));
+    },child: Container(
       width: SizeConfig.screenWidth,
       height: widget.index != null && widget.index == 0
           ? cellHeight + outMargin
@@ -97,7 +105,7 @@ class _ReportListCellState extends State<ReportListCell> {
           ),
         ),
       ),
-    );
+    ),);
   }
 
   // 姓名电话
@@ -255,7 +263,10 @@ class _ReportListCellState extends State<ReportListCell> {
               },
                   borderColor: Colors.red,
                   textStyle: TextStyle(color: Colors.red, fontSize: 13)),
-              getTextButton('成交', () {}),
+              getTextButton('成交', () {
+
+
+              }),
             ],
           ),
           Row(

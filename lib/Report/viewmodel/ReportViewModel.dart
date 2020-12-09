@@ -78,16 +78,18 @@ class ReportViewModel extends BaseViewModel {
     // print('data === $data');
     List clientsParams = [];
     Map<String, dynamic> params = {};
-    clients.forEach((element) {
-      Map client = {
-        'csutomerPhone': element['csutomerPhone'],
-        'custmoerCard': element['custmoerCard'],
-        'custmoerSex': element['sex'],
-        'customerId': element['id'],
-        'customerName': element['name'],
-      };
-      clientsParams.add(client);
-    });
+    if (clientData != null && clientData.length > 0) {
+      clients.forEach((element) {
+        Map client = {
+          'csutomerPhone': element['csutomerPhone'],
+          'custmoerCard': element['custmoerCard'],
+          'custmoerSex': element['sex'],
+          'customerId': element['id'],
+          'customerName': element['name'],
+        };
+        clientsParams.add(client);
+      });
+    }
     params = {
       'company': project['name'],
       'companyId': project['id'],

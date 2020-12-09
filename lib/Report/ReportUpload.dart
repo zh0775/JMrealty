@@ -1,12 +1,16 @@
 import 'dart:io';
 
+import 'package:JMrealty/Report/viewmodel/ReportUploadViewModel.dart';
+import 'package:JMrealty/base/image_loader.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/SelectImageView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ReportUpload extends StatefulWidget {
   Map data;
@@ -16,6 +20,7 @@ class ReportUpload extends StatefulWidget {
 }
 
 class _ReportUploadState extends State<ReportUpload> {
+  ReportUploadViewModel viewModel;
   SelectImageView imgSelectV; // 选择图片视图
   double cellHeight;
   double widthScale;
@@ -26,17 +31,17 @@ class _ReportUploadState extends State<ReportUpload> {
   dynamic img;
   @override
   void initState() {
+    viewModel = ReportUploadViewModel();
     imgSelectV = SelectImageView(
-      imageSelected: (image) {
-        Navigator.pop(context);
-        // print('image === ${image.runtimeType.toString()}');
-        setState(() {
-          if (image != null) {
-            imageList.add(image);
-          } else {
-            print('No image selected.');
-          }
-        });
+      count: 12,
+      imageSelected: (images) {
+        if (images != null) {
+          viewModel.upLoadReportImages(images,callBack: (){
+            setState(() {
+              imageList.addAll(viewModel.imageDatas);
+            });
+          });
+        }
       },
     );
     labelSpace = 3;
@@ -48,7 +53,6 @@ class _ReportUploadState extends State<ReportUpload> {
   void dispose() {
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -108,22 +112,6 @@ class _ReportUploadState extends State<ReportUpload> {
           Align(
             child: Container(
               width: SizeConfig.screenWidth - outMargin * 2,
-              // height: 300,
-              // color: Colors.red,
-              // child: GridView.count(
-              //   //水平子Widget之间间距
-              //   // crossAxisSpacing: 0.0,
-              //   //垂直子Widget之间间距
-              //   mainAxisSpacing: 1.0,
-              //   //GridView内边距
-              //   padding: EdgeInsets.all(0.0),
-              //   //一行的Widget数量
-              //   crossAxisCount: 3,
-              //   //子Widget宽高比例
-              //   // childAspectRatio: SizeConfig.screenWidth / 2.0 / buttonHeight,
-              //   //子Widget列表
-              //   children: [...getImageButtons()],
-              // ),
               child: Column(
                 children: [
                   ...getImageButtons(),
@@ -131,23 +119,6 @@ class _ReportUploadState extends State<ReportUpload> {
               ),
             ),
           ),
-          // child: Expanded(
-          //   child: GridView.count(
-          //     //水平子Widget之间间距
-          //     // crossAxisSpacing: 0.0,
-          //     //垂直子Widget之间间距
-          //     mainAxisSpacing: 1.0,
-          //     //GridView内边距
-          //     padding: EdgeInsets.all(0.0),
-          //     //一行的Widget数量
-          //     crossAxisCount: 3,
-          //     //子Widget宽高比例
-          //     // childAspectRatio: SizeConfig.screenWidth / 2.0 / buttonHeight,
-          //     //子Widget列表
-          //     children: [...getImageButtons()],
-          //   ),
-          // )
-
           SizedBox(
             height: 15,
           ),
@@ -163,7 +134,35 @@ class _ReportUploadState extends State<ReportUpload> {
             },
           ),
           CustomSubmitButton(
-            buttonClick: () {},
+            buttonClick: () {
+              Map<String, dynamic> mapParams = {};
+              if (imageList != null && imageList.length > 0) {
+                String imageStr = '';
+                imageList.forEach((element) {
+                  imageStr += element + ',';
+                });
+                imageStr = imageStr.substring(0, imageStr.length - 1);
+                mapParams['images'] = imageStr;
+              }
+              print('data ==== ${widget.data}');
+              print('images ==== $mapParams');
+              print('123 === ${widget.data['status']}');
+              if (widget.data['status'] != null) {
+                mapParams['beforeStatus'] = widget.data['status'];
+              }
+              if (widget.data['id'] != null) {
+                mapParams['reportId'] = widget.data['id'];
+              }
+              mapParams['remark'] = mark ?? '';
+              viewModel.uploadReportRecord(mapParams, (success) {
+                if(success) {
+                  ShowToast.normal('上传成功');
+                  Future.delayed(Duration(seconds: 1)).then((value) {
+                    Navigator.pop(context);
+                  });
+                }
+              });
+            },
           ),
         ],
       ),
@@ -181,6 +180,7 @@ class _ReportUploadState extends State<ReportUpload> {
   List<Widget> getImageButtons() {
     int lineCount = 3;
     List<Widget> widgetList = [];
+
     if (imageList != null && imageList != []) {
       List<Widget> widgetRow = [];
       for (var i = 0; i < (imageList.length + 1); i++) {
@@ -218,11 +218,22 @@ class _ReportUploadState extends State<ReportUpload> {
                 child: Container(
                   width: widthScale * 25.3,
                   height: widthScale * 25.3,
-                  color: jm_line_color,
-                ),
+                  // color: jm_line_color,
+                  child: ImageLoader(imageList[i], widthScale * 25.3),
+                  // Image.memory(imageList[i].buffer.asUint8List(),fit: BoxFit.cover,height: widthScale * 25.3,width: widthScale * 25.3,)
+                //   FutureBuilder<dynamic>(
+                //       future: imageList[i].getThumbByteData((widthScale * 25.3).round(), (widthScale * 25.3).round()),
+                //       builder: (context,snapshot) {
+                //         if (snapshot.connectionState == ConnectionState.done) {
+                //           return Image.memory(snapshot.data.buffer.asUint8List(),fit: BoxFit.cover,height: widthScale * 25.3,width: widthScale * 25.3,);
+                //         } else {
+                //           return Container(width: 0.0,height: 0.0,);
+                //         }
+                //       },
+                // ),
               ),
             ),
-          ));
+          )));
         }
 
         if ((i + 1) % lineCount == 0) {

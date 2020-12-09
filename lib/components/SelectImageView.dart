@@ -1,7 +1,7 @@
 // import 'dart:io';
 
 import 'package:flutter/material.dart';
-// import 'package:image_picker/image_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
 class SelectImageView {
@@ -82,24 +82,13 @@ class SelectImageView {
     );
     if (resultList != null) {
       imageSelected(resultList);
+      // List<Future> list = List.generate(resultList.length, (index) {
+      //   Asset asset = resultList[index];
+      //   return asset.getByteData();
+      // });
+      // Future.wait(list).then((value) {
+      //   imageSelected(value);
+      // });
     }
-    // try {
-    //   resultList = await MultiImagePicker.pickImages(
-    //     maxImages: 300,
-    //   );
-    // } on Exception catch (e) {
-    //   error = e.toString();
-    // }
-    // print('resultList == $resultList');
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    // if (!mounted) return;
-
-    // setState(() {
-    //   images = resultList;
-    //   _error = error;
-    // });
   }
 }
