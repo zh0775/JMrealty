@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'http_config.dart';
 import 'package:http_parser/http_parser.dart';
+import 'dart:convert' as convert;
 typedef Success = void Function(dynamic json);
 typedef Fail = void Function(String reason, int code);
 typedef After = void Function();

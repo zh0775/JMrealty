@@ -220,14 +220,15 @@ class CustomInput extends StatefulWidget {
   _CustomInputState createState() => _CustomInputState();
 }
 
-class _CustomInputState extends State<CustomInput> {
+class _CustomInputState extends State<CustomInput> with AutomaticKeepAliveClientMixin {
   double margin;
   double lableWidth;
   OverlayEntry _overlayEntry;
   bool isShow = false;
   TextEditingController textCtr;
   final LayerLink _layerLink = LayerLink();
-
+  @override
+  bool get wantKeepAlive => true;
   @override
   void initState() {
     textCtr = TextEditingController();
