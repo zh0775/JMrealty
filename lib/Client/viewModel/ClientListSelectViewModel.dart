@@ -154,7 +154,7 @@ class ClientListSelect3ViewModel extends BaseViewModel {
   loadSelectData() async {
     state = BaseState.LOADING;
     notifyListeners();
-    await UserDefault.get('access_token').then((token) {
+    await UserDefault.get(ACCESS_TOKEN).then((token) {
       Dio dio = Http().getDio();
       if (token != null) {
         dio.options.headers['Authorization'] = token;
@@ -225,7 +225,7 @@ class ClientListSelect4ViewModel extends BaseViewModel {
   loadSelectData() async {
     state = BaseState.LOADING;
     notifyListeners();
-    await UserDefault.get('access_token').then((token) {
+    await UserDefault.get(ACCESS_TOKEN).then((token) {
       Dio dio = Http().getDio();
       if (token != null) {
         dio.options.headers['Authorization'] = token;
@@ -296,7 +296,7 @@ class ClientListSelect5ViewModel extends BaseViewModel {
   loadSelectData() async {
     state = BaseState.LOADING;
     notifyListeners();
-    await UserDefault.get('access_token').then((token) {
+    await UserDefault.get(ACCESS_TOKEN).then((token) {
       Dio dio = Http().getDio();
       if (token != null) {
         dio.options.headers['Authorization'] = token;
