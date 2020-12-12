@@ -1,10 +1,12 @@
 import 'package:JMrealty/Report/viewmodel/ReportViewModel.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
+
 class AddReport extends StatefulWidget {
   @override
   _AddReportState createState() => _AddReportState();
@@ -37,7 +39,7 @@ class _AddReportState extends State<AddReport> {
   // String projectSearchStr;
   @override
   void initState() {
-    UserDefault.get('userInfo').then((value) {
+    UserDefault.get(USERINFO).then((value) {
       userInfo = convert.jsonDecode(value);
       setState(() {
         agentData = {

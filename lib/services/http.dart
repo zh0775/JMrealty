@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:JMrealty/services/Urls.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:dio/dio.dart';
@@ -36,7 +37,7 @@ class Http {
     Dio dio = Dio(baseOptions);
     dio.interceptors
         .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
-      UserDefault.get('access_token').then((token) {
+      UserDefault.get(ACCESS_TOKEN).then((token) {
         if (token != null) {
           options.headers['Authorization'] = token;
         }

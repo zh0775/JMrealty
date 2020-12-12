@@ -5,6 +5,7 @@ import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/components/TreeNode.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/foundation.dart';
@@ -255,14 +256,12 @@ class LoginViewModel extends BaseViewModel {
       {'phonenumber': phone, 'code': code},
       success: (json) {
         Map<String, dynamic> data = json['data'];
-        if (json['code'] == 200 && data['access_token'] != null) {
+        if (json['code'] == 200 && data[ACCESS_TOKEN] != null) {
           state = BaseState.CONTENT;
-          UserDefault.saveStr('access_token', data['access_token'])
+          UserDefault.saveStr(ACCESS_TOKEN, data[ACCESS_TOKEN])
               .then((bool value) {
             if (value) {
               success();
-              // UserDefault.get('access_token');
-              // print('access_token === $value');
               HomeViewModel().loadUserInfo();
             }
           });

@@ -1,6 +1,7 @@
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'dart:convert' as convert;
 
@@ -14,7 +15,7 @@ class HomeViewModel extends BaseViewModel {
       Urls.getUserInfo,
       {},
       success: (json) {
-        UserDefault.saveStr('userInfo', convert.jsonEncode(json['data']))
+        UserDefault.saveStr(USERINFO, convert.jsonEncode(json['data']))
             .then((value) {
           if (value) {
             state = BaseState.CONTENT;

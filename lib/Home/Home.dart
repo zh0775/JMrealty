@@ -10,6 +10,7 @@ import 'package:JMrealty/Report/AddReport.dart';
 import 'package:JMrealty/Report/Report.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/services/HomeService.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/cupertino.dart';
@@ -103,7 +104,7 @@ class _HomeState extends State<Home> {
             } else if (buttonIndex == 7) {
               UserDefault.get('access_token').then((token) {
                 if (token != null) {
-                  UserDefault.get('userInfo').then((userInfo) {
+                  UserDefault.get(USERINFO).then((userInfo) {
                     if (userInfo != null) {
                       Map<String, dynamic> userInfoMap =
                           Map<String, dynamic>.from(

@@ -1,6 +1,7 @@
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:JMrealty/utils/user_default.dart';
@@ -17,7 +18,7 @@ class WriteFollow {
   String expectTimeFormat;
   Map userInfo;
   void loadNextFollow() {
-    UserDefault.get('userInfo').then((value) {
+    UserDefault.get(USERINFO).then((value) {
       userInfo = convert.jsonDecode(value);
       Http().get(
         Urls.findExpectTime,

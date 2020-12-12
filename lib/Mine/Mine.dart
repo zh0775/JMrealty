@@ -1,5 +1,5 @@
-import 'package:JMrealty/Login/Login.dart';
-import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/utils/EventBus.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:flutter/material.dart';
 
 class Mine extends StatefulWidget {
@@ -8,8 +8,12 @@ class Mine extends StatefulWidget {
 }
 
 class _MineState extends State<Mine> {
+  var bus = EventBus();
   @override
   void initState() {
+    bus.on(NOTIFY_USER_INFO, (arg) {
+      print('arg ==== $arg');
+    });
     super.initState();
   }
 

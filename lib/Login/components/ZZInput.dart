@@ -78,7 +78,6 @@ class _ZZInputState extends State<ZZInput> {
                   maxLines: 1,
                   style: widget.textStyle,
                   onChanged: (value) {
-                    print('123123');
                     if (widget.valueChange != null) widget.valueChange(value);
                     if (widget.needCleanButton) {
                       bool needClear = false;

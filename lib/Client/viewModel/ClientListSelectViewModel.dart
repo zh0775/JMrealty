@@ -1,7 +1,7 @@
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
-import 'package:JMrealty/utils/toast.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:dio/dio.dart';
 // import 'package:dio/dio.dart';
@@ -12,78 +12,20 @@ class ClientListSelect1ViewModel extends BaseViewModel {
   loadSelectData() async {
     state = BaseState.LOADING;
     notifyListeners();
-    await UserDefault.get('access_token').then((token) {
-      Dio dio = Http().getDio();
-      if (token != null) {
-        dio.options.headers['Authorization'] = token;
-      Future.wait([
-        Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
-        Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
-        Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
-      ]).then((List e) {
-        // print('e111 ==== $e');//[true,true,false]
-        for (var i = 0; i < e.length; i++) {
-          String key;
-          switch (i) {
-            case 0:
-              key = 'jb';
-              break;
-            case 1:
-              key = 'lx';
-              break;
-            case 2:
-              key = 'mj';
-              break;
-          }
-          Map res = new Map<String, dynamic>.from((e[i]).data);
-          // print('res === $res');
-          if (res['code'] == 200) {
-            List reList = (res['data']).map((value) {
-              return value;
-            }).toList();
-            // print('reList === $reList');
-            selectData[key] = <Map<String, dynamic>>[
-              {'title': '全部', 'value': '-1'}
-            ];
-            reList.forEach((element) {
-              Map<String, dynamic> e = Map<String, dynamic>.from(element);
-              (selectData[key])
-                  .add({'title': e['dictLabel'], 'value': e['dictValue']});
-              // List list = selectData[key];
-              // print('list === ${list.runtimeType}');
-              // list.add(Map<String, dynamic>.from(element));
-            });
-            // print('selectData === $selectData');
-          } else {
-            state = BaseState.FAIL;
-            notifyListeners();
-            return;
-          }
-        }
-        state = BaseState.CONTENT;
-        notifyListeners();
-      }).catchError((e) {
-        state = BaseState.FAIL;
-        notifyListeners();
-        print('error 11==== $e'); //[
-      });
-    }});
-  }
-}
-
-class ClientListSelect2ViewModel extends BaseViewModel {
-  Map selectData = {'jb': [], 'lx': [], 'mj': []};
-  loadSelectData() async {
-    state = BaseState.LOADING;
-    notifyListeners();
-    await UserDefault.get('access_token').then((token) {
+    await UserDefault.get(ACCESS_TOKEN).then((token) {
       Dio dio = Http().getDio();
       if (token != null) {
         dio.options.headers['Authorization'] = token;
         Future.wait([
-          Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
-          Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
-          Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
+          Http()
+              .getDio()
+              .get(Urls.searchDic, queryParameters: {'dictId': '102'}),
+          Http()
+              .getDio()
+              .get(Urls.searchDic, queryParameters: {'dictId': '103'}),
+          Http()
+              .getDio()
+              .get(Urls.searchDic, queryParameters: {'dictId': '104'})
         ]).then((List e) {
           // print('e111 ==== $e');//[true,true,false]
           for (var i = 0; i < e.length; i++) {
@@ -131,7 +73,79 @@ class ClientListSelect2ViewModel extends BaseViewModel {
           notifyListeners();
           print('error 11==== $e'); //[
         });
-      }});
+      }
+    });
+  }
+}
+
+class ClientListSelect2ViewModel extends BaseViewModel {
+  Map selectData = {'jb': [], 'lx': [], 'mj': []};
+  loadSelectData() async {
+    state = BaseState.LOADING;
+    notifyListeners();
+    await UserDefault.get(ACCESS_TOKEN).then((token) {
+      Dio dio = Http().getDio();
+      if (token != null) {
+        dio.options.headers['Authorization'] = token;
+        Future.wait([
+          Http()
+              .getDio()
+              .get(Urls.searchDic, queryParameters: {'dictId': '102'}),
+          Http()
+              .getDio()
+              .get(Urls.searchDic, queryParameters: {'dictId': '103'}),
+          Http()
+              .getDio()
+              .get(Urls.searchDic, queryParameters: {'dictId': '104'})
+        ]).then((List e) {
+          // print('e111 ==== $e');//[true,true,false]
+          for (var i = 0; i < e.length; i++) {
+            String key;
+            switch (i) {
+              case 0:
+                key = 'jb';
+                break;
+              case 1:
+                key = 'lx';
+                break;
+              case 2:
+                key = 'mj';
+                break;
+            }
+            Map res = new Map<String, dynamic>.from((e[i]).data);
+            // print('res === $res');
+            if (res['code'] == 200) {
+              List reList = (res['data']).map((value) {
+                return value;
+              }).toList();
+              // print('reList === $reList');
+              selectData[key] = <Map<String, dynamic>>[
+                {'title': '全部', 'value': '-1'}
+              ];
+              reList.forEach((element) {
+                Map<String, dynamic> e = Map<String, dynamic>.from(element);
+                (selectData[key])
+                    .add({'title': e['dictLabel'], 'value': e['dictValue']});
+                // List list = selectData[key];
+                // print('list === ${list.runtimeType}');
+                // list.add(Map<String, dynamic>.from(element));
+              });
+              // print('selectData === $selectData');
+            } else {
+              state = BaseState.FAIL;
+              notifyListeners();
+              return;
+            }
+          }
+          state = BaseState.CONTENT;
+          notifyListeners();
+        }).catchError((e) {
+          state = BaseState.FAIL;
+          notifyListeners();
+          print('error 11==== $e'); //[
+        });
+      }
+    });
   }
 }
 
@@ -145,9 +159,15 @@ class ClientListSelect3ViewModel extends BaseViewModel {
       if (token != null) {
         dio.options.headers['Authorization'] = token;
         Future.wait([
-          Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
-          Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
-          Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
+          Http()
+              .getDio()
+              .get(Urls.searchDic, queryParameters: {'dictId': '102'}),
+          Http()
+              .getDio()
+              .get(Urls.searchDic, queryParameters: {'dictId': '103'}),
+          Http()
+              .getDio()
+              .get(Urls.searchDic, queryParameters: {'dictId': '104'})
         ]).then((List e) {
           // print('e111 ==== $e');//[true,true,false]
           for (var i = 0; i < e.length; i++) {
@@ -195,7 +215,8 @@ class ClientListSelect3ViewModel extends BaseViewModel {
           notifyListeners();
           print('error 11==== $e'); //[
         });
-      }});
+      }
+    });
   }
 }
 
@@ -209,9 +230,15 @@ class ClientListSelect4ViewModel extends BaseViewModel {
       if (token != null) {
         dio.options.headers['Authorization'] = token;
         Future.wait([
-          Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
-          Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
-          Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
+          Http()
+              .getDio()
+              .get(Urls.searchDic, queryParameters: {'dictId': '102'}),
+          Http()
+              .getDio()
+              .get(Urls.searchDic, queryParameters: {'dictId': '103'}),
+          Http()
+              .getDio()
+              .get(Urls.searchDic, queryParameters: {'dictId': '104'})
         ]).then((List e) {
           // print('e111 ==== $e');//[true,true,false]
           for (var i = 0; i < e.length; i++) {
@@ -259,7 +286,8 @@ class ClientListSelect4ViewModel extends BaseViewModel {
           notifyListeners();
           print('error 11==== $e'); //[
         });
-      }});
+      }
+    });
   }
 }
 
@@ -273,9 +301,15 @@ class ClientListSelect5ViewModel extends BaseViewModel {
       if (token != null) {
         dio.options.headers['Authorization'] = token;
         Future.wait([
-          Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
-          Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
-          Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
+          Http()
+              .getDio()
+              .get(Urls.searchDic, queryParameters: {'dictId': '102'}),
+          Http()
+              .getDio()
+              .get(Urls.searchDic, queryParameters: {'dictId': '103'}),
+          Http()
+              .getDio()
+              .get(Urls.searchDic, queryParameters: {'dictId': '104'})
         ]).then((List e) {
           // print('e111 ==== $e');//[true,true,false]
           for (var i = 0; i < e.length; i++) {
@@ -323,6 +357,7 @@ class ClientListSelect5ViewModel extends BaseViewModel {
           notifyListeners();
           print('error 11==== $e'); //[
         });
-      }});
+      }
+    });
   }
 }
