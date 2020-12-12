@@ -94,6 +94,8 @@ class LoginViewModel extends BaseViewModel {
   }
 
   static List<TreeNode> decodeDepListToList(dynamic json) {
+    print('json ==== ${json.runtimeType}');
+
     List<TreeNode> dataList = [];
     List datas = json['data'];
     if (datas == null) {

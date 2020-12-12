@@ -5,7 +5,6 @@ import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'http_config.dart';
 import 'package:http_parser/http_parser.dart';
