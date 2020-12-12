@@ -30,13 +30,12 @@ class ReportUploadViewModel extends BaseViewModel {
   }
 
   List imageDatas;
-  upLoadReportImages (List images,{Function() callBack}) {
+  upLoadReportImages(List images, {Function() callBack}) {
     int total = images.length;
     int successCount = 0;
-    Http().UploadImages(images,resList: (List images) {
+    Http().uploadImages(images, resList: (List images) {
       imageDatas = [];
       images.forEach((imgJson) {
-
         if ((imgJson.data)['code'] == 200) {
           successCount++;
           imageDatas.add((imgJson.data)['data']);
@@ -44,7 +43,11 @@ class ReportUploadViewModel extends BaseViewModel {
       });
       callBack();
       if (total != successCount) {
-        ShowToast.normal('上传成功'+ successCount.toString() +'张，失败' + (total - successCount).toString() + '张');
+        ShowToast.normal('上传成功' +
+            successCount.toString() +
+            '张，失败' +
+            (total - successCount).toString() +
+            '张');
       }
       if (successCount == 0) {
         ShowToast.normal('上传失败');

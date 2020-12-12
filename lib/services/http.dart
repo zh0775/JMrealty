@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'http_config.dart';
 import 'package:http_parser/http_parser.dart';
+
 typedef Success = void Function(dynamic json);
 typedef Fail = void Function(String reason, int code);
 typedef After = void Function();
@@ -61,7 +62,9 @@ class Http {
         if (response.statusCode == 200) {
           Map<String, dynamic> data = response.data;
           if (data['code'] != 200) {
-            ShowToast.normal(data['msg']);
+            if (data['msg'] != null) {
+              ShowToast.normal(data['msg']);
+            }
           }
           if (success != null) {
             success(response.data);
@@ -76,6 +79,7 @@ class Http {
         }
       });
     } catch (e) {
+      print('e ===== $e');
       if (fail != null) {
         fail('网络发生错误', -1);
       }
@@ -89,7 +93,9 @@ class Http {
         if (response.statusCode == 200) {
           Map<String, dynamic> data = response.data;
           if (data['code'] != 200) {
-            ShowToast.normal(data['msg']);
+            if (data['msg'] != null) {
+              ShowToast.normal(data['msg']);
+            }
           }
           if (success != null) {
             success(response.data);
@@ -104,6 +110,7 @@ class Http {
         }
       });
     } catch (e) {
+      print('e ===== $e');
       if (fail != null) {
         fail('网络发生错误', -1);
       }
@@ -117,7 +124,9 @@ class Http {
         if (response.statusCode == 200) {
           Map<String, dynamic> data = response.data;
           if (data['code'] != 200) {
-            ShowToast.normal(data['msg']);
+            if (data['msg'] != null) {
+              ShowToast.normal(data['msg']);
+            }
           }
           if (success != null) {
             success(response.data);
@@ -132,14 +141,14 @@ class Http {
         }
       });
     } catch (e) {
+      print('e ===== $e');
       if (fail != null) {
         fail('网络发生错误', -1);
       }
     }
   }
 
-  Future<void> UploadImages(List images,
-      {Function(List jsons) resList }) async {
+  Future<void> uploadImages(List images, {Function(List jsons) resList}) async {
     List<Future> imagesFuture = [];
     for (int i = 0; i < images.length; i++) {
       Asset asset = images[i];
@@ -150,14 +159,8 @@ class Http {
         filename: asset.name,
         contentType: MediaType.parse('application/octet-stream'),
       );
-      FormData formData = FormData.fromMap({
-        "uploadFile": multipartFile
-      });
-      imagesFuture.add(_dio.post(
-          Urls.imgUpload,
-          data: formData
-        )
-      );
+      FormData formData = FormData.fromMap({"uploadFile": multipartFile});
+      imagesFuture.add(_dio.post(Urls.imgUpload, data: formData));
     }
     try {
       Future.wait(imagesFuture).then((values) {
@@ -165,7 +168,7 @@ class Http {
         // print('images---value--- ====$value');
       });
     } catch (e) {
-
+      print('e ===== $e');
     }
 
     // try {
