@@ -63,6 +63,7 @@ class _ZZInputState extends State<ZZInput> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     double rightPadding = widget.needCleanButton ? 80 : 20;
+    // double rightPadding = 20;
     return Container(
         width: widget.width,
         constraints: BoxConstraints(maxHeight: widget.height),

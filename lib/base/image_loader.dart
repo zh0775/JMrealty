@@ -12,7 +12,9 @@ class ImageLoader extends StatelessWidget {
   Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: imgUrl,
-      placeholder: (context,url)=> Container(color: Colors.white,),
+      placeholder: (context, url) => Container(
+        color: Colors.white,
+      ),
       // height: height,
       fit: BoxFit.cover,
     );

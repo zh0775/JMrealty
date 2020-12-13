@@ -12,6 +12,7 @@ const Color jm_appTheme_splash = Color.fromRGBO(230, 184, 92, 0.2);
 const Color jm_line_color = Color.fromRGBO(0, 0, 0, 0.12);
 const Color jm_text_black = Color(0xff404351);
 const Color jm_text_gray = Color(0xffaaacb2);
+const Color jm_placeholder_color = Color(0xffaab2bd);
 
 const TextStyle jm_text_gray_style10 =
     TextStyle(fontSize: 10, color: jm_text_gray);
@@ -220,7 +221,8 @@ class CustomInput extends StatefulWidget {
   _CustomInputState createState() => _CustomInputState();
 }
 
-class _CustomInputState extends State<CustomInput> with AutomaticKeepAliveClientMixin {
+class _CustomInputState extends State<CustomInput>
+    with AutomaticKeepAliveClientMixin {
   double margin;
   double lableWidth;
   OverlayEntry _overlayEntry;
@@ -240,6 +242,7 @@ class _CustomInputState extends State<CustomInput> with AutomaticKeepAliveClient
     textCtr.text = widget.text;
     super.didUpdateWidget(oldWidget);
   }
+
   @override
   void dispose() {
     if (textCtr != null) {
@@ -295,8 +298,9 @@ class _CustomInputState extends State<CustomInput> with AutomaticKeepAliveClient
               // )
               Container(
                 width: widget.otherWidth ??
-                          SizeConfig.screenWidth - margin * 2 - lableWidth,
-                constraints: BoxConstraints(minHeight: widget.lineHeight,maxHeight: widget.lineHeight),
+                    SizeConfig.screenWidth - margin * 2 - lableWidth,
+                constraints: BoxConstraints(
+                    minHeight: widget.lineHeight, maxHeight: widget.lineHeight),
                 child: TextField(
                   key: widget.key,
                   controller: textCtr,
@@ -309,15 +313,14 @@ class _CustomInputState extends State<CustomInput> with AutomaticKeepAliveClient
                     fillColor: widget.backgroundColor,
                     focusedBorder: OutlineInputBorder(
                         borderSide:
-                        BorderSide(width: 0, color: Colors.transparent)),
+                            BorderSide(width: 0, color: Colors.transparent)),
                     disabledBorder: OutlineInputBorder(
                         borderSide:
-                        BorderSide(width: 0, color: Colors.transparent)),
+                            BorderSide(width: 0, color: Colors.transparent)),
                     enabledBorder: OutlineInputBorder(
                         borderSide:
-                        BorderSide(width: 0, color: Colors.transparent)),
-                    contentPadding: EdgeInsets.fromLTRB(
-                        10, 0, 10, 0),
+                            BorderSide(width: 0, color: Colors.transparent)),
+                    contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                     border: OutlineInputBorder(
                         // borderRadius: widget.borderRadius,
                         borderSide: BorderSide.none),
@@ -330,7 +333,6 @@ class _CustomInputState extends State<CustomInput> with AutomaticKeepAliveClient
                       widget.valueChangeAndShowList(value, this);
                     }
                   },
-
                 ),
               )
             ],

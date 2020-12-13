@@ -59,4 +59,14 @@ class Urls {
   static const String reportUploadRecord = '/customer/status/upload';
   // 已成交
   static const String reportSuccess = '/customer/shop/subscription';
+
+  //业绩规划
+  // 查询业绩规则列表
+  static const String targetRuleList = '/customer/targetRule/list';
+  // 修改业绩规则
+  static const String targetRuleChange = '/customer/targetRule/edit';
+  // 新增业绩规则
+  static const String addTargetRule = '/customer/targetRule/add';
+  // 删除业绩规则信息
+  static String deleteTargetRule(String id) => '/customer/targetRule/$id';
 }

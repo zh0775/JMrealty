@@ -17,11 +17,7 @@ class _ReportListViewState extends State<ReportListView>
     with AutomaticKeepAliveClientMixin {
   ReportListViewModel reportListVM;
   EasyRefreshController easyRefreshCtr;
-  // GlobalKey _easyRefreshKey = GlobalKey();
-
-  // GlobalKey _headerKey = GlobalKey();
-
-  // GlobalKey _footerKey = GlobalKey();
+  GlobalKey _easyRefreshKey = GlobalKey();
 
   int total;
   int currentPage;
@@ -60,13 +56,18 @@ class _ReportListViewState extends State<ReportListView>
       controller: easyRefreshCtr,
       header: PhoenixHeader(),
       footer: PhoenixFooter(),
+      enableControlFinishRefresh: true,
+      enableControlFinishLoad: true,
+      key: _easyRefreshKey,
+
       emptyWidget: dataList.length == 0 ? EmptyView() : null,
       firstRefresh: true,
       onRefresh: () async {
         print('onRefresh ---- loadListData');
-        await reportListVM.loadListData(widget.status, success: (success) {
+        reportListVM.loadListData(widget.status, success: (success) {
           // easyRefreshCtr.resetLoadState();
-          // easyRefreshCtr.finishRefresh();
+          easyRefreshCtr.finishRefresh();
+          easyRefreshCtr.finishLoad();
           if (success) {
             setState(() {
               total = reportListVM.listData['total'];
@@ -75,7 +76,11 @@ class _ReportListViewState extends State<ReportListView>
           }
         });
       },
-      onLoad: () async {},
+      onLoad: () async {
+        print('onLoad ---- loadListData');
+        easyRefreshCtr.finishRefresh();
+        easyRefreshCtr.finishLoad();
+      },
       child: ListView.builder(
         itemCount: dataList.length,
         itemBuilder: (context, index) {
@@ -101,7 +106,5 @@ class _ReportListViewState extends State<ReportListView>
   }
 
   @override
-  bool get wantKeepAlive {
-    return true;
-  }
+  bool get wantKeepAlive => true;
 }

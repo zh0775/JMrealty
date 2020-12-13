@@ -1,14 +1,15 @@
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
+import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'dart:convert' as convert;
 
 class HomeViewModel extends BaseViewModel {
   Map<String, dynamic> userInfo;
-
-  loadUserInfo() {
+  var bus = EventBus();
+  loadUserInfo({Function() finish}) {
     state = BaseState.LOADING;
     notifyListeners();
     Http().get(
@@ -18,8 +19,12 @@ class HomeViewModel extends BaseViewModel {
         UserDefault.saveStr(USERINFO, convert.jsonEncode(json['data']))
             .then((value) {
           if (value) {
+            bus.emit(NOTIFY_USER_INFO, convert.jsonEncode(json['data']));
             state = BaseState.CONTENT;
             notifyListeners();
+            if (finish != null) {
+              finish();
+            }
           }
         });
       },
