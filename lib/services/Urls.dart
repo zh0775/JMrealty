@@ -69,4 +69,12 @@ class Urls {
   static const String addTargetRule = '/customer/targetRule/add';
   // 删除业绩规则信息
   static String deleteTargetRule(String id) => '/customer/targetRule/$id';
+
+  //PK赛
+  // 查询pk赛列表
+  static const String pkList = '/comps/race/searchList';
+  // 新增pk赛
+  static const String addPk = '/comps/race/add';
+  // 查询pk赛详情
+  static const String pkDetail = '/comps/race/searchList';
 }

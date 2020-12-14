@@ -13,6 +13,30 @@ const Color jm_line_color = Color.fromRGBO(0, 0, 0, 0.12);
 const Color jm_text_black = Color(0xff404351);
 const Color jm_text_gray = Color(0xffaaacb2);
 const Color jm_placeholder_color = Color(0xffaab2bd);
+const IconData jm_naviBack = Icons.navigate_before;
+const Icon jm_naviBack_icon = Icon(
+  jm_naviBack,
+  size: 40,
+  color: Colors.white,
+);
+const Icon jm_naviAdd_icon = Icon(
+  Icons.add,
+  size: 40,
+  color: Colors.white,
+);
+
+String jm_getPKStatus(int status) {
+  switch (status) {
+    case 2:
+      return '进行中';
+      break;
+    default:
+      return '其他';
+      break;
+  }
+}
+
+Widget jm_naviTitle(String title) => Text(title,style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.bold),);
 
 const TextStyle jm_text_gray_style10 =
     TextStyle(fontSize: 10, color: jm_text_gray);

@@ -21,11 +21,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           style: TextStyle(color: Colors.white, fontSize: 18),
         ),
         leading: IconButton(
-          icon: Icon(
-            Icons.navigate_before,
-            size: 40,
-            color: Colors.white,
-          ),
+          icon: jm_naviBack_icon,
           onPressed: () {
             if (backClick != null) {
               backClick();

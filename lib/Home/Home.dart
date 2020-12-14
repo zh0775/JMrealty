@@ -6,6 +6,7 @@ import 'package:JMrealty/Home/components/HomeGoodDeed.dart';
 import 'package:JMrealty/Home/components/HomeNaviBar.dart';
 import 'package:JMrealty/Home/components/HomeScheduleToDo.dart';
 import 'package:JMrealty/Home/viewModel/HomeViewModel.dart';
+import 'package:JMrealty/PK/PKmain.dart';
 import 'package:JMrealty/Report/AddReport.dart';
 import 'package:JMrealty/Report/Report.dart';
 import 'package:JMrealty/const/Default.dart';
@@ -100,6 +101,10 @@ class _HomeState extends State<Home> {
             } else if (buttonIndex == 1) {
               Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
                 return Report();
+              }));
+            } else if (buttonIndex == 5) {
+              Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                return PKmain();
               }));
             } else if (buttonIndex == 7) {
               UserDefault.get(ACCESS_TOKEN).then((token) {
