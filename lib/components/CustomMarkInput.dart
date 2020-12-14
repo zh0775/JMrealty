@@ -16,11 +16,14 @@ class _CustomMarkInputState extends State<CustomMarkInput> {
     SizeConfig().init(context);
     marginSpace = SizeConfig.blockSizeHorizontal * 6;
     return Container(
-      constraints: BoxConstraints(maxHeight: 90, minHeight: 90),
-      width: SizeConfig.screenWidth - marginSpace * 2,
+      constraints: BoxConstraints(
+          maxHeight: 90,
+          minHeight: 90,
+          minWidth: SizeConfig.screenWidth - marginSpace * 2),
+      // width: SizeConfig.screenWidth - marginSpace * 2,
       padding: EdgeInsets.fromLTRB(marginSpace, 10, marginSpace, 10),
       child: TextField(
-        maxLines: 10,
+        maxLines: 100,
         minLines: 3,
         decoration: InputDecoration(
             contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),

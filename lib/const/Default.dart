@@ -36,7 +36,11 @@ String jm_getPKStatus(int status) {
   }
 }
 
-Widget jm_naviTitle(String title) => Text(title,style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.bold),);
+Widget jm_naviTitle(String title) => Text(
+      title,
+      style: TextStyle(
+          fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+    );
 
 const TextStyle jm_text_gray_style10 =
     TextStyle(fontSize: 10, color: jm_text_gray);
@@ -251,28 +255,28 @@ class _CustomInputState extends State<CustomInput>
   double lableWidth;
   OverlayEntry _overlayEntry;
   bool isShow = false;
-  TextEditingController textCtr;
+  // TextEditingController textCtr;
   final LayerLink _layerLink = LayerLink();
   @override
   bool get wantKeepAlive => true;
   @override
   void initState() {
-    textCtr = TextEditingController();
+    // textCtr = TextEditingController();
     super.initState();
   }
 
   @override
   void didUpdateWidget(covariant CustomInput oldWidget) {
-    textCtr.text = widget.text;
+    // textCtr.text = widget.text;
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   void dispose() {
-    if (textCtr != null) {
-      textCtr.dispose();
-      textCtr = null;
-    }
+    // if (textCtr != null) {
+    //   textCtr.dispose();
+    //   textCtr = null;
+    // }
     super.dispose();
   }
 
@@ -327,7 +331,12 @@ class _CustomInputState extends State<CustomInput>
                     minHeight: widget.lineHeight, maxHeight: widget.lineHeight),
                 child: TextField(
                   key: widget.key,
-                  controller: textCtr,
+                  controller: TextEditingController.fromValue(TextEditingValue(
+                    text: widget.text ?? '',
+                    selection: TextSelection.fromPosition(TextPosition(
+                        affinity: TextAffinity.downstream,
+                        offset: widget.text.length ?? 0)),
+                  )),
                   enabled: widget.enable,
                   keyboardType: widget.keyboardType,
                   maxLines: 1,
