@@ -34,7 +34,7 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
   void initState() {
     levelTargetVM = LevelTargetViewModel();
     cityValue = 0;
-    isEdit = false;
+    isEdit = true;
     newItem = {'count': '', 'month': '', 'price': ''};
     itemsData = [
       {'id': 0, 'title': 'A1', 'month': 1, 'count': 1, 'price': 10000},
@@ -105,6 +105,32 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
                           },
                         ),
                         ...getTargetCell(),
+                        SizedBox(
+                          height: 50,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            RawMaterialButton(
+                                elevation: 1.0,
+                                highlightElevation: 1.0,
+                                constraints: BoxConstraints(
+                                  minWidth: 70,
+                                  minHeight: 35,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)),
+                                textStyle: TextStyle(
+                                    fontSize: 15, color: Colors.white),
+                                fillColor: jm_appTheme,
+                                child: Text(isEdit ? '下一步' : '确认'),
+                                onPressed: () {
+                                  setState(() {
+                                    isEdit = !isEdit;
+                                  });
+                                })
+                          ],
+                        )
                       ],
                     ),
                   ),
@@ -132,6 +158,29 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
       }
       cell.add(Column(
         children: [
+          isEdit || i == itemsData.length
+              ? Container(
+                  width: 0.0,
+                  height: 0.0,
+                )
+              : Row(
+                  children: [
+                    SizedBox(
+                      width: widthScale * 2,
+                    ),
+                    IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: BoxConstraints(minHeight: 0, minWidth: 0),
+                        icon: Icon(
+                          Icons.cancel,
+                          size: 25,
+                          color: jm_placeholder_color,
+                        ),
+                        onPressed: () {
+                          deleteTarget(data);
+                        })
+                  ],
+                ),
           SizedBox(
             height: 10,
           ),
@@ -305,8 +354,19 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
                                 ShowToast.normal('请输入目标业绩');
                                 return;
                               }
-                              itemsData.add(newItem);
-                              newItem = {'count': '', 'month': '', 'price': ''};
+                              levelTargetVM.addTargetSetting(
+                                  Map<String, dynamic>.from({
+                                    'organizationId': widget.deptId,
+                                    'amount': newItem['price'],
+                                    'entryDays': newItem['month'] * 30,
+                                    'num': newItem['count'],
+                                    'gradeName': newItem['title'],
+                                  }), () {
+                                levelTargetVM.loadTarget(widget.deptId);
+                              });
+
+                              // itemsData.add(newItem);
+                              // newItem = {'count': '', 'month': '', 'price': ''};
                             }),
                       ),
                       SizedBox(width: margin)
@@ -316,10 +376,19 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
               : Container(
                   width: 0.0,
                   height: 0.0,
-                )
+                ),
         ],
       ));
     }
     return cell;
+  }
+
+  void deleteTarget(Map item) {
+    levelTargetVM.deleteTarget(item['id'], () {
+      levelTargetVM.loadTarget(widget.deptId);
+    });
+    // setState(() {
+    //   itemsData.remove(item);
+    // });
   }
 }
