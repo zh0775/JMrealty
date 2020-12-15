@@ -1,10 +1,15 @@
+import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
+import 'package:JMrealty/PK/viewModel/PKaddViewModel.dart';
 import 'package:JMrealty/PK/viewModel/PKviewModel.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
+import 'package:JMrealty/components/ShowDepNode.dart';
+import 'package:JMrealty/components/TreeNode.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/tTools.dart';
+import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -15,6 +20,8 @@ class PKadd extends StatefulWidget {
 }
 
 class _PKaddState extends State<PKadd> {
+  LoginViewModel depModel;
+  PKaddViewModel pkaddModel;
   double widthScale;
   double margin;
   double selfWidth;
@@ -28,8 +35,24 @@ class _PKaddState extends State<PKadd> {
   String pkName; // pk赛名称
   String award; // 奖励
   String rules; // 规则
+  Map medalData; //奖章
+  List targetDataList;
+  List<TreeNode> treeData;
   @override
   void initState() {
+    treeData = [];
+    pkaddModel = PKaddViewModel();
+    pkaddModel.loadTarget(success: (value){
+      setState(() {
+        targetDataList = value;
+      });
+    });
+    depModel = LoginViewModel();
+    depModel.loadRegistDeptSelectList(success: (value) {
+      setState(() {
+        treeData = value;
+      });
+    });
     unitList = [];
     pkTargetList = [];
     dateFormat = DateFormat('yyyy-MM-dd');
@@ -40,6 +63,8 @@ class _PKaddState extends State<PKadd> {
 
   @override
   void dispose() {
+    pkaddModel.dispose();
+    depModel.dispose();
     super.dispose();
   }
 
@@ -126,9 +151,15 @@ class _PKaddState extends State<PKadd> {
                                 ],
                               ),
                               onPressed: () {
-                                setState(() {
-                                  unitList.add({'name': '123'});
-                                });
+                                ShowDepNode(
+                                    size: Size(SizeConfig.blockSizeHorizontal * 80,
+                                    SizeConfig.blockSizeVertical * 80,),
+                                    treeData: treeData,
+                                    nodeSelected:(TreeNode node){
+                                      setState(() {
+                                        unitList.add(node);
+                                      });
+                                    }).show();
                               }),
                         ],
                       ),
@@ -181,9 +212,14 @@ class _PKaddState extends State<PKadd> {
                                 ],
                               ),
                               onPressed: () {
-                                setState(() {
-                                  pkTargetList.add({'name': '123'});
+                                showTargetSelect((data) {
+                                  setState(() {
+                                    pkTargetList.add(data);
+                                  });
                                 });
+                                // setState(() {
+                                //   pkTargetList.add({'name': '123'});
+                                // });
                               }),
                         ],
                       ),
@@ -216,6 +252,35 @@ class _PKaddState extends State<PKadd> {
                   award = value;
                 },
               ),
+              CustomInput(
+                key: ValueKey('CustomInput_project_1'),
+                text: medalData != null
+                    ? (medalData['name'] ?? '')
+                    : '',
+                labelStyle: jm_text_black_bold_style14,
+                textStyle: jm_text_black_style15,
+                title: '奖章',
+                hintText: '请输入奖章名称',
+                valueChangeAndShowList: (value, state) {
+                  if (value != '') {
+                    pkaddModel.loadMedal(
+                      value,
+                      success: (data) {
+                        if (data != null && data.length > 0) {
+                          state.showList(data);
+                        }
+                      },
+                    );
+                  } else {
+                    state.removeList();
+                  }
+                },
+                showListClick: (data) {
+                  setState(() {
+                    medalData = data;
+                  });
+                },
+              ),
               JMline(width: selfWidth, height: 0.5),
               SizedBox(
                 height: 10,
@@ -241,7 +306,36 @@ class _PKaddState extends State<PKadd> {
               SizedBox(
                 height: 20,
               ),
-              CustomSubmitButton(buttonClick: () {}),
+              CustomSubmitButton(buttonClick: () {
+                if(pkName == null || pkName == null) {
+                  ShowToast.normal('请输入PK赛名称');
+                  return;
+                }
+                Map params = {};
+                params['name'] = pkName;
+                params['award'] = award;
+                params['rule'] = rules;
+                if(medalData != null) {
+                  params['medalId'] = medalData['id'];
+                }
+                // params['name'] = pkName;
+
+                pkaddModel.adPkRequest(params,success: (success){
+                  if (success) {
+                    ShowToast.normal('新增PK赛成功');
+                    Future.delayed(Duration(seconds: 1),(){
+                      Navigator.pop(context);
+                    });
+                  }
+                });
+                // List unitList; // pk指标
+                // List pkTargetList; // 参与单位
+                // String pkName; // pk赛名称
+                // String award; // 奖励
+                // String rules; // 规则
+                // Map medalData; //奖章
+
+              }),
               SizedBox(
                 height: 20,
               ),
@@ -254,59 +348,63 @@ class _PKaddState extends State<PKadd> {
 
   Widget getDateWidget({@required String title, bool start = true}) {
     double labelWidth = widthScale * 22;
-    return Row(
-      children: [
-        SizedBox(
-          width: margin,
-          height: lineHeight,
-        ),
-        Container(
-          width: labelWidth,
-          child: Text(
-            title,
-            style: jm_text_black_style15,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+        showDatePick(start);
+      },
+      child: Row(
+        children: [
+          SizedBox(
+            width: margin,
+            height: lineHeight,
           ),
-        ),
-        Container(
-          width: selfWidth - labelWidth - widthScale * 8,
-          child: Text(
-            dateFormat.format(start ? startTime : endTime),
-            style: jm_text_black_style15,
+          Container(
+            width: labelWidth,
+            child: Text(
+              title,
+              style: jm_text_black_style15,
+            ),
           ),
-        ),
-        Icon(
-          Icons.keyboard_arrow_right,
-          size: widthScale * 8,
-        )
-      ],
+          Container(
+            width: selfWidth - labelWidth - widthScale * 8,
+            child: Text(
+              dateFormat.format(start ? startTime : endTime),
+              style: jm_text_black_style15,
+            ),
+          ),
+          Icon(
+            Icons.keyboard_arrow_right,
+            size: widthScale * 8,
+          )
+        ],
+      ),
     );
   }
 
-  showDatePick(DateTime dateTime) async {
-    dateTime = await showDatePicker(
+  Future<void> showDatePick(bool isStart) async {
+    final DateTime date = await showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
+        initialDate: isStart ? startTime : endTime,
         firstDate: DateTime(2018, 1),
         lastDate: DateTime(2022, 1),
-        builder: (BuildContext context, Widget child) {
-          return Theme(
-            child: Container(),
-            data: null,
-          );
-        });
-    setState(() {});
+    );
+    if (date == null) return;
+    setState(() {
+       isStart ? startTime = date : endTime = date;
+    });
   }
 
   List<Widget> getUnitList() {
     double buttonHeight = lineHeight * 0.5;
     List<Widget> units = [];
-    for (Map item in unitList) {
+    for (TreeNode node in unitList) {
       units.add(SizedBox(
         height: 6,
       ));
       units.add(RawMaterialButton(
         onPressed: () {
-          deleteUnit(item);
+          deleteUnit(node);
         },
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         constraints:
@@ -324,7 +422,7 @@ class _PKaddState extends State<PKadd> {
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
-                  item['name'] ?? '',
+                  node.label ?? '',
                   style: jm_text_black_style13,
                 ),
               ),
@@ -368,7 +466,7 @@ class _PKaddState extends State<PKadd> {
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
-                  item['name'] ?? '',
+                  item['dictLabel'] ?? '',
                   style: jm_text_black_style13,
                 ),
               ),
@@ -385,10 +483,14 @@ class _PKaddState extends State<PKadd> {
     return targets;
   }
 
-  void deleteUnit(Map item) {
-    if (item != null) {
+  void showDepSelect(){
+
+  }
+
+  void deleteUnit(TreeNode node) {
+    if (node != null) {
       setState(() {
-        unitList.remove(item);
+        unitList.remove(node);
       });
     }
   }
@@ -400,4 +502,93 @@ class _PKaddState extends State<PKadd> {
       });
     }
   }
+
+  void showTargetSelect (Function(Map data) selectData) {
+    int idx;
+
+    double dialogWidth = SizeConfig.screenWidth * 0.8;
+    double dialogHeight = SizeConfig.screenHeight * 0.8;
+    double dialogMargin = dialogWidth / 100 * 6;
+    showGeneralDialog(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel: '',
+        transitionDuration: Duration(milliseconds: 200),
+        barrierColor: Colors.black.withOpacity(.5),
+        pageBuilder: (BuildContext context, Animation<double> animation,
+            Animation<double> secondaryAnimation) {
+          return Material(
+            color: Colors.transparent,
+            child: Align(child:
+              Container(
+                width: dialogWidth,
+                height: dialogHeight,
+                color: Colors.white,
+                child: Stack(children: [
+                  Positioned(
+                      top: 0,
+                      right: 0,
+                      left: 0,
+                      height: dialogHeight - SizeConfig.screenWidth * 0.2,
+                      child: ListView.builder(
+                    padding: EdgeInsets.only(top: 20),
+                      itemCount: targetDataList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return GestureDetector(
+                          onTap: () {
+                            if (selectData != null) {
+                              selectData(targetDataList[index]);
+                            }
+                            Navigator.pop(context);
+                            // setState(() {
+                            //   cuttentData = targetDataList[index];
+                            //   idx = index;
+                            // });
+                          },
+                          child: Align(
+                            child: Container(
+                              constraints: BoxConstraints(
+                                minHeight: 60,
+                              ),
+                              width: dialogWidth - dialogMargin * 2,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text((targetDataList[index])['dictLabel'] ?? '', style: index == idx ? jm_text_apptheme_style17 : jm_text_black_style17,),
+                                  Text((targetDataList[index])['remark'] ?? '', style: index == idx ? jm_text_apptheme_style13 : jm_text_gray_style13,),
+                                  Container(width: dialogWidth - dialogMargin * 2,child: Text((targetDataList[index])['remark'] ?? '',maxLines: 100, style: index == idx ? jm_text_apptheme_style13 : jm_text_gray_style13)),
+                                  SizedBox(height: 20,)
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      })),
+                  Positioned(
+                      bottom: 0,
+                      height: SizeConfig.screenWidth * 0.2,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: RawMaterialButton(
+                          elevation: 1,
+                          highlightElevation: 1,
+                          constraints: BoxConstraints(
+                            minWidth: 90,
+                            minHeight: 40
+                          ),
+                          textStyle: TextStyle(fontSize: 15,color: Colors.white),
+                          fillColor: Color(0xff404351),
+                          child: Text('确定'),
+                          onPressed: (){
+                            Navigator.pop(context);
+                          },),
+
+                      ))
+                ],),
+              )),
+          );
+        });
+  }
+
 }

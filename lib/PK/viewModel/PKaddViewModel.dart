@@ -2,7 +2,7 @@ import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
 
-class PKviewModel extends BaseViewModel {
+class PKaddViewModel extends BaseViewModel {
 
 
   loadPKList (Map addParams) {
@@ -21,4 +21,51 @@ class PKviewModel extends BaseViewModel {
       notifyListeners();
     });
   }
+
+  loadTarget({Function(List targetList) success}){
+    Http().get(Urls.pkTarget, {'dictId': 114},
+      success:(json){
+        if (json['code'] == 200) {
+          if(success != null) {
+            success(json['data']);
+          }
+        } else {
+        }
+      },
+      fail: (reason, code){
+
+      });
+  }
+
+  loadMedal(String name,{Function(List targetList) success}){
+    Http().get(Urls.pkMedel, {'name': name},
+        success:(json){
+          if (json['code'] == 200) {
+            if(success != null) {
+              success(json['data']);
+            }
+          } else {
+          }
+        },
+        fail: (reason, code){
+
+        });
+  }
+
+  adPkRequest(Map params,{Function(bool success) success}){
+    Http().post(Urls.pkMedel,params,
+        success:(json){
+          if (json['code'] == 200) {
+            if(success != null) {
+              success(true);
+            }
+          } else {
+          }
+        },
+        fail: (reason, code){
+
+        });
+  }
 }
+
+

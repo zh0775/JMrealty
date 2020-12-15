@@ -77,4 +77,8 @@ class Urls {
   static const String addPk = '/comps/race/add';
   // 查询pk赛详情
   static const String pkDetail = '/comps/race/searchList';
+  // 查询pk赛详情
+  static const String pkTarget = '/system/dict/type/typeId';
+  // 查询pk赛详情
+  static const String pkMedel = '/comps/medal/findByFuzzySearch';
 }

@@ -73,7 +73,7 @@ class LoginViewModel extends BaseViewModel {
     return dataList;
   }
 
-  loadRegistDeptSelectList() {
+  loadRegistDeptSelectList({Function(List<TreeNode> value) success}) {
     state = BaseState.LOADING;
     notifyListeners();
     Http().get(
@@ -82,6 +82,9 @@ class LoginViewModel extends BaseViewModel {
       success: (json) {
         compute(decodeDepListToList, json).then((value) {
           depTreeDataList = value;
+          if (success != null) {
+            success(depTreeDataList);
+          }
           state = BaseState.CONTENT;
           notifyListeners();
         });

@@ -37,12 +37,15 @@ class Http {
     Dio dio = Dio(baseOptions);
     dio.interceptors
         .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
-      UserDefault.get(ACCESS_TOKEN).then((token) {
-        if (token != null) {
-          options.headers['Authorization'] = token;
-        }
-        return options;
-      });
+          if (!options.path.contains(Urls.registerDeptList)) {
+            UserDefault.get(ACCESS_TOKEN).then((token) {
+              if (token != null) {
+                options.headers['Authorization'] = token;
+              }
+              return options;
+            });
+          }
+          return options;
     }, onResponse: (Response response) {
       return response;
     }, onError: (DioError e) {
