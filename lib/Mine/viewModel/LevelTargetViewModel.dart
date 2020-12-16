@@ -8,12 +8,68 @@ class LevelTargetViewModel extends BaseViewModel {
 
   loadTarget(int depId) {
     state = BaseState.LOADING;
+    notifyListeners();
     Http().get(
       Urls.targetRuleList,
       {'organizationId': depId},
       success: (json) {
         state = BaseState.CONTENT;
+        notifyListeners();
         if (json['code'] == 200) {
+        } else {
+          if (json['msg'] != null) {
+            ShowToast.normal(json['msg']);
+          }
+        }
+      },
+      fail: (reason, code) {
+        if (reason != null) {
+          ShowToast.normal(reason);
+        }
+      },
+    );
+  }
+
+  addTargetSetting(Map params, Function() success) {
+    state = BaseState.LOADING;
+    notifyListeners();
+    Http().post(
+      Urls.addTargetRule,
+      params,
+      success: (json) {
+        state = BaseState.CONTENT;
+        notifyListeners();
+        if (json['code'] == 200) {
+          if (success != null) {
+            success();
+          }
+        } else {
+          if (json['msg'] != null) {
+            ShowToast.normal(json['msg']);
+          }
+        }
+      },
+      fail: (reason, code) {
+        if (reason != null) {
+          ShowToast.normal(reason);
+        }
+      },
+    );
+  }
+
+  deleteTarget(int id, Function() success) {
+    // state = BaseState.LOADING;
+    // notifyListeners();
+    Http().delete(
+      Urls.deleteTargetRule(id.toString()),
+      // params,
+      success: (json) {
+        // state = BaseState.CONTENT;
+        // notifyListeners();
+        if (json['code'] == 200) {
+          if (success != null) {
+            success();
+          }
         } else {
           if (json['msg'] != null) {
             ShowToast.normal(json['msg']);

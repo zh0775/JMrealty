@@ -37,15 +37,15 @@ class Http {
     Dio dio = Dio(baseOptions);
     dio.interceptors
         .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
-          if (!options.path.contains(Urls.registerDeptList)) {
-            UserDefault.get(ACCESS_TOKEN).then((token) {
-              if (token != null) {
-                options.headers['Authorization'] = token;
-              }
-              return options;
-            });
+      if (!options.path.contains(Urls.registerDeptList)) {
+        UserDefault.get(ACCESS_TOKEN).then((token) {
+          if (token != null) {
+            options.headers['Authorization'] = token;
           }
           return options;
+        });
+      }
+      return options;
     }, onResponse: (Response response) {
       return response;
     }, onError: (DioError e) {
@@ -62,6 +62,37 @@ class Http {
       {Success success, Fail fail, After after}) async {
     try {
       await _dio.get(url, queryParameters: params).then((response) {
+        if (response.statusCode == 200) {
+          Map<String, dynamic> data = response.data;
+          if (data['code'] != 200) {
+            if (data['msg'] != null) {
+              ShowToast.normal(data['msg']);
+            }
+          }
+          if (success != null) {
+            success(response.data);
+          }
+        } else {
+          if (fail != null) {
+            fail(response.statusMessage, response.statusCode);
+          }
+        }
+        if (after != null) {
+          after();
+        }
+      });
+    } catch (e) {
+      print('e ===== $e');
+      if (fail != null) {
+        fail('网络发生错误', -1);
+      }
+    }
+  }
+
+  Future<void> delete(String url,
+      {Success success, Fail fail, After after}) async {
+    try {
+      await _dio.delete(url).then((response) {
         if (response.statusCode == 200) {
           Map<String, dynamic> data = response.data;
           if (data['code'] != 200) {
