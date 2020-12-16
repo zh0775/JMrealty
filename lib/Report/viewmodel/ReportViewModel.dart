@@ -83,11 +83,15 @@ class ReportViewModel extends BaseViewModel {
       clients.forEach((element) {
         Map client = {
           'csutomerPhone': element['csutomerPhone'],
-          'custmoerCard': element['custmoerCard'],
           'custmoerSex': element['sex'],
-          'customerId': element['id'],
           'customerName': element['name'],
         };
+        if (element['id'] != null) {
+          client['customerId'] = element['id'];
+        }
+        if (element['custmoerCard'] != null) {
+          client['custmoerCard'] = element['custmoerCard'];
+        }
         clientsParams.add(client);
       });
     }
@@ -101,7 +105,6 @@ class ReportViewModel extends BaseViewModel {
       'projectName': project['name'],
       'remarks': data['mark'] ?? '',
     };
-    params['customerReport'] = clientsParams;
 
     // print('data === $data');
     Http().post(

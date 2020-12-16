@@ -23,7 +23,7 @@ class ClientListViewModel extends BaseViewModel {
         Map<String, dynamic> data = json['data'];
         if (json['code'] == 200) {
           listData = data['rows'];
-          if(success != null) {
+          if (success != null) {
             success(listData);
           }
           state = BaseState.CONTENT;

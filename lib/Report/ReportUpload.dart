@@ -155,6 +155,7 @@ class _ReportUploadState extends State<ReportUpload> {
                 mapParams['reportId'] = widget.data['id'];
               }
               mapParams['remark'] = mark ?? '';
+              mapParams['images'] = '';
               viewModel.uploadReportRecord(mapParams, (success) {
                 if (success) {
                   ShowToast.normal('上传成功');

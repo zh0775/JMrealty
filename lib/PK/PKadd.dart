@@ -1,6 +1,5 @@
 import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
 import 'package:JMrealty/PK/viewModel/PKaddViewModel.dart';
-import 'package:JMrealty/PK/viewModel/PKviewModel.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
@@ -8,7 +7,6 @@ import 'package:JMrealty/components/ShowDepNode.dart';
 import 'package:JMrealty/components/TreeNode.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
-import 'package:JMrealty/utils/tTools.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,18 +29,20 @@ class _PKaddState extends State<PKadd> {
   DateTime endTime;
   DateFormat dateFormat;
   List unitList; // pk指标
-  List pkTargetList; // 参与单位
+  Map pkTarget; // 参与单位
   String pkName; // pk赛名称
   String award; // 奖励
   String rules; // 规则
   Map medalData; //奖章
   List targetDataList;
   List<TreeNode> treeData;
+  List pkType; // pk赛类型
+  int pkTypeValue; // pk类型
   @override
   void initState() {
     treeData = [];
     pkaddModel = PKaddViewModel();
-    pkaddModel.loadTarget(success: (value){
+    pkaddModel.loadTarget(success: (value) {
       setState(() {
         targetDataList = value;
       });
@@ -53,8 +53,17 @@ class _PKaddState extends State<PKadd> {
         treeData = value;
       });
     });
+    pkaddModel.loadPkType(
+      success: (data) {
+        setState(() {
+          pkType = data.map((e) {
+            return Map<String, dynamic>.from(
+                {'title': e['dictLabel'], 'value': e['dictValue']});
+          }).toList();
+        });
+      },
+    );
     unitList = [];
-    pkTargetList = [];
     dateFormat = DateFormat('yyyy-MM-dd');
     startTime = DateTime.now();
     endTime = startTime.add(Duration(days: 7));
@@ -111,6 +120,14 @@ class _PKaddState extends State<PKadd> {
               JMline(width: selfWidth, height: 0.5),
               getDateWidget(title: '结束时间', start: false),
               JMline(width: selfWidth, height: 0.5),
+              SelectView(
+                title: 'PK赛类型',
+                dataList: pkType,
+                margin: margin,
+                selectValueChange: (value, data) {
+                  pkTypeValue = value;
+                },
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,10 +169,12 @@ class _PKaddState extends State<PKadd> {
                               ),
                               onPressed: () {
                                 ShowDepNode(
-                                    size: Size(SizeConfig.blockSizeHorizontal * 80,
-                                    SizeConfig.blockSizeVertical * 80,),
+                                    size: Size(
+                                      SizeConfig.blockSizeHorizontal * 80,
+                                      SizeConfig.blockSizeVertical * 80,
+                                    ),
                                     treeData: treeData,
-                                    nodeSelected:(TreeNode node){
+                                    nodeSelected: (TreeNode node) {
                                       setState(() {
                                         unitList.add(node);
                                       });
@@ -214,12 +233,10 @@ class _PKaddState extends State<PKadd> {
                               onPressed: () {
                                 showTargetSelect((data) {
                                   setState(() {
-                                    pkTargetList.add(data);
+                                    pkTarget = Map.from(data);
+                                    rules = pkTarget['remark'];
                                   });
                                 });
-                                // setState(() {
-                                //   pkTargetList.add({'name': '123'});
-                                // });
                               }),
                         ],
                       ),
@@ -254,9 +271,7 @@ class _PKaddState extends State<PKadd> {
               ),
               CustomInput(
                 key: ValueKey('CustomInput_project_1'),
-                text: medalData != null
-                    ? (medalData['name'] ?? '')
-                    : '',
+                text: medalData != null ? (medalData['name'] ?? '') : '',
                 labelStyle: jm_text_black_bold_style14,
                 textStyle: jm_text_black_style15,
                 title: '奖章',
@@ -298,6 +313,7 @@ class _PKaddState extends State<PKadd> {
                 ],
               ),
               CustomMarkInput(
+                text: rules ?? '',
                 valueChange: (value) {
                   rules = value;
                 },
@@ -307,23 +323,53 @@ class _PKaddState extends State<PKadd> {
                 height: 20,
               ),
               CustomSubmitButton(buttonClick: () {
-                if(pkName == null || pkName == null) {
+                if (pkName == null || pkName.length == 0) {
                   ShowToast.normal('请输入PK赛名称');
                   return;
                 }
+                if (award == null || award.length == 0) {
+                  ShowToast.normal('请输入奖励内容');
+                  return;
+                }
+                if (medalData == null) {
+                  ShowToast.normal('请选择奖章');
+                  return;
+                }
+                if (pkTypeValue == null) {
+                  ShowToast.normal('请选择PK赛类型');
+                  return;
+                }
+                if (pkTarget == null) {
+                  ShowToast.normal('请选择PK赛指标');
+                  return;
+                }
+                // if (rules == null || rules.length == 0) {
+                //   ShowToast.normal('请选择奖章');
+                //   return;
+                // }
                 Map params = {};
                 params['name'] = pkName;
                 params['award'] = award;
                 params['rule'] = rules;
-                if(medalData != null) {
+                if (medalData != null) {
                   params['medalId'] = medalData['id'];
                 }
-                // params['name'] = pkName;
-
-                pkaddModel.adPkRequest(params,success: (success){
+                params['quotaType'] = pkTarget['dictValue'];
+                params['raceType'] = pkTypeValue;
+                params['raceRankBOList'] = unitList.map((e) {
+                  return Map<String, dynamic>.from({
+                    'bussinesId': (e as TreeNode).id,
+                    'bussinesName': (e as TreeNode).label
+                  });
+                }).toList();
+                params['startTime'] = dateFormat.format(startTime);
+                params['endTime'] = dateFormat.format(endTime);
+                params['status'] = 0;
+                pkaddModel.adPkRequest(Map<String, dynamic>.from(params),
+                    success: (success) {
                   if (success) {
                     ShowToast.normal('新增PK赛成功');
-                    Future.delayed(Duration(seconds: 1),(){
+                    Future.delayed(Duration(seconds: 1), () {
                       Navigator.pop(context);
                     });
                   }
@@ -334,6 +380,10 @@ class _PKaddState extends State<PKadd> {
                 // String award; // 奖励
                 // String rules; // 规则
                 // Map medalData; //奖章
+                // List targetDataList;
+                // List<TreeNode> treeData;
+                // List pkType; // pk赛类型
+                // int pkTypeValue; // pk类型
               }),
               SizedBox(
                 height: 20,
@@ -383,14 +433,14 @@ class _PKaddState extends State<PKadd> {
 
   Future<void> showDatePick(bool isStart) async {
     final DateTime date = await showDatePicker(
-        context: context,
-        initialDate: isStart ? startTime : endTime,
-        firstDate: DateTime(2018, 1),
-        lastDate: DateTime(2022, 1),
+      context: context,
+      initialDate: isStart ? startTime : endTime,
+      firstDate: DateTime(2018, 1),
+      lastDate: DateTime(2022, 1),
     );
     if (date == null) return;
     setState(() {
-       isStart ? startTime = date : endTime = date;
+      isStart ? startTime = date : endTime = date;
     });
   }
 
@@ -441,50 +491,48 @@ class _PKaddState extends State<PKadd> {
   List<Widget> getTargetList() {
     double buttonHeight = lineHeight * 0.5;
     List<Widget> targets = [];
-    for (Map item in pkTargetList) {
-      targets.add(SizedBox(
-        height: 6,
-      ));
-      targets.add(RawMaterialButton(
-        onPressed: () {
-          deleteTarget(item);
-        },
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        constraints:
-            BoxConstraints(minHeight: buttonHeight, minWidth: widthScale * 50),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(buttonHeight / 2),
-          side: BorderSide(color: jm_line_color, width: 0.5),
-        ),
-        child: Container(
-          width: widthScale * 49,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  item['dictLabel'] ?? '',
-                  style: jm_text_black_style13,
-                ),
+    Map item = pkTarget;
+    if (pkTarget == null) return targets;
+    targets.add(SizedBox(
+      height: 6,
+    ));
+    targets.add(RawMaterialButton(
+      onPressed: () {
+        deleteTarget(item);
+      },
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      constraints:
+          BoxConstraints(minHeight: buttonHeight, minWidth: widthScale * 50),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(buttonHeight / 2),
+        side: BorderSide(color: jm_line_color, width: 0.5),
+      ),
+      child: Container(
+        width: widthScale * 49,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                item['dictLabel'] ?? '',
+                style: jm_text_black_style13,
               ),
-              Icon(
-                Icons.cancel,
-                size: buttonHeight * 0.9,
-                color: jm_line_color,
-              ),
-            ],
-          ),
+            ),
+            Icon(
+              Icons.cancel,
+              size: buttonHeight * 0.9,
+              color: jm_line_color,
+            ),
+          ],
         ),
-      ));
-    }
+      ),
+    ));
     return targets;
   }
 
-  void showDepSelect(){
-
-  }
+  void showDepSelect() {}
 
   void deleteUnit(TreeNode node) {
     if (node != null) {
@@ -497,12 +545,12 @@ class _PKaddState extends State<PKadd> {
   void deleteTarget(Map item) {
     if (item != null) {
       setState(() {
-        pkTargetList.remove(item);
+        pkTarget = null;
       });
     }
   }
 
-  void showTargetSelect (Function(Map data) selectData) {
+  void showTargetSelect(Function(Map data) selectData) {
     int idx;
 
     double dialogWidth = SizeConfig.screenWidth * 0.8;
@@ -518,51 +566,75 @@ class _PKaddState extends State<PKadd> {
             Animation<double> secondaryAnimation) {
           return Material(
             color: Colors.transparent,
-            child: Align(child:
-              Container(
-                width: dialogWidth,
-                height: dialogHeight,
-                color: Colors.white,
-                child: Stack(children: [
+            child: Align(
+                child: Container(
+              width: dialogWidth,
+              height: dialogHeight,
+              color: Colors.white,
+              child: Stack(
+                children: [
                   Positioned(
                       top: 0,
                       right: 0,
                       left: 0,
                       height: dialogHeight - SizeConfig.screenWidth * 0.2,
                       child: ListView.builder(
-                    padding: EdgeInsets.only(top: 20),
-                      itemCount: targetDataList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return GestureDetector(
-                          onTap: () {
-                            if (selectData != null) {
-                              selectData(targetDataList[index]);
-                            }
-                            Navigator.pop(context);
-                            // setState(() {
-                            //   cuttentData = targetDataList[index];
-                            //   idx = index;
-                            // });
-                          },
-                          child: Align(
-                            child: Container(
-                              constraints: BoxConstraints(
-                                minHeight: 60,
+                          padding: EdgeInsets.only(top: 20),
+                          itemCount: targetDataList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return GestureDetector(
+                              onTap: () {
+                                if (selectData != null) {
+                                  selectData(targetDataList[index]);
+                                }
+                                Navigator.pop(context);
+                                // setState(() {
+                                //   cuttentData = targetDataList[index];
+                                //   idx = index;
+                                // });
+                              },
+                              child: Align(
+                                child: Container(
+                                  constraints: BoxConstraints(
+                                    minHeight: 60,
+                                  ),
+                                  width: dialogWidth - dialogMargin * 2,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        (targetDataList[index])['dictLabel'] ??
+                                            '',
+                                        style: index == idx
+                                            ? jm_text_apptheme_style17
+                                            : jm_text_black_style17,
+                                      ),
+                                      Text(
+                                        (targetDataList[index])['remark'] ?? '',
+                                        style: index == idx
+                                            ? jm_text_apptheme_style13
+                                            : jm_text_gray_style13,
+                                      ),
+                                      Container(
+                                          width: dialogWidth - dialogMargin * 2,
+                                          child: Text(
+                                              (targetDataList[index])[
+                                                      'remark'] ??
+                                                  '',
+                                              maxLines: 100,
+                                              style: index == idx
+                                                  ? jm_text_apptheme_style13
+                                                  : jm_text_gray_style13)),
+                                      SizedBox(
+                                        height: 20,
+                                      )
+                                    ],
+                                  ),
+                                ),
                               ),
-                              width: dialogWidth - dialogMargin * 2,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text((targetDataList[index])['dictLabel'] ?? '', style: index == idx ? jm_text_apptheme_style17 : jm_text_black_style17,),
-                                  Text((targetDataList[index])['remark'] ?? '', style: index == idx ? jm_text_apptheme_style13 : jm_text_gray_style13,),
-                                  Container(width: dialogWidth - dialogMargin * 2,child: Text((targetDataList[index])['remark'] ?? '',maxLines: 100, style: index == idx ? jm_text_apptheme_style13 : jm_text_gray_style13)),
-                                  SizedBox(height: 20,)
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      })),
+                            );
+                          })),
                   Positioned(
                       bottom: 0,
                       height: SizeConfig.screenWidth * 0.2,
@@ -572,22 +644,21 @@ class _PKaddState extends State<PKadd> {
                         child: RawMaterialButton(
                           elevation: 1,
                           highlightElevation: 1,
-                          constraints: BoxConstraints(
-                            minWidth: 90,
-                            minHeight: 40
-                          ),
-                          textStyle: TextStyle(fontSize: 15,color: Colors.white),
+                          constraints:
+                              BoxConstraints(minWidth: 90, minHeight: 40),
+                          textStyle:
+                              TextStyle(fontSize: 15, color: Colors.white),
                           fillColor: Color(0xff404351),
                           child: Text('确定'),
-                          onPressed: (){
+                          onPressed: () {
                             Navigator.pop(context);
-                          },),
-
+                          },
+                        ),
                       ))
-                ],),
-              )),
+                ],
+              ),
+            )),
           );
         });
   }
-
 }

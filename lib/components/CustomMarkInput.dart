@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 class CustomMarkInput extends StatefulWidget {
   final Function(String value) valueChange;
-  CustomMarkInput({this.valueChange});
+  final String text;
+  CustomMarkInput({this.valueChange, this.text = ''});
   @override
   _CustomMarkInputState createState() => _CustomMarkInputState();
 }
@@ -24,6 +25,7 @@ class _CustomMarkInputState extends State<CustomMarkInput> {
       padding: EdgeInsets.fromLTRB(marginSpace, 10, marginSpace, 10),
       child: TextField(
         maxLines: 100,
+        controller: TextEditingController(text: widget.text),
         minLines: 3,
         decoration: InputDecoration(
             contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),

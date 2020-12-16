@@ -1,13 +1,15 @@
 import 'package:JMrealty/Client/model/ClientModel.dart';
 import 'package:JMrealty/Client/viewModel/ClientViewModel.dart';
 import 'package:JMrealty/Login/components/RegistSelectInput.dart';
-import 'package:JMrealty/Login/components/ZZInput.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert' as convert;
 
 class AddClientVC extends StatefulWidget {
   @override
@@ -552,13 +554,17 @@ class _AddClientVCState extends State<AddClientVC> {
                         onPressed: () {
                           FocusScope.of(context).requestFocus(FocusNode());
                           // sendRegist();
-                          model.sendAddClientRequest(addClientParams,
-                              (bool success) {
-                            if (success) {
-                              Future.delayed(Duration(seconds: 1), () {
-                                Navigator.pop(context);
-                              });
-                            }
+                          UserDefault.get(USERINFO).then((value) {
+                            Map userInfo = convert.jsonDecode(value);
+                            addClientParams['employeeId'] = userInfo['userId'];
+                            model.sendAddClientRequest(addClientParams,
+                                (bool success) {
+                              if (success) {
+                                Future.delayed(Duration(seconds: 1), () {
+                                  Navigator.pop(context);
+                                });
+                              }
+                            });
                           });
                         },
                         child: Text(
@@ -601,16 +607,6 @@ class _AddClientVCState extends State<AddClientVC> {
                 ),
               ),
             )
-            // ZZInput(
-            //   leftPadding: 0,
-            //   height: lineHeight,
-            //   width: otherWidth,
-            //   keyboardType: keyboardType,
-            //   backgroundColor: Colors.transparent,
-            //   needCleanButton: true,
-            //   valueChange: valueChange,
-            //   hintText: hintText,
-            // )
           ],
         ),
       ),

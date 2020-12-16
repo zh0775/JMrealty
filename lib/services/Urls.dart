@@ -81,4 +81,6 @@ class Urls {
   static const String pkTarget = '/system/dict/type/typeId';
   // 查询pk赛详情
   static const String pkMedel = '/comps/medal/findByFuzzySearch';
+  // pk赛指标
+  static const String pkType = '/system/dict/type/typeId';
 }

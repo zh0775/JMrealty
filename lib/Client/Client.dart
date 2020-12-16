@@ -49,7 +49,7 @@ class _ClientState extends State<Client> {
     value2 = {'title': '类型', 'value': '-1'};
     value3 = {'title': '面积', 'value': '-1'};
     topSelectVM = ClientListSelect1ViewModel();
-    topSelectVM.loadSelectData(success: (data){
+    topSelectVM.loadSelectData(success: (data) {
       setState(() {
         selectData = data;
       });
@@ -74,154 +74,155 @@ class _ClientState extends State<Client> {
     return DefaultTabController(
       length: 5,
       child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: jm_appTheme,
-          automaticallyImplyLeading: false,
-          title: Text(
-            '客户',
-            style: TextStyle(color: Colors.white, fontSize: 22),
-          ),
-          actions: [
-            IconButton(
-                icon: Icon(
-                  Icons.add_circle_outline,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                onPressed: () {
-                  Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                    return AddClientVC();
-                  }));
-                })
-          ],
-          bottom: TabBar(
-            indicatorSize: TabBarIndicatorSize.label,
-            indicatorColor: Colors.white,
-            indicatorWeight: 2.0,
-            indicatorPadding: EdgeInsets.only(bottom: 5),
-            tabs: [
-              Tab(
-                child: Text(
-                  '待跟进',
-                  style: TextStyle(fontSize: 14, color: Colors.white),
-                ),
-              ),
-              Tab(
-                child: Text(
-                  '已带看',
-                  style: TextStyle(fontSize: 14, color: Colors.white),
-                ),
-              ),
-              Tab(
-                child: Text(
-                  '已预约',
-                  style: TextStyle(fontSize: 14, color: Colors.white),
-                ),
-              ),
-              Tab(
-                child: Text(
-                  '已成交',
-                  style: TextStyle(fontSize: 14, color: Colors.white),
-                ),
-              ),
-              Tab(
-                child: Text(
-                  '水客',
-                  style: TextStyle(fontSize: 14, color: Colors.white),
-                ),
-              )
+          appBar: AppBar(
+            centerTitle: true,
+            backgroundColor: jm_appTheme,
+            automaticallyImplyLeading: false,
+            title: Text(
+              '客户',
+              style: TextStyle(color: Colors.white, fontSize: 22),
+            ),
+            actions: [
+              IconButton(
+                  icon: Icon(
+                    Icons.add_circle_outline,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                      return AddClientVC();
+                    }));
+                  })
             ],
-          ),
-        ),
-        backgroundColor: Colors.white,
-        body:Container(width: double.infinity,
-          height: double.infinity,
-          child: Stack(children: [
-            Positioned(
-              top: 40,
-              left: 0,
-              width: SizeConfig.screenWidth,
-              bottom: 0,
-              child: TabBarView(
-              children: [
-                ClientList(
-                    status: ClientStatus.wait,
-                    selectedForRowAtIndex: selectedForRowAtIndex,
-                    cellReportClick: cellReportClick,
-                    writeFollowClick: writeFollowClick),
-                ClientList(
-                    status: ClientStatus.already,
-                    selectedForRowAtIndex: selectedForRowAtIndex,
-                    cellReportClick: cellReportClick,
-                    writeFollowClick: writeFollowClick),
-                ClientList(
-                    status: ClientStatus.order,
-                    selectedForRowAtIndex: selectedForRowAtIndex,
-                    cellReportClick: cellReportClick,
-                    writeFollowClick: writeFollowClick),
-                ClientList(
-                    status: ClientStatus.deal,
-                    selectedForRowAtIndex: selectedForRowAtIndex,
-                    cellReportClick: cellReportClick,
-                    writeFollowClick: writeFollowClick),
-                ClientList(
-                    status: ClientStatus.water,
-                    selectedForRowAtIndex: selectedForRowAtIndex,
-                    cellReportClick: cellReportClick,
-                    writeFollowClick: writeFollowClick),
+            bottom: TabBar(
+              indicatorSize: TabBarIndicatorSize.label,
+              indicatorColor: Colors.white,
+              indicatorWeight: 2.0,
+              indicatorPadding: EdgeInsets.only(bottom: 5),
+              tabs: [
+                Tab(
+                  child: Text(
+                    '待跟进',
+                    style: TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                ),
+                Tab(
+                  child: Text(
+                    '已带看',
+                    style: TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                ),
+                Tab(
+                  child: Text(
+                    '已预约',
+                    style: TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                ),
+                Tab(
+                  child: Text(
+                    '已成交',
+                    style: TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                ),
+                Tab(
+                  child: Text(
+                    '水客',
+                    style: TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                )
               ],
             ),
-            ),
-            Positioned(
-                left: 0,
-                top: 0,
-                child: GestureDetector(
-                  onTap: () {
-                    if (selectExpand) {
-                      setState(() {
-                        selectExpand = !selectExpand;
-                      });
-                    }
-                  },
-                  child: Container(
-                    color: selectExpand
-                        ? Color.fromRGBO(0, 0, 0, 0.3)
-                        : Colors.transparent,
-                    width: SizeConfig.screenWidth,
-                    alignment: Alignment.topLeft,
-                    height: selectExpand ? SizeConfig.screenHeight : 40,
-                    child: Row(
-                      children: [
-                        topButton(value1['title'], () {
-                          setState(() {
-                            currentSelectIndex = 1;
-                            selectExpand = !selectExpand;
-                          });
-                        }),
-                        topButton(value2['title'], () {
-                          setState(() {
-                            currentSelectIndex = 2;
-                            selectExpand = !selectExpand;
-                          });
-                        }),
-                        topButton(value3['title'], () {
-                          setState(() {
-                            currentSelectIndex = 3;
-                            selectExpand = !selectExpand;
-                          });
-                        })
-                      ],
-                    ),
+          ),
+          backgroundColor: Colors.white,
+          body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 40,
+                  left: 0,
+                  width: SizeConfig.screenWidth,
+                  bottom: 0,
+                  child: TabBarView(
+                    children: [
+                      ClientList(
+                          status: ClientStatus.wait,
+                          selectedForRowAtIndex: selectedForRowAtIndex,
+                          cellReportClick: cellReportClick,
+                          writeFollowClick: writeFollowClick),
+                      ClientList(
+                          status: ClientStatus.already,
+                          selectedForRowAtIndex: selectedForRowAtIndex,
+                          cellReportClick: cellReportClick,
+                          writeFollowClick: writeFollowClick),
+                      ClientList(
+                          status: ClientStatus.order,
+                          selectedForRowAtIndex: selectedForRowAtIndex,
+                          cellReportClick: cellReportClick,
+                          writeFollowClick: writeFollowClick),
+                      ClientList(
+                          status: ClientStatus.deal,
+                          selectedForRowAtIndex: selectedForRowAtIndex,
+                          cellReportClick: cellReportClick,
+                          writeFollowClick: writeFollowClick),
+                      ClientList(
+                          status: ClientStatus.water,
+                          selectedForRowAtIndex: selectedForRowAtIndex,
+                          cellReportClick: cellReportClick,
+                          writeFollowClick: writeFollowClick),
+                    ],
                   ),
-                )),
-            selectExpand
-                ? Positioned(
-                top: 40, left: 0, child: getSelectView())
-                : Container(width: 0.0, height: 0.0)
-          ],),
-        )
-      ),
+                ),
+                Positioned(
+                    left: 0,
+                    top: 0,
+                    child: GestureDetector(
+                      onTap: () {
+                        if (selectExpand) {
+                          setState(() {
+                            selectExpand = !selectExpand;
+                          });
+                        }
+                      },
+                      child: Container(
+                        color: selectExpand
+                            ? Color.fromRGBO(0, 0, 0, 0.3)
+                            : Colors.transparent,
+                        width: SizeConfig.screenWidth,
+                        alignment: Alignment.topLeft,
+                        height: selectExpand ? SizeConfig.screenHeight : 40,
+                        child: Row(
+                          children: [
+                            topButton(value1['title'], () {
+                              setState(() {
+                                currentSelectIndex = 1;
+                                selectExpand = !selectExpand;
+                              });
+                            }),
+                            topButton(value2['title'], () {
+                              setState(() {
+                                currentSelectIndex = 2;
+                                selectExpand = !selectExpand;
+                              });
+                            }),
+                            topButton(value3['title'], () {
+                              setState(() {
+                                currentSelectIndex = 3;
+                                selectExpand = !selectExpand;
+                              });
+                            })
+                          ],
+                        ),
+                      ),
+                    )),
+                selectExpand
+                    ? Positioned(top: 40, left: 0, child: getSelectView())
+                    : Container(width: 0.0, height: 0.0)
+              ],
+            ),
+          )),
     );
   }
 
@@ -270,7 +271,7 @@ class _ClientState extends State<Client> {
         decoration: BoxDecoration(
             color: Colors.white,
             border:
-            Border(bottom: BorderSide(width: 0.5, color: jm_line_color))),
+                Border(bottom: BorderSide(width: 0.5, color: jm_line_color))),
         width: SizeConfig.screenWidth / 3,
         height: 40,
         child: Row(
@@ -289,23 +290,23 @@ class _ClientState extends State<Client> {
       ),
     );
   }
+
   Widget getSelectView() {
     String key;
     switch (currentSelectIndex) {
       case 1:
-      key = 'jb';
-      break;
-    case 2:
-      key = 'lx';
-      break;
-    case 3:
-      key = 'mj';
-      break;
+        key = 'jb';
+        break;
+      case 2:
+        key = 'lx';
+        break;
+      case 3:
+        key = 'mj';
+        break;
     }
-    return selectList(
-      selectData != null ? selectData[key] ?? [] : [],
+    return selectList(selectData != null ? selectData[key] ?? [] : [],
         (Map item) {
-        switch (currentSelectIndex) {
+      switch (currentSelectIndex) {
         case 1:
           value1 = item;
           break;
@@ -315,24 +316,30 @@ class _ClientState extends State<Client> {
         case 3:
           value3 = item;
           break;
-        }
-        setState(() {
-          selectExpand = false;
-        });
-        Map params = {};
-        if(value1['value'] != '-1'){
-          params['desireId'] = value1['value'] is int ? value1['value'] : int.parse(value1['value']);
-        }
-        if(value2['value'] != '-1'){
-          params['typeId'] = value2['value'] is int ? value2['value'] : int.parse(value2['value']);
-        }
-        if(value3['value'] != '-1'){
-          params['areaId'] = value3['value'] is int ? value3['value'] : int.parse(value3['value']);
-        }
-        print('params ==== $params');
-        eventBus.emit(NOTIFY_CLIENT_LIST_REFRASH,params);
+      }
+      setState(() {
+        selectExpand = false;
       });
-    }
+      Map params = {};
+      if (value1['value'] != '-1') {
+        params['desireId'] = value1['value'] is int
+            ? value1['value']
+            : int.parse(value1['value']);
+      }
+      if (value2['value'] != '-1') {
+        params['typeId'] = value2['value'] is int
+            ? value2['value']
+            : int.parse(value2['value']);
+      }
+      if (value3['value'] != '-1') {
+        params['areaId'] = value3['value'] is int
+            ? value3['value']
+            : int.parse(value3['value']);
+      }
+      print('params ==== $params');
+      eventBus.emit(NOTIFY_CLIENT_LIST_REFRASH, params);
+    });
+  }
 }
 
 class ClientList extends StatefulWidget {
@@ -349,62 +356,86 @@ class ClientList extends StatefulWidget {
   _ClientListState createState() => _ClientListState();
 }
 
-class _ClientListState extends State<ClientList> with AutomaticKeepAliveClientMixin{
+class _ClientListState extends State<ClientList>
+    with AutomaticKeepAliveClientMixin {
   EventBus eventBus;
   GlobalKey easyRefreshKey = GlobalKey();
   EasyRefreshController pullCtr;
   ClientListViewModel listModel;
   List listData;
   Map statusParams;
+
   @override
   void initState() {
-    statusParams = Map<String, dynamic>.from({'status': widget.status.index + 1});
+    int status = 0;
+    switch (widget.status) {
+      case ClientStatus.wait:
+        status = 0;
+        break;
+      case ClientStatus.already:
+        status = 10;
+        break;
+      case ClientStatus.order:
+        status = 20;
+        break;
+      case ClientStatus.deal:
+        status = 30;
+        break;
+      case ClientStatus.water:
+        status = 40;
+        break;
+      default:
+    }
+    statusParams = Map<String, dynamic>.from({'status': status});
     pullCtr = EasyRefreshController();
     listModel = ClientListViewModel();
-    listModel.loadClientList(statusParams,success: (data){
+    listModel.loadClientList(statusParams, success: (data) {
       setState(() {
         listData = data;
       });
     });
     eventBus = EventBus();
     eventBus.on(NOTIFY_CLIENT_LIST_REFRASH, (arg) {
-      if(arg['desireId'] != null) {
+      if (arg['desireId'] != null) {
         statusParams['desireId'] = arg['desireId'];
       } else {
         statusParams.remove('desireId');
       }
-      if(arg['areaId'] != null) {
+      if (arg['areaId'] != null) {
         statusParams['areaId'] = arg['areaId'];
       } else {
         statusParams.remove('areaId');
       }
-      if(arg['typeId'] != null) {
+      if (arg['typeId'] != null) {
         statusParams['typeId'] = arg['typeId'];
       } else {
         statusParams.remove('typeId');
       }
       pullCtr.callRefresh();
     });
-    eventBus.on(NOTIFY_CLIENT_LIST_REFRASH_NORMAL,(arg){
+    eventBus.on(NOTIFY_CLIENT_LIST_REFRASH_NORMAL, (arg) {
       pullCtr.callRefresh();
     });
     super.initState();
   }
+
   @override
   void dispose() {
-      // listModel.dispose();
+    // listModel.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return EasyRefresh(
       controller: pullCtr,
-      emptyWidget: listData == null || listData.length == 0 ? EmptyView() : null,
+      emptyWidget:
+          listData == null || listData.length == 0 ? EmptyView() : null,
       key: easyRefreshKey,
       onRefresh: () async {
         print('statusParams ===== $statusParams');
-        listModel.loadClientList(statusParams,success: (data){
+        listModel.loadClientList(statusParams, success: (data) {
           pullCtr.finishRefresh();
           setState(() {
             listData = data;
@@ -426,6 +457,7 @@ class _ClientListState extends State<ClientList> with AutomaticKeepAliveClientMi
       ),
     );
   }
+
   @override
   bool get wantKeepAlive => true;
 }
