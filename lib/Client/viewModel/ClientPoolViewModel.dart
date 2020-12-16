@@ -19,10 +19,10 @@ class ClientPoolViewModel extends BaseViewModel {
             key = 'jb';
             break;
           case 1:
-            key = 'lx';
+            key = 'mj';
             break;
           case 2:
-            key = 'mj';
+            key = 'lx';
             break;
         }
         Map res = new Map<String, dynamic>.from((e[i]).data);
@@ -48,27 +48,31 @@ class ClientPoolViewModel extends BaseViewModel {
   }
 
   Map listData;
-  loadClientPoolList() {
-    state = BaseState.LOADING;
-    notifyListeners();
+  loadClientPoolList({Map params = const {}, Function(Map data) success}) {
+    // state = BaseState.LOADING;
+    // notifyListeners();
     Http().get(
       Urls.findCustomerPoolInfo,
-      {},
+      params,
       success: (json) {
         if (json['code'] == 200) {
           listData = json['data'];
-          state = BaseState.CONTENT;
+          print('listData === $listData');
+          if(success != null) {
+            success(listData);
+          }
+          // state = BaseState.CONTENT;
         } else {
-          state = BaseState.FAIL;
-          ShowToast.normal(json['msg']);
+          // state = BaseState.FAIL;
+          // ShowToast.normal(json['msg']);
         }
-        notifyListeners();
+        // notifyListeners();
         // print('object')
       },
       fail: (reason, code) {
-        state = BaseState.FAIL;
-        ShowToast.normal(reason);
-        notifyListeners();
+        // state = BaseState.FAIL;
+        // ShowToast.normal(reason);
+        // notifyListeners();
       },
     );
   }

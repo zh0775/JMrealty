@@ -9,13 +9,9 @@ import 'package:dio/dio.dart';
 class ClientListSelect1ViewModel extends BaseViewModel {
   Map selectData = {'jb': [], 'lx': [], 'mj': []};
 
-  loadSelectData() async {
+  loadSelectData({Function(Map data) success}) {
     state = BaseState.LOADING;
     notifyListeners();
-    await UserDefault.get(ACCESS_TOKEN).then((token) {
-      Dio dio = Http().getDio();
-      if (token != null) {
-        dio.options.headers['Authorization'] = token;
         Future.wait([
           Http()
               .getDio()
@@ -35,10 +31,10 @@ class ClientListSelect1ViewModel extends BaseViewModel {
                 key = 'jb';
                 break;
               case 1:
-                key = 'lx';
+                key = 'mj';
                 break;
               case 2:
-                key = 'mj';
+                key = 'lx';
                 break;
             }
             Map res = new Map<String, dynamic>.from((e[i]).data);
@@ -59,12 +55,16 @@ class ClientListSelect1ViewModel extends BaseViewModel {
                 // print('list === ${list.runtimeType}');
                 // list.add(Map<String, dynamic>.from(element));
               });
+
               // print('selectData === $selectData');
             } else {
               state = BaseState.FAIL;
               notifyListeners();
               return;
             }
+          }
+          if(success != null) {
+            success(selectData);
           }
           state = BaseState.CONTENT;
           notifyListeners();
@@ -73,8 +73,6 @@ class ClientListSelect1ViewModel extends BaseViewModel {
           notifyListeners();
           print('error 11==== $e'); //[
         });
-      }
-    });
   }
 }
 

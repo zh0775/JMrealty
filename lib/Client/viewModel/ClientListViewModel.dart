@@ -12,17 +12,20 @@ enum ClientStatus {
 }
 
 class ClientListViewModel extends BaseViewModel {
-  Map listData = {};
-  loadClientList(ClientStatus status) {
+  List listData = [];
+  loadClientList(Map params, {Function(List data) success}) {
     state = BaseState.LOADING;
     notifyListeners();
     Http().get(
       Urls.clientList,
-      {'status': status.index + 1},
+      params,
       success: (json) {
         Map<String, dynamic> data = json['data'];
         if (json['code'] == 200) {
-          listData[status.index.toString()] = data['rows'];
+          listData = data['rows'];
+          if(success != null) {
+            success(listData);
+          }
           state = BaseState.CONTENT;
         } else {
           state = BaseState.FAIL;

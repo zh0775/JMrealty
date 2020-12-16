@@ -334,7 +334,6 @@ class _PKaddState extends State<PKadd> {
                 // String award; // 奖励
                 // String rules; // 规则
                 // Map medalData; //奖章
-
               }),
               SizedBox(
                 height: 20,

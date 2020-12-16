@@ -282,6 +282,7 @@ class _CustomInputState extends State<CustomInput>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     SizeConfig().init(context);
     margin = widget.margin != null
         ? widget.margin

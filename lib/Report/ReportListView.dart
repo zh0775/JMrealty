@@ -52,6 +52,7 @@ class _ReportListViewState extends State<ReportListView>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return EasyRefresh(
       controller: easyRefreshCtr,
       header: PhoenixHeader(),

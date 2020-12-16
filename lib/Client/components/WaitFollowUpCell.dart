@@ -57,15 +57,20 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
     if (widget.pool) {
       cellHeight = 140;
     }
-    model = widget.model;
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant WaitFollowUpCell oldWidget) {
+
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    model = widget.model;
     cellWidth = SizeConfig.screenWidth;
-
     Color levelColor = Colors.transparent;
     if (model['desireId'] != null) {
       switch (model['desireId']) {
@@ -81,6 +86,9 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
           level = 'C级';
           levelColor = Color.fromRGBO(40, 143, 255, 1);
           break;
+        default:
+          level = '';
+          levelColor = Colors.transparent;
       }
     }
     if (model['name'] != null) {

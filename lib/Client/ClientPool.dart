@@ -1,12 +1,11 @@
 import 'package:JMrealty/Client/components/WaitFollowUpCell.dart';
 import 'package:JMrealty/Client/viewModel/ClientPoolViewModel.dart';
-import 'package:JMrealty/base/base_viewmodel.dart';
-import 'package:JMrealty/base/provider_widget.dart';
-import 'package:JMrealty/components/ShowLoading.dart';
+import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 
 class ClientPool extends StatefulWidget {
   @override
@@ -14,25 +13,29 @@ class ClientPool extends StatefulWidget {
 }
 
 class _ClientPoolState extends State<ClientPool> {
+  EasyRefreshController pullCtr = EasyRefreshController();
+  GlobalKey pullKey = GlobalKey();
   ClientPoolViewModel clientPoolVM;
   int currentSelectIndex;
-  Map selectData;
+  Map selectData = Map<String, dynamic>.from({});
   Map value1;
   Map value2;
   Map value3;
   bool selectExpand;
+  List clientList = [];
+  Map clientData = Map<String, dynamic>.from({});
+  Map clientPoolParams = Map<String, dynamic>.from({});
   @override
   void initState() {
     currentSelectIndex = 1;
-    value1 = {'title': '级别', 'value': '9'};
-    value2 = {'title': '类型', 'value': '9'};
-    value3 = {'title': '面积', 'value': '9'};
+    value1 = {'title': '级别', 'value': '-1'};
+    value2 = {'title': '类型', 'value': '-1'};
+    value3 = {'title': '面积', 'value': '-1'};
     selectExpand = false;
     clientPoolVM = ClientPoolViewModel();
     clientPoolVM.loadSelectData((Map data) {
       setState(() {
-        selectData = Map.from(data);
-        // print('selectdata === $selectData');
+        selectData = Map<String, dynamic>.from(data);
       });
     });
     super.initState();
@@ -40,7 +43,7 @@ class _ClientPoolState extends State<ClientPool> {
 
   @override
   void dispose() {
-    // clientPoolVM.dispose();
+    clientPoolVM.dispose();
     super.dispose();
   }
 
@@ -89,82 +92,77 @@ class _ClientPoolState extends State<ClientPool> {
               right: 0,
               top: 40,
               bottom: 0,
-              child: ProviderWidget<ClientPoolViewModel>(
-                  model: clientPoolVM,
-                  onReady: (model) {
-                    model.loadClientPoolList();
+              child: EasyRefresh(
+                key: pullKey,
+                controller: pullCtr,
+                firstRefresh: true,
+                emptyWidget: clientList == null || clientList.length == 0 ? EmptyView() : null,
+                onRefresh: () async {
+                  clientPoolVM.loadClientPoolList(params: clientPoolParams, success: (data){
+                    setState(() {
+                      clientData = Map<String, dynamic>.from(data);
+                      clientList = clientData['rows'];
+                    });
+                  });
+                },
+                child: ListView.builder(
+                  itemCount: clientList.length,
+                  // itemCount: model.listData.length,
+                  itemBuilder: (context, index) {
+                    return WaitFollowUpCell(
+                      model: clientList[index],
+                      index: index,
+                      pool: true,
+                      takeOrderClick: (Map data) {
+                        showCupertinoDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: Text(
+                                  '提示',
+                                  style: TextStyle(
+                                      fontSize: 14, color: jm_text_black),
+                                ),
+                                content: Text(
+                                  '您要跟进该用户吗？',
+                                  style: TextStyle(
+                                      fontSize: 14, color: jm_text_black),
+                                ),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        '取消',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: jm_text_black),
+                                      )),
+                                  TextButton(
+                                      onPressed: () {
+                                        clientPoolVM.takeClientRequest(
+                                            data['id'], () {
+                                          Navigator.pop(context);
+                                          pullCtr.callRefresh();
+                                        });
+                                      },
+                                      child: Text(
+                                        '确认',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: jm_text_black),
+                                      ))
+                                ],
+                              );
+                            });
+                      },
+                      // writeFollowClick: widget.writeFollowClick,
+                      // cellReportClick: widget.cellReportClick,
+                    );
                   },
-                  builder: (ctx, model, child) {
-                    if (model.state == BaseState.CONTENT) {
-                      List clientList = model.listData['rows'];
-                      // print(
-                      //     'model.listData[widget.status.index] === ${model.listData[widget.status.index.toString()]}');
-                      return ListView.builder(
-                        itemCount: clientList.length,
-                        // itemCount: model.listData.length,
-                        itemBuilder: (context, index) {
-                          return WaitFollowUpCell(
-                            model: clientList[index],
-                            index: index,
-                            pool: true,
-                            takeOrderClick: (Map data) {
-                              // print('data === ${data['id']}');
-
-                              showCupertinoDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return CupertinoAlertDialog(
-                                      title: Text(
-                                        '提示',
-                                        style: TextStyle(
-                                            fontSize: 14, color: jm_text_black),
-                                      ),
-                                      content: Text(
-                                        '您要跟进该用户吗？',
-                                        style: TextStyle(
-                                            fontSize: 14, color: jm_text_black),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(
-                                              '取消',
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: jm_text_black),
-                                            )),
-                                        TextButton(
-                                            onPressed: () {
-                                              clientPoolVM.takeClientRequest(
-                                                  data['id'], () {
-                                                Navigator.pop(context);
-                                                clientPoolVM
-                                                    .loadClientPoolList();
-                                              });
-                                            },
-                                            child: Text(
-                                              '确认',
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: jm_text_black),
-                                            ))
-                                      ],
-                                    );
-                                  });
-                            },
-                            // writeFollowClick: widget.writeFollowClick,
-                            // cellReportClick: widget.cellReportClick,
-                          );
-                        },
-                      );
-                    } else if (model.state == BaseState.LOADING) {
-                      return ShowLoading();
-                    } else {
-                      return Container();
-                    }
-                  }),
+                ),
+              )
             ),
             Positioned(
                 left: 0,
@@ -227,6 +225,23 @@ class _ClientPoolState extends State<ClientPool> {
                       setState(() {
                         selectExpand = false;
                       });
+                      if(value1['value'] != '-1'){
+                        clientPoolParams['desireId'] = value1['value'] is int ? value1['value'] : int.parse(value1['value']);
+                      }else{
+                        clientPoolParams.remove('desireId');
+                      }
+                      if(value2['value'] != '-1'){
+                        clientPoolParams['typeId'] = value2['value'] is int ? value2['value'] : int.parse(value2['value']);
+                      }else {
+                        clientPoolParams.remove('typeId');
+                      }
+                      if(value3['value'] != '-1'){
+                        clientPoolParams['areaId'] = value3['value'] is int ? value3['value'] : int.parse(value3['value']);
+                      } else {
+                        clientPoolParams.remove('areaId');
+                      }
+                      // print('clientPoolParams ==== $clientPoolParams');
+                      pullCtr.callRefresh();
                     }),
                   )
                 : Container(width: 0.0, height: 0.0)
