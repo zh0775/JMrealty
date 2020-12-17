@@ -29,19 +29,18 @@ class ReportUploadViewModel extends BaseViewModel {
     );
   }
 
-  List imageDatas;
-  upLoadReportImages(List images, {Function() callBack}) {
+  upLoadReportImages(List images, {Function(List strImg) callBack}) {
     int total = images.length;
     int successCount = 0;
-    Http().uploadImages(images, resList: (List images) {
-      imageDatas = [];
-      images.forEach((imgJson) {
+    Http().uploadImages(images, resList: (List resImages) {
+      List imageDatas = [];
+      resImages.forEach((imgJson) {
         if ((imgJson.data)['code'] == 200) {
           successCount++;
           imageDatas.add((imgJson.data)['data']);
         }
       });
-      callBack();
+      callBack(imageDatas);
       if (total != successCount) {
         ShowToast.normal('上传成功' +
             successCount.toString() +

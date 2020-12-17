@@ -73,9 +73,9 @@ class CustomGridImageV extends StatelessWidget {
                     imageSelected: (images) {
                       if (images != null) {
                         ReportUploadViewModel().upLoadReportImages(images,
-                            callBack: () {
+                            callBack: (List strImages) {
                           if (addImages != null) {
-                            addImages(images);
+                            addImages(strImages);
                           }
                         });
                       }

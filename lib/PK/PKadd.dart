@@ -437,6 +437,7 @@ class _PKaddState extends State<PKadd> {
       initialDate: isStart ? startTime : endTime,
       firstDate: DateTime(2018, 1),
       lastDate: DateTime(2022, 1),
+      locale: Locale('zh')
     );
     if (date == null) return;
     setState(() {

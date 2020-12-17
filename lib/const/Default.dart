@@ -378,6 +378,7 @@ class _CustomInputState extends State<CustomInput>
 
   void showList(List data) {
     if (!isShow) {
+      FocusScope.of(context).requestFocus(FocusNode());
       this._overlayEntry = this.createOverlayEntry(data);
       Overlay.of(context).insert(this._overlayEntry);
       isShow = true;

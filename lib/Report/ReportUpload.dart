@@ -36,9 +36,9 @@ class _ReportUploadState extends State<ReportUpload> {
       count: 12,
       imageSelected: (images) {
         if (images != null) {
-          viewModel.upLoadReportImages(images, callBack: () {
+          viewModel.upLoadReportImages(images, callBack: (strImages) {
             setState(() {
-              imageList.addAll(viewModel.imageDatas);
+              imageList.addAll(strImages);
             });
           });
         }

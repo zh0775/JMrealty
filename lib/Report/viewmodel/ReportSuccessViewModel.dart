@@ -7,7 +7,7 @@ class ReportSuccessViewModel {
   reportSuccessRequest(Map params, Function(bool success) success) {
     Http()
         .getDio()
-        .post(Urls.reportSuccess, data: params)
+        .post(Urls.reportSuccess, data: Map<String, dynamic>.from(params))
         .then((Response response) {
       print('data ====  $response');
     });

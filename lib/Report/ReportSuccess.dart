@@ -1,7 +1,9 @@
 import 'package:JMrealty/Report/viewmodel/ReportDetailViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportSuccessViewModel.dart';
+import 'package:JMrealty/Report/viewmodel/ReportViewModel.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomGridImageV.dart';
+import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/SelectImageView.dart';
 import 'package:JMrealty/const/Default.dart';
@@ -17,7 +19,8 @@ class ReportSuccess extends StatefulWidget {
 }
 
 class _ReportSuccessState extends State<ReportSuccess> {
-  ReportDetailViewModel reportDetailModel;
+  ReportViewModel searchAgentVM = ReportViewModel();
+  ReportDetailViewModel reportDetailModel = ReportDetailViewModel();
   Map detailData; // data
   SelectImageView imgSelectV; // 选择图片视图
   double cellHeight;
@@ -27,7 +30,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
   String mark;
   dynamic img;
   List<String> imgUrls;
-
+  Map successParams = Map<String, dynamic>.from({});
   String payPhone;
   String dealTotal;
   String houseArea;
@@ -40,7 +43,6 @@ class _ReportSuccessState extends State<ReportSuccess> {
     buildNo = '';
     detailData = {};
     imgUrls = [];
-    reportDetailModel = ReportDetailViewModel();
     labelSpace = 3;
     super.initState();
   }
@@ -105,40 +107,21 @@ class _ReportSuccessState extends State<ReportSuccess> {
         SizedBox(
           height: 15,
         ),
-        JMline(width: SizeConfig.screenWidth, height: 6),
+        JMline(width: SizeConfig.screenWidth, height: 0.5),
         SizedBox(
           height: 15,
         ),
-        Row(
-          children: [
-            SizedBox(
-              width: outMargin,
-            ),
-            Container(
-              width: widthScale * 2.5,
-              height: widthScale * 2.5,
-              decoration: BoxDecoration(
-                  color: Color(0xff6ad09c),
-                  borderRadius: BorderRadius.circular(widthScale * 1.25)),
-            ),
-            SizedBox(
-              width: widthScale * 1.5,
-            ),
-            Text(
-              '成交信息',
-              style: jm_text_black_bold_style15,
-            ),
-          ],
-        ),
+        getTitleRow('成交信息表'),
         CustomInput(
           key: ValueKey('CustomInput_report_success_1'),
           labelStyle: jm_text_black_bold_style14,
           textStyle: jm_text_black_style15,
           title: '楼栋房号',
           hintText: '楼栋房号',
-          text: buildNo,
+          text: successParams['buildNo'] ?? '',
           valueChange: (value) {
-            buildNo = value;
+            // buildNo = value;
+            successParams['buildNo'] = value;
           },
         ),
         JMline(
@@ -149,27 +132,30 @@ class _ReportSuccessState extends State<ReportSuccess> {
           key: ValueKey('CustomInput_report_success_2'),
           labelStyle: jm_text_black_bold_style14,
           textStyle: jm_text_black_style15,
-          keyboardType: TextInputType.number,
-          title: '成交总价格(万)',
-          hintText: '成交总价格',
-          text: dealTotal,
+          title: '认购名称',
+          hintText: '认购名称',
+          text: successParams['payName'] ?? '',
           valueChange: (value) {
-            dealTotal = value;
+            // buildNo = value;
+            successParams['payName'] = value;
           },
         ),
         JMline(
             margin: outMargin,
             width: SizeConfig.screenWidth - outMargin,
             height: 0.5),
+
         CustomInput(
           key: ValueKey('CustomInput_report_success_3'),
           labelStyle: jm_text_black_bold_style14,
           textStyle: jm_text_black_style15,
-          title: '房屋面积',
-          hintText: '房屋面积',
-          text: houseArea,
+          title: '认购电话',
+          hintText: '认购电话',
+          keyboardType: TextInputType.phone,
+          text: successParams['payPhone'] ?? '',
           valueChange: (value) {
-            houseArea = value;
+            // buildNo = value;
+            successParams['payPhone'] = value;
           },
         ),
         JMline(
@@ -180,19 +166,102 @@ class _ReportSuccessState extends State<ReportSuccess> {
           key: ValueKey('CustomInput_report_success_4'),
           labelStyle: jm_text_black_bold_style14,
           textStyle: jm_text_black_style15,
-          keyboardType: TextInputType.phone,
-          title: '认购电话',
-          hintText: '认购电话',
-          text: payPhone,
+          title: '身份证号',
+          hintText: '身份证号',
+          keyboardType: TextInputType.text,
+          text: successParams['idCard'] ?? '',
           valueChange: (value) {
-            payPhone = value;
+            // buildNo = value;
+            successParams['idCard'] = value;
           },
         ),
         JMline(
             margin: outMargin,
             width: SizeConfig.screenWidth - outMargin,
             height: 0.5),
-        JMline(width: SizeConfig.screenWidth, height: 6),
+        CustomInput(
+          key: ValueKey('CustomInput_report_success_5'),
+          labelStyle: jm_text_black_bold_style14,
+          textStyle: jm_text_black_style15,
+          title: '房屋面积·平',
+          hintText: '房屋面积',
+          keyboardType: TextInputType.number,
+          text: successParams['houseArea'] ?? '',
+          valueChange: (value) {
+            // houseArea = value;
+            successParams['houseArea'] = value;
+          },
+        ),
+        JMline(
+            margin: outMargin,
+            width: SizeConfig.screenWidth - outMargin,
+            height: 0.5),
+        CustomInput(
+          key: ValueKey('CustomInput_report_success_6'),
+          labelStyle: jm_text_black_bold_style14,
+          textStyle: jm_text_black_style15,
+          keyboardType: TextInputType.number,
+          title: '成交总价格·万',
+          hintText: '成交总价格',
+          text: successParams['dealTotal'] ?? '',
+          valueChange: (value) {
+            // dealTotal = value;
+            successParams['dealTotal'] = value;
+          },
+        ),
+        JMline(
+            margin: outMargin,
+            width: SizeConfig.screenWidth - outMargin,
+            height: 0.5),
+        JMline(width: SizeConfig.screenWidth, height: 0.5),
+        SizedBox(
+          height: 15,
+        ),
+        getTitleRow('备注'),
+
+        CustomMarkInput(),
+        SizedBox(
+          height: 15,
+        ),
+        JMline(
+            width: SizeConfig.screenWidth,
+            height: 0.5),
+        SizedBox(
+          height: 15,
+        ),
+        getTitleRow('佣金'),
+        CustomInput(title: '搜索分佣人',hintText: '搜索添加分佣人',
+          valueChangeAndShowList: (value, state){
+          searchAgentVM.loadAgentSearchData(value,success:(data){
+            if (data != null && data.length > 0) {
+              state.showList(data);
+            }
+          });
+        },
+          showListClick: (clickData) {
+            if(successParams['reportShopPartnerBOList'] == null) {
+              successParams['reportShopPartnerBOList'] = List.from([]);
+            }
+
+            (successParams['reportShopPartnerBOList'] as List).forEach((element) {
+              if(element['id'] == clickData['id']) {
+                return;
+              }
+            });
+            setState(() {
+              (successParams['reportShopPartnerBOList'] as List).add(clickData);
+            });
+          },),
+        ...getCommissionList(),
+        SizedBox(
+          height: 15,
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        JMline(
+            width: SizeConfig.screenWidth,
+            height: 0.5),
         SizedBox(
           height: 15,
         ),
@@ -203,25 +272,18 @@ class _ReportSuccessState extends State<ReportSuccess> {
         CustomSubmitButton(
           buttonClick: () {
             print('widget === ${widget.data}');
-
-            Map<String, dynamic> params = {
-              'beforeStatus': widget.data['status'],
-              'reportId': widget.data['id'],
-              'customerId': widget.data['customerId'],
-              'buildNo': buildNo,
-              'dealTotal': dealTotal,
-              'houseArea': houseArea,
-              'payPhone': payPhone,
-            };
+            successParams['beforeStatus'] = widget.data['status'];
+            successParams['reportId'] = widget.data['id'];
+            successParams['customerId'] = widget.data['customerId'];
             if (imgUrls != null && imgUrls.length > 0) {
               String imageStr = '';
               imgUrls.forEach((element) {
                 imageStr += element + ',';
               });
               imageStr = imageStr.substring(0, imageStr.length - 1);
-              params['images'] = imageStr;
+              successParams['images'] = imageStr;
             }
-            ReportSuccessViewModel().reportSuccessRequest(params, (success) {
+            ReportSuccessViewModel().reportSuccessRequest(successParams, (success) {
               if (success) {
                 ShowToast.normal('恭喜，提交成功');
                 Future.delayed(Duration(seconds: 2)).then((value) {
@@ -229,33 +291,6 @@ class _ReportSuccessState extends State<ReportSuccess> {
                 });
               }
             });
-            // Map<String, dynamic> mapParams = {};
-            // if (imageList != null && imageList.length > 0) {
-            //   String imageStr = '';
-            //   imageList.forEach((element) {
-            //     imageStr += element + ',';
-            //   });
-            //   imageStr = imageStr.substring(0, imageStr.length - 1);
-            //   mapParams['images'] = imageStr;
-            // }
-            // // print('data ==== ${widget.data}');
-            // // print('images ==== $mapParams');
-            // // print('123 === ${widget.data['status']}');
-            // if (widget.data['status'] != null) {
-            //   mapParams['beforeStatus'] = widget.data['status'];
-            // }
-            // if (widget.data['id'] != null) {
-            //   mapParams['reportId'] = widget.data['id'];
-            // }
-            // mapParams['remark'] = mark ?? '';
-            // viewModel.uploadReportRecord(mapParams, (success) {
-            //   if (success) {
-            //     ShowToast.normal('上传成功');
-            //     Future.delayed(Duration(seconds: 1)).then((value) {
-            //       Navigator.pop(context);
-            //     });
-            //   }
-            // });
           },
         ),
         SizedBox(
@@ -414,27 +449,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            SizedBox(
-              width: outMargin,
-            ),
-            Container(
-              width: widthScale * 2.5,
-              height: widthScale * 2.5,
-              decoration: BoxDecoration(
-                  color: Color(0xff6ad09c),
-                  borderRadius: BorderRadius.circular(widthScale * 1.25)),
-            ),
-            SizedBox(
-              width: widthScale * 1.5,
-            ),
-            Text(
-              '上传资料',
-              style: jm_text_black_bold_style15,
-            ),
-          ],
-        ),
+        getTitleRow('上传资料'),
         SizedBox(
           height: 15,
         ),
@@ -461,5 +476,63 @@ class _ReportSuccessState extends State<ReportSuccess> {
     } else {
       return str.split(',');
     }
+  }
+
+  Widget getTitleRow(String title) {
+    return Row(
+      children: [
+        SizedBox(
+          width: outMargin,
+        ),
+        Container(
+          width: widthScale * 2.5,
+          height: widthScale * 2.5,
+          decoration: BoxDecoration(
+              color: Color(0xff6ad09c),
+              borderRadius: BorderRadius.circular(widthScale * 1.25)),
+        ),
+        SizedBox(
+          width: widthScale * 1.5,
+        ),
+        Text(
+          title,
+          style: jm_text_black_bold_style15,
+        ),
+      ],
+    );
+  }
+
+  List<Widget> getCommissionList () {
+    List<Widget> list = [getCommissionInput({'userName': 'zhanghan'})];
+    if (successParams['reportShopPartnerBOList'] == null) {
+      return list;
+    }
+    (successParams['reportShopPartnerBOList'] as List).forEach((e) {
+      list.add(getCommissionInput(e));
+    });
+    return list;
+  }
+
+  Widget getCommissionInput (Map data) {
+    double lableWidth = widthScale * 25;
+    return Row(children: [
+      SizedBox(width: outMargin,height: 50,),
+      Container(width: lableWidth,child: Text(data['userName'] ?? '',style: jm_text_black_style14,),),
+      JMline(width: 0.5, height: 50),
+      Container(
+        constraints: BoxConstraints(
+          maxHeight: 50,
+          maxWidth: SizeConfig.screenWidth - lableWidth - outMargin * 2,
+        ),
+        child: TextField(
+          decoration: InputDecoration(
+            // fillColor: Colors.red,
+            border: OutlineInputBorder(
+              // borderRadius: widget.borderRadius,
+                borderSide: BorderSide.none),
+          ),
+        ),
+      )
+    ],);
   }
 }

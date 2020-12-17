@@ -317,9 +317,15 @@ class _AddReportState extends State<AddReport> {
                 child: TextButton(
                   onPressed: () {
                     FocusScope.of(context).requestFocus(FocusNode());
-                    // sendRegist();
+                    List clients = [];
+                    clientsData.forEach((e) {
+                      if(e['name'] != null && e['phone'] != null) {
+                        clients.add(e);
+                      }
+                    });
+                    print('clientsData ==== $clients');
                     model.addReportRequest({
-                      'client': clientsData,
+                      'client': clients,
                       'agent': agentData,
                       'project': projectData,
                       'mark': mark
@@ -345,6 +351,7 @@ class _AddReportState extends State<AddReport> {
   void addClient() {
     // addClientWidgets.add(value)
     // Container()
+    FocusScope.of(context).requestFocus(FocusNode());
     addClientCount++;
     if (clientsData == null) {
       clientsData = [];

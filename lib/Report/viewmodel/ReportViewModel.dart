@@ -105,7 +105,13 @@ class ReportViewModel extends BaseViewModel {
       'projectName': project['name'],
       'remarks': data['mark'] ?? '',
     };
-
+    if (clientsParams.length > 0) {
+      params['customerReport'] = clientsParams;
+    } else {
+      ShowToast.normal('请输入客源信息');
+      return;
+    }
+    // print('addReportRequest ==== $data');
     // print('data === $data');
     Http().post(
       Urls.addReport,

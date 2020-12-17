@@ -116,7 +116,12 @@ class _RegistSelectInputState extends State<RegistSelectInput> {
       };
     }
     return GestureDetector(
-      onTap: cellTap,
+      onTap: () {
+        Focus.of(Global.navigatorKey.currentContext).requestFocus(FocusNode());
+        // Future.delayed(Duration(seconds: 1),(){
+          cellTap();
+        // });
+      },
       child: Container(
         width: SizeConfig.screenWidth,
         height: widget.height,
