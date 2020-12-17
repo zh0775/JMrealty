@@ -61,7 +61,7 @@ class LevelTargetViewModel extends BaseViewModel {
     // state = BaseState.LOADING;
     // notifyListeners();
     Http().delete(
-      Urls.deleteTargetRule(id.toString()),
+      Urls.deleteTargetRule(id.toString()), {},
       // params,
       success: (json) {
         // state = BaseState.CONTENT;

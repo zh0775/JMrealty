@@ -5,13 +5,32 @@ import 'package:dio/dio.dart';
 
 class ReportSuccessViewModel {
   reportSuccessRequest(Map params, Function(bool success) success) {
-    Http()
-        .getDio()
-        .post(Urls.reportSuccess, data: Map<String, dynamic>.from(params))
-        .then((Response response) {
-      print('data ====  $response');
-    });
-
+    // Http()
+    //     .getDio()
+    //     .post(Urls.reportSuccess, data: Map<String, dynamic>.from(params))
+    //     .then((Response response) {
+    //   print('data ====  $response');
+    // });
+    // Http().delete(
+    //   Urls.reportSuccess,
+    //   params,
+    //   success: (json) {
+    //     if (json['code'] == 200) {
+    //       success(true);
+    //     }
+    //   },
+    //   fail: (reason, code) {},
+    // );
+    Http().post(
+      Urls.reportSuccess,
+      params,
+      success: (json) {
+        if (json['code'] == 200) {
+          success(true);
+        }
+      },
+      fail: (reason, code) {},
+    );
     // Http().post(
     //   Urls.reportSuccess,
     //   Map<String, dynamic>.from(params),

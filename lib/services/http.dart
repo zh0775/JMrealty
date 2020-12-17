@@ -89,10 +89,10 @@ class Http {
     }
   }
 
-  Future<void> delete(String url,
+  Future<void> delete(String url, dynamic data,
       {Success success, Fail fail, After after}) async {
     try {
-      await _dio.delete(url).then((response) {
+      await _dio.delete(url, data: data).then((response) {
         if (response.statusCode == 200) {
           Map<String, dynamic> data = response.data;
           if (data['code'] != 200) {

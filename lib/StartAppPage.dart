@@ -119,7 +119,8 @@ class _StartAppPageState extends State<StartAppPage> {
 
   toMain(BuildContext context) {
     Future.delayed(Duration(seconds: 0), () {
-      Navigator.of(context).pushNamed(Routes.main_page);
+      Navigator.of(context).popAndPushNamed(Routes.main_page);
+      // Navigator.of(context).replace(oldRoute: null, newRoute: null)
     });
   }
 }

@@ -9,11 +9,13 @@ import 'package:JMrealty/components/SelectImageView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/toast.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ReportSuccess extends StatefulWidget {
   final Map data;
-  ReportSuccess({@required this.data});
+  final Map userInfo;
+  ReportSuccess({@required this.data, this.userInfo});
   @override
   _ReportSuccessState createState() => _ReportSuccessState();
 }
@@ -35,8 +37,18 @@ class _ReportSuccessState extends State<ReportSuccess> {
   String dealTotal;
   String houseArea;
   String buildNo;
+  Map userInfo;
   @override
   void initState() {
+    userInfo = Map<String, dynamic>.from(widget.userInfo);
+    successParams['reportShopPartnerBOList'] = List.from([
+      {
+        'userId': userInfo['userId'],
+        'userName': userInfo['userName'],
+        'userPhone': userInfo['phonenumber'],
+        'ratio': 100
+      }
+    ]);
     payPhone = '';
     dealTotal = '';
     houseArea = '';
@@ -61,7 +73,11 @@ class _ReportSuccessState extends State<ReportSuccess> {
         appBar: CustomAppbar(
           title: '成交信息录入',
         ),
-        body: getBody(context));
+        body: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: getBody(context)));
   }
 
   checkImg(int index) {
@@ -223,35 +239,39 @@ class _ReportSuccessState extends State<ReportSuccess> {
         SizedBox(
           height: 15,
         ),
-        JMline(
-            width: SizeConfig.screenWidth,
-            height: 0.5),
+        JMline(width: SizeConfig.screenWidth, height: 0.5),
         SizedBox(
           height: 15,
         ),
         getTitleRow('佣金'),
-        CustomInput(title: '搜索分佣人',hintText: '搜索添加分佣人',
-          valueChangeAndShowList: (value, state){
-          searchAgentVM.loadAgentSearchData(value,success:(data){
-            if (data != null && data.length > 0) {
-              state.showList(data);
-            }
-          });
-        },
+        CustomInput(
+          title: '搜索分佣人',
+          hintText: '搜索添加分佣人',
+          valueChangeAndShowList: (value, state) {
+            searchAgentVM.loadAgentSearchData(value, success: (data) {
+              if (data != null && data.length > 0) {
+                state.showList(data);
+              }
+            });
+          },
           showListClick: (clickData) {
-            if(successParams['reportShopPartnerBOList'] == null) {
-              successParams['reportShopPartnerBOList'] = List.from([]);
-            }
-
-            (successParams['reportShopPartnerBOList'] as List).forEach((element) {
-              if(element['id'] == clickData['id']) {
+            bool isHave = false;
+            (successParams['reportShopPartnerBOList'] as List)
+                .forEach((element) {
+              if (element['userId'] == clickData['userId']) {
+                isHave = true;
                 return;
               }
             });
+            if (isHave || userInfo['userId'] == clickData['userId']) {
+              return;
+            }
             setState(() {
-              (successParams['reportShopPartnerBOList'] as List).add(clickData);
+              (successParams['reportShopPartnerBOList'] as List)
+                  .add({...clickData, 'ratio': 0});
             });
-          },),
+          },
+        ),
         ...getCommissionList(),
         SizedBox(
           height: 15,
@@ -259,9 +279,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
         SizedBox(
           height: 15,
         ),
-        JMline(
-            width: SizeConfig.screenWidth,
-            height: 0.5),
+        JMline(width: SizeConfig.screenWidth, height: 0.5),
         SizedBox(
           height: 15,
         ),
@@ -283,7 +301,33 @@ class _ReportSuccessState extends State<ReportSuccess> {
               imageStr = imageStr.substring(0, imageStr.length - 1);
               successParams['images'] = imageStr;
             }
-            ReportSuccessViewModel().reportSuccessRequest(successParams, (success) {
+            if (successParams['buildNo'] == null ||
+                successParams['buildNo'] == '') {
+              ShowToast.normal('请输入楼栋房号');
+              return;
+            }
+            if (successParams['dealTotal'] == null ||
+                successParams['dealTotal'] == '') {
+              ShowToast.normal('请输入成交总价格');
+              return;
+            }
+            if (successParams['houseArea'] == null ||
+                successParams['houseArea'] == '') {
+              ShowToast.normal('请输入房屋面积');
+              return;
+            }
+            if (successParams['payName'] == null ||
+                successParams['payName'] == '') {
+              ShowToast.normal('请输入认购名称');
+              return;
+            }
+            if (successParams['payPhone'] == null ||
+                successParams['payPhone'] == '') {
+              ShowToast.normal('请输入认购电话');
+              return;
+            }
+            ReportSuccessViewModel().reportSuccessRequest(successParams,
+                (success) {
               if (success) {
                 ShowToast.normal('恭喜，提交成功');
                 Future.delayed(Duration(seconds: 2)).then((value) {
@@ -502,37 +546,111 @@ class _ReportSuccessState extends State<ReportSuccess> {
     );
   }
 
-  List<Widget> getCommissionList () {
-    List<Widget> list = [getCommissionInput({'userName': 'zhanghan'})];
-    if (successParams['reportShopPartnerBOList'] == null) {
-      return list;
-    }
+  List<Widget> getCommissionList() {
+    List<Widget> list = [];
+    int i = 0;
     (successParams['reportShopPartnerBOList'] as List).forEach((e) {
-      list.add(getCommissionInput(e));
+      list.add(getCommissionInput(e, i));
+      i++;
     });
     return list;
   }
 
-  Widget getCommissionInput (Map data) {
+  Widget getCommissionInput(Map data, int index) {
     double lableWidth = widthScale * 25;
-    return Row(children: [
-      SizedBox(width: outMargin,height: 50,),
-      Container(width: lableWidth,child: Text(data['userName'] ?? '',style: jm_text_black_style14,),),
-      JMline(width: 0.5, height: 50),
-      Container(
-        constraints: BoxConstraints(
-          maxHeight: 50,
-          maxWidth: SizeConfig.screenWidth - lableWidth - outMargin * 2,
+    double inputHeight = 40;
+    String ratioStr =
+        (((successParams['reportShopPartnerBOList'] as List)[index])['ratio'])
+            .toString();
+
+    return Row(
+      children: [
+        SizedBox(
+          width: outMargin,
+          height: inputHeight,
         ),
-        child: TextField(
-          decoration: InputDecoration(
-            // fillColor: Colors.red,
-            border: OutlineInputBorder(
-              // borderRadius: widget.borderRadius,
-                borderSide: BorderSide.none),
+        Container(
+          width: lableWidth,
+          child: Text(
+            data['userName'] ?? '',
+            style: jm_text_black_style14,
           ),
         ),
-      )
-    ],);
+        // JMline(width: 0.5, height: inputHeight),
+        Container(
+            constraints: BoxConstraints(
+              maxHeight: inputHeight,
+              maxWidth: widthScale * 30,
+              minHeight: inputHeight * 0.75,
+              minWidth: widthScale * 30,
+            ),
+            child: CupertinoTextField(
+              keyboardType: TextInputType.number,
+              style: jm_text_black_style14,
+              padding: EdgeInsets.only(left: widthScale * 4),
+              controller: TextEditingController.fromValue(TextEditingValue(
+                  text: ratioStr ?? '',
+                  selection: TextSelection.fromPosition(TextPosition(
+                      affinity: TextAffinity.downstream,
+                      offset: ratioStr.length ?? 0)))),
+              decoration: BoxDecoration(
+                color: index == 0 ? jm_line_color : Colors.transparent,
+              ),
+              enabled: index == 0 ? false : true,
+              // textAlign: TextAlign.start,
+              textAlignVertical: TextAlignVertical.center,
+              onChanged: (value) {
+                if (value != '' && !isNumeric(value)) {
+                  ShowToast.normal('请输入正确的比例');
+                  setState(() {
+                    ((successParams['reportShopPartnerBOList']
+                        as List)[index])['ratio'] = 0;
+                  });
+                } else {
+                  setState(() {
+                    int intValue = value == ''
+                        ? 0
+                        : (int.parse(value) > 100 ? 100 : int.parse(value));
+                    int total = 100;
+                    int have = 0;
+                    List list = successParams['reportShopPartnerBOList'];
+                    for (var i = 0; i < list.length; i++) {
+                      if (i != 0 && i != index) {
+                        int ratio = (list[i])['ratio'];
+                        have += ratio;
+                      }
+                    }
+                    int other = total - have;
+                    (list[index])['ratio'] =
+                        intValue > other ? other : intValue;
+                    have = 0;
+                    for (var i = 0; i < list.length; i++) {
+                      if (i != 0) {
+                        int ratio = (list[i])['ratio'];
+                        have += ratio;
+                      }
+                    }
+                    other = total - have;
+                    (list[0])['ratio'] = other;
+                  });
+                }
+              },
+            )),
+        SizedBox(
+          width: widthScale * 2,
+        ),
+        Text(
+          '%',
+          style: jm_text_black_style15,
+        )
+      ],
+    );
+  }
+
+  bool isNumeric(String s) {
+    if (s == null) {
+      return false;
+    }
+    return int.parse(s, onError: (e) => null) != null;
   }
 }

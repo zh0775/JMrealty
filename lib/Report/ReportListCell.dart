@@ -2,10 +2,12 @@ import 'package:JMrealty/Report/ReportSuccess.dart';
 import 'package:JMrealty/Report/ReportUpload.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'dart:convert' as convert;
 import 'ReportDetail.dart';
 
 class ReportListCell extends StatefulWidget {
@@ -270,11 +272,19 @@ class _ReportListCellState extends State<ReportListCell> {
                   borderColor: Colors.red,
                   textStyle: TextStyle(color: Colors.red, fontSize: 13)),
               getTextButton('成交', () {
-                Navigator.of(context).push(CupertinoPageRoute(
-                  builder: (context) {
-                    return ReportSuccess(data: widget.data);
-                  },
-                ));
+                UserDefault.get(USERINFO).then((value) {
+                  Map userInfo =
+                      Map<String, dynamic>.from(convert.jsonDecode(value));
+
+                  Navigator.of(context).push(CupertinoPageRoute(
+                    builder: (context) {
+                      return ReportSuccess(
+                        data: widget.data,
+                        userInfo: userInfo,
+                      );
+                    },
+                  ));
+                });
               }),
             ],
           ),
