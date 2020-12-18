@@ -3,8 +3,8 @@ import 'package:JMrealty/components/EmptyView.dart';
 import 'package:flutter/material.dart';
 import 'package:JMrealty/Report/ReportListCell.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
-import 'package:flutter_easyrefresh/phoenix_header.dart';
-import 'package:flutter_easyrefresh/phoenix_footer.dart';
+// import 'package:flutter_easyrefresh/phoenix_header.dart';
+// import 'package:flutter_easyrefresh/phoenix_footer.dart';
 
 class ReportListView extends StatefulWidget {
   final int status;
@@ -55,8 +55,8 @@ class _ReportListViewState extends State<ReportListView>
     super.build(context);
     return EasyRefresh(
       controller: easyRefreshCtr,
-      header: PhoenixHeader(),
-      footer: PhoenixFooter(),
+      // header: PhoenixHeader(),
+      // footer: PhoenixFooter(),
       enableControlFinishRefresh: true,
       enableControlFinishLoad: true,
       key: _easyRefreshKey,
@@ -68,7 +68,7 @@ class _ReportListViewState extends State<ReportListView>
         reportListVM.loadListData(widget.status, success: (success) {
           // easyRefreshCtr.resetLoadState();
           easyRefreshCtr.finishRefresh();
-          easyRefreshCtr.finishLoad();
+          // easyRefreshCtr.finishLoad();
           if (success) {
             setState(() {
               total = reportListVM.listData['total'];

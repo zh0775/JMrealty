@@ -1,4 +1,5 @@
 import 'package:JMrealty/Client/FollowTrack.dart';
+import 'package:JMrealty/Client/components/ClientSuccessWidget.dart';
 import 'package:JMrealty/Client/components/WriteFollow.dart';
 import 'package:JMrealty/Client/viewModel/ClientDetailViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
@@ -318,7 +319,16 @@ class _ClientDetailState extends State<ClientDetail> {
           height: 6,
           color: Color(0xfff0f2f5),
         ),
-        ...successInfo(),
+        clientData['reportShopDetailVOS'] != null &&
+                (clientData['reportShopDetailVOS'] is List)
+            ? Padding(
+                padding: EdgeInsets.only(left: margin),
+                child: successInfo(clientData['reportShopDetailVOS']),
+              )
+            : Container(
+                width: 0.0,
+                height: 0.0,
+              ),
         getCell(
             isFollow: true,
             count: clientData['progressSize'],
@@ -330,8 +340,11 @@ class _ClientDetailState extends State<ClientDetail> {
         ),
         getCell(
             isFollow: false,
-            count: clientData['progressSize'],
-            followData: customerProgress),
+            count: clientData['custmoerReportSize'],
+            followData: clientData['reportShopDetailVOS'] != null &&
+                    (clientData['reportShopDetailVOS'] is List)
+                ? clientData['reportShopDetailVOS']
+                : []),
         Container(
           width: SizeConfig.screenWidth,
           height: 6,
@@ -375,7 +388,7 @@ class _ClientDetailState extends State<ClientDetail> {
   Widget getCell({bool isFollow, int count, List followData}) {
     String titleText;
     Map progress;
-    if (followData is List && followData.length > 0) {
+    if ((followData is List) && followData.length > 0) {
       progress = followData[0];
     }
     if (isFollow) {
@@ -442,10 +455,22 @@ class _ClientDetailState extends State<ClientDetail> {
                         SizedBox(
                           width: widthScale * 3,
                         ),
-                        Text(
-                          progress != null ? progress['result'] : '',
-                          style: TextStyle(color: jm_text_black, fontSize: 14),
-                        )
+                        progress != null
+                            ? (isFollow
+                                ? Text(
+                                    progress['result'] ?? '',
+                                    style: TextStyle(
+                                        color: jm_text_black, fontSize: 14),
+                                  )
+                                : Text(
+                                    progress['projectName'] ?? '',
+                                    style: TextStyle(
+                                        color: jm_text_black, fontSize: 14),
+                                  ))
+                            : Container(
+                                width: 0.0,
+                                height: 0.0,
+                              )
                       ],
                     ),
                     SizedBox(
@@ -456,8 +481,17 @@ class _ClientDetailState extends State<ClientDetail> {
                         SizedBox(
                           width: widthScale * 3 + 10,
                         ),
-                        Text(progress != null ? progress['visitDate'] : '',
-                            style: TextStyle(color: jm_text_gray, fontSize: 14))
+                        progress != null
+                            ? (Text(
+                                isFollow
+                                    ? (progress['visitDate'] ?? '')
+                                    : (progress['createTime'] ?? ''),
+                                style: TextStyle(
+                                    color: jm_text_gray, fontSize: 14)))
+                            : Container(
+                                width: 0.0,
+                                height: 0.0,
+                              )
                       ],
                     ),
                     SizedBox(
@@ -528,131 +562,16 @@ class _ClientDetailState extends State<ClientDetail> {
         ));
   }
 
-  List<Widget> successInfo() {
-    return // 成交信息
-        [
-      Align(
-          child: Container(
-              width: contentWidth,
-              height: 210,
-              // color: jm_text_gray,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.thumb_up_alt,
-                          size: 20,
-                          color: jm_appTheme,
-                        ),
-                        SizedBox(
-                          width: widthScale * 1,
-                        ),
-                        Text(
-                          '成交信息',
-                          style: TextStyle(fontSize: 18, color: jm_text_black),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      children: [
-                        frameText('成交渠道',
-                            height: lineHeight1,
-                            width: 75,
-                            textColor: jm_text_gray,
-                            fontSize: 14,
-                            alignment: Alignment.centerLeft),
-                        Text(
-                          '金幕',
-                          style: TextStyle(fontSize: 14, color: jm_text_black),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        frameText('项目名称',
-                            height: lineHeight1,
-                            width: 75,
-                            textColor: jm_text_gray,
-                            fontSize: 14,
-                            alignment: Alignment.centerLeft),
-                        Text(
-                          '龙光九龙湾',
-                          style: TextStyle(fontSize: 14, color: jm_text_black),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        frameText('房号',
-                            height: lineHeight1,
-                            width: 75,
-                            textColor: jm_text_gray,
-                            fontSize: 14,
-                            alignment: Alignment.centerLeft),
-                        Text(
-                          '8-1-1801',
-                          style: TextStyle(fontSize: 14, color: jm_text_black),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        frameText('换签时间',
-                            height: lineHeight1,
-                            width: 75,
-                            textColor: jm_text_gray,
-                            fontSize: 14,
-                            alignment: Alignment.centerLeft),
-                        Text(
-                          '2020-11-15',
-                          style: TextStyle(fontSize: 14, color: jm_text_black),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        frameText('认购时间',
-                            height: lineHeight1,
-                            width: 75,
-                            textColor: jm_text_gray,
-                            fontSize: 14,
-                            alignment: Alignment.centerLeft),
-                        Text(
-                          '2020-11-18',
-                          style: TextStyle(fontSize: 14, color: jm_text_black),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        frameText('佣金',
-                            height: lineHeight1,
-                            width: 75,
-                            textColor: jm_text_gray,
-                            fontSize: 14,
-                            alignment: Alignment.centerLeft),
-                        Text(
-                          '￥' + '20000',
-                          style: TextStyle(fontSize: 14, color: jm_text_black),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              ))),
-      Container(
-        width: SizeConfig.screenWidth,
-        height: 6,
-        color: Color(0xfff0f2f5),
-      )
-    ];
+  Widget successInfo(List successList) {
+    List<Widget> successWidgetList = [];
+    for (var i = 0; i < successList.length; i++) {
+      Map successData = successList[i];
+      successWidgetList.add(ClientSuccessWidget(
+        successData: successData,
+      ));
+    }
+    return Column(
+      children: [...successWidgetList],
+    );
   }
 }

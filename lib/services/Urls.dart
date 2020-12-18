@@ -83,4 +83,16 @@ class Urls {
   static const String pkMedel = '/comps/medal/findByFuzzySearch';
   // pk赛指标
   static const String pkType = '/system/dict/type/typeId';
+
+  //项目
+  // 项目列表
+  static const String projectList = '/customer/project/findListByArea';
+
+  //我的任务
+  // 我发布的任务列表
+  static const String tasksPublishedList = '/comps/task/myPublishedTasks';
+  // 我接收的任务列表
+  static const String tasksAcceptList = '/comps/task/taskListTome';
+  // 新增任务
+  static const String tasksAdd = '/comps/task/add';
 }

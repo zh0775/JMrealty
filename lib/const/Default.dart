@@ -36,6 +36,80 @@ String jm_getPKStatus(int status) {
   }
 }
 
+String jm_getReportStatusStr(int status) {
+  String statusStr = '';
+  switch (status) {
+    case 0:
+      statusStr = '有效';
+      break;
+    case 10:
+      statusStr = '已带看';
+      break;
+    case 20:
+      statusStr = '已上传';
+      break;
+    case 21:
+      statusStr = '已预约';
+      break;
+    case 30:
+      statusStr = '已成交';
+      break;
+    case 40:
+      statusStr = '已签约';
+      break;
+    case 50:
+      statusStr = '已结款';
+      break;
+    case 60:
+      statusStr = '已结佣';
+      break;
+    case 70:
+      statusStr = '失效';
+      break;
+    case 80:
+      statusStr = '退单';
+      break;
+  }
+  return statusStr;
+}
+
+Color jm_getReportStatusColor(int status) {
+  Color statusColor = jm_text_black;
+  switch (status) {
+    case 0:
+      statusColor = Colors.green;
+      break;
+    case 10:
+      statusColor = Colors.green;
+      break;
+    case 20:
+      statusColor = Colors.green;
+      break;
+    case 21:
+      statusColor = Colors.green;
+      break;
+    case 30:
+      statusColor = Colors.green;
+      break;
+    case 40:
+      statusColor = Colors.green;
+      break;
+    case 50:
+      statusColor = Colors.green;
+      break;
+    case 60:
+      statusColor = Colors.green;
+      break;
+    case 70:
+      statusColor = Colors.red;
+      break;
+    case 80:
+      statusColor = Colors.red;
+      break;
+  }
+  return statusColor;
+}
+
 Widget jm_naviTitle(String title) => Text(
       title,
       style: TextStyle(

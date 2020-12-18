@@ -195,8 +195,10 @@ class _ReportListCellState extends State<ReportListCell> {
         ),
         getLabel('报备状态'),
         Text(
-          widget.data['status'].toString(),
-          style: jm_text_black_style15,
+          jm_getReportStatusStr(widget.data['status'] ?? -1),
+          style: TextStyle(
+              fontSize: 15,
+              color: jm_getReportStatusColor(widget.data['status'] ?? -1)),
         )
       ],
     );

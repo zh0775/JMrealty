@@ -267,8 +267,12 @@ class _ReportSuccessState extends State<ReportSuccess> {
               return;
             }
             setState(() {
-              (successParams['reportShopPartnerBOList'] as List)
-                  .add({...clickData, 'ratio': 0});
+              (successParams['reportShopPartnerBOList'] as List).add({
+                'userId': clickData['userId'],
+                'userName': clickData['userName'],
+                'userPhone': clickData['phonenumber'],
+                'ratio': 0
+              });
             });
           },
         ),
@@ -423,8 +427,10 @@ class _ReportSuccessState extends State<ReportSuccess> {
         ),
         getLabel('报备状态'),
         Text(
-          widget.data['status'].toString() ?? '无',
-          style: jm_text_black_style15,
+          jm_getReportStatusStr(widget.data['status'] ?? -1),
+          style: TextStyle(
+              fontSize: 15,
+              color: jm_getReportStatusColor(widget.data['status'] ?? -1)),
         )
       ],
     );

@@ -1,29 +1,25 @@
-import 'package:JMrealty/Project/ProjectCell.dart';
-import 'package:JMrealty/Project/ProjectViewModel.dart';
+import 'package:JMrealty/MyTasks/MyTasksCell.dart';
+import 'package:JMrealty/MyTasks/viewModel/MyTasksViewModel.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
-class Project extends StatefulWidget {
+class MyTasks extends StatefulWidget {
   @override
-  _ProjectState createState() => _ProjectState();
+  _MyTasksState createState() => _MyTasksState();
 }
 
-class _ProjectState extends State<Project> {
-  ProjectViewModel projectVM = ProjectViewModel();
+class _MyTasksState extends State<MyTasks> {
+  MyTasksViewModel tasksVM = MyTasksViewModel();
   EasyRefreshController pullCtr = EasyRefreshController();
   GlobalKey _easyRefreshKey = GlobalKey();
-  List projectListData = [];
+  List tasksListData = [];
+
   @override
   void dispose() {
     pullCtr.dispose();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   @override
@@ -34,7 +30,7 @@ class _ProjectState extends State<Project> {
           backgroundColor: jm_appTheme,
           automaticallyImplyLeading: false,
           title: Text(
-            '项目',
+            '我的任务',
             style: TextStyle(color: Colors.white, fontSize: 22),
           ),
           actions: [
@@ -51,21 +47,21 @@ class _ProjectState extends State<Project> {
         enableControlFinishLoad: true,
         key: _easyRefreshKey,
         controller: pullCtr,
-        emptyWidget: projectListData.length == 0 ? EmptyView() : null,
+        emptyWidget: tasksListData.length == 0 ? EmptyView() : null,
         firstRefresh: true,
         onRefresh: () async {
-          projectVM.loadProjectList((projectList) {
+          tasksVM.loadTasksPublishedList((tasksList) {
             pullCtr.finishRefresh();
             setState(() {
-              projectListData = projectList;
+              tasksListData = tasksList;
             });
           });
         },
         child: ListView.builder(
-          itemCount: projectListData.length,
+          itemCount: tasksListData.length,
           itemBuilder: (context, index) {
-            return ProjectCell(
-              data: projectListData[index],
+            return MyTasksCell(
+              data: tasksListData[index],
             );
           },
         ),

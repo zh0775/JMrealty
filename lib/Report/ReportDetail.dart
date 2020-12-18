@@ -1,3 +1,4 @@
+import 'package:JMrealty/Client/components/ClientSuccessWidget.dart';
 import 'package:JMrealty/Report/viewmodel/ReportDetailViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/image_loader.dart';
@@ -137,7 +138,33 @@ class _ReportDetailState extends State<ReportDetail> {
         SizedBox(
           height: 15,
         ),
-        ...getPhotoInfo(mapData['reportStatuses'] ?? [])
+        ...getPhotoInfo(mapData['reportStatuses'] ?? []),
+        (mapData['reportShopDetailVO'])['id'] != null
+            ? getSuccessWidget(mapData)
+            : Container(
+                width: 0.0,
+                height: 0.0,
+              )
+      ],
+    );
+  }
+
+  Widget getSuccessWidget(Map data) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 15,
+        ),
+        // // JMline(width: SizeConfig.screenWidth, height: 0.5),
+        // SizedBox(
+        //   height: 15,
+        // ),
+        Padding(
+          padding: EdgeInsets.only(left: outMargin),
+          child: ClientSuccessWidget(
+            successData: data['reportShopDetailVO'],
+          ),
+        )
       ],
     );
   }
@@ -291,8 +318,10 @@ class _ReportDetailState extends State<ReportDetail> {
         ),
         getLabel('报备状态'),
         Text(
-          widget.data['status'].toString() ?? '无',
-          style: jm_text_black_style15,
+          jm_getReportStatusStr(widget.data['status'] ?? -1),
+          style: TextStyle(
+              fontSize: 15,
+              color: jm_getReportStatusColor(widget.data['status'] ?? -1)),
         )
       ],
     );
