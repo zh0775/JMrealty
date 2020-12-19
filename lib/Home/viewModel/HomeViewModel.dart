@@ -32,4 +32,27 @@ class HomeViewModel extends BaseViewModel {
       after: () {},
     );
   }
+
+  loadHomeBanner(Function(List bannerList, bool success) success) {
+    Http().get(
+      Urls.getHomeBanner,
+      {},
+      success: (json) {
+        if (json['code'] == 200) {
+          if (success != null) {
+            success(json['data'], true);
+          }
+        } else {
+          if (success != null) {
+            success(null, false);
+          }
+        }
+      },
+      fail: (reason, code) {
+        if (success != null) {
+          success(null, false);
+        }
+      },
+    );
+  }
 }

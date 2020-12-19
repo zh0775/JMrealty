@@ -2,6 +2,8 @@ import 'package:JMrealty/Project/ProjectCell.dart';
 import 'package:JMrealty/Project/ProjectViewModel.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/utils/EventBus.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
@@ -11,6 +13,7 @@ class Project extends StatefulWidget {
 }
 
 class _ProjectState extends State<Project> {
+  EventBus _eventBus = EventBus();
   ProjectViewModel projectVM = ProjectViewModel();
   EasyRefreshController pullCtr = EasyRefreshController();
   GlobalKey _easyRefreshKey = GlobalKey();
@@ -23,6 +26,9 @@ class _ProjectState extends State<Project> {
 
   @override
   void initState() {
+    _eventBus.on(NOTIFY_LOGIN_SUCCESS, (arg) {
+      pullCtr.callRefresh();
+    });
     super.initState();
   }
 
@@ -54,11 +60,13 @@ class _ProjectState extends State<Project> {
         emptyWidget: projectListData.length == 0 ? EmptyView() : null,
         firstRefresh: true,
         onRefresh: () async {
-          projectVM.loadProjectList((projectList) {
+          projectVM.loadProjectList((projectList, success) {
             pullCtr.finishRefresh();
-            setState(() {
-              projectListData = projectList;
-            });
+            if (success) {
+              setState(() {
+                projectListData = projectList;
+              });
+            }
           });
         },
         child: ListView.builder(

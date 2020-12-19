@@ -7,6 +7,8 @@ import 'package:JMrealty/components/SelectImageView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
+import 'package:JMrealty/utils/EventBus.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/tTools.dart';
 import 'package:JMrealty/utils/toast.dart';
@@ -24,9 +26,8 @@ class Login extends StatefulWidget {
   _LoginState createState() => _LoginState();
 }
 
-
-
 class _LoginState extends State<Login> {
+  EventBus _eventBus = EventBus();
   String headImgPath; // 头像路径
   dynamic headImg;
   String phoneNumString; // 登录手机号
@@ -45,10 +46,9 @@ class _LoginState extends State<Login> {
 
   @override
   void dispose() {
+    _eventBus.off(NOTIFY_LOGIN_SUCCESS);
     super.dispose();
   }
-
-
 
   @override
   void initState() {
@@ -178,6 +178,7 @@ class _LoginState extends State<Login> {
                               }
                               value.requestLogin(phoneNumString, codeNumString,
                                   () {
+                                _eventBus.emit(NOTIFY_LOGIN_SUCCESS);
                                 ShowToast.normal('登录成功');
                                 Future.delayed(Duration(seconds: 1), () {
                                   FocusScope.of(context)
@@ -263,6 +264,7 @@ class _LoginState extends State<Login> {
       height: 48,
       keyboardType: TextInputType.number,
       hintText: '验证码',
+      text: isLogin ? codeNumString : registCodeNumString,
       borderRadius: BorderRadius.horizontal(left: Radius.circular(8)),
       valueChange: (String value) {
         isLogin ? codeNumString = value : registCodeNumString = value;
@@ -278,6 +280,7 @@ class _LoginState extends State<Login> {
       height: 48,
       hintText: '请输入手机号',
       needCleanButton: true,
+      text: phoneNumString,
       keyboardType: TextInputType.phone,
       valueChange: (String value) {
         // setState(() {
@@ -332,18 +335,26 @@ class _LoginState extends State<Login> {
                               borderRadius:
                                   BorderRadius.all(Radius.circular(40)),
                               child:
-                              // Image.memory(headImg.buffer.asUint8List(),fit: BoxFit.cover,height: 80,width: 80,)
-                              FutureBuilder<ByteData>(
-                                  future: headImg.getThumbByteData(80, 80),
-                                builder: (context,snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.done) {
-                                    return Image.memory(snapshot.data.buffer.asUint8List(),fit: BoxFit.cover,height: 80,width: 80,);
+                                  // Image.memory(headImg.buffer.asUint8List(),fit: BoxFit.cover,height: 80,width: 80,)
+                                  FutureBuilder<ByteData>(
+                                future: headImg.getThumbByteData(80, 80),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    return Image.memory(
+                                      snapshot.data.buffer.asUint8List(),
+                                      fit: BoxFit.cover,
+                                      height: 80,
+                                      width: 80,
+                                    );
                                   } else {
-                                    return Container(width: 0.0,height: 0.0,);
+                                    return Container(
+                                      width: 0.0,
+                                      height: 0.0,
+                                    );
                                   }
                                 },
-                              )
-                            )
+                              ))
                           : selectHead(context)),
                   SizedBox(
                     height: 40,
@@ -440,6 +451,7 @@ class _LoginState extends State<Login> {
                           width: SizeConfig.blockSizeHorizontal * 70 + 5,
                           backgroundColor: Colors.transparent,
                           needCleanButton: true,
+                          text: registName,
                           valueChange: (value) {
                             registName = value;
                           },
@@ -505,6 +517,7 @@ class _LoginState extends State<Login> {
                           width: SizeConfig.blockSizeHorizontal * 70 + 5,
                           backgroundColor: Colors.transparent,
                           needCleanButton: true,
+                          text: registPhone,
                           keyboardType: TextInputType.phone,
                           valueChange: (value) {
                             registPhone = value;

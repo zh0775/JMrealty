@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import './JMHomeBanner.dart';
 
 class HomeNaviBar extends StatefulWidget {
-  final images;
-  const HomeNaviBar({this.images});
+  final List bannerDatas;
+  const HomeNaviBar({this.bannerDatas});
   @override
   _HomeNaviBarState createState() => _HomeNaviBarState();
 }
@@ -12,12 +12,6 @@ class _HomeNaviBarState extends State<HomeNaviBar> {
   List<BannerItem> bannerList = [];
   @override
   void initState() {
-    if (widget.images != null) {
-      // print('widget.images === ${widget.images}');
-      setState(() {
-        this.bannerList = this.initBannerData(widget.images);
-      });
-    }
     super.initState();
   }
 
@@ -32,7 +26,7 @@ class _HomeNaviBarState extends State<HomeNaviBar> {
           color: Colors.transparent,
           child: BannerWidget(
             widgetHeight,
-            bannerList,
+            initBannerData(widget.bannerDatas),
             bannerPress: (post, item) {
               print('window.innerHeight == ${MediaQuery.of(context).size}');
               print('post === $post --- item === $item');
@@ -83,7 +77,7 @@ class _HomeNaviBarState extends State<HomeNaviBar> {
     List<BannerItem> list = [];
     for (var i = 0; i < value.length; i++) {
       var data = value[i];
-      BannerItem item = BannerItem.defaultBannerItem(data['imgUrl']);
+      BannerItem item = BannerItem.defaultBannerItem(data['rotationChart']);
       list.add(item);
     }
     return list;

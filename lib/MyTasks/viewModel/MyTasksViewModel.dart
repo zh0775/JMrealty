@@ -2,48 +2,126 @@ import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
 
 class MyTasksViewModel {
-  loadTasksPublishedList(Function(List tasksList) success) {
+  loadTasksPublishedList(Function(List tasksList, bool success) success,
+      {Map params = const {}}) {
     Http().get(
       Urls.tasksPublishedList,
-      {},
+      params,
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
-            success((json['data'])['rows']);
+            success((json['data'])['rows'], true);
+          }
+        } else {
+          if (success != null) {
+            success(null, false);
           }
         }
       },
-      fail: (reason, code) {},
+      fail: (reason, code) {
+        if (success != null) {
+          success(null, false);
+        }
+      },
     );
   }
 
-  loadTasksAcceptList(Function(List tasksList) success) {
+  loadTasksAcceptList(Function(List tasksList, bool success) success,
+      {Map params = const {}}) {
     Http().get(
       Urls.tasksAcceptList,
-      {},
+      params,
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
-            success((json['data'])['rows']);
+            success((json['data'])['rows'], true);
+          }
+        } else {
+          if (success != null) {
+            success(null, false);
           }
         }
       },
-      fail: (reason, code) {},
+      fail: (reason, code) {
+        if (success != null) {
+          success(null, false);
+        }
+      },
     );
   }
 
-  addTasksRequest(Map params, Function() success) {
+  addTasksRequest(Map params, Function(bool success) success) {
     Http().post(
       Urls.tasksAdd,
       params,
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
-            success();
+            success(true);
+          }
+        } else {
+          if (success != null) {
+            success(false);
           }
         }
       },
-      fail: (reason, code) {},
+      fail: (reason, code) {
+        if (success != null) {
+          success(false);
+        }
+      },
+    );
+  }
+
+  loadTasksType(Function(List data, bool success) success) {
+    Http().get(
+      Urls.tasksType,
+      {},
+      success: (json) {
+        if (json['code'] == 200) {
+          if (success != null) {
+            List listData = (json['data']).map((value) {
+              return {'title': value['dictLabel'], 'value': value['dictValue']};
+            }).toList();
+            success(listData, true);
+          }
+        } else {
+          if (success != null) {
+            success([], false);
+          }
+        }
+      },
+      fail: (reason, code) {
+        if (success != null) {
+          success([], false);
+        }
+      },
+    );
+  }
+
+  loadTasksUrgency(Function(List data, bool success) success) {
+    Http().get(
+      Urls.tasksUrgency,
+      {},
+      success: (json) {
+        if (json['code'] == 200) {
+          if (success != null) {
+            List listData = (json['data']).map((value) {
+              return {'title': value['dictLabel'], 'value': value['dictValue']};
+            }).toList();
+            success(listData, true);
+          }
+        } else {
+          if (success != null) {
+            success([], false);
+          }
+        }
+      },
+      fail: (reason, code) {
+        if (success != null) {
+          success([], false);
+        }
+      },
     );
   }
 }

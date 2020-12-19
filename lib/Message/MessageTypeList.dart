@@ -1,45 +1,39 @@
-import 'package:JMrealty/Message/MessageCell.dart';
+import 'package:JMrealty/Message/MessageTypeCell.dart';
 import 'package:JMrealty/Message/viewModel/MessageViewModel.dart';
+import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/EmptyView.dart';
-import 'package:JMrealty/utils/EventBus.dart';
-import 'package:JMrealty/utils/notify_default.dart';
+import 'package:JMrealty/const/Default.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
-class Message extends StatefulWidget {
+class MessageTypeList extends StatefulWidget {
+  final int noticeType;
+  const MessageTypeList({this.noticeType});
   @override
-  _MessageState createState() => _MessageState();
+  _MessageTypeListState createState() => _MessageTypeListState();
 }
 
-class _MessageState extends State<Message> {
+class _MessageTypeListState extends State<MessageTypeList> {
   MessageViewModel messageVM = MessageViewModel();
   EasyRefreshController pullCtr = EasyRefreshController();
   GlobalKey _easyRefreshKey = GlobalKey();
-  EventBus _eventBus = EventBus();
   List messageList = [];
   @override
   void initState() {
-    _eventBus.on(NOTIFY_USER_INFO, (arg) {
-      loadList();
-    });
     loadList();
     super.initState();
   }
 
   @override
   void dispose() {
-    pullCtr.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '消息',
-          style: TextStyle(color: Colors.white, fontSize: 22),
-        ),
+      appBar: CustomAppbar(
+        title: jm_getMessageTypeStr(widget.noticeType),
       ),
       body: EasyRefresh(
         enableControlFinishRefresh: true,
@@ -54,7 +48,7 @@ class _MessageState extends State<Message> {
         child: ListView.builder(
           itemCount: messageList.length,
           itemBuilder: (context, index) {
-            return MessageCell(
+            return MessageTypeCell(
               data: messageList[index],
             );
           },
@@ -64,7 +58,7 @@ class _MessageState extends State<Message> {
   }
 
   loadList() {
-    messageVM.loadMessageList((message, success) {
+    messageVM.loadMessageTypeList(widget.noticeType, (message, success) {
       pullCtr.finishRefresh();
       if (success) {
         setState(() {

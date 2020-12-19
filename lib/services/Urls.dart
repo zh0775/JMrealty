@@ -16,6 +16,8 @@ class Urls {
   static const String userLogin = '/auth/app/login';
   // 获取当前用户信息
   static const String getUserInfo = '/system/user/findUserInfo';
+  // 获取首页轮播图
+  static const String getHomeBanner = '/comps/chart/findRotationList';
 
   // 客户
   // 新增接口下拉数据接口
@@ -59,6 +61,12 @@ class Urls {
   static const String reportUploadRecord = '/customer/status/upload';
   // 已成交
   static const String reportSuccess = '/customer/shop/subscription';
+  // 退单
+  static const String reportChargeBack = '/customer/status/chargeback';
+  // 签约
+  static const String reportSignUp = '/customer/status/signUp';
+  // 带看
+  static const String reportTakelook = '/customer/status/takelook';
 
   //业绩规划
   // 查询业绩规则列表
@@ -95,4 +103,15 @@ class Urls {
   static const String tasksAcceptList = '/comps/task/taskListTome';
   // 新增任务
   static const String tasksAdd = '/comps/task/add';
+  // /system/dict/type/typeId?dictId=114
+  // 新增任务 下拉 任务类型
+  static const String tasksType = '/system/dict/type/typeId?dictId=122';
+  // 新增任务 下拉 任务紧急
+  static const String tasksUrgency = '/system/dict/type/typeId?dictId=123';
+
+  //消息
+  // 消息列表
+  static const String messageList = '/comps/notice/selectNoticeList';
+  // 消息类型列表
+  static const String messageTypeList = '/comps/notice/selectNoticeMessageList';
 }

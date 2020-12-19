@@ -11,6 +11,9 @@ class ImageLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedNetworkImage(
+      fadeInDuration: Duration(milliseconds: 1),
+      placeholderFadeInDuration: Duration(milliseconds: 1),
+      fadeOutDuration: Duration(milliseconds: 1),
       imageUrl: imgUrl,
       placeholder: (context, url) => Container(
         color: Colors.white,

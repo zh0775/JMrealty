@@ -3,8 +3,9 @@ import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 
 class ProjectCell extends StatefulWidget {
+  final int status;
   final Map data;
-  const ProjectCell({this.data});
+  const ProjectCell({this.data, this.status});
   @override
   _ProjectCellState createState() => _ProjectCellState();
 }

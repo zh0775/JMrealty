@@ -64,18 +64,7 @@ class _ReportListViewState extends State<ReportListView>
       emptyWidget: dataList.length == 0 ? EmptyView() : null,
       firstRefresh: true,
       onRefresh: () async {
-        print('onRefresh ---- loadListData');
-        reportListVM.loadListData(widget.status, success: (success) {
-          // easyRefreshCtr.resetLoadState();
-          easyRefreshCtr.finishRefresh();
-          // easyRefreshCtr.finishLoad();
-          if (success) {
-            setState(() {
-              total = reportListVM.listData['total'];
-              dataList = reportListVM.listData['rows'];
-            });
-          }
-        });
+        loadList();
       },
       onLoad: () async {
         print('onLoad ---- loadListData');
@@ -89,6 +78,9 @@ class _ReportListViewState extends State<ReportListView>
           return ReportListCell(
             data: dataList[index],
             index: index,
+            needRefrash: () {
+              loadList();
+            },
           );
         },
       ),
@@ -104,6 +96,20 @@ class _ReportListViewState extends State<ReportListView>
       //   ),
       // ],
     );
+  }
+
+  loadList() {
+    reportListVM.loadListData(widget.status, success: (success) {
+      // easyRefreshCtr.resetLoadState();
+      easyRefreshCtr.finishRefresh();
+      // easyRefreshCtr.finishLoad();
+      if (success) {
+        setState(() {
+          total = reportListVM.listData['total'];
+          dataList = reportListVM.listData['rows'];
+        });
+      }
+    });
   }
 
   @override

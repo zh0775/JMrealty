@@ -73,6 +73,38 @@ String jm_getReportStatusStr(int status) {
   return statusStr;
 }
 
+String jm_getMessageTypeStr(int noticeType) {
+  // 0：报备 10：成交喜报 20：待跟进 30：跟进进度 40：PK赛 50：我接收的任务 60：我发布的任务 70：日报
+  switch (noticeType) {
+    case 0:
+      return '报备';
+      break;
+    case 10:
+      return '成交喜报';
+      break;
+    case 20:
+      return '待跟进';
+      break;
+    case 30:
+      return '跟进进度';
+      break;
+    case 40:
+      return 'PK赛';
+      break;
+    case 50:
+      return '我接收的任务';
+      break;
+    case 60:
+      return '我发布的任务';
+      break;
+    case 70:
+      return '日报';
+      break;
+    default:
+      return '';
+  }
+}
+
 Color jm_getReportStatusColor(int status) {
   Color statusColor = jm_text_black;
   switch (status) {

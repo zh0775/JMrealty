@@ -1,5 +1,6 @@
 import 'package:JMrealty/Report/ReportSuccess.dart';
 import 'package:JMrealty/Report/ReportUpload.dart';
+import 'package:JMrealty/Report/viewmodel/ReportChangeStatusViewModel.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/notify_default.dart';
@@ -9,16 +10,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
 import 'ReportDetail.dart';
+import 'package:intl/intl.dart';
 
 class ReportListCell extends StatefulWidget {
+  final Function() needRefrash;
   final Map data;
   final int index;
-  ReportListCell({@required this.data, this.index});
+  ReportListCell({@required this.data, this.index, this.needRefrash});
   @override
   _ReportListCellState createState() => _ReportListCellState();
 }
 
 class _ReportListCellState extends State<ReportListCell> {
+  ReportChangeStatusViewModel reportChangeStatusVM =
+      ReportChangeStatusViewModel();
   double cellHeight;
   double widthScale;
   double outMargin;
@@ -269,7 +274,21 @@ class _ReportListCellState extends State<ReportListCell> {
                 ));
               }),
               getTextButton('退单', () {
-                CustomAlert(content: '确认要退单吗？').show();
+                CustomAlert(content: '确认要退单吗？').show(
+                  confirmClick: () {
+                    Map<String, dynamic> params = {
+                      'beforeStatus': widget.data['status'],
+                      'reportId': widget.data['id'],
+                      'remark': '',
+                      'images': '',
+                    };
+                    reportChangeStatusVM.chargebackRequest(params, (success) {
+                      if (success && widget.needRefrash != null) {
+                        widget.needRefrash();
+                      }
+                    });
+                  },
+                );
               },
                   borderColor: Colors.red,
                   textStyle: TextStyle(color: Colors.red, fontSize: 13)),
@@ -294,7 +313,23 @@ class _ReportListCellState extends State<ReportListCell> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               getTextButton('签约', () {
-                CustomAlert(content: '确认要签约吗？').show();
+                CustomAlert(content: '确认要签约吗？').show(
+                  confirmClick: () {
+                    Map<String, dynamic> params = {
+                      'beforeStatus': widget.data['status'],
+                      'reportId': widget.data['id'],
+                      'remark': '',
+                      'images': '',
+                      'visaTime': DateFormat('yyyy-MM-dd HH:mm:ss')
+                          .format(DateTime.now())
+                    };
+                    reportChangeStatusVM.signUpRequest(params, (success) {
+                      if (success && widget.needRefrash != null) {
+                        widget.needRefrash();
+                      }
+                    });
+                  },
+                );
               }),
             ],
           )

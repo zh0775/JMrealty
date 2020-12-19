@@ -72,8 +72,8 @@ class _HomeState extends State<Home> {
   void initState() {
     homeVM = HomeViewModel();
     homeVM.loadUserInfo();
-    this.getBanner();
-    this.getScheData();
+    getBanner();
+    getScheData();
     super.initState();
   }
 
@@ -87,7 +87,7 @@ class _HomeState extends State<Home> {
       child: ListView(
         children: [
           HomeNaviBar(
-            images: bannerList,
+            bannerDatas: bannerList,
           ),
           HomeAnno(),
           HomeGoodDeed(),
@@ -238,7 +238,7 @@ class _HomeState extends State<Home> {
     List<Widget> allRow = [];
     // List<Widget> row2 = [];
     // Column column = Column();
-    TextStyle textStyle = TextStyle(color: jm_text_black);
+    // TextStyle textStyle = TextStyle(color: jm_text_black);
     for (var i = 0; i < buttonData.length; i++) {
       List rowData = buttonData[i];
       Row row;
@@ -266,7 +266,7 @@ class _HomeState extends State<Home> {
                   Text(
                     data['title'],
                     maxLines: 1,
-                    style: textStyle,
+                    style: jm_text_black_style14,
                   ),
                 ],
               )),
@@ -315,12 +315,20 @@ class _HomeState extends State<Home> {
   }
 
   void getBanner() {
-    Map value = HomeService().getHomeBanner();
-    if (value['code'] == 0) {
-      this.setState(() {
-        this.bannerList = value['data'];
-      });
-      // this.initBannerData(value);
-    }
+    homeVM.loadHomeBanner((banner, success) {
+      if (success) {
+        this.setState(() {
+          this.bannerList = banner;
+        });
+      }
+    });
+
+    // Map value = HomeService().getHomeBanner();
+    // if (value['code'] == 0) {
+    //   this.setState(() {
+    //     this.bannerList = value['data'];
+    //   });
+    //   // this.initBannerData(value);
+    // }
   }
 }
