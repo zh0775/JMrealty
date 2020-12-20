@@ -57,7 +57,7 @@ class LevelTargetViewModel extends BaseViewModel {
     );
   }
 
-  deleteTarget(int id, Function() success) {
+  deleteTarget(int id, Function(bool success) success) {
     // state = BaseState.LOADING;
     // notifyListeners();
     Http().delete(
@@ -68,17 +68,23 @@ class LevelTargetViewModel extends BaseViewModel {
         // notifyListeners();
         if (json['code'] == 200) {
           if (success != null) {
-            success();
+            success(true);
           }
         } else {
           if (json['msg'] != null) {
             ShowToast.normal(json['msg']);
+          }
+          if (success != null) {
+            success(false);
           }
         }
       },
       fail: (reason, code) {
         if (reason != null) {
           ShowToast.normal(reason);
+        }
+        if (success != null) {
+          success(false);
         }
       },
     );

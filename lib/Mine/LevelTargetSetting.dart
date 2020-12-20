@@ -37,8 +37,8 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
     isEdit = true;
     newItem = {'count': '', 'month': '', 'price': ''};
     itemsData = [
-      {'id': 0, 'title': 'A1', 'month': 1, 'count': 1, 'price': 10000},
-      {'id': 1, 'title': 'A2', 'month': 3, 'count': 4, 'price': 30000},
+      // {'id': 0, 'title': 'A1', 'month': 1, 'count': 1, 'price': 10000},
+      // {'id': 1, 'title': 'A2', 'month': 3, 'count': 4, 'price': 30000},
     ];
     citys = <DropdownMenuItem<int>>[
       DropdownMenuItem(
@@ -384,7 +384,7 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
   }
 
   void deleteTarget(Map item) {
-    levelTargetVM.deleteTarget(item['id'], () {
+    levelTargetVM.deleteTarget(item['id'], (bool success) {
       levelTargetVM.loadTarget(widget.deptId);
     });
     // setState(() {
