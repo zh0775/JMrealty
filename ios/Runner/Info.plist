@@ -17,17 +17,33 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>金幕联行需要您的同意,才能访问音乐</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>金幕联行需要您的同意,才能访问日历</string>
 	<key>NSCameraUsageDescription</key>
-	<string>App需要您的同意,才能访问相机</string>
+	<string>金幕联行需要您的同意,才能访问相机</string>
+	<key>NSContactsUsageDescription</key>
+	<string>金幕联行需要您的同意,才能访问通讯录</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>金幕联行需要您的同意,才能访问地理位置</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>金幕联行需要您的同意,才能访问地理位置</string>
+	<key>NSMotionUsageDescription</key>
+	<string>金幕联行需要您的同意,才能访问运动</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>App需要您的同意,才能访问相册</string>
+	<string>金幕联行需要您的同意,才能访问相册</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>金幕联行需要您的同意,才能进行语音识别</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
