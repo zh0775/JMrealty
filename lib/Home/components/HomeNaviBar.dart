@@ -21,7 +21,7 @@ class _HomeNaviBarState extends State<HomeNaviBar> {
     return Stack(children: [
       ClipRRect(
         borderRadius: BorderRadius.vertical(
-            top: Radius.circular(0), bottom: Radius.circular(15)),
+            top: Radius.circular(0), bottom: Radius.circular(0)),
         child: Container(
           color: Colors.transparent,
           child: BannerWidget(
@@ -34,42 +34,42 @@ class _HomeNaviBarState extends State<HomeNaviBar> {
           ),
         ),
       ),
-      Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          color: Color.fromRGBO(0, 0, 0, 0.4),
-        ),
-        width: MediaQuery.of(context).size.width - 40,
-        margin: EdgeInsets.fromLTRB(20, 50, 0, 0),
-        height: 50,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-              child: Row(
-                children: [
-                  Image.asset("assets/images/tabbar/food-cake.png"),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                    child: Text(
-                      '南宁  多云  18-22°C',
-                      style: TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-              child: Icon(
-                Icons.search,
-                color: Colors.white,
-              ),
-            )
-          ],
-        ),
-      ),
+      // Container(
+      //   decoration: BoxDecoration(
+      //     // borderRadius: BorderRadius.all(Radius.circular(10.0)),
+      //     // color: Color.fromRGBO(0, 0, 0, 0.4),
+      //   ),
+      //   width: MediaQuery.of(context).size.width - 40,
+      //   margin: EdgeInsets.fromLTRB(20, 50, 0, 0),
+      //   height: 50,
+      //   child: Row(
+      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //     children: [
+      //       Padding(
+      //         padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+      //         child: Row(
+      //           children: [
+      //             Image.asset("assets/images/tabbar/food-cake.png"),
+      //             Padding(
+      //               padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+      //               child: Text(
+      //                 '南宁  多云  18-22°C',
+      //                 style: TextStyle(color: Colors.white, fontSize: 14),
+      //               ),
+      //             )
+      //           ],
+      //         ),
+      //       ),
+      //       Padding(
+      //         padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+      //         child: Icon(
+      //           Icons.search,
+      //           color: Colors.white,
+      //         ),
+      //       )
+      //     ],
+      //   ),
+      // ),
     ]);
   }
 

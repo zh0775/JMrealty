@@ -239,3 +239,33 @@ String getStatusString(int status) {
       break;
   }
 }
+
+Size calculateTextSize(
+    String value,
+    fontSize,
+    FontWeight fontWeight,
+    double maxWidth,
+    int maxLines,
+    BuildContext context, //GlobalStatic.context
+    ) {
+//过滤文本
+// value = filterText(value);
+//TextPainter
+  TextPainter painter = TextPainter(
+    ///AUTO：华为手机如果不指定locale的时候，该方法算出来的文字高度是比系统计算偏小的。
+    locale: Localizations.localeOf(context, nullOk: true),
+    maxLines: maxLines,
+    // textDirection: TextDirection.ltr,
+    text: TextSpan(
+      text: value,
+      style: TextStyle(
+        fontWeight: fontWeight,
+        fontSize: fontSize,
+      ),
+    ),
+  );
+//设置layout
+  painter.layout(maxWidth: maxWidth);
+//文字的Size
+  return Size(painter.width, painter.height);
+}

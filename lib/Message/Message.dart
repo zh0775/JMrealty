@@ -1,12 +1,15 @@
 import 'package:JMrealty/Message/MessageCell.dart';
 import 'package:JMrealty/Message/viewModel/MessageViewModel.dart';
 import 'package:JMrealty/components/EmptyView.dart';
+import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
 class Message extends StatefulWidget {
+  final IndexClick indexClick;
+  const Message({this.indexClick});
   @override
   _MessageState createState() => _MessageState();
 }

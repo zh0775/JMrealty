@@ -1,6 +1,7 @@
 import 'package:JMrealty/Home/viewModel/HomeViewModel.dart';
 import 'package:JMrealty/Mine/LevelTargetSetting.dart';
 import 'package:JMrealty/Mine/components/MineTop.dart';
+import 'package:JMrealty/Mine/viewModel/MineViewModel.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
@@ -12,37 +13,69 @@ import 'dart:convert' as convert;
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
 class Mine extends StatefulWidget {
+  final IndexClick indexClick;
+  const Mine({this.indexClick});
   @override
   _MineState createState() => _MineState();
 }
 
 class _MineState extends State<Mine> {
   HomeViewModel homeVM = HomeViewModel();
-
-  EasyRefreshController pullCtr;
-  double topHeight = 300;
+  MineViewModel mineVM = MineViewModel();
+  EasyRefreshController pullCtr = EasyRefreshController();
+  GlobalKey pullKey = GlobalKey();
+  double topHeight = 200;
   double widthScale;
   double margin;
   double selfWidth;
 
-  Map userInfo;
+  Map userInfo = {};
+  Map targetData = {};
   var bus = EventBus();
   @override
   void initState() {
-    pullCtr = EasyRefreshController();
-    userInfo = {};
+    loadMineRequest();
     bus.on(NOTIFY_USER_INFO, (arg) {
       setState(() {
         userInfo = Map<String, dynamic>.from(convert.jsonDecode(arg));
       });
     });
+    bus.on(NOTIFY_LOGIN_SUCCESS, (arg) {
+      loadMineRequest();
+    });
     super.initState();
   }
-
   @override
   void dispose() {
-    bus.off(NOTIFY_USER_INFO);
     super.dispose();
+  }
+
+  loadMineRequest(){
+    homeVM.loadUserInfo(
+      finish: () {
+        UserDefault.get(USERINFO).then((value) {
+          setState(() {
+            userInfo =
+            Map<String, dynamic>.from(convert.jsonDecode(value));
+            mineVM.loadMonthTarget(userInfo['userId'], (success, data) {
+              if (success) {
+                setState(() {
+                  targetData = data;
+                });
+              }
+            });
+          });
+        });
+      },
+    );
+  }
+
+  changeInfo(Map info) {
+    mineVM.changeInfo(info, (success){
+      if (success) {
+        loadMineRequest();
+      }
+    });
   }
 
   @override
@@ -55,19 +88,11 @@ class _MineState extends State<Mine> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: EasyRefresh(
-          controller: pullCtr,
-          header: PhoenixHeader(),
+        key: pullKey,
+          // controller: pullCtr,
+          // header: PhoenixHeader(),
           onRefresh: () async {
-            homeVM.loadUserInfo(
-              finish: () {
-                UserDefault.get(USERINFO).then((value) {
-                  setState(() {
-                    userInfo =
-                        Map<String, dynamic>.from(convert.jsonDecode(value));
-                  });
-                });
-              },
-            );
+            loadMineRequest();
           },
           child: SingleChildScrollView(
             child: Column(
@@ -75,12 +100,9 @@ class _MineState extends State<Mine> {
                 MineTop(
                   data: userInfo,
                   height: topHeight,
+                  targetData: targetData,
                   toLevelSetting: () {
-                    Navigator.of(context).push(CupertinoPageRoute(
-                      builder: (_) {
-                        return LevelTargetSetting(deptId: userInfo['deptId']);
-                      },
-                    ));
+
                   },
                 ),
                 Row(
@@ -122,6 +144,14 @@ class _MineState extends State<Mine> {
                   height: 20,
                 ),
                 JMline(width: SizeConfig.screenWidth, height: 0.5),
+                getCell('等级目标设置', Icons.grading, () {
+                  Navigator.of(context).push(CupertinoPageRoute(
+                    builder: (_) {
+                      return LevelTargetSetting(deptId: userInfo['deptId']);
+                    },
+                  ));
+                }),
+                JMline(width: SizeConfig.screenWidth, height: 0.5),
                 getCell('日报模板管理', Icons.grading, () {}),
                 JMline(
                     margin: margin,
@@ -132,8 +162,8 @@ class _MineState extends State<Mine> {
                     margin: margin,
                     width: SizeConfig.screenWidth - margin,
                     height: 0.5),
-                getCell('版本更新', Icons.update, () {}),
-                JMline(width: SizeConfig.screenWidth, height: 0.5),
+                // getCell('版本更新', Icons.update, () {}),
+                // JMline(width: SizeConfig.screenWidth, height: 0.5),
               ],
             ),
           )),
@@ -145,6 +175,7 @@ class _MineState extends State<Mine> {
       onTap: onPressed,
       child: Container(
         height: 50,
+        color: Colors.white,
         width: SizeConfig.screenWidth,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

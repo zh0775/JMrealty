@@ -8,11 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
 class Project extends StatefulWidget {
+  final IndexClick indexClick;
+  const Project({this.indexClick});
   @override
   _ProjectState createState() => _ProjectState();
 }
 
 class _ProjectState extends State<Project> {
+
   EventBus _eventBus = EventBus();
   ProjectViewModel projectVM = ProjectViewModel();
   EasyRefreshController pullCtr = EasyRefreshController();

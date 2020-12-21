@@ -12,6 +12,7 @@ import 'package:JMrealty/Report/AddReport.dart';
 import 'package:JMrealty/Report/Report.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/services/HomeService.dart';
+import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/user_default.dart';
@@ -29,20 +30,26 @@ class MainPageWidget extends StatefulWidget {
 }
 
 class _MainPageWidgetState extends State<MainPageWidget> {
+  IndexClick indexClick = ()=>{};
   @override
   void initState() {
     super.initState();
   }
-
   int _tabbarIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
         index: _tabbarIndex,
-        children: [Home(), Project(), Client(), Message(), Mine()],
+        children: [
+          Home(indexClick: indexClick,),
+          Project(indexClick: indexClick),
+          Client(indexClick: indexClick),
+          Message(indexClick: indexClick),
+          Mine(indexClick: indexClick)],
       ),
       bottomNavigationBar: JMTabBar((index) {
+        indexClick();
         setState(() {
           _tabbarIndex = index;
         });
@@ -60,6 +67,8 @@ class _MainPageWidgetState extends State<MainPageWidget> {
 // typedef void buttonClick(int buttonIndex, Map buttonData);
 
 class Home extends StatefulWidget {
+  final IndexClick indexClick;
+  const Home({this.indexClick});
   @override
   _HomeState createState() => _HomeState();
 }
@@ -68,15 +77,33 @@ class _HomeState extends State<Home> {
   HomeViewModel homeVM;
   var homeScheduleToDoData = [];
   var bannerList = [];
+  EventBus _eventBus = EventBus();
+
   @override
-  void initState() {
-    homeVM = HomeViewModel();
-    homeVM.loadUserInfo();
-    getBanner();
-    getScheData();
-    super.initState();
+  void deactivate() {
+    // print('deactivate === home_deactivate');
+    // bool isCurrent = ModalRoute.of(context).isCurrent;
+    // if(isCurrent) loadReqest();
+    super.deactivate();
   }
 
+  @override
+  void initState() {
+    _eventBus.on(NOTIFY_LOGIN_SUCCESS, (arg) {
+      loadReqest();
+    });
+    widget.indexClick();
+    homeVM = HomeViewModel();
+    super.initState();
+  }
+  void loadReqest() async {
+    homeVM.loadUserInfo();
+    String token = await UserDefault.get(ACCESS_TOKEN);
+    getBanner();
+    if (token != null && token.length > 0) {
+      getScheData();
+    }
+  }
   double widgetHeight = 180.0;
 
   @override
@@ -84,7 +111,8 @@ class _HomeState extends State<Home> {
     return MediaQuery.removePadding(
       removeTop: true,
       context: context,
-      child: ListView(
+      child: SingleChildScrollView(
+        child: Column(
         children: [
           HomeNaviBar(
             bannerDatas: bannerList,
@@ -146,6 +174,7 @@ class _HomeState extends State<Home> {
                 'buttonIndex === $buttonIndex --- buttonData === $buttonData');
           })
         ],
+      ),
       ),
     );
   }

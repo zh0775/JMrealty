@@ -114,4 +114,14 @@ class Urls {
   static const String messageList = '/comps/notice/selectNoticeList';
   // 消息类型列表
   static const String messageTypeList = '/comps/notice/selectNoticeMessageList';
+
+  // 强制提醒
+  static const String findOvertime = '/customer/progress/findOvertime';
+
+  //我的
+  // 个人信息 // findUserInfo
+  // 员工当前月的目标业绩及完成业绩
+  static const String monthTarget = '/comps/employee/find';
+  // 修改头像，签名，背景图
+  static const String changeUserInfo = '/system/user/updateInfo';
 }

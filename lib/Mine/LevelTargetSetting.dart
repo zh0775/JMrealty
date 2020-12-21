@@ -17,7 +17,7 @@ class LevelTargetSetting extends StatefulWidget {
 }
 
 class _LevelTargetSettingState extends State<LevelTargetSetting> {
-  LevelTargetViewModel levelTargetVM;
+  LevelTargetViewModel levelTargetVM = LevelTargetViewModel();
   double topHeight = 300;
   double widthScale;
   double margin;
@@ -26,20 +26,14 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
   Function(int deleteIndex) deleteItem = (int deleteIndex) {};
 
   List citys;
-  int cityValue;
+  int cityValue = 0;
   List itemsData;
-  bool isEdit;
+  bool isEdit  = false;
   Map newItem;
   @override
   void initState() {
-    levelTargetVM = LevelTargetViewModel();
-    cityValue = 0;
-    isEdit = true;
     newItem = {'count': '', 'month': '', 'price': ''};
-    itemsData = [
-      // {'id': 0, 'title': 'A1', 'month': 1, 'count': 1, 'price': 10000},
-      // {'id': 1, 'title': 'A2', 'month': 3, 'count': 4, 'price': 30000},
-    ];
+    itemsData = [];
     citys = <DropdownMenuItem<int>>[
       DropdownMenuItem(
         child: Text('南宁'),
@@ -63,7 +57,7 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
 
   @override
   Widget build(BuildContext context) {
-    print('newItem === $newItem');
+    // print('newItem === $newItem');
     SizeConfig().init(context);
     widthScale = SizeConfig.blockSizeHorizontal;
     margin = widthScale * 6;
@@ -79,6 +73,24 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
           },
           builder: (ctx, value, child) {
             if (value.state == BaseState.CONTENT) {
+
+              if (value.levelTarget != null && value.levelTarget is List) {
+                setState(() {
+                  itemsData = value.levelTarget.map((e) {
+                    // 'organizationId': widget.deptId,
+                    // 'amount': newItem['price'],
+                    // 'entryDays': newItem['month'] * 30,
+                    // 'num': newItem['count'],
+                    // 'gradeName': newItem['title'],
+                    return {
+                      'price': newItem['amount'],
+                      'month': newItem['entryDays'] / 30,
+                      'count': newItem['num'],
+                      'title': newItem['gradeName'],
+                    };
+                  }).toList();
+                });
+              }
               return GestureDetector(
                 onTap: () {
                   FocusScope.of(context).requestFocus(FocusNode());

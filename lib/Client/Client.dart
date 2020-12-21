@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
 class Client extends StatefulWidget {
+  final IndexClick indexClick;
+  const Client({this.indexClick});
   @override
   _ClientState createState() => _ClientState();
 }
@@ -44,6 +46,9 @@ class _ClientState extends State<Client> {
   };
   @override
   void initState() {
+    eventBus.on(NOTIFY_LOGIN_SUCCESS, (arg) {
+      eventBus.emit(NOTIFY_CLIENT_LIST_REFRASH_NORMAL);
+    });
     selectExpand = false;
     value1 = {'title': '级别', 'value': '-1'};
     value2 = {'title': '类型', 'value': '-1'};
@@ -66,6 +71,11 @@ class _ClientState extends State<Client> {
           'writeFollowClick status === $status --- index === $index --- model === $model');
     };
     super.initState();
+  }
+  @override
+  void dispose() {
+    eventBus.off(NOTIFY_CLIENT_LIST_REFRASH_NORMAL);
+    super.dispose();
   }
 
   @override
