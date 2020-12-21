@@ -1,5 +1,6 @@
 import 'package:JMrealty/Home/viewModel/HomeViewModel.dart';
 import 'package:JMrealty/Mine/LevelTargetSetting.dart';
+import 'package:JMrealty/Mine/SetTargetView.dart';
 import 'package:JMrealty/Mine/components/MineTop.dart';
 import 'package:JMrealty/Mine/viewModel/MineViewModel.dart';
 import 'package:JMrealty/const/Default.dart';
@@ -45,18 +46,18 @@ class _MineState extends State<Mine> {
     });
     super.initState();
   }
+
   @override
   void dispose() {
     super.dispose();
   }
 
-  loadMineRequest(){
+  loadMineRequest() {
     homeVM.loadUserInfo(
       finish: () {
         UserDefault.get(USERINFO).then((value) {
           setState(() {
-            userInfo =
-            Map<String, dynamic>.from(convert.jsonDecode(value));
+            userInfo = Map<String, dynamic>.from(convert.jsonDecode(value));
             mineVM.loadMonthTarget(userInfo['userId'], (success, data) {
               if (success) {
                 setState(() {
@@ -71,7 +72,7 @@ class _MineState extends State<Mine> {
   }
 
   changeInfo(Map info) {
-    mineVM.changeInfo(info, (success){
+    mineVM.changeInfo(info, (success) {
       if (success) {
         loadMineRequest();
       }
@@ -88,8 +89,8 @@ class _MineState extends State<Mine> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: EasyRefresh(
-        key: pullKey,
-          // controller: pullCtr,
+          key: pullKey,
+          controller: pullCtr,
           // header: PhoenixHeader(),
           onRefresh: () async {
             loadMineRequest();
@@ -101,9 +102,8 @@ class _MineState extends State<Mine> {
                   data: userInfo,
                   height: topHeight,
                   targetData: targetData,
-                  toLevelSetting: () {
-
-                  },
+                  changeInfo: changeInfo,
+                  toLevelSetting: () {},
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -115,7 +115,12 @@ class _MineState extends State<Mine> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(widthScale * 3),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context)
+                            .push(CupertinoPageRoute(builder: (_) {
+                          return SetTargetView();
+                        }));
+                      },
                       child: SizedBox(
                         width: widthScale * 30,
                         height: 50,

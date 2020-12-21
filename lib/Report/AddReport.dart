@@ -3,6 +3,7 @@ import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/toast.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
@@ -29,7 +30,7 @@ class _AddReportState extends State<AddReport> {
   double lineHeight;
   int addClientCount;
   List<Widget> addClientWidgets;
-  List<Map> clientsData;
+  List<Map> clientsData = [];
   Map projectData; // 项目数据
   Map agentData; // 经纪人数据
   String mark;
@@ -317,9 +318,21 @@ class _AddReportState extends State<AddReport> {
                 child: TextButton(
                   onPressed: () {
                     FocusScope.of(context).requestFocus(FocusNode());
+
+                    if (projectData == null) {
+                      ShowToast.normal('请选择项目信息');
+                      return;
+                    }
+
                     List clients = [];
+                    if (clientsData == null || clientsData.length == 0) {
+                      ShowToast.normal('请选择客源信息');
+                      return;
+                    }
+
                     clientsData.forEach((e) {
-                      if(e['name'] != null && e['phone'] != null) {
+                      print(e);
+                      if (e['name'] != null && e['csutomerPhone'] != null) {
                         clients.add(e);
                       }
                     });

@@ -1,3 +1,4 @@
+import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 
 class TargetSetting extends StatefulWidget {
@@ -8,6 +9,10 @@ class TargetSetting extends StatefulWidget {
 class _TargetSettingState extends State<TargetSetting> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: CustomAppbar(
+        title: '设置目标',
+      ),
+    );
   }
 }
