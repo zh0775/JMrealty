@@ -76,6 +76,7 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
 
               if (value.levelTarget != null && value.levelTarget is List) {
                 setState(() {
+                  print('value.levelTarget === ${value.levelTarget}');
                   itemsData = value.levelTarget.map((e) {
                     // 'organizationId': widget.deptId,
                     // 'amount': newItem['price'],
@@ -84,7 +85,7 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
                     // 'gradeName': newItem['title'],
                     return {
                       'price': newItem['amount'],
-                      'month': newItem['entryDays'] / 30,
+                      'month': (newItem['entryDays']) / 30,
                       'count': newItem['num'],
                       'title': newItem['gradeName'],
                     };

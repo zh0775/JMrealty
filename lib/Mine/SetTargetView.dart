@@ -55,6 +55,7 @@ class _SetTargetViewState extends State<SetTargetView> {
                     textAlignVertical: TextAlignVertical.center,
                     padding: EdgeInsets.only(left: widthScale * 3),
                     keyboardType: TextInputType.number,
+                    placeholder: '请输入目标业绩金额',
                     controller:
                         TextEditingController.fromValue(TextEditingValue(
                       text: monthTarget ?? '',
@@ -93,6 +94,7 @@ class _SetTargetViewState extends State<SetTargetView> {
                     textAlignVertical: TextAlignVertical.center,
                     padding: EdgeInsets.only(left: widthScale * 3),
                     keyboardType: TextInputType.number,
+                    placeholder: '请输入目标成交套数',
                     controller:
                         TextEditingController.fromValue(TextEditingValue(
                       text: monthCount ?? '',

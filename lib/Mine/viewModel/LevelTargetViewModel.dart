@@ -13,16 +13,23 @@ class LevelTargetViewModel extends BaseViewModel {
       Urls.targetRuleList,
       {'organizationId': depId},
       success: (json) {
-        state = BaseState.CONTENT;
-        notifyListeners();
+
         if (json['code'] == 200) {
+          levelTarget = json['rows'];
+          state = BaseState.CONTENT;
+          notifyListeners();
         } else {
+          state = BaseState.FAIL;
+          notifyListeners();
           if (json['msg'] != null) {
+
             ShowToast.normal(json['msg']);
           }
         }
       },
       fail: (reason, code) {
+        state = BaseState.FAIL;
+        notifyListeners();
         if (reason != null) {
           ShowToast.normal(reason);
         }
@@ -89,4 +96,6 @@ class LevelTargetViewModel extends BaseViewModel {
       },
     );
   }
+
+  saveTarget(){}
 }

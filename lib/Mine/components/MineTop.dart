@@ -44,7 +44,7 @@ class _MineTopState extends State<MineTop> {
         if (userSign != null &&
             userSign.length > 0 &&
             widget.changeInfo != null) {
-          widget.changeInfo({'sign': userSign});
+          widget.changeInfo({'sign': userSign, 'userId':widget.data['userId']});
         }
       }
       // print("焦点1是否被选中：" + signFocusNode.hasFocus.toString());
