@@ -14,7 +14,7 @@ class LevelTargetViewModel extends BaseViewModel {
       {'organizationId': depId},
       success: (json) {
         if (json['code'] == 200) {
-          levelTarget = json['rows'];
+          levelTarget = json['data'];
           state = BaseState.CONTENT;
           notifyListeners();
         } else {
@@ -66,8 +66,8 @@ class LevelTargetViewModel extends BaseViewModel {
     // state = BaseState.LOADING;
     // notifyListeners();
     Http().delete(
-      Urls.deleteTargetRule(id.toString()), {},
-      // params,
+      Urls.deleteTargetRule(id.toString()),
+      Map<String, dynamic>.from({'id': id}),
       success: (json) {
         // state = BaseState.CONTENT;
         // notifyListeners();

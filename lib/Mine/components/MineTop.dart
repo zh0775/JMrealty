@@ -1,4 +1,6 @@
+import 'package:JMrealty/Report/viewmodel/ReportUploadViewModel.dart';
 import 'package:JMrealty/base/image_loader.dart';
+import 'package:JMrealty/components/SelectImageView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,7 +25,8 @@ class MineTop extends StatefulWidget {
 
 class _MineTopState extends State<MineTop> {
   FocusNode signFocusNode = FocusNode();
-
+  SelectImageView headImgSelectV;
+  SelectImageView backImgSelectV;
   double targetHeight = 60;
   double topHeight;
   double coverHeight = 50;
@@ -32,8 +35,50 @@ class _MineTopState extends State<MineTop> {
   double margin;
   bool signIsEdit = false;
   String userSign = '';
+  String backgroundPath = '';
+  String avatarPath = '';
   @override
   void initState() {
+    headImgSelectV = SelectImageView(
+      count: 1,
+      imageSelected: (images) {
+        if (images != null) {
+          ReportUploadViewModel().upLoadReportImages(images,
+              callBack: (List strImages) {
+            if (strImages != null && strImages.length > 0) {
+              setState(() {
+                avatarPath = strImages[0];
+              });
+              if (widget.changeInfo != null) {
+                widget.changeInfo(Map<String, dynamic>.from(
+                    {'avatar': avatarPath, 'userId': widget.data['userId']}));
+              }
+            }
+          });
+        }
+      },
+    );
+    backImgSelectV = SelectImageView(
+      count: 1,
+      imageSelected: (images) {
+        if (images != null) {
+          ReportUploadViewModel().upLoadReportImages(images,
+              callBack: (List strImages) {
+            if (strImages != null && strImages.length > 0) {
+              setState(() {
+                backgroundPath = strImages[0];
+              });
+              if (widget.changeInfo != null) {
+                widget.changeInfo(Map<String, dynamic>.from({
+                  'background': backgroundPath,
+                  'userId': widget.data['userId']
+                }));
+              }
+            }
+          });
+        }
+      },
+    );
     topHeight = widget.height;
     topImageHeight = topHeight + coverHeight;
     signFocusNode.addListener(() {
@@ -44,7 +89,8 @@ class _MineTopState extends State<MineTop> {
         if (userSign != null &&
             userSign.length > 0 &&
             widget.changeInfo != null) {
-          widget.changeInfo({'sign': userSign, 'userId':widget.data['userId']});
+          widget
+              .changeInfo({'sign': userSign, 'userId': widget.data['userId']});
         }
       }
       // print("焦点1是否被选中：" + signFocusNode.hasFocus.toString());
@@ -53,7 +99,14 @@ class _MineTopState extends State<MineTop> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    backgroundPath = widget.data['background'];
+    avatarPath = widget.data['avatar'];
     SizeConfig().init(context);
     widthScale = SizeConfig.blockSizeHorizontal;
     margin = widthScale * 6;
@@ -77,8 +130,17 @@ class _MineTopState extends State<MineTop> {
                         left: 0,
                         right: 0,
                         height: topImageHeight,
-                        child: Container(
-                          color: Colors.yellow,
+                        child: GestureDetector(
+                          onTap: () {
+                            backImgSelectV.showImage(context);
+                          },
+                          child: backgroundPath != null &&
+                                  backgroundPath.length > 0
+                              ? ImageLoader(widget.data['background'], 0)
+                              : Container(
+                                  width: 0.0,
+                                  height: 0.0,
+                                ),
                         )),
                     // 遮挡照片一部分的
                     // Positioned(
@@ -115,20 +177,20 @@ class _MineTopState extends State<MineTop> {
                   Positioned(
                       left: margin,
                       top: -(widthScale * 10),
-                      child: Container(
-                        width: widthScale * 20,
-                        height: widthScale * 20,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(widthScale * 3),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(widthScale * 2),
-                          child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(widthScale * 2),
-                              child: ImageLoader(widget.data['avatar'] ?? '',
-                                  widthScale * 15)),
+                      width: widthScale * 20,
+                      height: widthScale * 20,
+                      child: GestureDetector(
+                        onTap: () {
+                          print('headImgSelectV == tap');
+                          headImgSelectV.showImage(context);
+                        },
+                        child: Container(
+                          width: widthScale * 20,
+                          height: widthScale * 20,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(widthScale * 3),
+                          ),
                         ),
                       )),
                 ],
@@ -227,7 +289,7 @@ class _MineTopState extends State<MineTop> {
                 children: [
                   getCommissionButton(
                       '总佣金',
-                      '50000',
+                      countFormat(widget.targetData['amount']),
                       widthScale,
                       (SizeConfig.screenWidth - margin * 2) / 3,
                       targetHeight,
@@ -235,7 +297,7 @@ class _MineTopState extends State<MineTop> {
                   JMline(width: 1, height: targetHeight),
                   getCommissionButton(
                       '已结佣',
-                      '20000',
+                      countFormat(widget.targetData['getSalary']),
                       widthScale,
                       (SizeConfig.screenWidth - margin * 2) / 3,
                       targetHeight,
@@ -243,7 +305,8 @@ class _MineTopState extends State<MineTop> {
                   JMline(width: 1, height: targetHeight),
                   getCommissionButton(
                       '待结佣',
-                      '30000',
+                      countCalculateFormat(
+                          widget.data['amount'], widget.data['getSalary']),
                       widthScale,
                       (SizeConfig.screenWidth - margin * 2) / 3,
                       targetHeight,
@@ -264,7 +327,7 @@ class _MineTopState extends State<MineTop> {
                     widthScale * 3.5, widthScale * 1),
                 child: Text(
                   getMonthText(),
-                  style: jm_text_black_style15,
+                  style: jm_text_black_style13,
                 ),
               ),
             ),
@@ -283,7 +346,7 @@ class _MineTopState extends State<MineTop> {
                 children: [
                   getCommissionButton(
                       '目标业绩',
-                      '50000',
+                      countFormat(widget.targetData['number']),
                       widthScale,
                       (SizeConfig.screenWidth - margin * 2) / 2,
                       targetHeight,
@@ -292,8 +355,8 @@ class _MineTopState extends State<MineTop> {
                   // getCommissionButton('已结佣', '20000', widthScale, (SizeConfig.screenWidth - margin * 2)/2, targetHeight, () {}),
                   // JMline(width: 1, height: targetHeight),
                   getCommissionButton(
-                      '已结佣',
-                      '30000',
+                      '完成业绩',
+                      countFormat(widget.targetData['actualCommission']),
                       widthScale,
                       (SizeConfig.screenWidth - margin * 2) / 2,
                       targetHeight,
@@ -384,6 +447,34 @@ class _MineTopState extends State<MineTop> {
       return '0' + time.toString();
     } else {
       return time.toString();
+    }
+  }
+
+  String countFormat(double count) {
+    if (count == null) {
+      return '0.0元';
+    } else if (count >= 10000) {
+      return (count / 10000).toString() + '万元';
+    } else {
+      return count.toString() + '元';
+    }
+  }
+
+  String countCalculateFormat(double count, double count2) {
+    if (count == null && count2 == null) {
+      return '0.0元';
+    } else if (count != null && count2 == null) {
+      if (count >= 10000) {
+        return (count / 10000).toString() + '万元';
+      } else {
+        return count.toString() + '元';
+      }
+    } else if (count == null && count2 != null) {
+      return '0.0元';
+    } else if ((count - count2) >= 10000) {
+      return ((count - count2) / 10000).toString() + '万元';
+    } else {
+      return (count - count2).toString() + '元';
     }
   }
 }

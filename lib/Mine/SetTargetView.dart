@@ -140,10 +140,17 @@ class _SetTargetViewState extends State<SetTargetView> {
                 title: '保存',
                 height: SizeConfig.blockSizeVertical * 6.5,
                 buttonClick: () {
-                  Map params = Map<String, dynamic>.from({});
-                  print(params);
-                  print(widget.userInfo);
-                  return;
+                  Map params = Map<String, dynamic>.from({
+                    'employeeId': widget.userInfo['userId'],
+                    'employeeName': 'userName',
+                    'number': int.parse(monthTarget),
+                    'organizationId': (widget.userInfo['dept'])['deptId'],
+                    'organizationName': (widget.userInfo['dept'])['deptName'],
+                    'turnover': int.parse(monthCount),
+                  });
+                  // print(params);
+                  // print(widget.userInfo);
+                  // return;
                   setTargetVM.setTargetRequest(params, (success) {
                     if (success) {
                       ShowToast.normal('设置成功');

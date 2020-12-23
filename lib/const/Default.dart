@@ -244,16 +244,19 @@ const TextStyle jm_text_black_bold_style20 =
 
 class Global {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
+  static bool showLogin = false;
   static void toLogin({bool isLogin = true}) {
-    Navigator.of(Global.navigatorKey.currentState.context)
-        .push(MaterialPageRoute(
-            builder: (_) {
-              return Login(
-                isLogin: isLogin,
-              );
-            },
-            fullscreenDialog: true));
+    if (!showLogin) {
+      showLogin = true;
+      Navigator.of(Global.navigatorKey.currentState.context)
+          .push(MaterialPageRoute(
+              builder: (_) {
+                return Login(
+                  isLogin: isLogin,
+                );
+              },
+              fullscreenDialog: true));
+    }
   }
 }
 

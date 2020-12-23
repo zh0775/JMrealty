@@ -18,6 +18,14 @@ class Urls {
   static const String getUserInfo = '/system/user/findUserInfo';
   // 获取首页轮播图
   static const String getHomeBanner = '/comps/chart/findRotationList';
+  // 获取通知公告列表
+  static const String getHomeNotice = '/system/notice/listInfo';
+  // app首页【成交喜报】列表
+  static const String getGladNotice = '/comps/notice/getNoticeList';
+  // 日期范围查询代办事项
+  static const String getHomeWaitToDo = '/comps/todo/findByTime';
+  // 获取首页菜单
+  static const String getHomeMenus = '/system/user/findMenuByUserId';
 
   // 客户
   // 新增接口下拉数据接口
@@ -78,6 +86,9 @@ class Urls {
   // 删除业绩规则信息
   static String deleteTargetRule(String id) => '/customer/targetRule/$id';
 
+  // 删除业绩规则信息
+  static const String deleteTargetRuleById = '/customer/targetRule';
+
   //PK赛
   // 查询pk赛列表
   static const String pkList = '/comps/race/searchList';
@@ -112,6 +123,8 @@ class Urls {
   //消息
   // 消息列表
   static const String messageList = '/comps/notice/selectNoticeList';
+  // 消息列表已读
+  static const String messageRead = '/comps/notice/readAdd';
   // 消息类型列表
   static const String messageTypeList = '/comps/notice/selectNoticeMessageList';
 

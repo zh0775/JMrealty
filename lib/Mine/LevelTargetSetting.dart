@@ -28,7 +28,7 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
   List citys;
   int cityValue = 0;
   List itemsData;
-  bool isEdit  = false;
+  bool isEdit = false;
   Map newItem;
   @override
   void initState() {
@@ -73,24 +73,23 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
           },
           builder: (ctx, value, child) {
             if (value.state == BaseState.CONTENT) {
-
               if (value.levelTarget != null && value.levelTarget is List) {
-                setState(() {
-                  print('value.levelTarget === ${value.levelTarget}');
-                  itemsData = value.levelTarget.map((e) {
-                    // 'organizationId': widget.deptId,
-                    // 'amount': newItem['price'],
-                    // 'entryDays': newItem['month'] * 30,
-                    // 'num': newItem['count'],
-                    // 'gradeName': newItem['title'],
-                    return {
-                      'price': newItem['amount'],
-                      'month': (newItem['entryDays']) / 30,
-                      'count': newItem['num'],
-                      'title': newItem['gradeName'],
-                    };
-                  }).toList();
-                });
+                // print('value.levelTarget === ${value.levelTarget}');
+                itemsData = value.levelTarget.map((e) {
+                  // 'organizationId': widget.deptId,
+                  // 'amount': newItem['price'],
+                  // 'entryDays': newItem['month'] * 30,
+                  // 'num': newItem['count'],
+                  // 'gradeName': newItem['title'],
+                  return {
+                    'id': e['id'],
+                    'price': (e['amount']).toString(),
+                    'month': ((e['entryDays']) / 30).round().toString(),
+                    'count': (e['num']).toString(),
+                    'title': (e['gradeName']).toString(),
+                  };
+                }).toList();
+                // setState(() {});
               }
               return GestureDetector(
                 onTap: () {
@@ -119,7 +118,7 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
                         ),
                         ...getTargetCell(),
                         SizedBox(
-                          height: 50,
+                          height: 30,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -138,9 +137,10 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
                                 fillColor: jm_appTheme,
                                 child: Text(isEdit ? '下一步' : '确认'),
                                 onPressed: () {
-                                  setState(() {
-                                    isEdit = !isEdit;
-                                  });
+                                  // setState(() {
+                                  //   isEdit = !isEdit;
+                                  // });
+                                  Navigator.of(context).pop();
                                 })
                           ],
                         )

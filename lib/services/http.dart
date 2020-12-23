@@ -38,7 +38,8 @@ class Http {
     Dio dio = Dio(baseOptions);
     dio.interceptors
         .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
-      if (!options.path.contains(Urls.registerDeptList)) {
+      if (!options.path.contains(Urls.registerDeptList) &&
+          !options.path.contains(Urls.imgUpload)) {
         UserDefault.get(ACCESS_TOKEN).then((token) {
           if (token != null) {
             options.headers['Authorization'] = token;
@@ -54,7 +55,9 @@ class Http {
     }));
 
     dio.interceptors.add(InterceptorsWrapper(onResponse: (Response res) {
-      if ((res.data)['code'] == 403) {
+      if ((res.data)['code'] == 403 ||
+          (res.data)['msg'] == '登录状态已失效，请重新登录' ||
+          (res.data)['msg'] == '令牌不能为空') {
         UserDefault.saveStr(ACCESS_TOKEN, null);
         Global.toLogin(isLogin: true);
       }
@@ -100,7 +103,7 @@ class Http {
   Future<void> delete(String url, dynamic data,
       {Success success, Fail fail, After after}) async {
     try {
-      await _dio.delete(url, data: data).then((response) {
+      await _dio.delete(url).then((response) {
         if (response.statusCode == 200) {
           Map<String, dynamic> data = response.data;
           if (data['code'] != 200) {
@@ -192,25 +195,53 @@ class Http {
 
   Future<void> uploadImages(List images, {Function(List jsons) resList}) async {
     List<Future> imagesFuture = [];
-    for (int i = 0; i < images.length; i++) {
-      Asset asset = images[i];
-      ByteData byteData = await asset.getByteData();
+    if (images.length == 1) {
+      Asset asset = images[0];
+      // ByteData byteData = await asset.getByteData();
+      ByteData byteData = await asset.getThumbByteData(
+          (asset.originalWidth * 0.3).round(),
+          (asset.originalHeight * 0.3).round());
       List<int> imageData = byteData.buffer.asUint8List();
       MultipartFile multipartFile = MultipartFile.fromBytes(
         imageData,
         filename: asset.name,
-        contentType: MediaType.parse('application/octet-stream'),
+        // contentType: MediaType.parse('application/octet-stream'),
       );
       FormData formData = FormData.fromMap({"uploadFile": multipartFile});
-      imagesFuture.add(_dio.post(Urls.imgUpload, data: formData));
-    }
-    try {
-      Future.wait(imagesFuture).then((values) {
-        resList(values);
-        // print('images---value--- ====$value');
+      // RequestOptions options = RequestOptions();
+      // options.headers['content-type'] = 'multipart/form-data';
+      _dio.post(
+        Urls.imgUpload,
+        data: formData,
+        onSendProgress: (count, total) {
+          print("当前进度是 $count 总进度是 $total ---- ${count / total * 100}%");
+        },
+      ).then((res) {
+        if (res.statusCode == 200 && (res.data)['code'] == 200) {
+          resList([res]);
+        }
       });
-    } catch (e) {
-      print('e ===== $e');
+    } else {
+      for (int i = 0; i < images.length; i++) {
+        Asset asset = images[i];
+        ByteData byteData = await asset.getByteData();
+        List<int> imageData = byteData.buffer.asUint8List();
+        MultipartFile multipartFile = MultipartFile.fromBytes(
+          imageData,
+          filename: asset.name,
+          contentType: MediaType.parse('application/octet-stream'),
+        );
+        FormData formData = FormData.fromMap({"uploadFile": multipartFile});
+        imagesFuture.add(_dio.post(Urls.imgUpload, data: formData));
+      }
+      try {
+        Future.wait(imagesFuture).then((values) {
+          resList(values);
+          // print('images---value--- ====$value');
+        });
+      } catch (e) {
+        print('e ===== $e');
+      }
     }
 
     // try {

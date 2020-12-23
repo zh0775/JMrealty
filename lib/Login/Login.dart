@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:JMrealty/Login/model/login_model.dart';
 import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
+import 'package:JMrealty/Report/viewmodel/ReportUploadViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
 import 'package:JMrealty/components/SelectImageView.dart';
@@ -53,12 +54,21 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     imgSelectV = SelectImageView(
+      count: 1,
       imageSelected: (images) {
-        setState(() {
-          if (images != null) {
-            headImg = images[0];
-          }
-        });
+        if (images != null) {
+          ReportUploadViewModel().upLoadReportImages(images,
+              callBack: (List strImages) {
+            if (strImages != null && strImages.length > 0) {
+              setState(() {
+                headImgPath = strImages[0];
+              });
+            }
+            // if (addImages != null) {
+            //   addImages(strImages);
+            // }
+          });
+        }
       },
     );
     registIsMan = true;
@@ -183,6 +193,7 @@ class _LoginState extends State<Login> {
                                 Future.delayed(Duration(seconds: 1), () {
                                   FocusScope.of(context)
                                       .requestFocus(FocusNode());
+                                  Global.showLogin = false;
                                   Navigator.pop(context);
                                 });
                               });
@@ -671,7 +682,7 @@ class _LoginState extends State<Login> {
       'sex': model.sex,
       'phonenumber': model.phonenumber,
       'position': model.position,
-      'code': model.code
+      'code': model.code,
     };
     if (model.avatar != null) {
       params['avatar'] = model.avatar;
@@ -732,6 +743,9 @@ class _LoginState extends State<Login> {
     }
     model.code = registCodeNumString;
     model.sex = registIsMan ? 1 : 2;
+    if (headImgPath != null && headImgPath.length > 0) {
+      model.avatar = headImgPath;
+    }
     requestRegist(model);
   }
 

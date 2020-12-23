@@ -79,8 +79,11 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   HomeViewModel homeVM;
-  var homeScheduleToDoData = [];
+  List homeScheduleToDoData = [];
   var bannerList = [];
+  List menus = [];
+  List notices = [];
+  List gladNotices = [];
   EventBus _eventBus = EventBus();
 
   @override
@@ -98,7 +101,7 @@ class _HomeState extends State<Home> {
         Global.toLogin();
       }
     });
-
+    loadReqest();
     _eventBus.on(NOTIFY_LOGIN_SUCCESS, (arg) {
       loadReqest();
     });
@@ -111,8 +114,35 @@ class _HomeState extends State<Home> {
     homeVM.loadUserInfo();
     String token = await UserDefault.get(ACCESS_TOKEN);
     getBanner();
+    homeVM.getHomeMenus((menuList, success) {
+      if (success) {
+        setState(() {
+          menus = menuList;
+        });
+      }
+    });
+    homeVM.getHomeNotice((noticeList, success) {
+      if (success) {
+        setState(() {
+          notices = noticeList;
+        });
+      }
+    });
+    homeVM.getGladNotice((gladNoticeList, success) {
+      if (success) {
+        setState(() {
+          gladNotices = gladNoticeList;
+        });
+      }
+    });
     if (token != null && token.length > 0) {
-      getScheData();
+      homeVM.getHomeWaitToDo((waitToDoList, success) {
+        if (success) {
+          setState(() {
+            homeScheduleToDoData = waitToDoList;
+          });
+        }
+      });
     }
   }
 
@@ -346,14 +376,14 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void getScheData() {
-    Map value = HomeService().getHomeSchedule();
-    if (value['code'] == 0) {
-      this.setState(() {
-        this.homeScheduleToDoData = value['data'];
-      });
-    }
-  }
+  // void getScheData() {
+  //   Map value = HomeService().getHomeSchedule();
+  //   if (value['code'] == 0) {
+  //     this.setState(() {
+  //       this.homeScheduleToDoData = value['data'];
+  //     });
+  //   }
+  // }
 
   void getBanner() {
     homeVM.loadHomeBanner((banner, success) {
@@ -363,7 +393,6 @@ class _HomeState extends State<Home> {
         });
       }
     });
-
     // Map value = HomeService().getHomeBanner();
     // if (value['code'] == 0) {
     //   this.setState(() {
