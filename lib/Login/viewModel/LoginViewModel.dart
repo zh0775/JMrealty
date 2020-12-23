@@ -23,7 +23,11 @@ class LoginViewModel extends BaseViewModel {
       Urls.phoneCode,
       {'phonenumber': phonenumber},
       success: (json) {
-        state = BaseState.CONTENT;
+        if (json['code'] == 200) {
+          state = BaseState.CONTENT;
+        } else {
+          state = BaseState.FAIL;
+        }
         notifyListeners();
       },
       fail: (reason, code) {

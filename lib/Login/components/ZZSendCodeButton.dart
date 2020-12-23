@@ -108,6 +108,7 @@ class _ZZSendCodeButtonState extends State<ZZSendCodeButton> {
     codeTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (codeNextTime <= 1) {
         timer.cancel();
+
         setState(() {
           codeButtonState = CodeButtonState.normal;
           codeNextTime = widget.codeWaitTime;

@@ -9,11 +9,10 @@ class LevelTargetViewModel extends BaseViewModel {
   loadTarget(int depId) {
     state = BaseState.LOADING;
     notifyListeners();
-    Http().get(
+    Http().post(
       Urls.targetRuleList,
       {'organizationId': depId},
       success: (json) {
-
         if (json['code'] == 200) {
           levelTarget = json['rows'];
           state = BaseState.CONTENT;
@@ -22,7 +21,6 @@ class LevelTargetViewModel extends BaseViewModel {
           state = BaseState.FAIL;
           notifyListeners();
           if (json['msg'] != null) {
-
             ShowToast.normal(json['msg']);
           }
         }
@@ -97,5 +95,5 @@ class LevelTargetViewModel extends BaseViewModel {
     );
   }
 
-  saveTarget(){}
+  saveTarget() {}
 }

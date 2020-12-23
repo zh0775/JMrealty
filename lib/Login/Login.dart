@@ -100,18 +100,18 @@ class _LoginState extends State<Login> {
       // color: Colors.blue,
       child: Stack(
         children: [
-          Positioned(
-              top: 60,
-              right: 0,
-              child: TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Icon(
-                    Icons.close,
-                    size: 40,
-                    color: Color.fromRGBO(65, 68, 83, 1),
-                  ))),
+          // Positioned(
+          //     top: 60,
+          //     right: 0,
+          //     child: TextButton(
+          //         onPressed: () {
+          //           Navigator.of(context).pop();
+          //         },
+          //         child: Icon(
+          //           Icons.close,
+          //           size: 40,
+          //           color: Color.fromRGBO(65, 68, 83, 1),
+          //         ))),
           Positioned(
               top: 100,
               // bottom: 100,
@@ -248,6 +248,7 @@ class _LoginState extends State<Login> {
           },
           codeButtonTimeOver: () {
             setState(() {
+              value.state = BaseState.FAIL;
               isLogin ? isLoginSend = false : isRegistSend = false;
             });
           },
@@ -306,18 +307,18 @@ class _LoginState extends State<Login> {
         width: SizeConfig.screenWidth,
         // color: Colors.blue,
         child: Stack(children: [
-          Positioned(
-              top: 50,
-              right: 0,
-              child: TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Icon(
-                    Icons.close,
-                    size: 40,
-                    color: Color.fromRGBO(65, 68, 83, 1),
-                  ))),
+          // Positioned(
+          //     top: 50,
+          //     right: 0,
+          //     child: TextButton(
+          //         onPressed: () {
+          //           Navigator.of(context).pop();
+          //         },
+          //         child: Icon(
+          //           Icons.close,
+          //           size: 40,
+          //           color: Color.fromRGBO(65, 68, 83, 1),
+          //         ))),
           Positioned(
               top: 80,
               // bottom: 100,

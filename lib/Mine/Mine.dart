@@ -118,7 +118,10 @@ class _MineState extends State<Mine> {
                       onPressed: () {
                         Navigator.of(context)
                             .push(CupertinoPageRoute(builder: (_) {
-                          return SetTargetView();
+                          return SetTargetView(
+                            id: userInfo['userId'],
+                            userInfo: userInfo,
+                          );
                         }));
                       },
                       child: SizedBox(

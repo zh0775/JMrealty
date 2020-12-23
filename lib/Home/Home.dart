@@ -30,11 +30,12 @@ class MainPageWidget extends StatefulWidget {
 }
 
 class _MainPageWidgetState extends State<MainPageWidget> {
-  IndexClick indexClick = ()=>{};
+  IndexClick indexClick = () => {};
   @override
   void initState() {
     super.initState();
   }
+
   int _tabbarIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -42,11 +43,14 @@ class _MainPageWidgetState extends State<MainPageWidget> {
       body: IndexedStack(
         index: _tabbarIndex,
         children: [
-          Home(indexClick: indexClick,),
+          Home(
+            indexClick: indexClick,
+          ),
           Project(indexClick: indexClick),
           Client(indexClick: indexClick),
           Message(indexClick: indexClick),
-          Mine(indexClick: indexClick)],
+          Mine(indexClick: indexClick)
+        ],
       ),
       bottomNavigationBar: JMTabBar((index) {
         indexClick();
@@ -89,6 +93,12 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    UserDefault.get(ACCESS_TOKEN).then((token) {
+      if (token == null || token.length == 0) {
+        Global.toLogin();
+      }
+    });
+
     _eventBus.on(NOTIFY_LOGIN_SUCCESS, (arg) {
       loadReqest();
     });
@@ -96,6 +106,7 @@ class _HomeState extends State<Home> {
     homeVM = HomeViewModel();
     super.initState();
   }
+
   void loadReqest() async {
     homeVM.loadUserInfo();
     String token = await UserDefault.get(ACCESS_TOKEN);
@@ -104,6 +115,7 @@ class _HomeState extends State<Home> {
       getScheData();
     }
   }
+
   double widgetHeight = 180.0;
 
   @override
@@ -113,68 +125,68 @@ class _HomeState extends State<Home> {
       context: context,
       child: SingleChildScrollView(
         child: Column(
-        children: [
-          HomeNaviBar(
-            bannerDatas: bannerList,
-          ),
-          HomeAnno(),
-          HomeGoodDeed(),
-          HomeScheduleToDo(
-            data: homeScheduleToDoData,
-          ),
-          buttons((int buttonIndex, Map buttonData) {
-            if (buttonIndex == 0) {
-              Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                return AddReport();
-              }));
-            } else if (buttonIndex == 1) {
-              Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                return Report();
-              }));
-            } else if (buttonIndex == 5) {
-              Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                return PKmain();
-              }));
-            } else if (buttonIndex == 7) {
-              UserDefault.get(ACCESS_TOKEN).then((token) {
-                if (token != null) {
-                  UserDefault.get(USERINFO).then((userInfo) {
-                    if (userInfo != null) {
-                      Map<String, dynamic> userInfoMap =
-                          Map<String, dynamic>.from(
-                              convert.jsonDecode(userInfo));
-                      Navigator.of(context)
-                          .push(CupertinoPageRoute(builder: (_) {
-                        return Follow(
-                          token: token,
-                          deptId: userInfoMap['deptId'],
-                        );
-                      }));
-                    } else {
-                      homeVM.loadUserInfo();
-                    }
-                  });
-                } else {
-                  Global.toLogin(isLogin: true);
-                }
-              });
-            } else if (buttonIndex == 10) {
-              Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                return ClientPool();
-              }));
-            } else if (buttonIndex == 11) {
-              Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                return MyTasks();
-              }));
-            } else {
-              Global.toLogin(isLogin: true);
-            }
+          children: [
+            HomeNaviBar(
+              bannerDatas: bannerList,
+            ),
+            HomeAnno(),
+            HomeGoodDeed(),
+            HomeScheduleToDo(
+              data: homeScheduleToDoData,
+            ),
+            buttons((int buttonIndex, Map buttonData) {
+              if (buttonIndex == 0) {
+                Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                  return AddReport();
+                }));
+              } else if (buttonIndex == 1) {
+                Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                  return Report();
+                }));
+              } else if (buttonIndex == 5) {
+                Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                  return PKmain();
+                }));
+              } else if (buttonIndex == 7) {
+                UserDefault.get(ACCESS_TOKEN).then((token) {
+                  if (token != null) {
+                    UserDefault.get(USERINFO).then((userInfo) {
+                      if (userInfo != null) {
+                        Map<String, dynamic> userInfoMap =
+                            Map<String, dynamic>.from(
+                                convert.jsonDecode(userInfo));
+                        Navigator.of(context)
+                            .push(CupertinoPageRoute(builder: (_) {
+                          return Follow(
+                            token: token,
+                            deptId: userInfoMap['deptId'],
+                          );
+                        }));
+                      } else {
+                        homeVM.loadUserInfo();
+                      }
+                    });
+                  } else {
+                    Global.toLogin(isLogin: true);
+                  }
+                });
+              } else if (buttonIndex == 10) {
+                Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                  return ClientPool();
+                }));
+              } else if (buttonIndex == 11) {
+                Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                  return MyTasks();
+                }));
+              } else {
+                Global.toLogin(isLogin: true);
+              }
 
-            print(
-                'buttonIndex === $buttonIndex --- buttonData === $buttonData');
-          })
-        ],
-      ),
+              print(
+                  'buttonIndex === $buttonIndex --- buttonData === $buttonData');
+            })
+          ],
+        ),
       ),
     );
   }

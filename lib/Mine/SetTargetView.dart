@@ -1,20 +1,45 @@
+import 'package:JMrealty/Mine/viewModel/SetTargetViewModel.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SetTargetView extends StatefulWidget {
+  final int id;
+  final Map userInfo;
+  const SetTargetView({this.id, this.userInfo});
   @override
   _SetTargetViewState createState() => _SetTargetViewState();
 }
 
 class _SetTargetViewState extends State<SetTargetView> {
+  SetTargetViewModel setTargetVM = SetTargetViewModel();
   double margin;
   double widthScale;
   String monthTarget = '';
   String monthCount = '';
+  Map targetData = {};
+
+  @override
+  void initState() {
+    setTargetVM.loadTargetSetting(widget.id, (success, data) {
+      if (success) {
+        setState(() {
+          targetData = data;
+          monthTarget = (targetData['amount'] != null
+              ? (targetData['amount']).toString()
+              : '');
+          monthCount =
+              (targetData['num'] != null ? (targetData['num']).toString() : '');
+        });
+      }
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     int currentMonth = DateTime.now().month;
@@ -114,7 +139,17 @@ class _SetTargetViewState extends State<SetTargetView> {
               CustomSubmitButton(
                 title: '保存',
                 height: SizeConfig.blockSizeVertical * 6.5,
-                buttonClick: () {},
+                buttonClick: () {
+                  Map params = Map<String, dynamic>.from({});
+                  print(params);
+                  print(widget.userInfo);
+                  return;
+                  setTargetVM.setTargetRequest(params, (success) {
+                    if (success) {
+                      ShowToast.normal('设置成功');
+                    }
+                  });
+                },
               ),
             ],
           ),
@@ -126,9 +161,15 @@ class _SetTargetViewState extends State<SetTargetView> {
   Widget getPreSet(bool isTarget) {
     String str = '建议目标';
     if (isTarget) {
-      str += '业绩为' + 5000.toString() + '元';
+      str += '业绩为' +
+          (targetData['amount'] != null
+              ? (targetData['amount']).toString()
+              : '') +
+          '元';
     } else {
-      str += '成交套数为' + 2.toString() + '套';
+      str += '成交套数为' +
+          (targetData['num'] != null ? (targetData['num']).toString() : '') +
+          '套';
     }
     return Container(
       margin: EdgeInsets.only(top: 10),

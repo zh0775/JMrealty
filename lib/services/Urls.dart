@@ -124,4 +124,8 @@ class Urls {
   static const String monthTarget = '/comps/employee/find';
   // 修改头像，签名，背景图
   static const String changeUserInfo = '/system/user/updateInfo';
+  // 根据员工id 查找等级规则，去设置目标
+  static const String queryEmployeeTarget = '/comps/employee/query';
+  // 员工设置目标
+  static const String employeeSetTarget = '/comps/employee/setTarget';
 }

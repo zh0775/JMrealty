@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/toast.dart';
@@ -50,6 +51,13 @@ class Http {
       return response;
     }, onError: (DioError e) {
       return e;
+    }));
+
+    dio.interceptors.add(InterceptorsWrapper(onResponse: (Response res) {
+      if ((res.data)['code'] == 403) {
+        UserDefault.saveStr(ACCESS_TOKEN, null);
+        Global.toLogin(isLogin: true);
+      }
     }));
     return dio;
   }
