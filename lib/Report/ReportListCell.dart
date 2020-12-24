@@ -132,14 +132,14 @@ class _ReportListCellState extends State<ReportListCell> {
               width: outMargin,
             ),
             Text(
-              widget.data['employeeName'] ?? '无',
+              widget.data['customerName'] ?? '无',
               style: jm_text_black_bold_style16,
             ),
             SizedBox(
               width: widthScale * 2,
             ),
             Text(
-              widget.data['employeePhone'],
+              widget.data['customerPhone'],
               style: jm_text_black_bold_style16,
             )
           ],

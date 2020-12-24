@@ -57,7 +57,8 @@ class Http {
     dio.interceptors.add(InterceptorsWrapper(onResponse: (Response res) {
       if ((res.data)['code'] == 403 ||
           (res.data)['msg'] == '登录状态已失效，请重新登录' ||
-          (res.data)['msg'] == '令牌不能为空') {
+          (res.data)['msg'] == '令牌不能为空' ||
+          (res.data)['msg'] == '令牌验证失败，请重新登录') {
         UserDefault.saveStr(ACCESS_TOKEN, null);
         Global.toLogin(isLogin: true);
       }
@@ -199,8 +200,8 @@ class Http {
       Asset asset = images[0];
       // ByteData byteData = await asset.getByteData();
       ByteData byteData = await asset.getThumbByteData(
-          (asset.originalWidth * 0.3).round(),
-          (asset.originalHeight * 0.3).round());
+          (asset.originalWidth * 0.6).round(),
+          (asset.originalHeight * 0.6).round());
       List<int> imageData = byteData.buffer.asUint8List();
       MultipartFile multipartFile = MultipartFile.fromBytes(
         imageData,
@@ -224,7 +225,10 @@ class Http {
     } else {
       for (int i = 0; i < images.length; i++) {
         Asset asset = images[i];
-        ByteData byteData = await asset.getByteData();
+        // ByteData byteData = await asset.getByteData();
+        ByteData byteData = await asset.getThumbByteData(
+            (asset.originalWidth * 0.6).round(),
+            (asset.originalHeight * 0.6).round());
         List<int> imageData = byteData.buffer.asUint8List();
         MultipartFile multipartFile = MultipartFile.fromBytes(
           imageData,

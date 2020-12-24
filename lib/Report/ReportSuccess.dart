@@ -38,17 +38,24 @@ class _ReportSuccessState extends State<ReportSuccess> {
   String houseArea;
   String buildNo;
   Map userInfo;
+  List reportShopPartnerBOList = [];
   @override
   void initState() {
     userInfo = Map<String, dynamic>.from(widget.userInfo);
-    successParams['reportShopPartnerBOList'] = List.from([
-      {
-        'userId': userInfo['userId'],
-        'userName': userInfo['userName'],
-        'userPhone': userInfo['phonenumber'],
-        'ratio': 100
-      }
-    ]);
+    reportShopPartnerBOList.add({
+      'userId': userInfo['userId'],
+      'userName': userInfo['userName'],
+      'userPhone': userInfo['phonenumber'],
+      'ratio': 100
+    });
+    // successParams['reportShopPartnerBOList'] = List.from([
+    //   {
+    //     'userId': userInfo['userId'],
+    //     'userName': userInfo['userName'],
+    //     'userPhone': userInfo['phonenumber'],
+    //     'ratio': 100
+    //   }
+    // ]);
     payPhone = '';
     dealTotal = '';
     houseArea = '';
@@ -256,7 +263,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
           },
           showListClick: (clickData) {
             bool isHave = false;
-            (successParams['reportShopPartnerBOList'] as List)
+            reportShopPartnerBOList
                 .forEach((element) {
               if (element['userId'] == clickData['userId']) {
                 isHave = true;
@@ -267,7 +274,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
               return;
             }
             setState(() {
-              (successParams['reportShopPartnerBOList'] as List).add({
+              reportShopPartnerBOList.add({
                 'userId': clickData['userId'],
                 'userName': clickData['userName'],
                 'userPhone': clickData['phonenumber'],
@@ -330,6 +337,14 @@ class _ReportSuccessState extends State<ReportSuccess> {
               ShowToast.normal('请输入认购电话');
               return;
             }
+            successParams['reportShopPartnerBOList'] = [];
+            reportShopPartnerBOList?.forEach((e) {
+              if(e['ratio'] != 0) {
+                Map bo = Map<String, dynamic>.from({...e});
+                bo['ratio'] = e['ratio'] / 100;
+                successParams['reportShopPartnerBOList'].add(bo);
+              }
+            });
             ReportSuccessViewModel().reportSuccessRequest(successParams,
                 (success) {
               if (success) {
@@ -350,6 +365,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
 
   // 姓名电话
   Widget getTitle() {
+    print(widget.data);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -359,14 +375,14 @@ class _ReportSuccessState extends State<ReportSuccess> {
               width: outMargin,
             ),
             Text(
-              widget.data['employeeName'] ?? '无',
+              widget.data['customerName'] ?? '无',
               style: jm_text_black_bold_style16,
             ),
             SizedBox(
               width: widthScale * 2,
             ),
             Text(
-              widget.data['employeePhone'] ?? '无',
+              widget.data['customerPhone'] ?? '无',
               style: jm_text_black_bold_style16,
             )
           ],
@@ -555,7 +571,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
   List<Widget> getCommissionList() {
     List<Widget> list = [];
     int i = 0;
-    (successParams['reportShopPartnerBOList'] as List).forEach((e) {
+    reportShopPartnerBOList.forEach((e) {
       list.add(getCommissionInput(e, i));
       i++;
     });
@@ -566,7 +582,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
     double lableWidth = widthScale * 25;
     double inputHeight = 40;
     String ratioStr =
-        (((successParams['reportShopPartnerBOList'] as List)[index])['ratio'])
+        ((reportShopPartnerBOList[index])['ratio'])
             .toString();
 
     return Row(
@@ -609,8 +625,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
                 if (value != '' && !isNumeric(value)) {
                   ShowToast.normal('请输入正确的比例');
                   setState(() {
-                    ((successParams['reportShopPartnerBOList']
-                        as List)[index])['ratio'] = 0;
+                    (reportShopPartnerBOList[index])['ratio'] = 0;
                   });
                 } else {
                   setState(() {
@@ -619,7 +634,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
                         : (int.parse(value) > 100 ? 100 : int.parse(value));
                     int total = 100;
                     int have = 0;
-                    List list = successParams['reportShopPartnerBOList'];
+                    List list = reportShopPartnerBOList;
                     for (var i = 0; i < list.length; i++) {
                       if (i != 0 && i != index) {
                         int ratio = (list[i])['ratio'];

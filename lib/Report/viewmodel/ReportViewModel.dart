@@ -2,7 +2,7 @@ import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
 import 'package:JMrealty/utils/toast.dart';
-
+import 'package:intl/intl.dart';
 class ReportViewModel extends BaseViewModel {
   List projectData;
   loadProjectList(String name, {Function(List data) success}) {
@@ -82,7 +82,7 @@ class ReportViewModel extends BaseViewModel {
     if (clients != null && clients.length > 0) {
       clients.forEach((element) {
         Map client = {
-          'csutomerPhone': element['csutomerPhone'],
+          'csutomerPhone': element['phone'],
           'custmoerSex': element['sex'],
           'customerName': element['name'],
         };
@@ -103,6 +103,8 @@ class ReportViewModel extends BaseViewModel {
       'employeePhone': agent['phonenumber'],
       'projectId': project['id'],
       'projectName': project['name'],
+      'projectBeforeTime': project['approachDate'],
+      'projectProtect': DateFormat('yyyy-MM-dd').format(DateTime.now().add(Duration(days: project['reportProtect']))) ,
       'remarks': data['mark'] ?? '',
     };
     if (clientsParams.length > 0) {

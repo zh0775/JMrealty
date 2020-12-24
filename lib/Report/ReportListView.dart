@@ -66,11 +66,6 @@ class _ReportListViewState extends State<ReportListView>
       onRefresh: () async {
         loadList();
       },
-      onLoad: () async {
-        print('onLoad ---- loadListData');
-        easyRefreshCtr.finishRefresh();
-        easyRefreshCtr.finishLoad();
-      },
       child: ListView.builder(
         itemCount: dataList.length,
         itemBuilder: (context, index) {

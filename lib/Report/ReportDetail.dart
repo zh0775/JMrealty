@@ -250,14 +250,14 @@ class _ReportDetailState extends State<ReportDetail> {
               width: outMargin,
             ),
             Text(
-              widget.data['employeeName'] ?? '无',
+              widget.data['customerName'] ?? '无',
               style: jm_text_black_bold_style16,
             ),
             SizedBox(
               width: widthScale * 2,
             ),
             Text(
-              widget.data['employeePhone'] ?? '无',
+              widget.data['customerPhone'] ?? '无',
               style: jm_text_black_bold_style16,
             )
           ],

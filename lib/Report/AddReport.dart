@@ -19,9 +19,11 @@ class _AddReportState extends State<AddReport> {
       Widget w = addClientWidgets[i];
       if (identical(w, widget)) {
         clientsData[i] = clientData;
+
         break;
       }
     }
+    print('clientsData ==== ${clientsData}');
   }
 
   ReportViewModel model;
@@ -72,291 +74,294 @@ class _AddReportState extends State<AddReport> {
     lineHeight = 50;
     widthScale = SizeConfig.blockSizeHorizontal;
     margin = widthScale * 6;
-    return Scaffold(
-      appBar: CustomAppbar(
-        title: '报备',
-      ),
-      body: ListView(
-        children: [
-          Container(
-            height: 50,
-            margin: EdgeInsets.only(left: margin),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                '项目1',
-                style: jm_text_black_bold_style17,
-              ),
-            ),
-          ),
-          JMline(
-            width: SizeConfig.screenWidth - margin,
-            height: 0.5,
-            margin: margin,
-          ),
-          CustomInput(
-            key: ValueKey('CustomInput_project_1'),
-            text: projectData != null && projectData['name'] != null
-                ? projectData['name']
-                : '',
-            labelStyle: jm_text_black_bold_style14,
-            textStyle: jm_text_black_style15,
-            title: '项目搜索',
-            hintText: '请输入项目名称',
-            valueChangeAndShowList: (value, state) {
-              if (value != '') {
-                model.loadProjectList(
-                  value,
-                  success: (data) {
-                    if (data != null && data.length > 0) {
-                      state.showList(data);
-                    }
-                  },
-                );
-              } else {
-                state.removeList();
-              }
-            },
-            showListClick: (data) {
-              setState(() {
-                projectData = data;
-              });
-            },
-          ),
-          JMline(
-            width: SizeConfig.screenWidth - margin,
-            height: 0.5,
-            margin: margin,
-          ),
-          CustomInput(
-            key: ValueKey('CustomInput_project_2'),
-            labelStyle: jm_text_black_bold_style14,
-            textStyle: jm_text_black_style15,
-            title: '最早到场时间',
-            hintText: '项目名称',
-            text: projectData != null && projectData['approachDate'] != null
-                ? projectData['approachDate']
-                : '',
-            enable: false,
-          ),
-          JMline(
-            width: SizeConfig.screenWidth - margin,
-            height: 0.5,
-            margin: margin,
-          ),
-          CustomInput(
-            key: ValueKey('CustomInput_project_3'),
-            labelStyle: jm_text_black_bold_style14,
-            textStyle: jm_text_black_style15,
-            title: '对接公司',
-            hintText: '对接公司',
-            text: projectData != null && projectData['companyName'] != null
-                ? projectData['companyName']
-                : '',
-            enable: false,
-          ),
-          JMline(
-            width: SizeConfig.screenWidth,
-            height: 6,
-          ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                addClient();
-              });
-            },
-            child: Container(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Scaffold(
+        appBar: CustomAppbar(
+          title: '报备',
+        ),
+        body: ListView(
+          children: [
+            Container(
+              height: 50,
               margin: EdgeInsets.only(left: margin),
-              height: lineHeight,
-              width: SizeConfig.screenWidth - margin,
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.add_circle_outline,
-                    size: 20,
-                    color: jm_appTheme,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 5),
-                    child: Text(
-                      '添加客源',
-                      style: jm_text_apptheme_style15,
-                    ),
-                  )
-                ],
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '项目1',
+                  style: jm_text_black_bold_style17,
+                ),
               ),
             ),
-          ),
-          ...addClientWidgets,
-          JMline(
-            width: SizeConfig.screenWidth,
-            height: 6,
-          ),
-          CustomInput(
-            key: ValueKey('CustomInput_agent_1'),
-            labelStyle: jm_text_black_bold_style14,
-            textStyle: jm_text_black_style15,
-            text: agentData != null && agentData['showName'] != null
-                ? agentData['showName']
-                : '',
-            title: '搜索内容',
-            hintText: '请输入名称和手机号码',
-            valueChange: (value) {},
-            valueChangeAndShowList: (value, state) {
-              if (value != '') {
-                model.loadAgentSearchData(
-                  value,
-                  success: (data) {
-                    if (data != null && data.length > 0) {
-                      state.showList(data);
-                    }
-                  },
-                );
-              } else {
-                state.removeList();
-              }
-            },
-            showListClick: (data) {
-              setState(() {
-                agentData = data;
-                agentData['showName'] = data['userName'];
-              });
-            },
-          ),
-          JMline(
-            width: SizeConfig.screenWidth - margin,
-            height: 0.5,
-            margin: margin,
-          ),
-          CustomInput(
-            key: ValueKey('CustomInput_agent_2'),
-            labelStyle: jm_text_black_bold_style14,
-            textStyle: jm_text_black_style15,
-            title: '带看经纪人',
-            text: agentData != null && agentData['userName'] != null
-                ? agentData['userName']
-                : '',
-            enable: false,
-          ),
-          JMline(
-            width: SizeConfig.screenWidth - margin,
-            height: 0.5,
-            margin: margin,
-          ),
-          CustomInput(
-            key: ValueKey('CustomInput_agent_3'),
-            labelStyle: jm_text_black_bold_style14,
-            textStyle: jm_text_black_style15,
-            title: '联系方式',
-            text: agentData != null && agentData['phonenumber'] != null
-                ? agentData['phonenumber']
-                : '',
-            enable: false,
-          ),
-          JMline(
-            width: SizeConfig.screenWidth,
-            height: 6,
-          ),
-          Container(
-            height: lineHeight,
-            margin: EdgeInsets.only(left: margin),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              '备注（选填）',
-              style: jm_text_black_style14,
+            JMline(
+              width: SizeConfig.screenWidth - margin,
+              height: 0.5,
+              margin: margin,
             ),
-          ),
-          Container(
-            constraints: BoxConstraints(maxHeight: 100, minHeight: 90),
-            width: SizeConfig.screenWidth - margin * 2,
-            padding: EdgeInsets.fromLTRB(margin, 10, margin, 10),
-            child: TextField(
-              maxLength: 200,
-              maxLines: 10,
-              minLines: 3,
-              decoration: InputDecoration(
-                  contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  // border: OutlineInputBorder(
-                  //     borderRadius: BorderRadius.circular(10),
-                  //     borderSide:
-                  //         BorderSide(width: 0.1, color: Colors.red)),
-                  // fillColor: Color(0xfff7f8fb),
-                  // contentPadding: EdgeInsets.all(20.0),
-                  hintText: '请输入',
-                  filled: true,
-                  enabledBorder: OutlineInputBorder(
-                    //未选中时候的颜色
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color: jm_line_color,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    //选中时外边框颜色
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color: jm_line_color,
-                    ),
-                  )),
-              onChanged: (value) {
-                mark = value;
+            CustomInput(
+              key: ValueKey('CustomInput_project_1'),
+              text: projectData != null && projectData['name'] != null
+                  ? projectData['name']
+                  : '',
+              labelStyle: jm_text_black_bold_style14,
+              textStyle: jm_text_black_style15,
+              title: '项目搜索',
+              hintText: '请输入项目名称',
+              valueChangeAndShowList: (value, state) {
+                if (value != '') {
+                  model.loadProjectList(
+                    value,
+                    success: (data) {
+                      if (data != null && data.length > 0) {
+                        state.showList(data);
+                      }
+                    },
+                  );
+                } else {
+                  state.removeList();
+                }
+              },
+              showListClick: (data) {
+                setState(() {
+                  projectData = data;
+                });
               },
             ),
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          Align(
-            child: Container(
-                // 提交按钮
-                width: SizeConfig.screenWidth - margin * 2,
+            JMline(
+              width: SizeConfig.screenWidth - margin,
+              height: 0.5,
+              margin: margin,
+            ),
+            CustomInput(
+              key: ValueKey('CustomInput_project_2'),
+              labelStyle: jm_text_black_bold_style14,
+              textStyle: jm_text_black_style15,
+              title: '最早到场时间',
+              hintText: '项目名称',
+              text: projectData != null && projectData['approachDate'] != null
+                  ? projectData['approachDate']
+                  : '',
+              enable: false,
+            ),
+            JMline(
+              width: SizeConfig.screenWidth - margin,
+              height: 0.5,
+              margin: margin,
+            ),
+            CustomInput(
+              key: ValueKey('CustomInput_project_3'),
+              labelStyle: jm_text_black_bold_style14,
+              textStyle: jm_text_black_style15,
+              title: '对接公司',
+              hintText: '对接公司',
+              text: projectData != null && projectData['companyName'] != null
+                  ? projectData['companyName']
+                  : '',
+              enable: false,
+            ),
+            JMline(
+              width: SizeConfig.screenWidth,
+              height: 6,
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  addClient();
+                });
+              },
+              child: Container(
+                margin: EdgeInsets.only(left: margin),
                 height: lineHeight,
-                margin: EdgeInsets.only(bottom: 50),
-                decoration: BoxDecoration(
-                    color: jm_appTheme,
-                    borderRadius: BorderRadius.all(Radius.circular(8))),
-                child: TextButton(
-                  onPressed: () {
-                    FocusScope.of(context).requestFocus(FocusNode());
-
-                    if (projectData == null) {
-                      ShowToast.normal('请选择项目信息');
-                      return;
-                    }
-
-                    List clients = [];
-                    if (clientsData == null || clientsData.length == 0) {
-                      ShowToast.normal('请选择客源信息');
-                      return;
-                    }
-
-                    clientsData.forEach((e) {
-                      print(e);
-                      if (e['name'] != null && e['csutomerPhone'] != null) {
-                        clients.add(e);
+                width: SizeConfig.screenWidth - margin,
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.add_circle_outline,
+                      size: 20,
+                      color: jm_appTheme,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: Text(
+                        '添加客源',
+                        style: jm_text_apptheme_style15,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            ...addClientWidgets,
+            JMline(
+              width: SizeConfig.screenWidth,
+              height: 6,
+            ),
+            CustomInput(
+              key: ValueKey('CustomInput_agent_1'),
+              labelStyle: jm_text_black_bold_style14,
+              textStyle: jm_text_black_style15,
+              text: agentData != null && agentData['showName'] != null
+                  ? agentData['showName']
+                  : '',
+              title: '搜索内容',
+              hintText: '请输入名称和手机号码',
+              valueChange: (value) {},
+              valueChangeAndShowList: (value, state) {
+                if (value != '') {
+                  model.loadAgentSearchData(
+                    value,
+                    success: (data) {
+                      if (data != null && data.length > 0) {
+                        state.showList(data);
                       }
-                    });
-                    print('clientsData ==== $clients');
-                    model.addReportRequest({
-                      'client': clients,
-                      'agent': agentData,
-                      'project': projectData,
-                      'mark': mark
-                    }, (bool success) {
-                      if (success) {
-                        Future.delayed(Duration(seconds: 1), () {
-                          Navigator.pop(context);
-                        });
+                    },
+                  );
+                } else {
+                  state.removeList();
+                }
+              },
+              showListClick: (data) {
+                setState(() {
+                  agentData = data;
+                  agentData['showName'] = data['userName'];
+                });
+              },
+            ),
+            JMline(
+              width: SizeConfig.screenWidth - margin,
+              height: 0.5,
+              margin: margin,
+            ),
+            CustomInput(
+              key: ValueKey('CustomInput_agent_2'),
+              labelStyle: jm_text_black_bold_style14,
+              textStyle: jm_text_black_style15,
+              title: '带看经纪人',
+              text: agentData != null && agentData['userName'] != null
+                  ? agentData['userName']
+                  : '',
+              enable: false,
+            ),
+            JMline(
+              width: SizeConfig.screenWidth - margin,
+              height: 0.5,
+              margin: margin,
+            ),
+            CustomInput(
+              key: ValueKey('CustomInput_agent_3'),
+              labelStyle: jm_text_black_bold_style14,
+              textStyle: jm_text_black_style15,
+              title: '联系方式',
+              text: agentData != null && agentData['phonenumber'] != null
+                  ? agentData['phonenumber']
+                  : '',
+              enable: false,
+            ),
+            JMline(
+              width: SizeConfig.screenWidth,
+              height: 6,
+            ),
+            Container(
+              height: lineHeight,
+              margin: EdgeInsets.only(left: margin),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '备注（选填）',
+                style: jm_text_black_style14,
+              ),
+            ),
+            Container(
+              constraints: BoxConstraints(maxHeight: 100, minHeight: 90),
+              width: SizeConfig.screenWidth - margin * 2,
+              padding: EdgeInsets.fromLTRB(margin, 10, margin, 10),
+              child: TextField(
+                maxLength: 200,
+                maxLines: 10,
+                minLines: 3,
+                decoration: InputDecoration(
+                    contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    // border: OutlineInputBorder(
+                    //     borderRadius: BorderRadius.circular(10),
+                    //     borderSide:
+                    //         BorderSide(width: 0.1, color: Colors.red)),
+                    // fillColor: Color(0xfff7f8fb),
+                    // contentPadding: EdgeInsets.all(20.0),
+                    hintText: '请输入',
+                    filled: true,
+                    enabledBorder: OutlineInputBorder(
+                      //未选中时候的颜色
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: jm_line_color,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      //选中时外边框颜色
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: jm_line_color,
+                      ),
+                    )),
+                onChanged: (value) {
+                  mark = value;
+                },
+              ),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            Align(
+              child: Container(
+                  // 提交按钮
+                  width: SizeConfig.screenWidth - margin * 2,
+                  height: lineHeight,
+                  margin: EdgeInsets.only(bottom: 50),
+                  decoration: BoxDecoration(
+                      color: jm_appTheme,
+                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                  child: TextButton(
+                    onPressed: () {
+                      FocusScope.of(context).requestFocus(FocusNode());
+
+                      if (projectData == null) {
+                        ShowToast.normal('请选择项目信息');
+                        return;
                       }
-                    });
-                  },
-                  child: Text(
-                    '提交',
-                    style: TextStyle(fontSize: 15, color: Colors.white),
-                  ),
-                )),
-          )
-        ],
+
+                      List clients = [];
+                      if (clientsData == null || clientsData.length == 0) {
+                        ShowToast.normal('请选择客源信息');
+                        return;
+                      }
+
+                      clientsData.forEach((e) {
+                        // print(e);
+                        // if (e['name'] != null && e['csutomerPhone'] != null) {
+                          clients.add(e);
+                        // }
+                      });
+                      print('clientsData ==== $clients');
+                      model.addReportRequest({
+                        'client': clients,
+                        'agent': agentData,
+                        'project': projectData,
+                        'mark': mark
+                      }, (bool success) {
+                        if (success) {
+                          Future.delayed(Duration(seconds: 1), () {
+                            Navigator.pop(context);
+                          });
+                        }
+                      });
+                    },
+                    child: Text(
+                      '提交',
+                      style: TextStyle(fontSize: 15, color: Colors.white),
+                    ),
+                  )),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -439,7 +444,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
   double margin;
   List reportType;
   Sex sex;
-  Map clientData;
+  Map clientData = Map<String, dynamic>.from({'sex': 1});
   @override
   void initState() {
     model = ReportViewModel();
@@ -589,7 +594,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
               if (clientData == null) {
                 clientData = {};
               }
-              clientData['sex'] = newSex == Sex.boy ? 2 : 1;
+              clientData['sex'] = (newSex == Sex.boy ? 1 : 2);
               if (widget.clientDataUpdate != null) {
                 widget.clientDataUpdate(widget, clientData);
               }
@@ -601,6 +606,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
             textStyle: jm_text_black_style15,
             title: '手机号',
             hintText: '请输入客户手机号码',
+            keyboardType: TextInputType.phone,
             text: clientData != null && clientData['phone'] != null
                 ? clientData['phone']
                 : '',
@@ -608,7 +614,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
               if (clientData == null) {
                 clientData = {};
               }
-              clientData['csutomerPhone'] = value;
+              clientData['phone'] = value;
               if (widget.clientDataUpdate != null) {
                 widget.clientDataUpdate(widget, clientData);
               }
