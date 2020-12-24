@@ -1,6 +1,7 @@
 import 'package:JMrealty/PK/PKadd.dart';
 import 'package:JMrealty/PK/PKdetail.dart';
 import 'package:JMrealty/PK/viewModel/PKviewModel.dart';
+import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,14 +17,16 @@ class PKmain extends StatefulWidget {
 
 class _PKmainState extends State<PKmain> {
   void Function(Map cellData, int index) cellClick;
-  List pkListData;
+  List pkListData = [];
   double topHeight = 200;
   double widthScale;
   double margin;
   double selfWidth;
-  EasyRefreshController pullCtr;
-  ScrollController listViewCtr;
-  PKviewModel pkVM;
+  EasyRefreshController pullCtr = EasyRefreshController();
+  GlobalKey pullKey = GlobalKey();
+  GlobalKey pullHeaderKey = GlobalKey();
+  ScrollController listViewCtr = ScrollController();
+  PKviewModel pkVM = PKviewModel();
 
   @override
   void initState() {
@@ -32,10 +35,6 @@ class _PKmainState extends State<PKmain> {
         return PKdetail(pkData: cellData);
       }));
     };
-    pkListData = [];
-    pullCtr = EasyRefreshController();
-    listViewCtr = ScrollController();
-    pkVM = PKviewModel();
     pkVM.loadPKList(success: (dataList) {
       setState(() {
         pkListData = dataList;
@@ -60,8 +59,9 @@ class _PKmainState extends State<PKmain> {
     selfWidth = SizeConfig.screenWidth - margin * 2;
     return Scaffold(
         body: EasyRefresh(
+            key: pullKey,
             controller: pullCtr,
-            header: PhoenixHeader(),
+            header: CustomPullHeader(key: pullHeaderKey),
             onRefresh: () async {
               pkVM.loadPKList(success: (dataList) {
                 pullCtr.finishRefresh();

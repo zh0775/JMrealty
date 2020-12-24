@@ -1,5 +1,6 @@
 import 'package:JMrealty/Message/MessageCell.dart';
 import 'package:JMrealty/Message/viewModel/MessageViewModel.dart';
+import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
@@ -18,6 +19,7 @@ class _MessageState extends State<Message> {
   MessageViewModel messageVM = MessageViewModel();
   EasyRefreshController pullCtr = EasyRefreshController();
   GlobalKey _easyRefreshKey = GlobalKey();
+  GlobalKey _pullHeaderKey = GlobalKey();
   EventBus _eventBus = EventBus();
   List messageList = [];
   @override
@@ -45,6 +47,7 @@ class _MessageState extends State<Message> {
         ),
       ),
       body: EasyRefresh(
+        header: CustomPullHeader(key: _pullHeaderKey),
         enableControlFinishRefresh: true,
         enableControlFinishLoad: true,
         key: _easyRefreshKey,

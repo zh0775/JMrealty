@@ -23,8 +23,7 @@ class _HomeGoodDeedState extends State<HomeGoodDeed> {
         height: thisHeight,
         margin: EdgeInsets.only(top: 20),
         decoration: BoxDecoration(
-            color: Color.fromRGBO(0, 0, 0, 0.1),
-            borderRadius: BorderRadius.circular(10)),
+            color: Color(0xffF7F8FB), borderRadius: BorderRadius.circular(10)),
         child: Stack(
           children: [
             Positioned(
@@ -32,7 +31,7 @@ class _HomeGoodDeedState extends State<HomeGoodDeed> {
               left: 10,
               top: 0,
               child: Image.asset(
-                "assets/images/tabbar/food-cake.png",
+                "assets/images/home/icon_home_gladnotice.png",
                 height: 30,
                 width: 30,
               ),

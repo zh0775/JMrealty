@@ -10,14 +10,17 @@ import 'package:JMrealty/MyTasks/MyTasks.dart';
 import 'package:JMrealty/PK/PKmain.dart';
 import 'package:JMrealty/Report/AddReport.dart';
 import 'package:JMrealty/Report/Report.dart';
+import 'package:JMrealty/Report/SmartReport.dart';
+import 'package:JMrealty/base/image_loader.dart';
+import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/const/Default.dart';
-import 'package:JMrealty/services/HomeService.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import '../tabbar.dart';
 import '../Project/Project.dart';
 import '../Client/Client.dart';
@@ -79,6 +82,9 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   HomeViewModel homeVM = HomeViewModel();
+  EasyRefreshController pullCtr = EasyRefreshController();
+  GlobalKey pullKey = GlobalKey();
+  GlobalKey pullHeaderKey = GlobalKey();
   List homeScheduleToDoData = [];
   var bannerList = [];
   List menus = [];
@@ -117,7 +123,7 @@ class _HomeState extends State<Home> {
     homeVM.getHomeMenus((menuList, success) {
       if (success) {
         setState(() {
-          menus = menuList;
+          menus = (menuList[3])['menu'];
         });
       }
     });
@@ -165,75 +171,133 @@ class _HomeState extends State<Home> {
     return MediaQuery.removePadding(
       removeTop: true,
       context: context,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            HomeNaviBar(
-              bannerDatas: bannerList,
-            ),
-            HomeAnno(
-              dataList: notices ?? [],
-              noticeClick: (index) {},
-            ),
-            HomeGoodDeed(
-              dataList: gladNotices ?? [],
-              noticeClick: (index) {},
-            ),
-            HomeScheduleToDo(
-              data: homeScheduleToDoData,
-            ),
-            buttons((int buttonIndex, Map buttonData) {
-              if (buttonIndex == 0) {
-                Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                  return AddReport();
-                }));
-              } else if (buttonIndex == 1) {
-                Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                  return Report();
-                }));
-              } else if (buttonIndex == 5) {
-                Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                  return PKmain();
-                }));
-              } else if (buttonIndex == 7) {
-                UserDefault.get(ACCESS_TOKEN).then((token) {
-                  if (token != null) {
-                    UserDefault.get(USERINFO).then((userInfo) {
-                      if (userInfo != null) {
-                        Map<String, dynamic> userInfoMap =
-                            Map<String, dynamic>.from(
-                                convert.jsonDecode(userInfo));
-                        Navigator.of(context)
-                            .push(CupertinoPageRoute(builder: (_) {
-                          return Follow(
-                            token: token,
-                            deptId: userInfoMap['deptId'],
-                          );
-                        }));
-                      } else {
-                        homeVM.loadUserInfo();
-                      }
-                    });
-                  } else {
-                    Global.toLogin(isLogin: true);
-                  }
-                });
-              } else if (buttonIndex == 10) {
-                Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                  return ClientPool();
-                }));
-              } else if (buttonIndex == 11) {
-                Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                  return MyTasks();
-                }));
-              } else {
-                Global.toLogin(isLogin: true);
-              }
-
-              print(
-                  'buttonIndex === $buttonIndex --- buttonData === $buttonData');
-            })
-          ],
+      child: EasyRefresh(
+        controller: pullCtr,
+        key: pullKey,
+        header: CustomPullHeader(key: pullHeaderKey),
+        onRefresh: () async {
+          loadReqest();
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              HomeNaviBar(
+                bannerDatas: bannerList,
+              ),
+              HomeAnno(
+                dataList: notices ?? [],
+                noticeClick: (index) {},
+              ),
+              HomeGoodDeed(
+                dataList: gladNotices ?? [],
+                noticeClick: (index) {},
+              ),
+              HomeScheduleToDo(
+                data: homeScheduleToDoData,
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Wrap(
+                children: [
+                  ...buttons((int buttonIndex, Map buttonData) {
+                    if (buttonData['menuId'] == 2061) {
+                      // 新增报备
+                      Navigator.of(context)
+                          .push(CupertinoPageRoute(builder: (_) {
+                        return AddReport();
+                      }));
+                    } else if (buttonData['menuId'] == 2063) {
+                      // 报备记录
+                      Navigator.of(context)
+                          .push(CupertinoPageRoute(builder: (_) {
+                        return Report();
+                      }));
+                    } else if (buttonData['menuId'] == 2080) {
+                      // PK赛
+                      Navigator.of(context)
+                          .push(CupertinoPageRoute(builder: (_) {
+                        return PKmain();
+                      }));
+                    } else if (buttonIndex == 100) {
+                      // 跟进记录
+                      UserDefault.get(ACCESS_TOKEN).then((token) {
+                        if (token != null) {
+                          UserDefault.get(USERINFO).then((userInfo) {
+                            if (userInfo != null) {
+                              Map<String, dynamic> userInfoMap =
+                                  Map<String, dynamic>.from(
+                                      convert.jsonDecode(userInfo));
+                              Navigator.of(context)
+                                  .push(CupertinoPageRoute(builder: (_) {
+                                return Follow(
+                                  token: token,
+                                  deptId: userInfoMap['deptId'],
+                                );
+                              }));
+                            } else {
+                              homeVM.loadUserInfo();
+                            }
+                          });
+                        } else {
+                          Global.toLogin(isLogin: true);
+                        }
+                      });
+                    } else if (buttonData['menuId'] == 2146) {
+                      // 客户池
+                      Navigator.of(context)
+                          .push(CupertinoPageRoute(builder: (_) {
+                        return ClientPool();
+                      }));
+                    } else if (buttonData['menuId'] == 2086) {
+                      // 我的任务
+                      Navigator.of(context)
+                          .push(CupertinoPageRoute(builder: (_) {
+                        return MyTasks();
+                      }));
+                    } else if (buttonData['menuId'] == 2084) {
+                      // 智能报备
+                      Navigator.of(context)
+                          .push(CupertinoPageRoute(builder: (_) {
+                        return SmartReport();
+                      }));
+                    } else if (buttonData['menuId'] == 2092) {
+                      // 每日总结
+                    } else if (buttonData['menuId'] == 2082) {
+                      // 榜单
+                    } else if (buttonIndex == 100) {
+                      // 跟进记录
+                      UserDefault.get(ACCESS_TOKEN).then((token) {
+                        if (token != null) {
+                          UserDefault.get(USERINFO).then((userInfo) {
+                            if (userInfo != null) {
+                              Map<String, dynamic> userInfoMap =
+                                  Map<String, dynamic>.from(
+                                      convert.jsonDecode(userInfo));
+                              Navigator.of(context)
+                                  .push(CupertinoPageRoute(builder: (_) {
+                                return Follow(
+                                  token: token,
+                                  deptId: userInfoMap['deptId'],
+                                );
+                              }));
+                            } else {
+                              homeVM.loadUserInfo();
+                            }
+                          });
+                        } else {
+                          Global.toLogin(isLogin: true);
+                        }
+                      });
+                    }
+                  }),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -323,75 +387,108 @@ class _HomeState extends State<Home> {
     ]
   ];
 
-  Widget buttons(buttonClick) {
+  List<Widget> buttons(buttonClick) {
+    double buttonWidth = SizeConfig.screenWidth / 5;
+    double buttonHeight = SizeConfig.screenWidth / 5;
     List<Widget> allRow = [];
+    if (menus != null && menus is List && menus.length > 0) {
+      int i = 0;
+      menus.forEach((e) {
+        allRow.add(RawMaterialButton(
+            constraints:
+                BoxConstraints(minHeight: buttonHeight, minWidth: buttonWidth),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: buttonWidth * 0.45,
+                  height: buttonHeight * 0.45,
+                  child: ImageLoader(e['icon'] ?? '', 0),
+                ),
+                SizedBox(
+                  height: 6,
+                ),
+                Text(
+                  e['menuName'] ?? '',
+                  style: jm_text_black_style14,
+                )
+              ],
+            ),
+            onPressed: () {
+              buttonClick(i, e);
+            }));
+        i++;
+      });
+    }
     // List<Widget> row2 = [];
     // Column column = Column();
     // TextStyle textStyle = TextStyle(color: jm_text_black);
-    for (var i = 0; i < buttonData.length; i++) {
-      List rowData = buttonData[i];
-      Row row;
-      List<Widget> rowList = [];
-      for (var j = 0; j < rowData.length; j++) {
-        var data = rowData[j];
-        // if (i == 0) {
-        rowList.add(Container(
-          width: SizeConfig.blockSizeHorizontal * 20,
-          height: 80,
-          child: TextButton(
-              onPressed: () {
-                buttonClick(i * buttonData[0].length + j, data);
-              },
-              child: Column(
-                children: [
-                  Image.asset(
-                    data['icon'],
-                    height: 30,
-                    width: SizeConfig.blockSizeHorizontal * 15,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    data['title'],
-                    maxLines: 1,
-                    style: jm_text_black_style14,
-                  ),
-                ],
-              )),
-        ));
-        // } else {
-        //   row.children.add(TextButton(
-        //       onPressed: () {
-        //         buttonClick(i * buttonData[0].length + j, data);
-        //       },
-        //       child: Column(
-        //         children: [
-        //           Image.asset(data['icon']),
-        //           Text(
-        //             data['title'],
-        //             style: textStyle,
-        //           ),
-        //         ],
-        //       )));
-        // }
-      }
-      row = Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-        ...rowList,
-      ]);
-      allRow.add(row);
-      // column.children.add(Row());
-      // column.children.add(SizedBox(
-      //   width: 7,
-      // ));
-    }
-    return Container(
-      child: Column(
-        children: [
-          ...allRow,
-        ],
-      ),
-    );
+    // for (var i = 0; i < buttonData.length; i++) {
+    //   List rowData = buttonData[i];
+    //   Row row;
+    //   List<Widget> rowList = [];
+    //   for (var j = 0; j < rowData.length; j++) {
+    //     var data = rowData[j];
+    //     // if (i == 0) {
+    //     rowList.add(Container(
+    //       width: SizeConfig.blockSizeHorizontal * 20,
+    //       height: 80,
+    //       child: TextButton(
+    //           onPressed: () {
+    //             buttonClick(i * buttonData[0].length + j, data);
+    //           },
+    //           child: Column(
+    //             children: [
+    //               Image.asset(
+    //                 data['icon'],
+    //                 height: 30,
+    //                 width: SizeConfig.blockSizeHorizontal * 15,
+    //               ),
+    //               SizedBox(
+    //                 height: 10,
+    //               ),
+    //               Text(
+    //                 data['title'],
+    //                 maxLines: 1,
+    //                 style: jm_text_black_style14,
+    //               ),
+    //             ],
+    //           )),
+    //     ));
+    //     // } else {
+    //     //   row.children.add(TextButton(
+    //     //       onPressed: () {
+    //     //         buttonClick(i * buttonData[0].length + j, data);
+    //     //       },
+    //     //       child: Column(
+    //     //         children: [
+    //     //           Image.asset(data['icon']),
+    //     //           Text(
+    //     //             data['title'],
+    //     //             style: textStyle,
+    //     //           ),
+    //     //         ],
+    //     //       )));
+    //     // }
+    //   }
+    //   row = Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+    //     ...rowList,
+    //   ]);
+    //   allRow.add(row);
+    // column.children.add(Row());
+    // column.children.add(SizedBox(
+    //   width: 7,
+    // ));
+    // }
+
+    return allRow;
+    // return Container(
+    //   child: Column(
+    //     children: [
+    //       ...allRow,
+    //     ],
+    //   ),
+    // );
   }
 
   // void getScheData() {

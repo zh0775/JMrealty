@@ -37,7 +37,7 @@ class _ProjectCellState extends State<ProjectCell> {
               height: axisSpace,
             ),
             Text(
-              widget.data['developer'] ?? '',
+              widget.data['name'] ?? '',
               style: jm_text_black_style18,
             ),
             SizedBox(

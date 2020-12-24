@@ -1,5 +1,6 @@
 import 'package:JMrealty/Client/components/WaitFollowUpCell.dart';
 import 'package:JMrealty/Client/viewModel/ClientPoolViewModel.dart';
+import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -15,6 +16,7 @@ class ClientPool extends StatefulWidget {
 class _ClientPoolState extends State<ClientPool> {
   EasyRefreshController pullCtr = EasyRefreshController();
   GlobalKey pullKey = GlobalKey();
+  GlobalKey pullHeaderKey = GlobalKey();
   ClientPoolViewModel clientPoolVM;
   int currentSelectIndex;
   Map selectData = Map<String, dynamic>.from({});
@@ -88,82 +90,86 @@ class _ClientPoolState extends State<ClientPool> {
           height: double.infinity,
           child: Stack(children: [
             Positioned(
-              left: 0,
-              right: 0,
-              top: 40,
-              bottom: 0,
-              child: EasyRefresh(
-                key: pullKey,
-                controller: pullCtr,
-                firstRefresh: true,
-                emptyWidget: clientList == null || clientList.length == 0 ? EmptyView() : null,
-                onRefresh: () async {
-                  clientPoolVM.loadClientPoolList(params: clientPoolParams, success: (data){
-                    setState(() {
-                      clientData = Map<String, dynamic>.from(data);
-                      clientList = clientData['rows'];
-                    });
-                  });
-                },
-                child: ListView.builder(
-                  itemCount: clientList.length,
-                  // itemCount: model.listData.length,
-                  itemBuilder: (context, index) {
-                    return WaitFollowUpCell(
-                      model: clientList[index],
-                      index: index,
-                      pool: true,
-                      takeOrderClick: (Map data) {
-                        showCupertinoDialog(
-                            context: context,
-                            builder: (context) {
-                              return CupertinoAlertDialog(
-                                title: Text(
-                                  '提示',
-                                  style: TextStyle(
-                                      fontSize: 14, color: jm_text_black),
-                                ),
-                                content: Text(
-                                  '您要跟进该用户吗？',
-                                  style: TextStyle(
-                                      fontSize: 14, color: jm_text_black),
-                                ),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(
-                                        '取消',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: jm_text_black),
-                                      )),
-                                  TextButton(
-                                      onPressed: () {
-                                        clientPoolVM.takeClientRequest(
-                                            data['id'], () {
-                                          Navigator.pop(context);
-                                          pullCtr.callRefresh();
-                                        });
-                                      },
-                                      child: Text(
-                                        '确认',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: jm_text_black),
-                                      ))
-                                ],
-                              );
-                            });
-                      },
-                      // writeFollowClick: widget.writeFollowClick,
-                      // cellReportClick: widget.cellReportClick,
-                    );
+                left: 0,
+                right: 0,
+                top: 40,
+                bottom: 0,
+                child: EasyRefresh(
+                  header: CustomPullHeader(key: pullHeaderKey),
+                  key: pullKey,
+                  controller: pullCtr,
+                  firstRefresh: true,
+                  emptyWidget: clientList == null || clientList.length == 0
+                      ? EmptyView()
+                      : null,
+                  onRefresh: () async {
+                    clientPoolVM.loadClientPoolList(
+                        params: clientPoolParams,
+                        success: (data) {
+                          setState(() {
+                            clientData = Map<String, dynamic>.from(data);
+                            clientList = clientData['rows'];
+                          });
+                        });
                   },
-                ),
-              )
-            ),
+                  child: ListView.builder(
+                    itemCount: clientList.length,
+                    // itemCount: model.listData.length,
+                    itemBuilder: (context, index) {
+                      return WaitFollowUpCell(
+                        model: clientList[index],
+                        index: index,
+                        pool: true,
+                        takeOrderClick: (Map data) {
+                          showCupertinoDialog(
+                              context: context,
+                              builder: (context) {
+                                return CupertinoAlertDialog(
+                                  title: Text(
+                                    '提示',
+                                    style: TextStyle(
+                                        fontSize: 14, color: jm_text_black),
+                                  ),
+                                  content: Text(
+                                    '您要跟进该用户吗？',
+                                    style: TextStyle(
+                                        fontSize: 14, color: jm_text_black),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          '取消',
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: jm_text_black),
+                                        )),
+                                    TextButton(
+                                        onPressed: () {
+                                          clientPoolVM.takeClientRequest(
+                                              data['id'], () {
+                                            Navigator.pop(context);
+                                            pullCtr.callRefresh();
+                                          });
+                                        },
+                                        child: Text(
+                                          '确认',
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: jm_text_black),
+                                        ))
+                                  ],
+                                );
+                              });
+                        },
+                        // writeFollowClick: widget.writeFollowClick,
+                        // cellReportClick: widget.cellReportClick,
+                      );
+                    },
+                  ),
+                )),
             Positioned(
                 left: 0,
                 top: 0,
@@ -225,18 +231,24 @@ class _ClientPoolState extends State<ClientPool> {
                       setState(() {
                         selectExpand = false;
                       });
-                      if(value1['value'] != '-1'){
-                        clientPoolParams['desireId'] = value1['value'] is int ? value1['value'] : int.parse(value1['value']);
-                      }else{
+                      if (value1['value'] != '-1') {
+                        clientPoolParams['desireId'] = value1['value'] is int
+                            ? value1['value']
+                            : int.parse(value1['value']);
+                      } else {
                         clientPoolParams.remove('desireId');
                       }
-                      if(value2['value'] != '-1'){
-                        clientPoolParams['typeId'] = value2['value'] is int ? value2['value'] : int.parse(value2['value']);
-                      }else {
+                      if (value2['value'] != '-1') {
+                        clientPoolParams['typeId'] = value2['value'] is int
+                            ? value2['value']
+                            : int.parse(value2['value']);
+                      } else {
                         clientPoolParams.remove('typeId');
                       }
-                      if(value3['value'] != '-1'){
-                        clientPoolParams['areaId'] = value3['value'] is int ? value3['value'] : int.parse(value3['value']);
+                      if (value3['value'] != '-1') {
+                        clientPoolParams['areaId'] = value3['value'] is int
+                            ? value3['value']
+                            : int.parse(value3['value']);
                       } else {
                         clientPoolParams.remove('areaId');
                       }

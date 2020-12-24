@@ -3,6 +3,7 @@ import 'package:JMrealty/base/image_loader.dart';
 import 'package:JMrealty/components/SelectImageView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/tTools.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -454,9 +455,9 @@ class _MineTopState extends State<MineTop> {
     if (count == null) {
       return '0.0元';
     } else if (count >= 10000) {
-      return (count / 10000).toString() + '万元';
+      return formatNum((count / 10000) * 1.0, 2) + '万元';
     } else {
-      return count.toString() + '元';
+      return formatNum(count * 1.0, 2) + '元';
     }
   }
 
@@ -465,16 +466,16 @@ class _MineTopState extends State<MineTop> {
       return '0.0元';
     } else if (count != null && count2 == null) {
       if (count >= 10000) {
-        return (count / 10000).toString() + '万元';
+        return formatNum((count / 10000.0), 2) + '万元';
       } else {
-        return count.toString() + '元';
+        return formatNum((count * 1.0), 2) + '元';
       }
     } else if (count == null && count2 != null) {
       return '0.0元';
     } else if ((count - count2) >= 10000) {
-      return ((count - count2) / 10000).toString() + '万元';
+      return formatNum(((count - count2) * 1.0 / 10000), 2) + '万元';
     } else {
-      return (count - count2).toString() + '元';
+      return formatNum((count - count2) * 1.0, 2) + '元';
     }
   }
 }

@@ -3,6 +3,7 @@ import 'package:JMrealty/Mine/LevelTargetSetting.dart';
 import 'package:JMrealty/Mine/SetTargetView.dart';
 import 'package:JMrealty/Mine/components/MineTop.dart';
 import 'package:JMrealty/Mine/viewModel/MineViewModel.dart';
+import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
@@ -25,6 +26,7 @@ class _MineState extends State<Mine> {
   MineViewModel mineVM = MineViewModel();
   EasyRefreshController pullCtr = EasyRefreshController();
   GlobalKey pullKey = GlobalKey();
+  GlobalKey pullHeaderKey = GlobalKey();
   double topHeight = 200;
   double widthScale;
   double margin;
@@ -91,7 +93,7 @@ class _MineState extends State<Mine> {
       body: EasyRefresh(
           key: pullKey,
           controller: pullCtr,
-          // header: PhoenixHeader(),
+          header: CustomPullHeader(key: pullHeaderKey),
           onRefresh: () async {
             loadMineRequest();
           },

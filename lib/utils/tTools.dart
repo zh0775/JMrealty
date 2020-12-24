@@ -241,13 +241,13 @@ String getStatusString(int status) {
 }
 
 Size calculateTextSize(
-    String value,
-    fontSize,
-    FontWeight fontWeight,
-    double maxWidth,
-    int maxLines,
-    BuildContext context, //GlobalStatic.context
-    ) {
+  String value,
+  fontSize,
+  FontWeight fontWeight,
+  double maxWidth,
+  int maxLines,
+  BuildContext context, //GlobalStatic.context
+) {
 //过滤文本
 // value = filterText(value);
 //TextPainter
@@ -268,4 +268,19 @@ Size calculateTextSize(
   painter.layout(maxWidth: maxWidth);
 //文字的Size
   return Size(painter.width, painter.height);
+}
+
+String formatNum(double num, int postion) {
+  if ((num.toString().length - num.toString().lastIndexOf(".") - 1) <=
+      postion) {
+    //小数点后有几位小数
+    // return (num.toStringAsFixed(postion)
+    //     .substring(0, num.toString().lastIndexOf(".") + postion + 1)
+    //     .toString());
+    return num.toString();
+  } else {
+    return (num.toString()
+        .substring(0, num.toString().lastIndexOf(".") + postion + 1)
+        .toString());
+  }
 }

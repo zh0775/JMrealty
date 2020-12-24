@@ -1,5 +1,6 @@
 import 'package:JMrealty/MyTasks/MyTasksCell.dart';
 import 'package:JMrealty/MyTasks/viewModel/MyTasksViewModel.dart';
+import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
@@ -18,6 +19,7 @@ class _MyTasksListState extends State<MyTasksList> {
   MyTasksViewModel tasksVM = MyTasksViewModel();
   EasyRefreshController pullCtr = EasyRefreshController();
   GlobalKey _easyRefreshKey = GlobalKey();
+  GlobalKey _pullHeaderKey = GlobalKey();
   List tasksListData = [];
   EventBus eventBus = EventBus();
   int topIndex;
@@ -47,6 +49,7 @@ class _MyTasksListState extends State<MyTasksList> {
       enableControlFinishLoad: true,
       key: _easyRefreshKey,
       controller: pullCtr,
+      header: CustomPullHeader(key: _pullHeaderKey),
       emptyWidget: tasksListData.length == 0 ? EmptyView() : null,
       firstRefresh: true,
       onRefresh: () async {

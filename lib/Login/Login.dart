@@ -130,9 +130,9 @@ class _LoginState extends State<Login> {
               child: Column(
                 children: [
                   Image.asset(
-                    'assets/images/tabbar/food-cake.png',
-                    width: 80,
-                    height: 80,
+                    'assets/images/home/icon_login.png',
+                    width: SizeConfig.screenWidth * (114 / 375),
+                    height: SizeConfig.screenWidth * (114 / 375),
                     fit: BoxFit.fill,
                   ),
                   SizedBox(
@@ -141,11 +141,11 @@ class _LoginState extends State<Login> {
                   Text(
                     '登录',
                     style: TextStyle(
-                        fontSize: 22,
+                        fontSize: 20,
                         color: Color.fromRGBO(65, 68, 83, 1),
                         fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 50),
+                  SizedBox(height: 20),
                   phoneInput(context),
                   SizedBox(
                     height: 20,

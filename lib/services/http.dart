@@ -200,8 +200,8 @@ class Http {
       Asset asset = images[0];
       // ByteData byteData = await asset.getByteData();
       ByteData byteData = await asset.getThumbByteData(
-          (asset.originalWidth * 0.6).round(),
-          (asset.originalHeight * 0.6).round());
+          (asset.originalWidth * 0.3).round(),
+          (asset.originalHeight * 0.3).round());
       List<int> imageData = byteData.buffer.asUint8List();
       MultipartFile multipartFile = MultipartFile.fromBytes(
         imageData,
@@ -227,8 +227,8 @@ class Http {
         Asset asset = images[i];
         // ByteData byteData = await asset.getByteData();
         ByteData byteData = await asset.getThumbByteData(
-            (asset.originalWidth * 0.6).round(),
-            (asset.originalHeight * 0.6).round());
+            (asset.originalWidth * 0.3).round(),
+            (asset.originalHeight * 0.3).round());
         List<int> imageData = byteData.buffer.asUint8List();
         MultipartFile multipartFile = MultipartFile.fromBytes(
           imageData,

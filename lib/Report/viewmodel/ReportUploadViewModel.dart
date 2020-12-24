@@ -33,7 +33,7 @@ class ReportUploadViewModel extends BaseViewModel {
     int total = images.length;
     int successCount = 0;
     Http().uploadImages(images, resList: (List resImages) {
-      List imageDatas = [];
+      List<String> imageDatas = [];
       resImages.forEach((imgJson) {
         if ((imgJson.data)['code'] == 200) {
           successCount++;

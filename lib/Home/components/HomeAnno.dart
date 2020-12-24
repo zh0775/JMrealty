@@ -28,7 +28,7 @@ class _HomeAnnoState extends State<HomeAnno> {
           margin: EdgeInsets.only(top: 20),
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
-              border: Border.all(color: Color(0xFFe5b763), width: 1.2),
+              border: Border.all(color: Color(0xffE6B85C), width: 1.0),
               borderRadius: BorderRadius.all(Radius.circular(10))),
           child: Stack(
             overflow: Overflow.visible,
@@ -37,13 +37,13 @@ class _HomeAnnoState extends State<HomeAnno> {
                 left: -15,
                 height: announcementHeght,
                 child: Image.asset(
-                  "assets/images/tabbar/food-cake.png",
-                  width: 30,
-                  height: 30,
+                  "assets/images/home/icon_home_notice.png",
+                  width: announcementHeght,
+                  height: announcementHeght,
                 ),
               ),
               Positioned(
-                  left: 10,
+                  left: 20,
                   height: announcementHeght,
                   width: MediaQuery.of(context).size.width - 40 - 60,
                   child: TextButton(
@@ -64,7 +64,7 @@ class _HomeAnnoState extends State<HomeAnno> {
                           NoticeView(
                             dataList: widget.dataList ?? [],
                             noticeClick: widget.noticeClick,
-                            size: Size(SizeConfig.screenWidth - 40 - 60 - 60,
+                            size: Size(SizeConfig.screenWidth - 40 - 60 - 70,
                                 announcementHeght),
                           )
                         ],

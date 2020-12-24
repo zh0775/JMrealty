@@ -1,5 +1,6 @@
 import 'package:JMrealty/Project/ProjectCell.dart';
 import 'package:JMrealty/Project/ProjectViewModel.dart';
+import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
@@ -15,11 +16,11 @@ class Project extends StatefulWidget {
 }
 
 class _ProjectState extends State<Project> {
-
   EventBus _eventBus = EventBus();
   ProjectViewModel projectVM = ProjectViewModel();
   EasyRefreshController pullCtr = EasyRefreshController();
   GlobalKey _easyRefreshKey = GlobalKey();
+  GlobalKey _pullHeaderKey = GlobalKey();
   List projectListData = [];
   @override
   void dispose() {
@@ -60,6 +61,7 @@ class _ProjectState extends State<Project> {
         enableControlFinishLoad: true,
         key: _easyRefreshKey,
         controller: pullCtr,
+        header: CustomPullHeader(key: _pullHeaderKey),
         emptyWidget: projectListData.length == 0 ? EmptyView() : null,
         firstRefresh: true,
         onRefresh: () async {

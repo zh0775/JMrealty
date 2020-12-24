@@ -1,6 +1,7 @@
 import 'package:JMrealty/Message/MessageTypeCell.dart';
 import 'package:JMrealty/Message/viewModel/MessageViewModel.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
+import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class _MessageTypeListState extends State<MessageTypeList> {
   MessageViewModel messageVM = MessageViewModel();
   EasyRefreshController pullCtr = EasyRefreshController();
   GlobalKey _easyRefreshKey = GlobalKey();
+  GlobalKey _pullHeaderKey = GlobalKey();
   List messageList = [];
   @override
   void initState() {
@@ -36,6 +38,7 @@ class _MessageTypeListState extends State<MessageTypeList> {
         title: jm_getMessageTypeStr(widget.noticeType),
       ),
       body: EasyRefresh(
+        header: CustomPullHeader(key: _pullHeaderKey),
         enableControlFinishRefresh: true,
         enableControlFinishLoad: true,
         key: _easyRefreshKey,

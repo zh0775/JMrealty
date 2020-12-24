@@ -4,6 +4,7 @@ import 'package:JMrealty/Client/components/WaitFollowUpCell.dart';
 import 'package:JMrealty/Client/components/WriteFollow.dart';
 import 'package:JMrealty/Client/viewModel/ClientListSelectViewModel.dart';
 import 'package:JMrealty/Client/viewModel/ClientListViewModel.dart';
+import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
@@ -72,6 +73,7 @@ class _ClientState extends State<Client> {
     };
     super.initState();
   }
+
   @override
   void dispose() {
     eventBus.off(NOTIFY_CLIENT_LIST_REFRASH_NORMAL);
@@ -368,6 +370,7 @@ class ClientList extends StatefulWidget {
 
 class _ClientListState extends State<ClientList>
     with AutomaticKeepAliveClientMixin {
+  GlobalKey pullHeaderKey = GlobalKey();
   EventBus eventBus;
   GlobalKey easyRefreshKey = GlobalKey();
   EasyRefreshController pullCtr;
@@ -440,6 +443,7 @@ class _ClientListState extends State<ClientList>
     super.build(context);
     return EasyRefresh(
       controller: pullCtr,
+      header: CustomPullHeader(key: pullHeaderKey),
       emptyWidget:
           listData == null || listData.length == 0 ? EmptyView() : null,
       key: easyRefreshKey,

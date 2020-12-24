@@ -1,4 +1,5 @@
 import 'package:JMrealty/Report/viewmodel/ReportListViewModel.dart';
+import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:flutter/material.dart';
 import 'package:JMrealty/Report/ReportListCell.dart';
@@ -15,24 +16,18 @@ class ReportListView extends StatefulWidget {
 
 class _ReportListViewState extends State<ReportListView>
     with AutomaticKeepAliveClientMixin {
-  ReportListViewModel reportListVM;
-  EasyRefreshController easyRefreshCtr;
+  ReportListViewModel reportListVM = ReportListViewModel();
+  EasyRefreshController easyRefreshCtr = EasyRefreshController();
   GlobalKey _easyRefreshKey = GlobalKey();
+  GlobalKey pullHeaderKey = GlobalKey();
 
-  int total;
-  int currentPage;
-  int pageSize;
-  List dataList;
+  int total = 0;
+  int currentPage = 1;
+  int pageSize = 10;
+  List dataList = [];
   // bool unNeedDispose;
   @override
   void initState() {
-    total = 0;
-    currentPage = 1;
-    pageSize = 10;
-    dataList = [];
-    // unNeedDispose = true;
-    easyRefreshCtr = EasyRefreshController();
-    reportListVM = ReportListViewModel();
     super.initState();
   }
 
@@ -55,6 +50,7 @@ class _ReportListViewState extends State<ReportListView>
     super.build(context);
     return EasyRefresh(
       controller: easyRefreshCtr,
+      header: CustomPullHeader(key: pullHeaderKey),
       // header: PhoenixHeader(),
       // footer: PhoenixFooter(),
       enableControlFinishRefresh: true,
