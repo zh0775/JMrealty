@@ -1,6 +1,11 @@
+import 'package:JMrealty/Home/components/NoticeView.dart';
+import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 
 class HomeAnno extends StatefulWidget {
+  final List dataList;
+  final Function(int index) noticeClick;
+  const HomeAnno({this.dataList = const [], this.noticeClick});
   @override
   _HomeAnnoState createState() => _HomeAnnoState();
 }
@@ -15,6 +20,7 @@ class _HomeAnnoState extends State<HomeAnno> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Align(
       child: Container(
           width: MediaQuery.of(context).size.width - 40,
@@ -42,25 +48,26 @@ class _HomeAnnoState extends State<HomeAnno> {
                   width: MediaQuery.of(context).size.width - 40 - 60,
                   child: TextButton(
                       onPressed: () {},
-                      child: RichText(
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        text: TextSpan(
-                            text: '[公告]',
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: ' ' +
-                                    '公告内容大家啊快乐公告内容大家啊快乐公告内容大家啊快乐公告内容大家啊快乐公告内容大家啊快乐',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ]),
+                      child: Row(
+                        children: [
+                          RichText(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            text: TextSpan(
+                              text: '[公告]',
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          NoticeView(
+                            dataList: widget.dataList ?? [],
+                            noticeClick: widget.noticeClick,
+                            size: Size(SizeConfig.screenWidth - 40 - 60 - 60,
+                                announcementHeght),
+                          )
+                        ],
                       ))),
               Positioned(
                 right: -5,

@@ -71,7 +71,7 @@ class BannerState extends State<BannerWidget> {
   @override
   void didUpdateWidget(BannerWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print('didUpdateWidget----------------------banner');
+    // print('didUpdateWidget----------------------banner');
   }
 
   start() {

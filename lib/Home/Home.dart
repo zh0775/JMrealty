@@ -78,7 +78,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  HomeViewModel homeVM;
+  HomeViewModel homeVM = HomeViewModel();
   List homeScheduleToDoData = [];
   var bannerList = [];
   List menus = [];
@@ -106,13 +106,13 @@ class _HomeState extends State<Home> {
       loadReqest();
     });
     widget.indexClick();
-    homeVM = HomeViewModel();
     super.initState();
   }
 
   void loadReqest() async {
     homeVM.loadUserInfo();
     String token = await UserDefault.get(ACCESS_TOKEN);
+
     getBanner();
     homeVM.getHomeMenus((menuList, success) {
       if (success) {
@@ -121,17 +121,29 @@ class _HomeState extends State<Home> {
         });
       }
     });
-    homeVM.getHomeNotice((noticeList, success) {
-      if (success) {
-        setState(() {
-          notices = noticeList;
-        });
-      }
-    });
+    String userInfoJson = await UserDefault.get(USERINFO);
+    if (userInfoJson != null) {
+      Map userInfo = convert.jsonDecode(userInfoJson);
+      homeVM.getHomeNotice(
+          Map<String, dynamic>.from(
+              {'userId': userInfo['userId'], 'deptId': userInfo['deptId']}),
+          (noticeList, success) {
+        if (success) {
+          setState(() {
+            notices = noticeList.map((e) {
+              return {...e, 'zzTitle': e['noticeTitle']};
+            }).toList();
+          });
+        }
+      });
+    }
+
     homeVM.getGladNotice((gladNoticeList, success) {
       if (success) {
         setState(() {
-          gladNotices = gladNoticeList;
+          gladNotices = gladNoticeList.map((e) {
+            return {...e, 'zzTitle': e['content']};
+          }).toList();
         });
       }
     });
@@ -159,8 +171,14 @@ class _HomeState extends State<Home> {
             HomeNaviBar(
               bannerDatas: bannerList,
             ),
-            HomeAnno(),
-            HomeGoodDeed(),
+            HomeAnno(
+              dataList: notices ?? [],
+              noticeClick: (index) {},
+            ),
+            HomeGoodDeed(
+              dataList: gladNotices ?? [],
+              noticeClick: (index) {},
+            ),
             HomeScheduleToDo(
               data: homeScheduleToDoData,
             ),

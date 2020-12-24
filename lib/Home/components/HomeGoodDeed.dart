@@ -1,7 +1,13 @@
+import 'package:JMrealty/Home/components/NoticeView.dart';
+import 'package:JMrealty/Message/MessageTypeList.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomeGoodDeed extends StatefulWidget {
+  final List dataList;
+  final Function(int index) noticeClick;
+  const HomeGoodDeed({this.dataList = const [], this.noticeClick});
   @override
   _HomeGoodDeedState createState() => _HomeGoodDeedState();
 }
@@ -34,21 +40,28 @@ class _HomeGoodDeedState extends State<HomeGoodDeed> {
             Positioned(
               height: thisHeight,
               right: 40,
-              left: 40,
+              left: 30,
               child: TextButton(
                   onPressed: null,
-                  child: Text(
-                    '阿萨德很快就阿萨德很快就阿萨德很快就阿萨德很快就阿萨德很快就',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.black, fontSize: 14),
+                  child: NoticeView(
+                    dataList: widget.dataList,
+                    noticeClick: widget.noticeClick,
+                    size: Size(SizeConfig.screenWidth - 120, thisHeight),
                   )),
             ),
             Positioned(
               height: thisHeight,
               right: -5,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(CupertinoPageRoute(
+                    builder: (_) {
+                      return MessageTypeList(
+                        noticeType: 10,
+                      );
+                    },
+                  ));
+                },
                 child: Text(
                   '更多',
                   style: TextStyle(color: Color(0XFF9fa1a8), fontSize: 13),

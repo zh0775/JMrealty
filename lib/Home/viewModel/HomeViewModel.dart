@@ -57,14 +57,14 @@ class HomeViewModel extends BaseViewModel {
     );
   }
 
-  getHomeNotice(Function(List noticeList, bool success) success) {
+  getHomeNotice(Map params, Function(List noticeList, bool success) success) {
     Http().get(
       Urls.getHomeNotice,
-      {},
+      params,
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
-            success(json['data'], true);
+            success((json['data'])['rows'], true);
           }
         } else {
           if (success != null) {
@@ -83,7 +83,7 @@ class HomeViewModel extends BaseViewModel {
   getGladNotice(Function(List gladNoticeList, bool success) success) {
     Http().get(
       Urls.getGladNotice,
-      {},
+      {'noticeType': 10},
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
@@ -118,7 +118,7 @@ class HomeViewModel extends BaseViewModel {
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
-            success(json['data'], true);
+            success((json['data'])['rows'], true);
           }
         } else {
           if (success != null) {
