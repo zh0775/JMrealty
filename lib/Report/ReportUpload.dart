@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:JMrealty/Report/viewmodel/ReportUploadViewModel.dart';
 import 'package:JMrealty/base/image_loader.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';

@@ -73,6 +73,7 @@ class _ReportListCellState extends State<ReportListCell> {
       },
       child: Container(
         width: SizeConfig.screenWidth,
+        margin: EdgeInsets.only(bottom: outMargin),
         decoration: BoxDecoration(
           // border: Border(bottom: BorderSide(width: 1.5, color: Colors.black)),
           color: Color(0xfff0f2f5),

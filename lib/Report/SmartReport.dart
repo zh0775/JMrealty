@@ -14,7 +14,7 @@ class SmartReport extends StatefulWidget {
 
 class _SmartReportState extends State<SmartReport> {
   SmartReportViewModel smartVM = SmartReportViewModel();
-  String str = '';
+  String str = '''''';
   double widthScale;
   double margin;
   @override
@@ -50,8 +50,10 @@ class _SmartReportState extends State<SmartReport> {
                           minHeight: SizeConfig.blockSizeVertical * 50),
                       margin: EdgeInsets.only(top: margin),
                       child: CupertinoTextField(
+                        maxLines: 16,
                         placeholder: '智能识别，请粘贴文本',
                         textAlignVertical: TextAlignVertical.top,
+                        keyboardType: TextInputType.multiline,
                         controller:
                             TextEditingController.fromValue(TextEditingValue(
                           text: str ?? '',
@@ -60,7 +62,7 @@ class _SmartReportState extends State<SmartReport> {
                               offset: str.length ?? 0)),
                         )),
                         onChanged: (value) {
-                          str = value;
+                          str = '''$value''';
                         },
                       ),
                     ),
