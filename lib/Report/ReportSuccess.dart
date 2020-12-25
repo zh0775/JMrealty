@@ -1,12 +1,15 @@
 import 'package:JMrealty/Report/viewmodel/ReportDetailViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportSuccessViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportViewModel.dart';
+import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomGridImageV.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/SelectImageView.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/utils/EventBus.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,6 +24,7 @@ class ReportSuccess extends StatefulWidget {
 }
 
 class _ReportSuccessState extends State<ReportSuccess> {
+  EventBus _eventBus = EventBus();
   ReportViewModel searchAgentVM = ReportViewModel();
   ReportDetailViewModel reportDetailModel = ReportDetailViewModel();
   Map detailData; // data
@@ -68,6 +72,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
 
   @override
   void dispose() {
+    _eventBus.off(NOTIFY_REPORT_LIST_REFRASH);
     super.dispose();
   }
 
@@ -263,8 +268,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
           },
           showListClick: (clickData) {
             bool isHave = false;
-            reportShopPartnerBOList
-                .forEach((element) {
+            reportShopPartnerBOList.forEach((element) {
               if (element['userId'] == clickData['userId']) {
                 isHave = true;
                 return;
@@ -339,21 +343,26 @@ class _ReportSuccessState extends State<ReportSuccess> {
             }
             successParams['reportShopPartnerBOList'] = [];
             reportShopPartnerBOList?.forEach((e) {
-              if(e['ratio'] != 0) {
+              if (e['ratio'] != 0) {
                 Map bo = Map<String, dynamic>.from({...e});
                 bo['ratio'] = e['ratio'] / 100;
                 successParams['reportShopPartnerBOList'].add(bo);
               }
             });
-            ReportSuccessViewModel().reportSuccessRequest(successParams,
-                (success) {
-              if (success) {
-                ShowToast.normal('恭喜，提交成功');
-                Future.delayed(Duration(seconds: 2)).then((value) {
-                  Navigator.pop(context);
+            CustomAlert(title: '提示', content: '确认提交吗').show(
+              confirmClick: () {
+                ReportSuccessViewModel().reportSuccessRequest(successParams,
+                    (success) {
+                  if (success) {
+                    ShowToast.normal('恭喜，提交成功');
+                    _eventBus.emit(NOTIFY_REPORT_LIST_REFRASH);
+                    Future.delayed(Duration(seconds: 2)).then((value) {
+                      Navigator.pop(context);
+                    });
+                  }
                 });
-              }
-            });
+              },
+            );
           },
         ),
         SizedBox(
@@ -581,9 +590,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
   Widget getCommissionInput(Map data, int index) {
     double lableWidth = widthScale * 25;
     double inputHeight = 40;
-    String ratioStr =
-        ((reportShopPartnerBOList[index])['ratio'])
-            .toString();
+    String ratioStr = ((reportShopPartnerBOList[index])['ratio']).toString();
 
     return Row(
       children: [

@@ -1,5 +1,7 @@
 import 'package:JMrealty/Report/ReportListView.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/utils/EventBus.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 
@@ -9,14 +11,22 @@ class Report extends StatefulWidget {
 }
 
 class _ReportState extends State<Report> {
+  bool isCopy = false;
   // int projectIndex;
   TabController tabCtr;
   double widthScale;
+  EventBus _eventBus = EventBus();
   @override
   void initState() {
     // projectIndex = 0;
     // tabCtr = TabController(length: null, vsync: null)
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _eventBus.off(NOTIFY_REPORT_SELECT_COPY_REFRASH);
+    super.dispose();
   }
 
   @override
@@ -46,9 +56,16 @@ class _ReportState extends State<Report> {
             ),
             actions: [
               TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      isCopy = !isCopy;
+                    });
+                    if (!isCopy) {
+                      _eventBus.emit(NOTIFY_REPORT_SELECT_COPY_REFRASH);
+                    }
+                  },
                   child: Text(
-                    '复制',
+                    isCopy ? '复制' : '多选复制',
                     style: TextStyle(fontSize: 15, color: Colors.white),
                   )),
             ],
@@ -108,16 +125,19 @@ class _ReportState extends State<Report> {
             ),
             Expanded(
               child: TabBarView(children: [
-                ReportListView(status: 0),
-                ReportListView(status: 10),
-                ReportListView(status: 20),
-                ReportListView(status: 21),
-                ReportListView(status: 30),
-                ReportListView(status: 40),
-                ReportListView(status: 50),
-                ReportListView(status: 60),
-                ReportListView(status: 70),
-                ReportListView(status: 80),
+                ReportListView(
+                  status: 0,
+                  isCopy: isCopy,
+                ),
+                ReportListView(status: 10, isCopy: isCopy),
+                ReportListView(status: 20, isCopy: isCopy),
+                ReportListView(status: 21, isCopy: isCopy),
+                ReportListView(status: 30, isCopy: isCopy),
+                ReportListView(status: 40, isCopy: isCopy),
+                ReportListView(status: 50, isCopy: isCopy),
+                ReportListView(status: 60, isCopy: isCopy),
+                ReportListView(status: 70, isCopy: isCopy),
+                ReportListView(status: 80, isCopy: isCopy),
               ]),
             )
           ],

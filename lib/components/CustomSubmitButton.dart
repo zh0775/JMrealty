@@ -14,27 +14,26 @@ class CustomSubmitButton extends StatelessWidget {
     SizeConfig().init(context);
     double selfMargin =
         margin != null ? margin : SizeConfig.blockSizeHorizontal * 6;
-    return Align(
-      child: Container(
-          // 提交注册按钮
-          width: SizeConfig.screenWidth - selfMargin * 2,
-          height: height,
-          margin: EdgeInsets.only(bottom: 50),
-          decoration: BoxDecoration(
-              color: jm_appTheme,
-              borderRadius: BorderRadius.all(Radius.circular(8))),
-          child: TextButton(
-            onPressed: () {
-              FocusScope.of(context).requestFocus(FocusNode());
-              if (buttonClick != null) {
-                buttonClick();
-              }
-            },
-            child: Text(
-              title,
-              style: TextStyle(fontSize: 15, color: Colors.white),
-            ),
-          )),
+    return RawMaterialButton(
+      constraints: BoxConstraints(
+          minHeight: height, minWidth: SizeConfig.screenWidth - selfMargin * 2),
+      fillColor: jm_appTheme,
+      elevation: 1,
+      highlightElevation: 2,
+      shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(SizeConfig.blockSizeHorizontal * 3)),
+      onPressed: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+        if (buttonClick != null) {
+          buttonClick();
+        }
+      },
+      child: Text(
+        title,
+        style: TextStyle(
+            fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
+      ),
     );
   }
 }

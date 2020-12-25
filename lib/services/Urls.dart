@@ -75,6 +75,10 @@ class Urls {
   static const String reportSignUp = '/customer/status/signUp';
   // 带看
   static const String reportTakelook = '/customer/status/takelook';
+  // 复制
+  static const String reportCopy = '/customer/report/copyReport';
+  // 智能报备
+  static const String smartReport = '/customer/report/intelligenceReport';
 
   //业绩规划
   // 查询业绩规则列表

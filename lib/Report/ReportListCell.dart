@@ -2,6 +2,7 @@ import 'package:JMrealty/Report/ReportSuccess.dart';
 import 'package:JMrealty/Report/ReportUpload.dart';
 import 'package:JMrealty/Report/viewmodel/ReportChangeStatusViewModel.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
+import 'package:JMrealty/components/CustomCheckBox.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -16,34 +17,51 @@ class ReportListCell extends StatefulWidget {
   final Function() needRefrash;
   final Map data;
   final int index;
-  ReportListCell({@required this.data, this.index, this.needRefrash});
+  final bool copyStatus;
+  final Function(Map data, bool add) copyItem;
+  final Function(Map data) copyOneItem;
+  ReportListCell(
+      {@required this.data,
+      this.index,
+      this.needRefrash,
+      this.copyItem,
+      this.copyStatus = false,
+      this.copyOneItem});
   @override
   _ReportListCellState createState() => _ReportListCellState();
 }
 
 class _ReportListCellState extends State<ReportListCell> {
+  bool checkCopyValue = false;
   ReportChangeStatusViewModel reportChangeStatusVM =
       ReportChangeStatusViewModel();
-  double cellHeight;
   double widthScale;
   double outMargin;
   double insideMargin;
   double labelSpace;
   @override
   void initState() {
-    cellHeight = 340;
     labelSpace = 3;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.copyStatus) {
+      checkCopyValue = false;
+    }
+
     SizeConfig().init(context);
     widthScale = SizeConfig.blockSizeHorizontal;
     outMargin = widthScale * 4;
     insideMargin = widthScale * 6;
 
     return GestureDetector(
+      onLongPress: () {
+        if (!widget.copyStatus && widget.copyOneItem != null) {
+          widget.copyOneItem(widget.data);
+        }
+      },
       onTap: () {
         Navigator.of(context).push(CupertinoPageRoute(
           builder: (context) {
@@ -55,9 +73,6 @@ class _ReportListCellState extends State<ReportListCell> {
       },
       child: Container(
         width: SizeConfig.screenWidth,
-        height: widget.index != null && widget.index == 0
-            ? cellHeight + outMargin
-            : cellHeight,
         decoration: BoxDecoration(
           // border: Border(bottom: BorderSide(width: 1.5, color: Colors.black)),
           color: Color(0xfff0f2f5),
@@ -66,7 +81,6 @@ class _ReportListCellState extends State<ReportListCell> {
           alignment: Alignment.topLeft,
           child: Container(
             width: SizeConfig.screenWidth - outMargin * 2,
-            height: cellHeight - outMargin,
             margin: widget.index != null && widget.index == 0
                 ? EdgeInsets.only(top: outMargin, left: outMargin)
                 : EdgeInsets.only(left: outMargin),
@@ -76,9 +90,7 @@ class _ReportListCellState extends State<ReportListCell> {
             ),
             child: Column(
               children: [
-                SizedBox(
-                  height: 15,
-                ),
+                copyView(),
                 // 第一行
                 getTitle(),
                 SizedBox(
@@ -121,6 +133,40 @@ class _ReportListCellState extends State<ReportListCell> {
     );
   }
 
+  // 复制
+  Widget copyView() {
+    if (widget.copyStatus) {
+      return Container(
+        width: double.infinity,
+        margin: EdgeInsets.only(right: widthScale * 2),
+        // color: Colors.red,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            SizedBox(
+              height: 5,
+            ),
+            CustomCheckBox(
+              value: checkCopyValue,
+              onChange: (selected) {
+                setState(() {
+                  checkCopyValue = selected;
+                });
+                if (widget.copyItem != null) {
+                  widget.copyItem(widget.data, checkCopyValue);
+                }
+              },
+            ),
+          ],
+        ),
+      );
+    } else {
+      return SizedBox(
+        height: 15,
+      );
+    }
+  }
+
   // 姓名电话
   Widget getTitle() {
     return Row(
@@ -147,7 +193,9 @@ class _ReportListCellState extends State<ReportListCell> {
         Row(
           children: [
             Text(
-              '已复制',
+              widget.data['isCopy'] != null
+                  ? (widget.data['isCopy'] == 1 ? '已复制' : '')
+                  : '',
               style: jm_text_gray_style15,
             ),
             SizedBox(

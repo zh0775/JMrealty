@@ -34,4 +34,27 @@ class ReportListViewModel extends BaseViewModel {
       },
     );
   }
+
+  copyReportRequest(List params, Function(bool success) success) {
+    Http().post(
+      Urls.reportCopy,
+      {'copyReport': params},
+      success: (json) {
+        if (json['code'] == 200) {
+          if (success != null) {
+            success(true);
+          }
+        } else {
+          if (success != null) {
+            success(false);
+          }
+        }
+      },
+      fail: (reason, code) {
+        if (success != null) {
+          success(false);
+        }
+      },
+    );
+  }
 }
