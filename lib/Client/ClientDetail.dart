@@ -399,13 +399,16 @@ class _ClientDetailState extends State<ClientDetail> {
     return Align(
       child: Container(
           width: contentWidth,
-          height: 180,
+          // height: 180,
           child: Align(
               alignment: Alignment.centerLeft,
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    SizedBox(
+                      height: 10,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -457,15 +460,28 @@ class _ClientDetailState extends State<ClientDetail> {
                         ),
                         progress != null
                             ? (isFollow
-                                ? Text(
-                                    progress['result'] ?? '',
-                                    style: TextStyle(
-                                        color: jm_text_black, fontSize: 14),
+                                ? Container(
+                                    width: contentWidth -
+                                        10 -
+                                        widthScale * 3 -
+                                        margin,
+                                    child: Text(
+                                      progress['result'] ?? '',
+                                      maxLines: 100,
+                                      style: TextStyle(
+                                          color: jm_text_black, fontSize: 14),
+                                    ),
                                   )
-                                : Text(
-                                    progress['projectName'] ?? '',
-                                    style: TextStyle(
-                                        color: jm_text_black, fontSize: 14),
+                                : Container(
+                                    width: contentWidth -
+                                        10 -
+                                        widthScale * 3 -
+                                        margin,
+                                    child: Text(
+                                      progress['projectName'] ?? '',
+                                      style: TextStyle(
+                                          color: jm_text_black, fontSize: 14),
+                                    ),
                                   ))
                             : Container(
                                 width: 0.0,
@@ -517,6 +533,9 @@ class _ClientDetailState extends State<ClientDetail> {
                           style: TextStyle(fontSize: 18, color: jm_text_black),
                         ),
                       ),
+                    ),
+                    SizedBox(
+                      height: 10,
                     )
                   ]))),
     );

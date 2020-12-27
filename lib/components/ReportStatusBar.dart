@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class ReportStatusBar extends StatelessWidget {
   final int statusNo;
   final List statusData;
-  ReportStatusBar({@required this.statusNo,@required this.statusData});
+  ReportStatusBar({@required this.statusNo, this.statusData = const []});
 
   double widthScale;
   double margin;
@@ -16,80 +16,141 @@ class ReportStatusBar extends StatelessWidget {
     SizeConfig().init(context);
     widthScale = SizeConfig.blockSizeHorizontal;
     margin = widthScale * 4;
-    rowWidth = (SizeConfig.screenWidth - margin * 2) / 5;
-    return Container(
-      // height: 200,
-      width: double.infinity,
-      child: Row(
-        children: [
-          ...getRow(),
-        ],
-      ),
-    );
+    rowWidth = (SizeConfig.screenWidth) / 5;
+    return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Container(
+          constraints: BoxConstraints(minWidth: SizeConfig.screenWidth),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ...getRow(),
+            ],
+          ),
+        ));
   }
 
-  List<Widget> getRow(){
+  List<Widget> getRow() {
+    double leftRightLineWidth = widthScale * 3;
     double titleHeight = 40;
     List<Widget> rows = [];
-    for (int i = 0; i < 5; i++) {
-      Column column;
-      if (statusData!= null &&  i < statusData.length) {
+
+    if (statusData != null && statusData.length > 0) {
+      for (int i = 0; i < statusData.length; i++) {
         Map rowData = statusData[i];
-        column = Column(
+        rows.add(Column(
           children: [
-            Container(width: rowWidth - widthScale * 4,height: titleHeight,
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(252,247,238, 1),
-                borderRadius: BorderRadius.circular(titleHeight / 2),
-                border: Border.all(color: jm_appTheme,width: 2)
-              ),
-              child: Center(child: Text(getTitle(i),style: jm_text_apptheme_style15,),),
+            SizedBox(
+              height: 5,
             ),
-            Text(rowData['createTime'] != null ? timeToYMD(rowData['createTime']) : '' ,style: jm_text_gray_style11,),
-            Text(rowData['employeeName']??'',style: jm_text_black_style11,),
-          ],
-        );
-      } else {
-        column = Column(
-          children: [
-            Container(width: rowWidth - widthScale * 4,height: 40,
-              decoration: BoxDecoration(
-                  color: jm_line_color,
-                  borderRadius: BorderRadius.circular(titleHeight / 2),
+            Container(
+                width: rowWidth,
+                height: titleHeight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    i != 0
+                        ? Container(
+                            width: leftRightLineWidth,
+                            height: 2,
+                            color: jm_appTheme,
+                          )
+                        : SizedBox(
+                            width: leftRightLineWidth,
+                          ),
+                    Container(
+                      width: rowWidth - widthScale * 8,
+                      height: 30,
+                      decoration: BoxDecoration(
+                          color: Color.fromRGBO(252, 247, 238, 1),
+                          borderRadius: BorderRadius.circular(titleHeight / 2),
+                          border: Border.all(color: jm_appTheme, width: 2)),
+                      child: Center(
+                        child: Text(
+                          getTitle(rowData['status']),
+                          style: jm_text_apptheme_style14,
+                        ),
+                      ),
+                    ),
+                    i != statusData.length - 1
+                        ? Container(
+                            width: leftRightLineWidth,
+                            height: 2.0,
+                            color: jm_appTheme,
+                          )
+                        : SizedBox(
+                            width: leftRightLineWidth,
+                          ),
+                  ],
+                )),
+            SizedBox(
+              height: 1,
+            ),
+            Container(
+              alignment: Alignment.center,
+              height: 12,
+              // color: Colors.red,
+              child: Text(
+                rowData['createTime'] != null
+                    ? timeToYMD(rowData['createTime'])
+                    : '',
+                style: jm_text_gray_style11,
               ),
-              child: Center(child: Text(getTitle(i),style: jm_text_gray_style15,),),
+            ),
+            Container(
+              alignment: Alignment.center,
+              height: 19,
+              child: Text(
+                rowData['employeeName'] ?? '',
+                style: jm_text_black_style11,
+              ),
+            ),
+            SizedBox(
+              height: 4,
             )
           ],
-        );
+        ));
       }
-      rows.add(column);
     }
     return rows;
-    Column(
-      children: [
-        Container(width: rowWidth - widthScale * 4,height: 40,)
-      ],
-    );
   }
-  String getTitle (int index) {
-    switch(index) {
+
+  String getTitle(int status) {
+    String statusStr = '';
+    switch (status) {
       case 0:
-        return '报备';
+        statusStr = '报备';
         break;
-      case 1:
-        return '报备';
+      case 10:
+        statusStr = '带看';
         break;
-      case 2:
-        return '认购';
+      case 20:
+        statusStr = '上传';
         break;
-      case 3:
-        return '签约';
+      case 21:
+        statusStr = '预约';
         break;
-      case 4:
-        return '结佣';
+      case 30:
+        statusStr = '成交';
+        break;
+      case 40:
+        statusStr = '签约';
+        break;
+      case 50:
+        statusStr = '结款';
+        break;
+      case 60:
+        statusStr = '结佣';
+        break;
+      case 70:
+        statusStr = '失效';
+        break;
+      case 80:
+        statusStr = '退单';
         break;
       default:
         return '其他';
     }
+    return statusStr;
   }
 }

@@ -29,8 +29,17 @@ const Icon jm_naviAdd_icon = Icon(
 
 String jm_getPKStatus(int status) {
   switch (status) {
-    case 2:
+    case 0:
+      return '未开始';
+      break;
+    case 1:
       return '进行中';
+      break;
+    case 2:
+      return '已结束';
+      break;
+    case 3:
+      return '已取消';
       break;
     default:
       return '其他';
@@ -333,12 +342,14 @@ class CustomInput extends StatefulWidget {
   final String text;
   final bool enable;
   final Color backgroundColor;
+  final String lastLabelText;
   final TextStyle textStyle;
   final Function(Map data) showListClick;
   final Function(String value) valueChange;
   final Function(String value, _CustomInputState state) valueChangeAndShowList;
   CustomInput(
       {Key key,
+      this.lastLabelText,
       this.title = '',
       this.otherWidth,
       this.valueChange,
@@ -366,6 +377,7 @@ class _CustomInputState extends State<CustomInput>
   double lableWidth;
   OverlayEntry _overlayEntry;
   bool isShow = false;
+  double lastLabelWidth;
   // TextEditingController textCtr;
   final LayerLink _layerLink = LayerLink();
   @override
@@ -395,6 +407,8 @@ class _CustomInputState extends State<CustomInput>
   Widget build(BuildContext context) {
     super.build(context);
     SizeConfig().init(context);
+    lastLabelWidth =
+        widget.lastLabelText != null ? SizeConfig.blockSizeHorizontal * 22 : 0;
     margin = widget.margin != null
         ? widget.margin
         : SizeConfig.blockSizeHorizontal * 6;
@@ -438,7 +452,10 @@ class _CustomInputState extends State<CustomInput>
               // )
               Container(
                 width: widget.otherWidth ??
-                    SizeConfig.screenWidth - margin * 2 - lableWidth,
+                    SizeConfig.screenWidth -
+                        margin * 2 -
+                        lableWidth -
+                        lastLabelWidth,
                 constraints: BoxConstraints(
                     minHeight: widget.lineHeight, maxHeight: widget.lineHeight),
                 child: TextField(
@@ -478,6 +495,17 @@ class _CustomInputState extends State<CustomInput>
                       widget.valueChangeAndShowList(value, this);
                     }
                   },
+                ),
+              ),
+              Container(
+                width: lastLabelWidth,
+                child: Padding(
+                  padding:
+                      EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 2),
+                  child: Text(
+                    widget.lastLabelText ?? '',
+                    style: widget.labelStyle,
+                  ),
                 ),
               )
             ],

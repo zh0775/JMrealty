@@ -62,7 +62,6 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
 
   @override
   void didUpdateWidget(covariant WaitFollowUpCell oldWidget) {
-
     super.didUpdateWidget(oldWidget);
   }
 
@@ -74,7 +73,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
     Color levelColor = Colors.transparent;
     if (model['desireId'] != null) {
       switch (model['desireId']) {
-        case 3:
+        case 1:
           level = 'A级';
           levelColor = Color.fromRGBO(233, 193, 112, 1);
           break;
@@ -82,7 +81,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
           level = 'B级';
           levelColor = Color.fromRGBO(91, 93, 106, 1);
           break;
-        case 1:
+        case 3:
           level = 'C级';
           levelColor = Color.fromRGBO(40, 143, 255, 1);
           break;

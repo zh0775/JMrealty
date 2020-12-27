@@ -1,14 +1,9 @@
 import 'package:JMrealty/PK/PKadd.dart';
-import 'package:JMrealty/PK/PKdetail.dart';
-import 'package:JMrealty/PK/viewModel/PKviewModel.dart';
-import 'package:JMrealty/components/CustomPullHeader.dart';
+import 'package:JMrealty/PK/PKmainList.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
-
-import 'components/PKmainListCell.dart';
 
 class PKmain extends StatefulWidget {
   @override
@@ -16,38 +11,19 @@ class PKmain extends StatefulWidget {
 }
 
 class _PKmainState extends State<PKmain> {
-  void Function(Map cellData, int index) cellClick;
-  List pkListData = [];
-  double topHeight = 200;
+  Color tabColor = Color(0xff404352);
+  double topHeight = 178;
   double widthScale;
   double margin;
   double selfWidth;
-  EasyRefreshController pullCtr = EasyRefreshController();
-  GlobalKey pullKey = GlobalKey();
-  GlobalKey pullHeaderKey = GlobalKey();
-  ScrollController listViewCtr = ScrollController();
-  PKviewModel pkVM = PKviewModel();
 
   @override
   void initState() {
-    cellClick = (Map cellData, int index) {
-      Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-        return PKdetail(pkData: cellData);
-      }));
-    };
-    pkVM.loadPKList(success: (dataList) {
-      setState(() {
-        pkListData = dataList;
-      });
-    });
     super.initState();
   }
 
   @override
   void dispose() {
-    pullCtr.dispose();
-    listViewCtr.dispose();
-    pkVM.dispose();
     super.dispose();
   }
 
@@ -58,86 +34,118 @@ class _PKmainState extends State<PKmain> {
     margin = widthScale * 6;
     selfWidth = SizeConfig.screenWidth - margin * 2;
     return Scaffold(
-        body: EasyRefresh(
-            key: pullKey,
-            controller: pullCtr,
-            header: CustomPullHeader(key: pullHeaderKey),
-            onRefresh: () async {
-              pkVM.loadPKList(success: (dataList) {
-                pullCtr.finishRefresh();
-                setState(() {
-                  pkListData = dataList;
-                });
-              });
-            },
-            child: Container(
-              constraints: BoxConstraints(
-                maxHeight: SizeConfig.screenHeight,
-                maxWidth: SizeConfig.screenWidth,
-              ),
-              width: SizeConfig.screenWidth,
-              height: SizeConfig.screenHeight,
-              child: Stack(
-                children: [
-                  Positioned(
-                    left: 0,
-                    top: 0,
-                    child: Container(
-                      width: SizeConfig.screenWidth,
-                      height: topHeight,
-                      color: jm_appTheme,
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              IconButton(
-                                  icon: jm_naviBack_icon,
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  }),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 12.0),
-                                child: jm_naviTitle('PK赛'),
-                              ),
-                              IconButton(
-                                  icon: jm_naviAdd_icon,
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .push(CupertinoPageRoute(builder: (_) {
-                                      return PKadd();
-                                    }));
-                                  }),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                      left: 0,
-                      top: topHeight - 50,
-                      width: SizeConfig.screenWidth,
-                      height: SizeConfig.screenHeight - topHeight + 50,
-                      child: Container(
-                        child: ListView.builder(
-                          controller: listViewCtr,
-                          padding: EdgeInsets.only(top: 15),
-                          itemCount: pkListData.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return PKmainListCell(
-                              cellData: pkListData[index],
-                              index: index,
-                              cellClick: cellClick,
-                            );
-                          },
+        body: DefaultTabController(
+      length: 4,
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: SizeConfig.screenHeight,
+          maxWidth: SizeConfig.screenWidth,
+        ),
+        width: SizeConfig.screenWidth,
+        height: SizeConfig.screenHeight,
+        child: Stack(
+          children: [
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: topHeight,
+              child: Image.asset("assets/images/home/bg_pkmain_topbar.png"),
+            ),
+            Positioned(
+              left: 0,
+              top: 39,
+              child: Container(
+                  width: SizeConfig.screenWidth,
+                  // height: topHeight,
+                  // color: jm_appTheme,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                          icon: jm_naviBack_icon,
+                          onPressed: () {
+                            Navigator.pop(context);
+                          }),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(top: 12.0),
+                      //   child: jm_naviTitle('PK赛'),
+                      // ),
+                      IconButton(
+                          icon: jm_naviAdd_icon,
+                          onPressed: () {
+                            Navigator.of(context)
+                                .push(CupertinoPageRoute(builder: (_) {
+                              return PKadd();
+                            }));
+                          }),
+                    ],
+                  )),
+            ),
+            Positioned(
+                left: margin,
+                right: margin,
+                top: 95,
+                // height: 10,
+                child: TabBar(
+                    indicatorSize: TabBarIndicatorSize.label,
+                    indicatorColor: tabColor,
+                    indicatorWeight: 3.0,
+                    indicatorPadding: EdgeInsets.only(bottom: 5),
+                    // onTap: (value) {
+                    //   print('value === $value');
+                    // },
+                    tabs: [
+                      Tab(
+                        child: Text(
+                          '全部',
+                          style: TextStyle(fontSize: 14, color: tabColor),
                         ),
-                      ))
-                ],
-              ),
-            )));
+                      ),
+                      Tab(
+                        child: Text(
+                          '待跟进',
+                          style: TextStyle(fontSize: 14, color: tabColor),
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          '待跟进',
+                          style: TextStyle(fontSize: 14, color: tabColor),
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          '待跟进',
+                          style: TextStyle(fontSize: 14, color: tabColor),
+                        ),
+                      ),
+                    ])),
+            Positioned(
+                left: 0,
+                top: topHeight - 30,
+                width: SizeConfig.screenWidth,
+                height: SizeConfig.screenHeight - topHeight + 30,
+                child: Container(
+                    child: TabBarView(
+                  children: [
+                    PKmainList(
+                      status: -1,
+                    ),
+                    PKmainList(
+                      status: 0,
+                    ),
+                    PKmainList(
+                      status: 1,
+                    ),
+                    PKmainList(
+                      status: 2,
+                    ),
+                  ],
+                )))
+          ],
+        ),
+      ),
+    ));
   }
 }

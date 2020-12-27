@@ -1,4 +1,5 @@
 import 'package:JMrealty/Report/viewmodel/ReportViewModel.dart';
+import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/notify_default.dart';
@@ -79,6 +80,18 @@ class _AddReportState extends State<AddReport> {
       child: Scaffold(
         appBar: CustomAppbar(
           title: '报备',
+          backClick: () {
+            CustomAlert(
+                    cancelText: '退出',
+                    confirmText: '继续添加',
+                    title: '退出',
+                    content: '退出后信息将不再保存，是否确定退出')
+                .show(
+              cancelClick: () {
+                Navigator.pop(context);
+              },
+            );
+          },
         ),
         body: ListView(
           children: [
@@ -337,7 +350,7 @@ class _AddReportState extends State<AddReport> {
                       clientsData.forEach((e) {
                         // print(e);
                         // if (e['name'] != null && e['csutomerPhone'] != null) {
-                          clients.add(e);
+                        clients.add(e);
                         // }
                       });
                       print('clientsData ==== $clients');

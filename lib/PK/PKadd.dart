@@ -1,5 +1,6 @@
 import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
 import 'package:JMrealty/PK/viewModel/PKaddViewModel.dart';
+import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
@@ -28,19 +29,18 @@ class _PKaddState extends State<PKadd> {
   DateTime startTime;
   DateTime endTime;
   DateFormat dateFormat;
-  List unitList; // pk指标
+  List unitList = []; // pk指标
   Map pkTarget; // 参与单位
   String pkName; // pk赛名称
   String award; // 奖励
   String rules; // 规则
   Map medalData; //奖章
   List targetDataList;
-  List<TreeNode> treeData;
+  List<TreeNode> treeData = [];
   List pkType; // pk赛类型
   int pkTypeValue; // pk类型
   @override
   void initState() {
-    treeData = [];
     pkaddModel = PKaddViewModel();
     pkaddModel.loadTarget(success: (value) {
       setState(() {
@@ -63,7 +63,6 @@ class _PKaddState extends State<PKadd> {
         });
       },
     );
-    unitList = [];
     dateFormat = DateFormat('yyyy-MM-dd');
     startTime = DateTime.now();
     endTime = startTime.add(Duration(days: 7));
@@ -86,7 +85,21 @@ class _PKaddState extends State<PKadd> {
     selfWidth = SizeConfig.screenWidth - margin * 2;
     lineHeight = 50;
     return Scaffold(
-      appBar: CustomAppbar(title: '新建PK赛'),
+      appBar: CustomAppbar(
+        title: '新建PK赛',
+        backClick: () {
+          CustomAlert(
+                  cancelText: '退出',
+                  confirmText: '继续添加',
+                  title: '退出',
+                  content: '退出后信息将不再保存，是否确定退出')
+              .show(
+            cancelClick: () {
+              Navigator.pop(context);
+            },
+          );
+        },
+      ),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(FocusNode());
@@ -323,6 +336,10 @@ class _PKaddState extends State<PKadd> {
                 height: 20,
               ),
               CustomSubmitButton(buttonClick: () {
+                if (startTime.isAfter(endTime)) {
+                  ShowToast.normal('结束时间不能小于开始时间');
+                  return;
+                }
                 if (pkName == null || pkName.length == 0) {
                   ShowToast.normal('请输入PK赛名称');
                   return;
@@ -362,6 +379,7 @@ class _PKaddState extends State<PKadd> {
                     'bussinesName': (e as TreeNode).label
                   });
                 }).toList();
+
                 params['startTime'] = dateFormat.format(startTime);
                 params['endTime'] = dateFormat.format(endTime);
                 params['status'] = 0;
@@ -433,15 +451,18 @@ class _PKaddState extends State<PKadd> {
 
   Future<void> showDatePick(bool isStart) async {
     final DateTime date = await showDatePicker(
-      context: context,
-      initialDate: isStart ? startTime : endTime,
-      firstDate: DateTime(2018, 1),
-      lastDate: DateTime(2022, 1),
-      locale: Locale('zh')
-    );
+        context: context,
+        initialDate: isStart ? startTime : endTime,
+        firstDate: DateTime(2018, 1),
+        lastDate: DateTime(2022, 1),
+        locale: Locale('zh'));
     if (date == null) return;
     setState(() {
-      isStart ? startTime = date : endTime = date;
+      isStart
+          ? startTime = date
+          : endTime = date.add(Duration(
+              milliseconds:
+                  1000 * 60 * 60 * 23 + 60 * 1000 * 59 + 1000 * 59 + 999));
     });
   }
 

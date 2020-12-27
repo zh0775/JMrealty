@@ -3,6 +3,7 @@ import 'package:JMrealty/Mine/LevelTargetSetting.dart';
 import 'package:JMrealty/Mine/SetTargetView.dart';
 import 'package:JMrealty/Mine/components/MineTop.dart';
 import 'package:JMrealty/Mine/viewModel/MineViewModel.dart';
+import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
@@ -168,6 +169,21 @@ class _MineState extends State<Mine> {
                     width: SizeConfig.screenWidth - margin,
                     height: 0.5),
                 getCell('关于', Icons.info, () {}),
+                JMline(
+                    margin: margin,
+                    width: SizeConfig.screenWidth - margin,
+                    height: 0.5),
+                getCell('退出登录', Icons.info, () {
+                  CustomAlert(content: '确定要退出登录吗？').show(
+                    confirmClick: () {
+                      UserDefault.saveStr(ACCESS_TOKEN, null).then((value) {
+                        if (value) {
+                          Global.toLogin();
+                        }
+                      });
+                    },
+                  );
+                }),
                 JMline(
                     margin: margin,
                     width: SizeConfig.screenWidth - margin,

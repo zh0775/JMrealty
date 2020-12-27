@@ -11,8 +11,9 @@ import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
 
 class ReportUpload extends StatefulWidget {
+  final int status;
   final Map data;
-  ReportUpload({@required this.data});
+  ReportUpload({@required this.data, this.status});
   @override
   _ReportUploadState createState() => _ReportUploadState();
 }
@@ -57,114 +58,117 @@ class _ReportUploadState extends State<ReportUpload> {
     SizeConfig().init(context);
     widthScale = SizeConfig.blockSizeHorizontal;
     outMargin = widthScale * 6;
-    return Scaffold(
-      appBar: CustomAppbar(
-        title: '上传带看单',
-      ),
-      body: ListView(
-        children: [
-          SizedBox(
-            height: 20,
-          ),
-          // 第一行
-          getTitle(),
-          SizedBox(
-            height: 12,
-          ),
-          getProject(),
-          SizedBox(
-            height: labelSpace,
-          ),
-          getProtect(),
-          SizedBox(
-            height: labelSpace,
-          ),
-          getStatus(),
-          SizedBox(
-            height: labelSpace,
-          ),
-          getCompany(),
-          SizedBox(
-            height: labelSpace,
-          ),
-          getName(),
-          SizedBox(
-            height: labelSpace,
-          ),
-          getNum(),
-          SizedBox(
-            height: 15,
-          ),
-          JMline(width: SizeConfig.screenWidth, height: 0.5),
-          SizedBox(
-            height: 15,
-          ),
-          Padding(
-              padding: EdgeInsets.only(left: outMargin),
-              child: Text(
-                '上传资料',
-                style: jm_text_black_bold_style17,
-              )),
-          SizedBox(
-            height: 13,
-          ),
-          Align(
-            child: Container(
-              width: SizeConfig.screenWidth - outMargin * 2,
-              child: Column(
-                children: [
-                  ...getImageButtons(),
-                ],
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Scaffold(
+        appBar: CustomAppbar(
+          title: '上传带看单',
+        ),
+        body: ListView(
+          children: [
+            SizedBox(
+              height: 20,
+            ),
+            // 第一行
+            getTitle(),
+            SizedBox(
+              height: 12,
+            ),
+            getProject(),
+            SizedBox(
+              height: labelSpace,
+            ),
+            getProtect(),
+            SizedBox(
+              height: labelSpace,
+            ),
+            getStatus(),
+            SizedBox(
+              height: labelSpace,
+            ),
+            getCompany(),
+            SizedBox(
+              height: labelSpace,
+            ),
+            getName(),
+            SizedBox(
+              height: labelSpace,
+            ),
+            getNum(),
+            SizedBox(
+              height: 15,
+            ),
+            JMline(width: SizeConfig.screenWidth, height: 0.5),
+            SizedBox(
+              height: 15,
+            ),
+            Padding(
+                padding: EdgeInsets.only(left: outMargin),
+                child: Text(
+                  '上传资料',
+                  style: jm_text_black_bold_style17,
+                )),
+            SizedBox(
+              height: 13,
+            ),
+            Align(
+              child: Container(
+                width: SizeConfig.screenWidth - outMargin * 2,
+                child: Column(
+                  children: [
+                    ...getImageButtons(),
+                  ],
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Padding(
-              padding: EdgeInsets.only(left: outMargin),
-              child: Text(
-                '备注',
-                style: jm_text_black_bold_style17,
-              )),
-          CustomMarkInput(
-            valueChange: (value) {
-              mark = value;
-            },
-          ),
-          CustomSubmitButton(
-            buttonClick: () {
-              Map<String, dynamic> mapParams = {};
-              if (imageList != null && imageList.length > 0) {
-                String imageStr = '';
-                imageList.forEach((element) {
-                  imageStr += element + ',';
-                });
-                imageStr = imageStr.substring(0, imageStr.length - 1);
-                mapParams['images'] = imageStr;
-              }
-              // print('data ==== ${widget.data}');
-              // print('images ==== $mapParams');
-              // print('123 === ${widget.data['status']}');
-              if (widget.data['status'] != null) {
-                mapParams['beforeStatus'] = widget.data['status'];
-              }
-              if (widget.data['id'] != null) {
-                mapParams['reportId'] = widget.data['id'];
-              }
-              mapParams['remark'] = mark ?? '';
-              mapParams['images'] = '';
-              viewModel.uploadReportRecord(mapParams, (success) {
-                if (success) {
-                  ShowToast.normal('上传成功');
-                  Future.delayed(Duration(seconds: 1)).then((value) {
-                    Navigator.pop(context);
+            SizedBox(
+              height: 15,
+            ),
+            Padding(
+                padding: EdgeInsets.only(left: outMargin),
+                child: Text(
+                  '备注',
+                  style: jm_text_black_bold_style17,
+                )),
+            CustomMarkInput(
+              valueChange: (value) {
+                mark = value;
+              },
+            ),
+            CustomSubmitButton(
+              buttonClick: () {
+                Map<String, dynamic> mapParams = {};
+                mapParams['images'] = '';
+                if (imageList != null && imageList.length > 0) {
+                  String imageStr = '';
+                  imageList.forEach((element) {
+                    imageStr += element + ',';
                   });
+                  imageStr = imageStr.substring(0, imageStr.length - 1);
+                  mapParams['images'] = imageStr;
                 }
-              });
-            },
-          ),
-        ],
+                // print('data ==== ${widget.data}');
+                // print('images ==== $mapParams');
+                // print('123 === ${widget.data['status']}');
+                if (widget.data['status'] != null) {
+                  mapParams['beforeStatus'] = widget.data['status'];
+                }
+                if (widget.data['id'] != null) {
+                  mapParams['reportId'] = widget.data['id'];
+                }
+                mapParams['remark'] = mark ?? '';
+                viewModel.uploadReportRecord(mapParams, (success) {
+                  if (success) {
+                    ShowToast.normal('上传成功');
+                    Future.delayed(Duration(seconds: 1)).then((value) {
+                      Navigator.pop(context);
+                    });
+                  }
+                });
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:JMrealty/Report/viewmodel/ReportDetailViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportSuccessViewModel.dart';
+import 'package:JMrealty/Report/viewmodel/ReportUploadViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportViewModel.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
@@ -52,14 +53,26 @@ class _ReportSuccessState extends State<ReportSuccess> {
       'userPhone': userInfo['phonenumber'],
       'ratio': 100
     });
-    // successParams['reportShopPartnerBOList'] = List.from([
-    //   {
-    //     'userId': userInfo['userId'],
-    //     'userName': userInfo['userName'],
-    //     'userPhone': userInfo['phonenumber'],
-    //     'ratio': 100
-    //   }
-    // ]);
+
+    imgSelectV = SelectImageView(
+      count: 9,
+      imageSelected: (images) {
+        if (images != null) {
+          ReportUploadViewModel().upLoadReportImages(images,
+              callBack: (List strImages) {
+            if (strImages != null && strImages.length > 0) {
+              setState(() {
+                imgUrls = strImages;
+              });
+              // if (widget.changeInfo != null) {
+              //   widget.changeInfo(Map<String, dynamic>.from(
+              //       {'avatar': avatarPath, 'userId': widget.data['userId']}));
+              // }
+            }
+          });
+        }
+      },
+    );
     payPhone = '';
     dealTotal = '';
     houseArea = '';
@@ -211,7 +224,8 @@ class _ReportSuccessState extends State<ReportSuccess> {
           key: ValueKey('CustomInput_report_success_5'),
           labelStyle: jm_text_black_bold_style14,
           textStyle: jm_text_black_style15,
-          title: '房屋面积·平',
+          title: '房屋面积',
+          lastLabelText: '平方米',
           hintText: '房屋面积',
           keyboardType: TextInputType.number,
           text: successParams['houseArea'] ?? '',
@@ -229,7 +243,8 @@ class _ReportSuccessState extends State<ReportSuccess> {
           labelStyle: jm_text_black_bold_style14,
           textStyle: jm_text_black_style15,
           keyboardType: TextInputType.number,
-          title: '成交总价格·万',
+          title: '成交总价格',
+          lastLabelText: '元',
           hintText: '成交总价格',
           text: successParams['dealTotal'] ?? '',
           valueChange: (value) {
@@ -237,10 +252,10 @@ class _ReportSuccessState extends State<ReportSuccess> {
             successParams['dealTotal'] = value;
           },
         ),
-        JMline(
-            margin: outMargin,
-            width: SizeConfig.screenWidth - outMargin,
-            height: 0.5),
+        // JMline(
+        //     margin: outMargin,
+        //     width: SizeConfig.screenWidth - outMargin,
+        //     height: 0.5),
         JMline(width: SizeConfig.screenWidth, height: 0.5),
         SizedBox(
           height: 15,
