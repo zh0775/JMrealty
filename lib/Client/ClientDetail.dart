@@ -341,9 +341,9 @@ class _ClientDetailState extends State<ClientDetail> {
         getCell(
             isFollow: false,
             count: clientData['custmoerReportSize'],
-            followData: clientData['reportShopDetailVOS'] != null &&
-                    (clientData['reportShopDetailVOS'] is List)
-                ? clientData['reportShopDetailVOS']
+            followData: clientData['custmoerReportInfoVOS'] != null &&
+                    (clientData['custmoerReportInfoVOS'] is List)
+                ? clientData['custmoerReportInfoVOS']
                 : []),
         Container(
           width: SizeConfig.screenWidth,
@@ -525,7 +525,7 @@ class _ClientDetailState extends State<ClientDetail> {
                               .push(CupertinoPageRoute(builder: (_) {
                             return FollowTrack(
                                 json: convert.jsonEncode(followData),
-                                isFollow: true);
+                                isFollow: isFollow);
                           }));
                         },
                         child: Text(

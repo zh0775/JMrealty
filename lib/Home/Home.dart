@@ -263,6 +263,28 @@ class _HomeState extends State<Home> {
                       }));
                     } else if (buttonData['menuId'] == 2092) {
                       // 每日总结
+                      UserDefault.get(ACCESS_TOKEN).then((token) {
+                        if (token != null) {
+                          UserDefault.get(USERINFO).then((userInfo) {
+                            if (userInfo != null) {
+                              Map<String, dynamic> userInfoMap =
+                                  Map<String, dynamic>.from(
+                                      convert.jsonDecode(userInfo));
+                              Navigator.of(context)
+                                  .push(CupertinoPageRoute(builder: (_) {
+                                return Follow(
+                                  token: token,
+                                  deptId: userInfoMap['deptId'],
+                                );
+                              }));
+                            } else {
+                              homeVM.loadUserInfo();
+                            }
+                          });
+                        } else {
+                          Global.toLogin(isLogin: true);
+                        }
+                      });
                     } else if (buttonData['menuId'] == 2082) {
                       // 榜单
                     } else if (buttonIndex == 100) {

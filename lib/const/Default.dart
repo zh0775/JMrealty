@@ -373,6 +373,7 @@ class CustomInput extends StatefulWidget {
 
 class _CustomInputState extends State<CustomInput>
     with AutomaticKeepAliveClientMixin {
+  String selfValue = '';
   double margin;
   double lableWidth;
   OverlayEntry _overlayEntry;
@@ -470,6 +471,9 @@ class _CustomInputState extends State<CustomInput>
                   keyboardType: widget.keyboardType,
                   maxLines: 1,
                   style: widget.textStyle,
+                  textInputAction: widget.valueChangeAndShowList != null
+                      ? TextInputAction.search
+                      : TextInputAction.done,
                   decoration: InputDecoration(
                     hintText: widget.hintText,
                     fillColor: widget.backgroundColor,
@@ -488,11 +492,14 @@ class _CustomInputState extends State<CustomInput>
                         borderSide: BorderSide.none),
                   ),
                   onChanged: (value) {
+                    selfValue = value;
                     if (widget.valueChange != null) {
                       widget.valueChange(value);
                     }
+                  },
+                  onEditingComplete: () {
                     if (widget.valueChangeAndShowList != null) {
-                      widget.valueChangeAndShowList(value, this);
+                      widget.valueChangeAndShowList(selfValue, this);
                     }
                   },
                 ),
@@ -535,7 +542,7 @@ class _CustomInputState extends State<CustomInput>
   OverlayEntry createOverlayEntry(List data) {
     RenderBox renderBox = context.findRenderObject();
     var size = renderBox.size;
-
+    Widget c = Container();
     return OverlayEntry(
         builder: (context) => Positioned(
               width: size.width,

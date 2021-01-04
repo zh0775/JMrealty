@@ -55,10 +55,12 @@ class Http {
     }));
 
     dio.interceptors.add(InterceptorsWrapper(onResponse: (Response res) {
+      print('123');
       if (res.statusCode == 403 ||
           (res.data)['msg'] == '登录状态已失效，请重新登录' ||
           (res.data)['msg'] == '令牌不能为空' ||
-          (res.data)['msg'] == '令牌验证失败，请重新登录') {
+          (res.data)['msg'] == '令牌验证失败，请重新登录' ||
+          (res.data)['code'] == 401) {
         UserDefault.saveStr(ACCESS_TOKEN, null);
         Global.toLogin(isLogin: true);
       }
@@ -94,9 +96,15 @@ class Http {
         }
       });
     } catch (e) {
+      if (e.response.statusCode == 403) {
+        UserDefault.saveStr(ACCESS_TOKEN, null);
+        Global.toLogin(isLogin: true);
+      }
       print('e ===== $e');
       if (fail != null) {
-        fail('网络发生错误', -1);
+        if (e.response.data != null) {
+          fail(((e.response.data)['msg']) ?? '', -1);
+        }
       }
     }
   }
@@ -125,9 +133,15 @@ class Http {
         }
       });
     } catch (e) {
+      if (e.response.statusCode == 403) {
+        UserDefault.saveStr(ACCESS_TOKEN, null);
+        Global.toLogin(isLogin: true);
+      }
       print('e ===== $e');
       if (fail != null) {
-        fail('网络发生错误', -1);
+        if (e.response.data != null) {
+          fail(((e.response.data)['msg']) ?? '', -1);
+        }
       }
     }
   }
@@ -156,9 +170,15 @@ class Http {
         }
       });
     } catch (e) {
+      if (e.response.statusCode == 403) {
+        UserDefault.saveStr(ACCESS_TOKEN, null);
+        Global.toLogin(isLogin: true);
+      }
       print('e ===== $e');
       if (fail != null) {
-        fail('网络发生错误', -1);
+        if (e.response.data != null) {
+          fail(((e.response.data)['msg']) ?? '', -1);
+        }
       }
     }
   }
@@ -187,9 +207,15 @@ class Http {
         }
       });
     } catch (e) {
+      if (e.response.statusCode == 403) {
+        UserDefault.saveStr(ACCESS_TOKEN, null);
+        Global.toLogin(isLogin: true);
+      }
       print('e ===== $e');
       if (fail != null) {
-        fail('网络发生错误', -1);
+        if (e.response.data != null) {
+          fail(((e.response.data)['msg']) ?? '', -1);
+        }
       }
     }
   }

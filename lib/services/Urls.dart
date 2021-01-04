@@ -51,6 +51,8 @@ class Urls {
       '/customer/customer/findCustomerPoolInfo';
   // 从客户池添加客户到我的客户列表
   static const String takeCustomerInPool = '/customer/customer/customerPool';
+  // 员工把客户放入客户池
+  static const String customToPoll = '/customer/customer/increaseCustomerPool';
 
   // 报备
   // 项目名称模糊查询
@@ -71,8 +73,15 @@ class Urls {
   static const String reportSuccess = '/customer/shop/subscription';
   // 退单
   static const String reportChargeBack = '/customer/status/chargeback';
+  // 失效
+  static const String reportInvalid = '/customer/status/invalid';
   // 签约
   static const String reportSignUp = '/customer/status/signUp';
+  // 结佣
+  static const String reportMakingCommission =
+      '/customer/status/makingCommission';
+  // 预约
+  static const String reportAppointment = '/customer/status/makeAppointment';
   // 带看
   static const String reportTakelook = '/customer/status/takelook';
   // 复制

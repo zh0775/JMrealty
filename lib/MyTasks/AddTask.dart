@@ -21,6 +21,7 @@ class _AddTaskState extends State<AddTask> {
   double margin;
   double lineHeight = 50;
   double selfWidth;
+  String taskRecipient = '';
   List typeList = [];
   List urgencyList = [];
   DateTime startDate = DateTime.now();
@@ -103,13 +104,17 @@ class _AddTaskState extends State<AddTask> {
                 },
               ),
               JMline(width: selfWidth, height: 0.5),
-              getDateWidget(title: '任务开始时间', start: true),
+              getDateWidget(title: '发布时间', start: true),
               JMline(width: selfWidth, height: 0.5),
-              getDateWidget(title: '任务结束时间', start: false),
+              getDateWidget(title: '截止时间', start: false),
               JMline(width: selfWidth, height: 0.5),
               CustomInput(
                 title: '任务接收人',
                 hintText: '搜索添加任务接收人',
+                text: taskRecipient ?? '',
+                valueChange: (value) {
+                  taskRecipient = value;
+                },
                 valueChangeAndShowList: (value, state) {
                   if (value != '') {
                     searchAgentVM.loadAgentSearchData(
@@ -161,36 +166,41 @@ class _AddTaskState extends State<AddTask> {
               SizedBox(
                 height: 15,
               ),
-              CustomSubmitButton(
-                buttonClick: () {
-                  params['receiveIdList'] =
-                      agentList.map((e) => e['userId']).toList();
-                  if (params['name'] == null || params['name'] == '') {
-                    ShowToast.normal('请输入任务名称');
-                    return;
-                  }
-                  if (params['type'] == null) {
-                    ShowToast.normal('请选择任务类型');
-                    return;
-                  }
-                  if (params['priority'] == null) {
-                    ShowToast.normal('请选择任务紧急程度');
-                    return;
-                  }
-                  if (params['taskExplain'] == null ||
-                      params['taskExplain'] == '') {
-                    ShowToast.normal('请输入任务说明');
-                    return;
-                  }
-
-                  tasksVM.addTasksRequest(params, (success) {
-                    if (success) {
-                      ShowToast.normal('新增成功');
-                      Future.delayed(
-                          Duration(seconds: 1), () => Navigator.pop(context));
+              Padding(
+                padding: EdgeInsets.only(left: margin * 5),
+                child: CustomSubmitButton(
+                  height: 60,
+                  margin: margin * 5,
+                  buttonClick: () {
+                    params['receiveIdList'] =
+                        agentList.map((e) => e['userId']).toList();
+                    if (params['name'] == null || params['name'] == '') {
+                      ShowToast.normal('请输入任务名称');
+                      return;
                     }
-                  });
-                },
+                    if (params['type'] == null) {
+                      ShowToast.normal('请选择任务类型');
+                      return;
+                    }
+                    if (params['priority'] == null) {
+                      ShowToast.normal('请选择任务紧急程度');
+                      return;
+                    }
+                    if (params['taskExplain'] == null ||
+                        params['taskExplain'] == '') {
+                      ShowToast.normal('请输入任务说明');
+                      return;
+                    }
+
+                    tasksVM.addTasksRequest(params, (success) {
+                      if (success) {
+                        ShowToast.normal('新增成功');
+                        Future.delayed(
+                            Duration(seconds: 1), () => Navigator.pop(context));
+                      }
+                    });
+                  },
+                ),
               ),
               SizedBox(
                 height: 20,

@@ -1,3 +1,4 @@
+import 'package:JMrealty/Project/ProjectViewModel.dart';
 import 'package:JMrealty/Report/ReportListView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
@@ -11,13 +12,31 @@ class Report extends StatefulWidget {
 }
 
 class _ReportState extends State<Report> {
+  ProjectViewModel projectVM = ProjectViewModel();
   bool isCopy = false;
   // int projectIndex;
   TabController tabCtr;
   double widthScale;
   EventBus _eventBus = EventBus();
+  double topMenuHeight = 40;
+  bool showMenu = false;
+  Map currentSelect = {'title': '所有项目', 'value': null};
+  List projectListData = [];
   @override
   void initState() {
+    projectVM.loadProjectList((projectList, success) {
+      if (success) {
+        List listFormat = projectList.map((e) {
+          return {'title': e['name'], 'value': e['id']};
+        }).toList();
+        setState(() {
+          projectListData = [
+            {'title': '所有项目', 'value': null},
+            ...listFormat
+          ];
+        });
+      }
+    });
     // projectIndex = 0;
     // tabCtr = TabController(length: null, vsync: null)
     super.initState();
@@ -26,6 +45,7 @@ class _ReportState extends State<Report> {
   @override
   void dispose() {
     _eventBus.off(NOTIFY_REPORT_SELECT_COPY_REFRASH);
+    _eventBus.off(NOTIFY_REPORT_SELECT_REFRASH);
     super.dispose();
   }
 
@@ -89,61 +109,133 @@ class _ReportState extends State<Report> {
               ],
             )),
         backgroundColor: Color(0xfff0f2f5),
-        body: Column(
-          children: [
-            Container(
-              height: 40,
-              width: SizeConfig.screenWidth,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(
-                      bottom: BorderSide(width: 0.5, color: jm_line_color))),
-              child: Row(
-                children: [
-                  ButtonTheme(
-                    layoutBehavior: ButtonBarLayoutBehavior.constrained,
-                    minWidth: 0,
-                    child: FlatButton(
-                        onPressed: () {},
-                        child: Text(
-                          '项目',
-                          style: jm_text_gray_style14,
-                        )),
-                  ),
-                  ButtonTheme(
-                    minWidth: 0,
-                    layoutBehavior: ButtonBarLayoutBehavior.constrained,
-                    child: FlatButton(
-                        onPressed: () {},
-                        child: Text(
-                          '所有项目',
-                          style: jm_text_black_style15,
-                        )),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: TabBarView(children: [
-                ReportListView(
-                  status: 0,
-                  isCopy: isCopy,
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: Stack(
+            children: [
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Column(
+                  children: [
+                    Container(
+                      height: topMenuHeight,
+                      width: SizeConfig.screenWidth,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border(
+                              bottom: BorderSide(
+                                  width: 0.5, color: jm_line_color))),
+                      child: Row(
+                        children: [
+                          ButtonTheme(
+                            layoutBehavior: ButtonBarLayoutBehavior.constrained,
+                            minWidth: 0,
+                            child: FlatButton(
+                                onPressed: () {},
+                                child: Text(
+                                  '项目',
+                                  style: jm_text_gray_style14,
+                                )),
+                          ),
+                          ButtonTheme(
+                            minWidth: 0,
+                            layoutBehavior: ButtonBarLayoutBehavior.constrained,
+                            child: FlatButton(
+                                onPressed: () {
+                                  setState(() {
+                                    showMenu = !showMenu;
+                                  });
+                                },
+                                child: Text(
+                                  currentSelect['title'],
+                                  style: jm_text_black_style15,
+                                )),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: TabBarView(children: [
+                        ReportListView(
+                          status: 0,
+                          isCopy: isCopy,
+                        ),
+                        ReportListView(status: 10, isCopy: isCopy),
+                        ReportListView(status: 20, isCopy: isCopy),
+                        ReportListView(status: 21, isCopy: isCopy),
+                        ReportListView(status: 30, isCopy: isCopy),
+                        ReportListView(status: 40, isCopy: isCopy),
+                        ReportListView(status: 50, isCopy: isCopy),
+                        ReportListView(status: 60, isCopy: isCopy),
+                        ReportListView(status: 70, isCopy: isCopy),
+                        ReportListView(status: 80, isCopy: isCopy),
+                      ]),
+                    )
+                  ],
                 ),
-                ReportListView(status: 10, isCopy: isCopy),
-                ReportListView(status: 20, isCopy: isCopy),
-                ReportListView(status: 21, isCopy: isCopy),
-                ReportListView(status: 30, isCopy: isCopy),
-                ReportListView(status: 40, isCopy: isCopy),
-                ReportListView(status: 50, isCopy: isCopy),
-                ReportListView(status: 60, isCopy: isCopy),
-                ReportListView(status: 70, isCopy: isCopy),
-                ReportListView(status: 80, isCopy: isCopy),
-              ]),
-            )
-          ],
+              ),
+              showMenu
+                  ? Positioned(
+                      top: topMenuHeight,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            showMenu = false;
+                          });
+                        },
+                        child: Container(
+                          color: Colors.black26,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [...selectList()],
+                            ),
+                          ),
+                        ),
+                      ))
+                  : Container(
+                      width: 0.0,
+                      height: 0.0,
+                    ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  List<Widget> selectList() {
+    List<Widget> listWidget = [];
+    projectListData.forEach((e) {
+      listWidget.add(GestureDetector(
+        onTap: () {
+          setState(() {
+            currentSelect = e;
+            showMenu = false;
+          });
+          _eventBus.emit(NOTIFY_REPORT_SELECT_REFRASH, e['value']);
+        },
+        child: Container(
+          color: Colors.white,
+          height: 40,
+          alignment: Alignment.centerLeft,
+          width: SizeConfig.screenWidth,
+          child: Padding(
+            padding: EdgeInsets.only(left: widthScale * 5),
+            child: Text(
+              e['title'] ?? '',
+            ),
+          ),
+        ),
+      ));
+    });
+    return listWidget;
   }
 
   Widget getTab(String title) {

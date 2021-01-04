@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
 
 class AddReport extends StatefulWidget {
+  final Map userData;
+  const AddReport({this.userData});
   @override
   _AddReportState createState() => _AddReportState();
 }

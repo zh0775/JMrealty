@@ -13,11 +13,11 @@ class FollowTrack extends StatefulWidget {
 
 class _FollowTrackState extends State<FollowTrack> {
   WebViewController _controller;
-  String url = '';
+  String webUrl = '';
   String _title;
   @override
   void initState() {
-    url = widget.isFollow ? 'followTrack' : 'guideTrack';
+    webUrl = WEB_URL + (widget.isFollow ? '/followTrack' : '/guideTrack');
     _title = '';
     super.initState();
   }
@@ -44,7 +44,7 @@ class _FollowTrackState extends State<FollowTrack> {
             },
           )),
       body: WebView(
-        initialUrl: WEB_URL + '/#/' + url,
+        initialUrl: webUrl,
         javascriptMode: JavascriptMode.unrestricted,
         onWebViewCreated: (controller) {
           _controller = controller;

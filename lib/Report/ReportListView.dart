@@ -32,9 +32,14 @@ class _ReportListViewState extends State<ReportListView>
   int pageSize = 10;
   List dataList = [];
   List copyList = [];
+  int projectId;
   // bool unNeedDispose;
   @override
   void initState() {
+    _eventBus.on(NOTIFY_REPORT_SELECT_REFRASH, (arg) {
+      projectId = arg;
+      loadList();
+    });
     _eventBus.on(NOTIFY_REPORT_LIST_REFRASH, (arg) {
       loadList();
     });
@@ -139,7 +144,8 @@ class _ReportListViewState extends State<ReportListView>
   }
 
   loadList() {
-    reportListVM.loadListData(widget.status, success: (success) {
+    reportListVM.loadListData(widget.status, projectId: projectId,
+        success: (success) {
       // easyRefreshCtr.resetLoadState();
       easyRefreshCtr.finishRefresh();
       // easyRefreshCtr.finishLoad();

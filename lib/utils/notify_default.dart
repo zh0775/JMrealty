@@ -11,3 +11,4 @@ const String NOTIFY_TASKS_LIST_REFRASH = 'notify_tasks_list_refrash';
 const String NOTIFY_REPORT_LIST_REFRASH = 'notify_REPORT_list_refrash';
 const String NOTIFY_REPORT_SELECT_COPY_REFRASH =
     'notify_REPORT_select_copy_refrash';
+const String NOTIFY_REPORT_SELECT_REFRASH = 'notify_REPORT_select_refrash';

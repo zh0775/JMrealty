@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:JMrealty/Report/ReportSuccess.dart';
 import 'package:JMrealty/Report/ReportUpload.dart';
 import 'package:JMrealty/Report/viewmodel/ReportChangeStatusViewModel.dart';
@@ -12,6 +14,16 @@ import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
 import 'ReportDetail.dart';
 import 'package:intl/intl.dart';
+
+enum ReportCellButtonStatus {
+  takeLook, // 带看
+  invalid, // 失效
+  upload, // 上传
+  appointment, // 预约
+  buy, // 认购
+  sign, // 签约
+  chargeback, // 退单
+}
 
 class ReportListCell extends StatefulWidget {
   final Function() needRefrash;
@@ -39,6 +51,7 @@ class _ReportListCellState extends State<ReportListCell> {
   double outMargin;
   double insideMargin;
   double labelSpace;
+  int status;
   @override
   void initState() {
     labelSpace = 3;
@@ -47,6 +60,7 @@ class _ReportListCellState extends State<ReportListCell> {
 
   @override
   Widget build(BuildContext context) {
+    status = widget.data['status'];
     if (!widget.copyStatus) {
       checkCopyValue = false;
     }
@@ -306,85 +320,140 @@ class _ReportListCellState extends State<ReportListCell> {
     );
   }
 
+  // enum ReportCellButtonStatus {
+  //   takeLook, // 带看
+  //   invalid, // 失效
+  //   upload, // 上传
+  //   appointment, // 预约
+  //   buy, // 认购
+  //   sign, // 签约
+  //   chargeback, // 退单
+  // }
+
   // 底部按钮
   Widget getButtons() {
+    List buttonsType = [];
+    switch (status) {
+      case 0:
+        buttonsType = [
+          ReportCellButtonStatus.takeLook,
+          ReportCellButtonStatus.upload,
+          ReportCellButtonStatus.invalid
+        ];
+        break;
+      case 10:
+        buttonsType = [
+          ReportCellButtonStatus.upload,
+        ];
+        break;
+      case 20:
+        buttonsType = [
+          ReportCellButtonStatus.buy,
+          ReportCellButtonStatus.appointment,
+        ];
+        break;
+      case 21:
+        buttonsType = [
+          ReportCellButtonStatus.buy,
+        ];
+        break;
+      case 30:
+        buttonsType = [
+          ReportCellButtonStatus.sign,
+          ReportCellButtonStatus.chargeback,
+        ];
+        break;
+    }
+    List<Widget> buttons = [];
+    buttonsType.forEach((e) {
+      buttons.add(getStatusButton(e));
+    });
+    double space =
+        ((SizeConfig.screenWidth - outMargin * 2) - widthScale * 75) / 4;
     return Container(
-      width: SizeConfig.screenWidth - outMargin * 2,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              getTextButton('上传带看单', () {
-                Navigator.of(context).push(CupertinoPageRoute(
-                  builder: (context) {
-                    return ReportUpload(data: widget.data);
-                  },
-                ));
-              }),
-              getTextButton('退单', () {
-                CustomAlert(content: '确认要退单吗？').show(
-                  confirmClick: () {
-                    Map<String, dynamic> params = {
-                      'beforeStatus': widget.data['status'],
-                      'reportId': widget.data['id'],
-                      'remark': '',
-                      'images': '',
-                    };
-                    reportChangeStatusVM.chargebackRequest(params, (success) {
-                      if (success && widget.needRefrash != null) {
-                        widget.needRefrash();
-                      }
-                    });
-                  },
-                );
-              },
-                  borderColor: Colors.red,
-                  textStyle: TextStyle(color: Colors.red, fontSize: 13)),
-              getTextButton('成交', () {
-                UserDefault.get(USERINFO).then((value) {
-                  Map userInfo =
-                      Map<String, dynamic>.from(convert.jsonDecode(value));
+        width: SizeConfig.screenWidth - outMargin * 2,
+        margin: EdgeInsets.only(left: space, bottom: 10, top: 4),
+        child: Wrap(
+          // alignment: WrapAlignment.spaceAround,
+          spacing: space,
 
-                  Navigator.of(context).push(CupertinoPageRoute(
-                    builder: (context) {
-                      return ReportSuccess(
-                        data: widget.data,
-                        userInfo: userInfo,
-                      );
-                    },
-                  ));
-                });
-              }),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              getTextButton('签约', () {
-                CustomAlert(content: '确认要签约吗？').show(
-                  confirmClick: () {
-                    Map<String, dynamic> params = {
-                      'beforeStatus': widget.data['status'],
-                      'reportId': widget.data['id'],
-                      'remark': '',
-                      'images': '',
-                      'visaTime': DateFormat('yyyy-MM-dd HH:mm:ss')
-                          .format(DateTime.now())
-                    };
-                    reportChangeStatusVM.signUpRequest(params, (success) {
-                      if (success && widget.needRefrash != null) {
-                        widget.needRefrash();
-                      }
-                    });
-                  },
-                );
-              }),
-            ],
-          )
-        ],
-      ),
-    );
+          children: [...buttons],
+        )
+        // Column(
+        //   children: [
+        //     Row(
+        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //       children: [
+        //         getTextButton('上传带看单', () {
+        //           Navigator.of(context).push(CupertinoPageRoute(
+        //             builder: (context) {
+        //               return ReportUpload(data: widget.data);
+        //             },
+        //           ));
+        //         }),
+        //         getTextButton('退单', () {
+        //           CustomAlert(content: '确认要退单吗？').show(
+        //             confirmClick: () {
+        //               Map<String, dynamic> params = {
+        //                 'beforeStatus': widget.data['status'],
+        //                 'reportId': widget.data['id'],
+        //                 'remark': '',
+        //                 'images': '',
+        //               };
+        //               reportChangeStatusVM.chargebackRequest(params, (success) {
+        //                 if (success && widget.needRefrash != null) {
+        //                   widget.needRefrash();
+        //                 }
+        //               });
+        //             },
+        //           );
+        //         },
+        //             borderColor: Colors.red,
+        //             textStyle: TextStyle(color: Colors.red, fontSize: 13)),
+        //         getTextButton('成交', () {
+        //           UserDefault.get(USERINFO).then((value) {
+        //             Map userInfo =
+        //                 Map<String, dynamic>.from(convert.jsonDecode(value));
+
+        //             Navigator.of(context).push(CupertinoPageRoute(
+        //               builder: (context) {
+        //                 return ReportSuccess(
+        //                   data: widget.data,
+        //                   userInfo: userInfo,
+        //                 );
+        //               },
+        //             ));
+        //           });
+        //         }),
+        //       ],
+        //     ),
+        //     Row(
+        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //       children: [
+        //         getTextButton('签约', () {
+        //           CustomAlert(content: '确认要签约吗？').show(
+        //             confirmClick: () {
+        //               Map<String, dynamic> params = {
+        //                 'beforeStatus': widget.data['status'],
+        //                 'reportId': widget.data['id'],
+        //                 'remark': '',
+        //                 'images': '',
+        //                 'visaTime': DateFormat('yyyy-MM-dd HH:mm:ss')
+        //                     .format(DateTime.now())
+        //               };
+        //               reportChangeStatusVM.signUpRequest(params, (success) {
+        //                 if (success && widget.needRefrash != null) {
+        //                   widget.needRefrash();
+        //                 }
+        //               });
+        //             },
+        //           );
+        //         }),
+        //       ],
+        //     )
+        //   ],
+        // ),
+        );
   }
 
   // label
@@ -395,6 +464,166 @@ class _ReportListCellState extends State<ReportListCell> {
         title,
         style: jm_text_gray_style15,
       ),
+    );
+  }
+
+  Widget getStatusButton(ReportCellButtonStatus buttonStatus) {
+    void Function() buttonClick = () {};
+    // Color buttonColor = Colors.white;
+    Color borderColor = jm_line_color;
+    String titlt = '带看';
+    TextStyle textStyle = jm_text_black_style13;
+    switch (buttonStatus) {
+      case ReportCellButtonStatus.takeLook:
+        buttonClick = () {
+          CustomAlert(content: '是否添加到已带看').show(
+            confirmClick: () {
+              Map<String, dynamic> params = {
+                'beforeStatus': widget.data['status'],
+                'reportId': widget.data['id'],
+                'remark': '',
+                'images': '',
+                'visaTime':
+                    DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())
+              };
+              reportChangeStatusVM.takelookRequest(params, (success) {
+                if (success && widget.needRefrash != null) {
+                  widget.needRefrash();
+                }
+              });
+            },
+          );
+        };
+        titlt = '带看';
+        break;
+      case ReportCellButtonStatus.upload:
+        buttonClick = () {
+          Navigator.of(context).push(CupertinoPageRoute(
+            builder: (context) {
+              return ReportUpload(
+                data: widget.data,
+                uploadStatus: ReportUploadStatus.upload,
+              );
+            },
+          ));
+        };
+        titlt = '上传带看单';
+        break;
+      case ReportCellButtonStatus.invalid:
+        buttonClick = () {
+          Navigator.of(context).push(CupertinoPageRoute(
+            builder: (context) {
+              return ReportUpload(
+                data: widget.data,
+                uploadStatus: ReportUploadStatus.invalid,
+              );
+            },
+          ));
+        };
+        titlt = '失效';
+        break;
+      case ReportCellButtonStatus.appointment:
+        buttonClick = () {
+          Navigator.of(context).push(CupertinoPageRoute(
+            builder: (context) {
+              return ReportUpload(
+                data: widget.data,
+                uploadStatus: ReportUploadStatus.appointment,
+              );
+            },
+          ));
+        };
+        titlt = '预约';
+        break;
+      case ReportCellButtonStatus.buy:
+        buttonClick = () {
+          UserDefault.get(USERINFO).then((value) {
+            Map userInfo = Map<String, dynamic>.from(convert.jsonDecode(value));
+
+            Navigator.of(context).push(CupertinoPageRoute(
+              builder: (context) {
+                return ReportSuccess(
+                  data: widget.data,
+                  userInfo: userInfo,
+                );
+              },
+            ));
+          });
+        };
+        titlt = '认购';
+        break;
+      case ReportCellButtonStatus.sign:
+        buttonClick = () {
+          // CustomAlert(content: '确认要签约吗？').show(
+          //   confirmClick: () {
+          //     Map<String, dynamic> params = {
+          //       'beforeStatus': widget.data['status'],
+          //       'reportId': widget.data['id'],
+          //       'remark': '',
+          //       'images': '',
+          //       'visaTime':
+          //           DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())
+          //     };
+          //     reportChangeStatusVM.signUpRequest(params, (success) {
+          //       if (success && widget.needRefrash != null) {
+          //         widget.needRefrash();
+          //       }
+          //     });
+          //   },
+          // );
+          Navigator.of(context).push(CupertinoPageRoute(
+            builder: (context) {
+              return ReportUpload(
+                data: widget.data,
+                uploadStatus: ReportUploadStatus.sign,
+              );
+            },
+          ));
+        };
+        titlt = '签约';
+        break;
+      case ReportCellButtonStatus.chargeback:
+        buttonClick = () {
+          // CustomAlert(content: '确认要退单吗？').show(
+          //   confirmClick: () {
+          //     Map<String, dynamic> params = {
+          //       'beforeStatus': widget.data['status'],
+          //       'reportId': widget.data['id'],
+          //       'remark': '',
+          //       'images': '',
+          //     };
+          //     reportChangeStatusVM.chargebackRequest(params, (success) {
+          //       if (success && widget.needRefrash != null) {
+          //         widget.needRefrash();
+          //       }
+          //     });
+          //   },
+          // );
+          Navigator.of(context).push(CupertinoPageRoute(
+            builder: (context) {
+              return ReportUpload(
+                data: widget.data,
+                uploadStatus: ReportUploadStatus.chargeback,
+              );
+            },
+          ));
+        };
+        titlt = '退单';
+        break;
+    }
+
+    return RawMaterialButton(
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(widthScale * 2),
+          side: BorderSide(width: 1, color: borderColor)),
+      constraints: BoxConstraints(
+        minHeight: 30,
+        minWidth: widthScale * 25,
+      ),
+      textStyle: textStyle,
+      child: Text(titlt),
+      onPressed: buttonClick,
     );
   }
 

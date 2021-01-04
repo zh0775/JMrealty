@@ -139,8 +139,11 @@ class _MineTopState extends State<MineTop> {
                                   backgroundPath.length > 0
                               ? ImageLoader(widget.data['background'], 0)
                               : Container(
-                                  width: 0.0,
-                                  height: 0.0,
+                                  color: Colors.grey,
+                                  // child: Image.asset(
+                                  // 'assets/images/home/motivation_monochromatic.png',)
+                                  // width: 0.0,
+                                  // height: 0.0,
                                 ),
                         )),
                     // 遮挡照片一部分的
@@ -171,7 +174,7 @@ class _MineTopState extends State<MineTop> {
             // 头像
             Container(
               width: SizeConfig.screenWidth,
-              height: 0,
+              height: 30,
               child: Stack(
                 overflow: Overflow.visible,
                 children: [
@@ -192,6 +195,17 @@ class _MineTopState extends State<MineTop> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(widthScale * 3),
                           ),
+                          child: avatarPath != null && avatarPath.length > 0
+                              ? Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.circular(widthScale * 2),
+                                      child: ImageLoader(avatarPath, 0)),
+                                )
+                              : Container(
+                                  color: Colors.grey,
+                                ),
                         ),
                       )),
                 ],

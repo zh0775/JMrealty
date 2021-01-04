@@ -25,7 +25,12 @@ class _CustomMarkInputState extends State<CustomMarkInput> {
       padding: EdgeInsets.fromLTRB(marginSpace, 10, marginSpace, 10),
       child: TextField(
         maxLines: 100,
-        controller: TextEditingController(text: widget.text),
+        controller: TextEditingController.fromValue(TextEditingValue(
+          text: widget.text ?? '',
+          selection: TextSelection.fromPosition(TextPosition(
+              affinity: TextAffinity.downstream,
+              offset: widget.text.length ?? 0)),
+        )),
         minLines: 3,
         decoration: InputDecoration(
             contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),

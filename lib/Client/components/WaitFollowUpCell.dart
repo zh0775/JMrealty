@@ -10,6 +10,8 @@ typedef void WriteFollowClick(
     ClientStatus status, int index, Map model, BuildContext context);
 typedef void CellReportClick(
     ClientStatus status, int index, Map model, BuildContext context);
+typedef void CellClientOpenClick(
+    ClientStatus status, int index, Map model, BuildContext context);
 
 typedef void TakeOrderClick(Map model);
 
@@ -21,6 +23,7 @@ class WaitFollowUpCell extends StatefulWidget {
   final WriteFollowClick writeFollowClick;
   final CellReportClick cellReportClick;
   final TakeOrderClick takeOrderClick;
+  final CellClientOpenClick cellClientOpenClick;
   final bool pool;
   WaitFollowUpCell(
       {this.model,
@@ -30,6 +33,7 @@ class WaitFollowUpCell extends StatefulWidget {
       this.writeFollowClick,
       this.cellReportClick,
       this.takeOrderClick,
+      this.cellClientOpenClick,
       this.pool = false});
   @override
   _WaitFollowUpCellState createState() => _WaitFollowUpCellState();
@@ -39,6 +43,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
   double lineHeight;
   double cellHeight;
   double cellWidth;
+  double widthScale;
   String level = '';
   String name = '';
   String sex = '';
@@ -70,6 +75,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
     SizeConfig().init(context);
     model = widget.model;
     cellWidth = SizeConfig.screenWidth;
+    widthScale = SizeConfig.blockSizeHorizontal;
     Color levelColor = Colors.transparent;
     if (model['desireId'] != null) {
       switch (model['desireId']) {
@@ -330,7 +336,43 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
         ),
       ];
     } else {
+      Color whiteButtonTextColor = Color.fromRGBO(87, 93, 116, 1);
       return [
+        RawMaterialButton(
+          onPressed: () {
+            if (widget.cellClientOpenClick != null) {
+              widget.cellClientOpenClick(
+                  widget.status, widget.index, widget.model, context);
+            }
+          },
+          constraints: BoxConstraints(
+            minHeight: lineHeight - 5,
+            minWidth: SizeConfig.blockSizeHorizontal * 17,
+          ),
+          shape: RoundedRectangleBorder(
+            side: BorderSide(width: 0.5, color: whiteButtonTextColor),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.lock_open,
+                size: widthScale * 4.5,
+                color: whiteButtonTextColor,
+              ),
+              SizedBox(
+                width: widthScale,
+              ),
+              Text(
+                '公开',
+                style: TextStyle(fontSize: 14, color: whiteButtonTextColor),
+              )
+            ],
+          ),
+        ),
+        SizedBox(
+          width: SizeConfig.blockSizeHorizontal * 3,
+        ),
         Container(
             width: SizeConfig.blockSizeHorizontal * 20,
             height: lineHeight - 5,
@@ -339,8 +381,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
               elevation: 0,
               fillColor: Colors.white,
               shape: RoundedRectangleBorder(
-                side: BorderSide(
-                    width: 0.5, color: Color.fromRGBO(87, 93, 116, 1)),
+                side: BorderSide(width: 0.5, color: whiteButtonTextColor),
                 borderRadius: BorderRadius.circular(6),
               ),
               onPressed: () {
@@ -355,15 +396,14 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
                   Icon(
                     Icons.create,
                     size: 15,
-                    color: Color.fromRGBO(87, 93, 116, 1),
+                    color: whiteButtonTextColor,
                   ),
                   SizedBox(
                     width: 6,
                   ),
                   Text(
                     '写跟进',
-                    style: TextStyle(
-                        fontSize: 14, color: Color.fromRGBO(87, 93, 116, 1)),
+                    style: TextStyle(fontSize: 14, color: whiteButtonTextColor),
                   )
                 ],
               ),

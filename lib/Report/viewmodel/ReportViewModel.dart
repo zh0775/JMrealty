@@ -3,6 +3,7 @@ import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:intl/intl.dart';
+
 class ReportViewModel extends BaseViewModel {
   List projectData;
   loadProjectList(String name, {Function(List data) success}) {
@@ -96,15 +97,16 @@ class ReportViewModel extends BaseViewModel {
       });
     }
     params = {
-      'company': project['name'],
-      'companyId': project['id'],
+      'company': project['companyName'],
+      'companyId': project['companyId'],
       'employeeId': agent['userId'],
       'employeeName': agent['userName'],
       'employeePhone': agent['phonenumber'],
       'projectId': project['id'],
       'projectName': project['name'],
       'projectBeforeTime': project['approachDate'],
-      'projectProtect': DateFormat('yyyy-MM-dd').format(DateTime.now().add(Duration(days: project['reportProtect']))) ,
+      'projectProtect': DateFormat('yyyy-MM-dd')
+          .format(DateTime.now().add(Duration(days: project['reportProtect']))),
       'remarks': data['mark'] ?? '',
     };
     if (clientsParams.length > 0) {

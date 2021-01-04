@@ -205,28 +205,28 @@ String timeToYMD(String dateStr) {
 String getStatusString(int status) {
   switch (status) {
     case 0:
-      return '有效';
+      return '报备';
       break;
     case 10:
       return '已带看';
       break;
     case 20:
-      return '已上传';
+      return '带看资料';
       break;
     case 21:
-      return '已预约';
+      return '预约';
       break;
     case 30:
-      return '已成交';
+      return '成交';
       break;
     case 40:
-      return '已签约';
+      return '签约';
       break;
     case 50:
-      return '已结款';
+      return '结款';
       break;
     case 60:
-      return '已结佣';
+      return '结佣';
       break;
     case 70:
       return '失效';

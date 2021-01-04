@@ -4,6 +4,8 @@ import 'package:JMrealty/Client/components/WaitFollowUpCell.dart';
 import 'package:JMrealty/Client/components/WriteFollow.dart';
 import 'package:JMrealty/Client/viewModel/ClientListSelectViewModel.dart';
 import 'package:JMrealty/Client/viewModel/ClientListViewModel.dart';
+import 'package:JMrealty/Report/AddReport.dart';
+import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/const/Default.dart';
@@ -22,14 +24,14 @@ class Client extends StatefulWidget {
 }
 
 class _ClientState extends State<Client> {
-  bool selectExpand;
+  bool selectExpand = false;
   int currentSelectIndex;
-  Map value1;
-  Map value2;
-  Map value3;
+  Map value1 = {'title': '级别', 'value': '-1'};
+  Map value2 = {'title': '类型', 'value': '-1'};
+  Map value3 = {'title': '面积', 'value': '-1'};
   Map selectData;
   EventBus eventBus = EventBus();
-  ClientListSelect1ViewModel topSelectVM;
+  ClientListSelect1ViewModel topSelectVM = ClientListSelect1ViewModel();
   SelectedForRowAtIndex selectedForRowAtIndex =
       (ClientStatus status, int index, Map model, BuildContext context) {
     Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
@@ -40,32 +42,45 @@ class _ClientState extends State<Client> {
     // print('status === $status --- index === $index --- model === $model');
   };
   WriteFollowClick writeFollowClick;
+  CellClientOpenClick cellClientOpenClick;
   CellReportClick cellReportClick =
       (ClientStatus status, int index, Map model, BuildContext context) {
+    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+      return AddReport(
+        userData: model,
+      );
+    }));
     print(
         'cellReportClick status === $status --- index === $index --- model === $model');
   };
   @override
   void initState() {
     eventBus.on(NOTIFY_LOGIN_SUCCESS, (arg) {
-      eventBus.emit(NOTIFY_CLIENT_LIST_REFRASH_NORMAL);
+      refrashList();
     });
-    selectExpand = false;
-    value1 = {'title': '级别', 'value': '-1'};
-    value2 = {'title': '类型', 'value': '-1'};
-    value3 = {'title': '面积', 'value': '-1'};
-    topSelectVM = ClientListSelect1ViewModel();
     topSelectVM.loadSelectData(success: (data) {
       setState(() {
         selectData = data;
       });
     });
+    cellClientOpenClick =
+        (ClientStatus status, int index, Map model, BuildContext context) {
+      CustomAlert(content: '是否公开到客户池').show(
+        confirmClick: () {
+          topSelectVM.customToPullRequest(model['id'], (success) {
+            if (success) {
+              refrashList();
+            }
+          });
+        },
+      );
+    };
     writeFollowClick =
         (ClientStatus status, int index, Map model, BuildContext context) {
       WriteFollow(
         clientData: model,
         addFollowConfirm: () {
-          eventBus.emit(NOTIFY_CLIENT_LIST_REFRASH_NORMAL);
+          refrashList();
         },
       ).loadNextFollow();
       print(
@@ -77,6 +92,7 @@ class _ClientState extends State<Client> {
   @override
   void dispose() {
     eventBus.off(NOTIFY_CLIENT_LIST_REFRASH_NORMAL);
+    eventBus.off(NOTIFY_CLIENT_LIST_REFRASH);
     super.dispose();
   }
 
@@ -139,7 +155,7 @@ class _ClientState extends State<Client> {
                 ),
                 Tab(
                   child: Text(
-                    '水客',
+                    '公开',
                     style: TextStyle(fontSize: 14, color: Colors.white),
                   ),
                 )
@@ -160,30 +176,36 @@ class _ClientState extends State<Client> {
                   child: TabBarView(
                     children: [
                       ClientList(
-                          status: ClientStatus.wait,
-                          selectedForRowAtIndex: selectedForRowAtIndex,
-                          cellReportClick: cellReportClick,
-                          writeFollowClick: writeFollowClick),
+                        status: ClientStatus.wait,
+                        selectedForRowAtIndex: selectedForRowAtIndex,
+                        cellReportClick: cellReportClick,
+                        writeFollowClick: writeFollowClick,
+                        cellClientOpenClick: cellClientOpenClick,
+                      ),
                       ClientList(
                           status: ClientStatus.already,
                           selectedForRowAtIndex: selectedForRowAtIndex,
                           cellReportClick: cellReportClick,
-                          writeFollowClick: writeFollowClick),
+                          writeFollowClick: writeFollowClick,
+                          cellClientOpenClick: cellClientOpenClick),
                       ClientList(
                           status: ClientStatus.order,
                           selectedForRowAtIndex: selectedForRowAtIndex,
                           cellReportClick: cellReportClick,
-                          writeFollowClick: writeFollowClick),
+                          writeFollowClick: writeFollowClick,
+                          cellClientOpenClick: cellClientOpenClick),
                       ClientList(
                           status: ClientStatus.deal,
                           selectedForRowAtIndex: selectedForRowAtIndex,
                           cellReportClick: cellReportClick,
-                          writeFollowClick: writeFollowClick),
+                          writeFollowClick: writeFollowClick,
+                          cellClientOpenClick: cellClientOpenClick),
                       ClientList(
                           status: ClientStatus.water,
                           selectedForRowAtIndex: selectedForRowAtIndex,
                           cellReportClick: cellReportClick,
-                          writeFollowClick: writeFollowClick),
+                          writeFollowClick: writeFollowClick,
+                          cellClientOpenClick: cellClientOpenClick),
                     ],
                   ),
                 ),
@@ -241,37 +263,38 @@ class _ClientState extends State<Client> {
   Widget selectList(List data, void Function(Map value) itemClick) {
     List textButtons = [];
     double buttonHeight = 40;
-    double cHeight = data.length % 2 == 0
-        ? (data.length / 2) * buttonHeight
-        : (data.length ~/ 2 + 1) * buttonHeight;
+    // double cHeight = data.length % 2 == 0
+    //     ? (data.length / 2) * buttonHeight
+    //     : (data.length ~/ 2 + 1) * buttonHeight;
     for (var i = 0; i < data.length; i++) {
       Map e = data[i];
-      Widget button = TextButton(
+      Widget button = RawMaterialButton(
         onPressed: () {
           itemClick(e);
         },
-        child: Text(e['title'],
-            style: TextStyle(fontSize: 14, color: jm_text_black)),
+
+        // constraints: BoxConstraints(minWidth: SizeConfig.screenWidth),
+        child: Container(
+          width: SizeConfig.screenWidth - SizeConfig.blockSizeHorizontal * 6,
+          height: buttonHeight,
+          margin: EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 6),
+          alignment: Alignment.centerLeft,
+          child: Text(e['title'],
+              textAlign: TextAlign.left,
+              style: TextStyle(fontSize: 14, color: jm_text_black)),
+        ),
       );
       textButtons.add(button);
     }
-    return Container(
-      width: SizeConfig.screenWidth,
-      height: cHeight,
-      color: Colors.white,
-      child: GridView.count(
-        //水平子Widget之间间距
-        // crossAxisSpacing: 0.0,
-        //垂直子Widget之间间距
-        // mainAxisSpacing: 1.0,
-        //GridView内边距
-        padding: EdgeInsets.all(0.0),
-        //一行的Widget数量
-        crossAxisCount: 2,
-        //子Widget宽高比例
-        childAspectRatio: SizeConfig.screenWidth / 2.0 / buttonHeight,
-        //子Widget列表
-        children: [...textButtons],
+    return SingleChildScrollView(
+      child: Container(
+        width: SizeConfig.screenWidth,
+        // height: cHeight,
+        color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [...textButtons],
+        ),
       ),
     );
   }
@@ -332,38 +355,42 @@ class _ClientState extends State<Client> {
       setState(() {
         selectExpand = false;
       });
-      Map params = {};
-      if (value1['value'] != '-1') {
-        params['desireId'] = value1['value'] is int
-            ? value1['value']
-            : int.parse(value1['value']);
-      }
-      if (value2['value'] != '-1') {
-        params['typeId'] = value2['value'] is int
-            ? value2['value']
-            : int.parse(value2['value']);
-      }
-      if (value3['value'] != '-1') {
-        params['areaId'] = value3['value'] is int
-            ? value3['value']
-            : int.parse(value3['value']);
-      }
-      print('params ==== $params');
-      eventBus.emit(NOTIFY_CLIENT_LIST_REFRASH, params);
+      refrashList();
     });
+  }
+
+  refrashList() {
+    Map params = {};
+    if (value1['value'] != '-1') {
+      params['desireId'] =
+          value1['value'] is int ? value1['value'] : int.parse(value1['value']);
+    }
+    if (value2['value'] != '-1') {
+      params['typeId'] =
+          value2['value'] is int ? value2['value'] : int.parse(value2['value']);
+    }
+    if (value3['value'] != '-1') {
+      params['areaId'] =
+          value3['value'] is int ? value3['value'] : int.parse(value3['value']);
+    }
+    print('params ==== $params');
+    eventBus.emit(NOTIFY_CLIENT_LIST_REFRASH, params);
   }
 }
 
 class ClientList extends StatefulWidget {
   final WriteFollowClick writeFollowClick;
   final CellReportClick cellReportClick;
+  final CellClientOpenClick cellClientOpenClick;
   final ClientStatus status;
   final SelectedForRowAtIndex selectedForRowAtIndex;
-  ClientList(
-      {@required this.status,
-      this.selectedForRowAtIndex,
-      this.cellReportClick,
-      this.writeFollowClick});
+  ClientList({
+    @required this.status,
+    this.selectedForRowAtIndex,
+    this.cellReportClick,
+    this.writeFollowClick,
+    this.cellClientOpenClick,
+  });
   @override
   _ClientListState createState() => _ClientListState();
 }
@@ -371,10 +398,10 @@ class ClientList extends StatefulWidget {
 class _ClientListState extends State<ClientList>
     with AutomaticKeepAliveClientMixin {
   GlobalKey pullHeaderKey = GlobalKey();
-  EventBus eventBus;
+  EventBus eventBus = EventBus();
   GlobalKey easyRefreshKey = GlobalKey();
-  EasyRefreshController pullCtr;
-  ClientListViewModel listModel;
+  EasyRefreshController pullCtr = EasyRefreshController();
+  ClientListViewModel listModel = ClientListViewModel();
   List listData;
   Map statusParams;
 
@@ -400,14 +427,11 @@ class _ClientListState extends State<ClientList>
       default:
     }
     statusParams = Map<String, dynamic>.from({'status': status});
-    pullCtr = EasyRefreshController();
-    listModel = ClientListViewModel();
     listModel.loadClientList(statusParams, success: (data) {
       setState(() {
         listData = data;
       });
     });
-    eventBus = EventBus();
     eventBus.on(NOTIFY_CLIENT_LIST_REFRASH, (arg) {
       if (arg['desireId'] != null) {
         statusParams['desireId'] = arg['desireId'];
@@ -466,6 +490,7 @@ class _ClientListState extends State<ClientList>
             selectedForRowAtIndex: widget.selectedForRowAtIndex,
             writeFollowClick: widget.writeFollowClick,
             cellReportClick: widget.cellReportClick,
+            cellClientOpenClick: widget.cellClientOpenClick,
           );
         },
       ),

@@ -135,9 +135,9 @@ class _ReportDetailState extends State<ReportDetail> {
           height: 15,
         ),
         JMline(width: SizeConfig.screenWidth, height: 0.5),
-        SizedBox(
-          height: 15,
-        ),
+        // SizedBox(
+        //   height: 15,
+        // ),
         ...getPhotoInfo(mapData['reportStatuses'] ?? []),
         (mapData['reportShopDetailVO'])['id'] != null
             ? getSuccessWidget(mapData)
@@ -265,7 +265,7 @@ class _ReportDetailState extends State<ReportDetail> {
         Row(
           children: [
             Text(
-              '已复制',
+              widget.data['isCopy'] == 1 ? '已复制' : '',
               style: jm_text_gray_style15,
             ),
             SizedBox(
@@ -401,6 +401,9 @@ class _ReportDetailState extends State<ReportDetail> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(
+            height: 15,
+          ),
           Row(
             children: [
               SizedBox(
@@ -450,7 +453,17 @@ class _ReportDetailState extends State<ReportDetail> {
               needButton: false,
             ),
           ),
-          JMline(width: SizeConfig.screenWidth, height: 0.5)
+          data['remark'] != null && (data['remark']).length > 0
+              ? Container(
+                  margin: EdgeInsets.only(left: outMargin, bottom: 15),
+                  width: SizeConfig.screenWidth - outMargin * 2,
+                  child: Text(
+                    data['remark'] ?? '',
+                    style: jm_text_black_style14,
+                  ),
+                )
+              : Container(width: 0.0, height: 0.0),
+          JMline(width: SizeConfig.screenWidth, height: 0.5),
         ],
       );
     } else {

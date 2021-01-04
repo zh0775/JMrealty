@@ -170,13 +170,12 @@ class WriteFollow {
                       ),
                       Container(
                         constraints:
-                            BoxConstraints(maxHeight: 60, minHeight: 60),
+                            BoxConstraints(maxHeight: 80, minHeight: 80),
                         width: width - margin * 2,
                         // margin: EdgeInsets.only(left: margin),
                         child: TextField(
-                          // maxLines: 10,
+                          maxLines: 2,
                           maxLength: 200,
-                          minLines: 1,
                           decoration: InputDecoration(
                               contentPadding:
                                   EdgeInsets.fromLTRB(10, 10, 10, 10),

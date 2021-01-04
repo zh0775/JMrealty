@@ -2,6 +2,7 @@ import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/services/http_config.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'dart:convert' as convert;
 
 class Follow extends StatefulWidget {
   final String token;
@@ -27,52 +28,47 @@ class _FollowState extends State<Follow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: jm_appTheme,
-          automaticallyImplyLeading: false,
-          title: Text(
-            _title,
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          leading: IconButton(
-            icon: Icon(
-              Icons.navigate_before,
-              size: 40,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              if (backStatus == 'follow') {
-                back();
-              } else if (backStatus == 'followDetail') {
-                _controller.goBack();
-              }
-            },
-          )),
+      // appBar: AppBar(
+      //     centerTitle: true,
+      //     backgroundColor: jm_appTheme,
+      //     automaticallyImplyLeading: false,
+      //     title: Text(
+      //       _title,
+      //       style: TextStyle(color: Colors.white, fontSize: 18),
+      //     ),
+      //     leading: IconButton(
+      //       icon: Icon(
+      //         Icons.navigate_before,
+      //         size: 40,
+      //         color: Colors.white,
+      //       ),
+      //       onPressed: () {
+      //         if (backStatus == 'follow') {
+      //           back();
+      //         } else if (backStatus == 'followDetail') {
+      //           _controller.goBack();
+      //         }
+      //       },
+      //     )),
       body: WebView(
-        initialUrl: WEB_URL + '/#/followProgress',
+        initialUrl: WEB_URL + '/followProgress',
         javascriptMode: JavascriptMode.unrestricted,
         onWebViewCreated: (controller) {
           _controller = controller;
         },
         onPageFinished: (url) {
-          String js_String = "var token = " +
-              "'" +
-              widget.token +
-              "'" +
-              '; ' +
-              'var deptId = ' +
-              "'" +
-              widget.deptId.toString() +
-              "'" +
-              ';  setParams(token, deptId);';
+          String json = convert
+              .jsonEncode({'token': widget.token, 'deptId': widget.deptId});
+          String js_String =
+              "var json = " + "'" + json + "'" + '; ' + 'setParams(json);';
           print('js_String === $js_String');
           // "var title_1 = 30; var price_1 = 40; var title_2 = 10; var price_2 = 50; setData([{title:title_1,price:price_1},{title:title_2,price:price_2}])";
           _controller?.evaluateJavascript(js_String)?.then((result) {});
         },
         javascriptChannels: <JavascriptChannel>[
           _titleJavascriptChannel(context),
-          _jumpJavascriptChannel(context)
+          _clgJavascriptChannel(context),
+          _backJavascriptChannel(context)
         ].toSet(),
       ),
     );
@@ -80,7 +76,7 @@ class _FollowState extends State<Follow> {
 
   JavascriptChannel _titleJavascriptChannel(BuildContext context) {
     return JavascriptChannel(
-      name: 'title',
+      name: 'currentTitle',
       onMessageReceived: (JavascriptMessage message) {
         print('title === ${message.message}');
         setState(() {
@@ -90,12 +86,21 @@ class _FollowState extends State<Follow> {
     );
   }
 
-  JavascriptChannel _jumpJavascriptChannel(BuildContext context) {
+  JavascriptChannel _clgJavascriptChannel(BuildContext context) {
     return JavascriptChannel(
-        name: "jump",
+        name: "clg",
         onMessageReceived: (JavascriptMessage message) {
-          print('jump === ${message.message}');
-          backStatus = message.message;
+          print('clg === ${message.message}');
+        });
+  }
+
+  JavascriptChannel _backJavascriptChannel(BuildContext context) {
+    return JavascriptChannel(
+        name: "back",
+        onMessageReceived: (JavascriptMessage message) {
+          print('back === ${message.message}');
+          // backStatus = message.message;
+          back();
         });
   }
 

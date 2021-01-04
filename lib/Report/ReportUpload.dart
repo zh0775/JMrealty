@@ -8,31 +8,44 @@ import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 // import 'package:flutter/services.dart';
+enum ReportUploadStatus {
+  upload,
+  appointment,
+  invalid,
+  sign, // 需要填时间
+  chargeback
+}
 
 class ReportUpload extends StatefulWidget {
   final int status;
   final Map data;
-  ReportUpload({@required this.data, this.status});
+  final ReportUploadStatus uploadStatus;
+  const ReportUpload(
+      {@required this.data,
+      this.status,
+      this.uploadStatus = ReportUploadStatus.upload});
   @override
   _ReportUploadState createState() => _ReportUploadState();
 }
 
 class _ReportUploadState extends State<ReportUpload> {
-  ReportUploadViewModel viewModel;
+  ReportUploadViewModel viewModel = ReportUploadViewModel();
   SelectImageView imgSelectV; // 选择图片视图
+  String timeStr = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
   double cellHeight;
   double widthScale;
   double outMargin;
-  double labelSpace;
+  double labelSpace = 3;
   String mark;
-  List imageList;
+  List imageList = [];
   dynamic img;
   @override
   void initState() {
-    viewModel = ReportUploadViewModel();
     imgSelectV = SelectImageView(
-      count: 12,
+      count: 9,
       imageSelected: (images) {
         if (images != null) {
           viewModel.upLoadReportImages(images, callBack: (strImages) {
@@ -43,8 +56,6 @@ class _ReportUploadState extends State<ReportUpload> {
         }
       },
     );
-    labelSpace = 3;
-    imageList = [];
     super.initState();
   }
 
@@ -53,8 +64,33 @@ class _ReportUploadState extends State<ReportUpload> {
     super.dispose();
   }
 
+// upload,
+//   appointment,
+//   invalid,
+//   sign, // 需要填时间
+//   chargeback
   @override
   Widget build(BuildContext context) {
+    String title = '上传带看单';
+    switch (widget.uploadStatus) {
+      case ReportUploadStatus.upload:
+        title = '上传带看单';
+        break;
+      case ReportUploadStatus.appointment:
+        title = '预约';
+        break;
+      case ReportUploadStatus.invalid:
+        title = '失效';
+        break;
+      case ReportUploadStatus.sign:
+        title = '签约';
+        break;
+      case ReportUploadStatus.chargeback:
+        title = '退单';
+        break;
+      default:
+    }
+
     SizeConfig().init(context);
     widthScale = SizeConfig.blockSizeHorizontal;
     outMargin = widthScale * 6;
@@ -62,7 +98,7 @@ class _ReportUploadState extends State<ReportUpload> {
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: Scaffold(
         appBar: CustomAppbar(
-          title: '上传带看单',
+          title: title,
         ),
         body: ListView(
           children: [
@@ -99,6 +135,14 @@ class _ReportUploadState extends State<ReportUpload> {
               height: 15,
             ),
             JMline(width: SizeConfig.screenWidth, height: 0.5),
+
+            widget.uploadStatus == ReportUploadStatus.sign
+                ? getDateWidget(title: '签约时间')
+                : Container(
+                    width: 0.0,
+                    height: 0.0,
+                  ),
+            JMline(width: SizeConfig.screenWidth, height: 0.5),
             SizedBox(
               height: 15,
             ),
@@ -131,6 +175,7 @@ class _ReportUploadState extends State<ReportUpload> {
                   style: jm_text_black_bold_style17,
                 )),
             CustomMarkInput(
+              text: mark ?? '',
               valueChange: (value) {
                 mark = value;
               },
@@ -146,6 +191,9 @@ class _ReportUploadState extends State<ReportUpload> {
                   });
                   imageStr = imageStr.substring(0, imageStr.length - 1);
                   mapParams['images'] = imageStr;
+                } else {
+                  ShowToast.normal('请上传图片');
+                  return;
                 }
                 // print('data ==== ${widget.data}');
                 // print('images ==== $mapParams');
@@ -156,21 +204,33 @@ class _ReportUploadState extends State<ReportUpload> {
                 if (widget.data['id'] != null) {
                   mapParams['reportId'] = widget.data['id'];
                 }
+                if (mark == null || mark.length == 0) {
+                  ShowToast.normal('请填写备注信息');
+                  return;
+                }
                 mapParams['remark'] = mark ?? '';
+                if (widget.uploadStatus == ReportUploadStatus.sign) {
+                  mapParams['visaTime'] = timeStr ?? '';
+                }
+
                 viewModel.uploadReportRecord(mapParams, (success) {
                   if (success) {
-                    ShowToast.normal('上传成功');
-                    Future.delayed(Duration(seconds: 1)).then((value) {
-                      Navigator.pop(context);
-                    });
+                    successBack();
                   }
-                });
+                }, uploadStatus: widget.uploadStatus);
               },
             ),
           ],
         ),
       ),
     );
+  }
+
+  successBack() {
+    ShowToast.normal('上传成功');
+    Future.delayed(Duration(seconds: 1)).then((value) {
+      Navigator.pop(context);
+    });
   }
 
   checkImg(int index) {
@@ -272,14 +332,14 @@ class _ReportUploadState extends State<ReportUpload> {
               width: outMargin,
             ),
             Text(
-              widget.data['employeeName'] ?? '无',
+              widget.data['customerName'] ?? '无',
               style: jm_text_black_bold_style16,
             ),
             SizedBox(
               width: widthScale * 2,
             ),
             Text(
-              widget.data['employeePhone'] ?? '无',
+              widget.data['customerPhone'] ?? '无',
               style: jm_text_black_bold_style16,
             )
           ],
@@ -404,6 +464,80 @@ class _ReportUploadState extends State<ReportUpload> {
       child: Text(
         title,
         style: jm_text_gray_style15,
+      ),
+    );
+  }
+
+  Future<void> showDatePick() async {
+    final DateTime date = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2015, 1),
+        lastDate: DateTime(2022, 1),
+        locale: Locale('zh'));
+    if (date == null) return;
+    setState(() {
+      timeStr = DateFormat('yyyy-MM-dd').format(date);
+    });
+
+    final TimeOfDay time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (time == null) return;
+    setState(() {
+      timeStr += (' ' +
+          getIntFormat(time.hour) +
+          ':' +
+          getIntFormat(time.minute) +
+          ':00');
+    });
+  }
+
+  String getIntFormat(int value) {
+    if (value < 10) {
+      return '0' + value.toString();
+    } else {
+      return value.toString();
+    }
+  }
+
+  Widget getDateWidget({@required String title}) {
+    double labelWidth = widthScale * 22;
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+        showDatePick();
+      },
+      child: Row(
+        children: [
+          SizedBox(
+            width: outMargin,
+            height: 48,
+          ),
+          Container(
+            width: labelWidth,
+            child: Text(
+              title,
+              style: jm_text_black_style15,
+            ),
+          ),
+          Container(
+            width: SizeConfig.screenWidth -
+                outMargin * 2 -
+                labelWidth -
+                widthScale * 8,
+            child: Text(
+              // dateFormat.format(start ? startDate : endDate),
+              timeStr ?? '',
+              style: jm_text_black_style15,
+            ),
+          ),
+          Icon(
+            Icons.keyboard_arrow_right,
+            size: widthScale * 8,
+          )
+        ],
       ),
     );
   }

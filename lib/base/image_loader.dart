@@ -6,7 +6,10 @@ class ImageLoader extends StatelessWidget {
   final String imgUrl;
   final double height;
 
-  ImageLoader(this.imgUrl, this.height);
+  ImageLoader(
+    this.imgUrl,
+    this.height,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +18,19 @@ class ImageLoader extends StatelessWidget {
       placeholderFadeInDuration: Duration(milliseconds: 1),
       fadeOutDuration: Duration(milliseconds: 1),
       imageUrl: imgUrl,
-      placeholder: (context, url) => Container(
-        color: Colors.white,
-      ),
+      // placeholder: (context, url) {
+      //   return Image.asset(
+      //     'assets/images/home/motivation_monochromatic.png',
+      //     // width: context.size.width, height: context.size.height
+      //   );
+      // },
+      // errorWidget: (context, url, error) {
+      //   return Image.asset(
+      //     'assets/images/home/motivation_monochromatic.png',
+      //     // width: context.size.width,
+      //     // height: context.size.height,
+      //   );
+      // },
       // height: height,
       fit: BoxFit.cover,
     );

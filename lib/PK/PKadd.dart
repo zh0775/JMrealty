@@ -31,9 +31,9 @@ class _PKaddState extends State<PKadd> {
   DateFormat dateFormat;
   List unitList = []; // pk指标
   Map pkTarget; // 参与单位
-  String pkName; // pk赛名称
-  String award; // 奖励
-  String rules; // 规则
+  String pkName = ''; // pk赛名称
+  String award = ''; // 奖励
+  String rules = ''; // 规则
   Map medalData; //奖章
   List targetDataList;
   List<TreeNode> treeData = [];
@@ -278,6 +278,7 @@ class _PKaddState extends State<PKadd> {
                 ],
               ),
               CustomMarkInput(
+                text: award,
                 valueChange: (value) {
                   award = value;
                 },
