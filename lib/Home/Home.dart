@@ -39,18 +39,18 @@ class _MainPageWidgetState extends State<MainPageWidget> {
     super.initState();
   }
 
-  int _tabbarIndex = 0;
+  int _tabbarIndex = 2;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
         index: _tabbarIndex,
         children: [
+          Project(indexClick: indexClick),
+          Client(indexClick: indexClick),
           Home(
             indexClick: indexClick,
           ),
-          Project(indexClick: indexClick),
-          Client(indexClick: indexClick),
           Message(indexClick: indexClick),
           Mine(indexClick: indexClick)
         ],
@@ -325,90 +325,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  List buttonData = [
-    [
-      {
-        'title': '报备',
-        'path': '报备',
-        'icon': 'assets/images/tabbar/food-bread.png'
-      },
-      {
-        'title': '报备记录',
-        'path': '报备记录',
-        'icon': 'assets/images/tabbar/food-bread.png'
-      },
-      {
-        'title': '业绩统计',
-        'path': '业绩统计',
-        'icon': 'assets/images/tabbar/food-bread.png'
-      },
-      {
-        'title': '来访统计',
-        'path': '来访统计',
-        'icon': 'assets/images/tabbar/food-bread.png'
-      },
-      {
-        'title': '榜单',
-        'path': '榜单',
-        'icon': 'assets/images/tabbar/food-bread.png'
-      }
-    ],
-    [
-      {
-        'title': 'PK赛',
-        'path': 'PK赛',
-        'icon': 'assets/images/tabbar/food-bread.png'
-      },
-      {
-        'title': '智能报备',
-        'path': '智能报备',
-        'icon': 'assets/images/tabbar/food-bread.png'
-      },
-      {
-        'title': '跟进进度',
-        'path': '跟进进度',
-        'icon': 'assets/images/tabbar/food-bread.png'
-      },
-      {
-        'title': 'WI分',
-        'path': 'WI分',
-        'icon': 'assets/images/tabbar/food-bread.png'
-      },
-      {
-        'title': '业绩对比',
-        'path': '业绩对比',
-        'icon': 'assets/images/tabbar/food-bread.png'
-      }
-    ],
-    [
-      {
-        'title': '客户池',
-        'path': '客户池',
-        'icon': 'assets/images/tabbar/food-bread.png'
-      },
-      {
-        'title': '我的任务',
-        'path': '我的任务',
-        'icon': 'assets/images/tabbar/food-bread.png'
-      },
-      {
-        'title': '每日总结',
-        'path': '每日总结',
-        'icon': 'assets/images/tabbar/food-bread.png'
-      },
-      {
-        'title': '破壳率',
-        'path': '破壳率',
-        'icon': 'assets/images/tabbar/food-bread.png'
-      },
-      {
-        'title': '未开发人员',
-        'path': '未开发人员',
-        'icon': 'assets/images/tabbar/food-bread.png'
-      }
-    ]
-  ];
-
   List<Widget> buttons(buttonClick) {
     double buttonWidth = SizeConfig.screenWidth / 5;
     double buttonHeight = SizeConfig.screenWidth / 5;
@@ -425,7 +341,7 @@ class _HomeState extends State<Home> {
                 SizedBox(
                   width: buttonWidth * 0.45,
                   height: buttonHeight * 0.45,
-                  child: ImageLoader(e['icon'] ?? '', 0),
+                  child: ImageLoader(e['icon'] ?? ''),
                 ),
                 SizedBox(
                   height: 6,
@@ -442,85 +358,8 @@ class _HomeState extends State<Home> {
         i++;
       });
     }
-    // List<Widget> row2 = [];
-    // Column column = Column();
-    // TextStyle textStyle = TextStyle(color: jm_text_black);
-    // for (var i = 0; i < buttonData.length; i++) {
-    //   List rowData = buttonData[i];
-    //   Row row;
-    //   List<Widget> rowList = [];
-    //   for (var j = 0; j < rowData.length; j++) {
-    //     var data = rowData[j];
-    //     // if (i == 0) {
-    //     rowList.add(Container(
-    //       width: SizeConfig.blockSizeHorizontal * 20,
-    //       height: 80,
-    //       child: TextButton(
-    //           onPressed: () {
-    //             buttonClick(i * buttonData[0].length + j, data);
-    //           },
-    //           child: Column(
-    //             children: [
-    //               Image.asset(
-    //                 data['icon'],
-    //                 height: 30,
-    //                 width: SizeConfig.blockSizeHorizontal * 15,
-    //               ),
-    //               SizedBox(
-    //                 height: 10,
-    //               ),
-    //               Text(
-    //                 data['title'],
-    //                 maxLines: 1,
-    //                 style: jm_text_black_style14,
-    //               ),
-    //             ],
-    //           )),
-    //     ));
-    //     // } else {
-    //     //   row.children.add(TextButton(
-    //     //       onPressed: () {
-    //     //         buttonClick(i * buttonData[0].length + j, data);
-    //     //       },
-    //     //       child: Column(
-    //     //         children: [
-    //     //           Image.asset(data['icon']),
-    //     //           Text(
-    //     //             data['title'],
-    //     //             style: textStyle,
-    //     //           ),
-    //     //         ],
-    //     //       )));
-    //     // }
-    //   }
-    //   row = Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-    //     ...rowList,
-    //   ]);
-    //   allRow.add(row);
-    // column.children.add(Row());
-    // column.children.add(SizedBox(
-    //   width: 7,
-    // ));
-    // }
-
     return allRow;
-    // return Container(
-    //   child: Column(
-    //     children: [
-    //       ...allRow,
-    //     ],
-    //   ),
-    // );
   }
-
-  // void getScheData() {
-  //   Map value = HomeService().getHomeSchedule();
-  //   if (value['code'] == 0) {
-  //     this.setState(() {
-  //       this.homeScheduleToDoData = value['data'];
-  //     });
-  //   }
-  // }
 
   void getBanner() {
     homeVM.loadHomeBanner((banner, success) {
@@ -530,12 +369,5 @@ class _HomeState extends State<Home> {
         });
       }
     });
-    // Map value = HomeService().getHomeBanner();
-    // if (value['code'] == 0) {
-    //   this.setState(() {
-    //     this.bannerList = value['data'];
-    //   });
-    //   // this.initBannerData(value);
-    // }
   }
 }

@@ -137,7 +137,7 @@ class _MineTopState extends State<MineTop> {
                           },
                           child: backgroundPath != null &&
                                   backgroundPath.length > 0
-                              ? ImageLoader(widget.data['background'], 0)
+                              ? ImageLoader(widget.data['background'])
                               : Container(
                                   color: Colors.grey,
                                   // child: Image.asset(
@@ -201,7 +201,7 @@ class _MineTopState extends State<MineTop> {
                                   child: ClipRRect(
                                       borderRadius:
                                           BorderRadius.circular(widthScale * 2),
-                                      child: ImageLoader(avatarPath, 0)),
+                                      child: ImageLoader(avatarPath)),
                                 )
                               : Container(
                                   color: Colors.grey,

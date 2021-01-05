@@ -57,7 +57,7 @@ class _MessageCellState extends State<MessageCell> {
                 Container(
                   width: 60,
                   height: 60,
-                  child: ImageLoader('imgUrl', 0),
+                  child: ImageLoader('imgUrl'),
                 )
               ],
             ),

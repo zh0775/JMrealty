@@ -6,10 +6,7 @@ class ImageLoader extends StatelessWidget {
   final String imgUrl;
   final double height;
 
-  ImageLoader(
-    this.imgUrl,
-    this.height,
-  );
+  ImageLoader(this.imgUrl, {this.height});
 
   @override
   Widget build(BuildContext context) {

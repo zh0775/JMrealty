@@ -104,7 +104,10 @@ class CustomGridImageV extends StatelessWidget {
                 onTap: () {
                   selectImage(element, i);
                 },
-                child: ImageLoader(element, imgHeight)),
+                child: ImageLoader(
+                  element,
+                  height: imgHeight,
+                )),
           ));
         }
         if ((i + 1) % 3 == 0) {

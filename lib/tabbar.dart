@@ -10,20 +10,20 @@ class JMTabBar extends StatefulWidget {
 }
 
 class _JMTabBarState extends State<JMTabBar> {
-  int _currentIndex = 0;
+  int _currentIndex = 2;
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      selectedFontSize: 14,
-      unselectedFontSize: 14,
+      selectedFontSize: 13,
+      unselectedFontSize: 13,
       currentIndex: _currentIndex,
       type: BottomNavigationBarType.fixed,
       items: [
-        createItem('cookie', '首页'),
-        createItem('pudding', '项目'),
-        createItem('cake', '客户'),
-        createItem('avocado', '消息'),
-        createItem('doughnut', '我的')
+        createItem('project', '项目'),
+        createItem('client', '客户'),
+        createItem('home', '首页'),
+        createItem('message', '消息'),
+        createItem('mine', '我的')
       ],
       onTap: (index) {
         widget.tabItemClick(index);
@@ -38,11 +38,11 @@ class _JMTabBarState extends State<JMTabBar> {
 BottomNavigationBarItem createItem(String iconName, String title) {
   return BottomNavigationBarItem(
       icon: Image.asset(
-        "assets/images/tabbar/food-$iconName.png",
+        "assets/images/tabbar/tabbar_$iconName.png",
         width: 30,
       ),
       activeIcon: Image.asset(
-        "assets/images/tabbar/food-bread.png",
+        "assets/images/tabbar/tabbar_${iconName}_selected.png",
         width: 30,
       ),
       label: title);

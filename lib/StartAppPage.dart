@@ -73,7 +73,9 @@ class _StartAppPageState extends State<StartAppPage> {
                     top: 0,
                     bottom: 0,
                     child: ImageLoader(
-                        model.startImgUrl, SizeConfig.screenHeight)),
+                      model.startImgUrl,
+                      height: SizeConfig.screenHeight,
+                    )),
                 Positioned(
                     right: 15,
                     top: 30,

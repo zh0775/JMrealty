@@ -44,7 +44,7 @@ class _MyTasksCellState extends State<MyTasksCell> {
                       height: 60,
                       child: widget.data['avatar'] != null &&
                               widget.data['avatar'] != ''
-                          ? ImageLoader(widget.data['avatar'], 0)
+                          ? ImageLoader(widget.data['avatar'])
                           : Container(
                               width: 0.0,
                               height: 0.0,

@@ -283,7 +283,10 @@ class _ReportUploadState extends State<ReportUpload> {
                     width: widthScale * 25.3,
                     height: widthScale * 25.3,
                     // color: jm_line_color,
-                    child: ImageLoader(imageList[i], widthScale * 25.3),
+                    child: ImageLoader(
+                      imageList[i],
+                      height: widthScale * 25.3,
+                    ),
                     // Image.memory(imageList[i].buffer.asUint8List(),fit: BoxFit.cover,height: widthScale * 25.3,width: widthScale * 25.3,)
                     //   FutureBuilder<dynamic>(
                     //       future: imageList[i].getThumbByteData((widthScale * 25.3).round(), (widthScale * 25.3).round()),

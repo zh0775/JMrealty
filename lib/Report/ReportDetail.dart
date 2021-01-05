@@ -212,7 +212,10 @@ class _ReportDetailState extends State<ReportDetail> {
                     width: widthScale * 25.3,
                     height: widthScale * 25.3,
                     // color: jm_line_color,
-                    child: ImageLoader(imageList[i], widthScale * 25.3),
+                    child: ImageLoader(
+                      imageList[i],
+                      height: widthScale * 25.3,
+                    ),
                   ),
                 ),
               )));
