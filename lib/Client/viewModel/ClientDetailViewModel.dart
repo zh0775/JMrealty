@@ -11,7 +11,7 @@ class ClientDetailViewModel extends BaseViewModel {
     notifyListeners();
     Http().get(
       Urls.findClientById,
-      {'id': id},
+      {'id': id.toString()},
       success: (json) {
         if (json['code'] == 200) {
           clientData = json['data'];

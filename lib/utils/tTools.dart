@@ -101,6 +101,14 @@ String hiddenPhone(String phone) {
   return result;
 }
 
+String stringTrim(String string) {
+  // String str = string.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+  // print('phone === $str');
+  return string != null && string.length > 0
+      ? string.replaceAll(RegExp(r'\D'), '')
+      : '';
+}
+
 ///去除后面的0
 String stringDisposeWithDouble(v, [fix = 2]) {
   double b = double.parse(v.toString());

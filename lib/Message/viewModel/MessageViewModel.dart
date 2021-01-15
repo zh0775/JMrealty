@@ -52,7 +52,8 @@ class MessageViewModel {
           success: (json) {
             if (json['code'] == 200) {
               if (success != null) {
-                success(json['data'], true);
+                success(
+                    json['data'] != null ? (json['data'])['rows'] : [], true);
               }
             } else {
               if (success != null) {
@@ -69,6 +70,7 @@ class MessageViewModel {
       }
     });
   }
+
   // loadUserInfo({Function() finish}) {
   //   Http().get(
   //     Urls.getUserInfo,
@@ -88,4 +90,26 @@ class MessageViewModel {
   //     after: () {},
   //   );
   // }
+  loadRead(Map params, {Function(bool success) success}) {
+    Http().get(
+      Urls.messageRead,
+      Map<String, dynamic>.from(params),
+      success: (json) {
+        if (json['code'] == 200) {
+          if (success != null) {
+            success(true);
+          }
+        } else {
+          if (success != null) {
+            success(false);
+          }
+        }
+      },
+      fail: (reason, code) {
+        if (success != null) {
+          success(false);
+        }
+      },
+    );
+  }
 }

@@ -1,6 +1,8 @@
 import 'package:JMrealty/PK/components/PKmainListCell.dart';
 import 'package:JMrealty/PK/viewModel/PKviewModel.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
+import 'package:JMrealty/utils/EventBus.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -15,6 +17,7 @@ class PKmainList extends StatefulWidget {
 }
 
 class _PKmainListState extends State<PKmainList> {
+  EventBus _bus = EventBus();
   void Function(Map cellData, int index) cellClick;
   List pkListData = [];
   double topHeight = 178;
@@ -33,12 +36,18 @@ class _PKmainListState extends State<PKmainList> {
         return PKdetail(pkData: cellData);
       }));
     };
+    _bus.on(NOTIFY_PK_LIST_REFRASH, (arg) {
+      if (mounted) {
+        loadList();
+      }
+    });
     loadList();
     super.initState();
   }
 
   @override
   void dispose() {
+    _bus.off(NOTIFY_PK_LIST_REFRASH);
     pullCtr.dispose();
     // pkVM.dispose();
     super.dispose();

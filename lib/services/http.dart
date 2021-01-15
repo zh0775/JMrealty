@@ -55,13 +55,13 @@ class Http {
     }));
 
     dio.interceptors.add(InterceptorsWrapper(onResponse: (Response res) {
-      print('123');
       if (res.statusCode == 403 ||
           (res.data)['msg'] == '登录状态已失效，请重新登录' ||
           (res.data)['msg'] == '令牌不能为空' ||
           (res.data)['msg'] == '令牌验证失败，请重新登录' ||
           (res.data)['code'] == 401) {
         UserDefault.saveStr(ACCESS_TOKEN, null);
+        UserDefault.saveStr(USERINFO, null);
         Global.toLogin(isLogin: true);
       }
     }));
@@ -270,6 +270,7 @@ class Http {
           // print('images---value--- ====$value');
         });
       } catch (e) {
+        resList([]);
         print('e ===== $e');
       }
     }
@@ -315,6 +316,7 @@ class Http {
           "\n================================= 响应数据开始 =================================");
       print("code = ${response.statusCode}");
       print("data = ${response.data}");
+      print("data = ${response.request.uri}");
       print(
           "================================= 响应数据结束 =================================\n");
     }, onError: (DioError e) {
@@ -322,6 +324,7 @@ class Http {
           "\n=================================错误响应数据 =================================");
       print("type = ${e.type}");
       print("message = ${e.message}");
+      print("url = ${e.request.uri}");
       // print("stackTrace = ${e.}");
       print("\n");
     }));

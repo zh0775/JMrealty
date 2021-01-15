@@ -4,9 +4,13 @@ import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
+import 'package:JMrealty/components/CustomTextF.dart';
+import 'package:JMrealty/components/DropdownSelectV.dart';
 import 'package:JMrealty/components/ShowDepNode.dart';
 import 'package:JMrealty/components/TreeNode.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/utils/EventBus.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,11 +18,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class PKadd extends StatefulWidget {
+  final Function() addSuccessRefresh;
+  const PKadd({this.addSuccessRefresh});
   @override
   _PKaddState createState() => _PKaddState();
 }
 
 class _PKaddState extends State<PKadd> {
+  EventBus _bus = EventBus();
   LoginViewModel depModel;
   PKaddViewModel pkaddModel;
   double widthScale;
@@ -38,7 +45,7 @@ class _PKaddState extends State<PKadd> {
   List targetDataList;
   List<TreeNode> treeData = [];
   List pkType; // pk赛类型
-  int pkTypeValue; // pk类型
+  dynamic pkTypeValue; // pk类型
   @override
   void initState() {
     pkaddModel = PKaddViewModel();
@@ -64,8 +71,8 @@ class _PKaddState extends State<PKadd> {
       },
     );
     dateFormat = DateFormat('yyyy-MM-dd');
-    startTime = DateTime.now();
-    endTime = startTime.add(Duration(days: 7));
+    // startTime = DateTime.now();
+    // endTime = startTime.add(Duration(days: 7));
     super.initState();
   }
 
@@ -120,9 +127,9 @@ class _PKaddState extends State<PKadd> {
                 ],
               ),
               JMline(width: SizeConfig.screenWidth, height: 0.5),
-              CustomInput(
-                title: 'PK赛名称',
-                hintText: '请输入',
+              CustomTextF(
+                labelText: 'PK赛名称',
+                placeholder: '请输入PK赛名称',
                 text: pkName ?? '',
                 valueChange: (value) {
                   pkName = value;
@@ -133,12 +140,25 @@ class _PKaddState extends State<PKadd> {
               JMline(width: selfWidth, height: 0.5),
               getDateWidget(title: '结束时间', start: false),
               JMline(width: selfWidth, height: 0.5),
-              SelectView(
-                title: 'PK赛类型',
-                dataList: pkType,
-                margin: margin,
-                selectValueChange: (value, data) {
-                  pkTypeValue = value;
+              // SelectView(
+              //   title: 'PK赛类型',
+              //   dataList: pkType,
+              //   margin: margin,
+              //   selectValueChange: (value, data) {
+              //     pkTypeValue = value;
+              //   },
+              // ),
+              DropdownSelectV(
+                labelText: 'PK赛类型',
+                dataList: pkType ?? [],
+                // margin: margin,
+                currentValue: pkTypeValue ?? '',
+                placeholder: '请选择pk赛类型',
+                textPadding: EdgeInsets.only(left: 10),
+                valueChange: (value, data) {
+                  setState(() {
+                    pkTypeValue = value ?? 0;
+                  });
                 },
               ),
               Row(
@@ -204,63 +224,78 @@ class _PKaddState extends State<PKadd> {
                 ],
               ),
               JMline(width: selfWidth, height: 0.5),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: margin,
-                        height: lineHeight,
-                      ),
-                      Text(
-                        'PK赛指标',
-                        style: jm_text_black_style15,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          ...getTargetList(),
-                          RawMaterialButton(
-                              key: ValueKey('addTarget_button'),
-                              constraints: BoxConstraints(
-                                  maxHeight: lineHeight, maxWidth: 50),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.add,
-                                    size: 15,
-                                    color: jm_appTheme,
-                                  ),
-                                  Text(
-                                    '添加',
-                                    style: jm_text_apptheme_style13,
-                                  )
-                                ],
-                              ),
-                              onPressed: () {
-                                showTargetSelect((data) {
-                                  setState(() {
-                                    pkTarget = Map.from(data);
-                                    rules = pkTarget['remark'];
-                                  });
-                                });
-                              }),
-                        ],
-                      ),
-                      SizedBox(
-                        width: margin,
-                        height: lineHeight,
-                      ),
-                    ],
-                  )
-                ],
+              DropdownSelectV(
+                labelText: 'PK赛指标',
+                dataList: targetDataList ?? [],
+                placeholder: '请选择PK赛指标',
+                titleKey: 'dictLabel',
+                valueKey: 'dictValue',
+                // currentValue: ,
+                textPadding: EdgeInsets.only(left: 10),
+                valueChange: (value, data) {
+                  setState(() {
+                    pkTarget = Map.from(data);
+                    rules = pkTarget['remark'];
+                  });
+                },
               ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   crossAxisAlignment: CrossAxisAlignment.start,
+              //   children: [
+              //     Row(
+              //       children: [
+              //         SizedBox(
+              //           width: margin,
+              //           height: lineHeight,
+              //         ),
+              //         Text(
+              //           'PK赛指标',
+              //           style: jm_text_black_style15,
+              //         ),
+              //       ],
+              //     ),
+              //     Row(
+              //       children: [
+              //         Column(
+              //           crossAxisAlignment: CrossAxisAlignment.end,
+              //           children: [
+              //             ...getTargetList(),
+              //             RawMaterialButton(
+              //                 key: ValueKey('addTarget_button'),
+              //                 constraints: BoxConstraints(
+              //                     maxHeight: lineHeight, maxWidth: 50),
+              //                 child: Row(
+              //                   children: [
+              //                     Icon(
+              //                       Icons.add,
+              //                       size: 15,
+              //                       color: jm_appTheme,
+              //                     ),
+              //                     Text(
+              //                       '添加',
+              //                       style: jm_text_apptheme_style13,
+              //                     )
+              //                   ],
+              //                 ),
+              //                 onPressed: () {
+              //                   showTargetSelect((data) {
+              //                     setState(() {
+              //                       pkTarget = Map.from(data);
+              //                       rules = pkTarget['remark'];
+              //                     });
+              //                   });
+              //                 }),
+              //           ],
+              //         ),
+              //         SizedBox(
+              //           width: margin,
+              //           height: lineHeight,
+              //         ),
+              //       ],
+              //     )
+              //   ],
+              // ),
               JMline(width: selfWidth, height: 0.5),
               SizedBox(
                 height: 10,
@@ -326,11 +361,29 @@ class _PKaddState extends State<PKadd> {
                   ),
                 ],
               ),
-              CustomMarkInput(
-                text: rules ?? '',
-                valueChange: (value) {
-                  rules = value;
-                },
+              // CustomMarkInput(
+              //   text: rules ?? '',
+              //   valueChange: (value) {
+              //     rules = value;
+              //   },
+              // ),
+              Container(
+                width: selfWidth,
+                constraints: BoxConstraints(minHeight: 70),
+                decoration: BoxDecoration(
+                    color: jm_line_color,
+                    borderRadius: BorderRadius.circular(widthScale * 3)),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                      10, widthScale * 3, widthScale * 3, 10),
+                  child: Text(
+                    rules == null || rules.length == 0 ? '请选择PK赛指标' : rules,
+                    style: rules == null || rules.length == 0
+                        ? TextStyle(color: jm_placeholder_color, fontSize: 15)
+                        : jm_text_black_style15,
+                    maxLines: 1000,
+                  ),
+                ),
               ),
               // JMline(width: selfWidth, height: 0.5),
               SizedBox(
@@ -388,6 +441,10 @@ class _PKaddState extends State<PKadd> {
                     success: (success) {
                   if (success) {
                     ShowToast.normal('新增PK赛成功');
+                    if (widget.addSuccessRefresh != null) {
+                      widget.addSuccessRefresh();
+                    }
+                    _bus.emit(NOTIFY_PK_LIST_REFRASH);
                     Future.delayed(Duration(seconds: 1), () {
                       Navigator.pop(context);
                     });
@@ -415,7 +472,11 @@ class _PKaddState extends State<PKadd> {
   }
 
   Widget getDateWidget({@required String title, bool start = true}) {
-    double labelWidth = widthScale * 22;
+    double labelWidth = widthScale * 24;
+    dynamic data = start ? startTime : endTime;
+    TextStyle valueStyle = data != null
+        ? jm_text_black_style15
+        : TextStyle(color: jm_placeholder_color, fontSize: 15);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
@@ -436,9 +497,14 @@ class _PKaddState extends State<PKadd> {
           ),
           Container(
             width: selfWidth - labelWidth - widthScale * 8,
+            padding: EdgeInsets.only(left: 10),
             child: Text(
-              dateFormat.format(start ? startTime : endTime),
-              style: jm_text_black_style15,
+              start
+                  ? (startTime == null
+                      ? '请选择开始时间'
+                      : dateFormat.format(startTime))
+                  : (endTime == null ? '请选择开始时间' : dateFormat.format(endTime)),
+              style: valueStyle,
             ),
           ),
           Icon(
@@ -451,9 +517,10 @@ class _PKaddState extends State<PKadd> {
   }
 
   Future<void> showDatePick(bool isStart) async {
+    dynamic time = isStart ? startTime : endTime;
     final DateTime date = await showDatePicker(
         context: context,
-        initialDate: isStart ? startTime : endTime,
+        initialDate: time ?? DateTime.now(),
         firstDate: DateTime(2018, 1),
         lastDate: DateTime(2022, 1),
         locale: Locale('zh'));

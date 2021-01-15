@@ -1,6 +1,7 @@
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class PKmainListCell extends StatefulWidget {
   final Map cellData;
@@ -13,6 +14,7 @@ class PKmainListCell extends StatefulWidget {
 }
 
 class _PKmainListCellState extends State<PKmainListCell> {
+  DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
   double cellLineHeight = 40;
   double widthScale;
   double margin;
@@ -50,20 +52,22 @@ class _PKmainListCellState extends State<PKmainListCell> {
                     children: [
                       Positioned(
                           right: margin,
-                          top: -15,
-                          child: Container(
-                            width: widthScale * 16,
-                            height: 30,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: jm_appTheme,
-                                border: Border.all(
-                                    width: 0.5, color: jm_line_color)),
-                            child: Center(
-                              child: Text(
-                                jm_getPKStatus(widget.cellData['status'] ?? 0),
-                                style: jm_text_black_bold_style15,
-                              ),
+                          top: -(25 / 2),
+                          width: widthScale * 17,
+                          height: 25,
+                          child: Image.asset(
+                            'assets/images/icon/icon_pk_status_bg.png',
+                            fit: BoxFit.fill,
+                          )),
+                      Positioned(
+                          right: margin,
+                          top: -(25 / 2) - 1,
+                          width: widthScale * 17,
+                          height: 25,
+                          child: Center(
+                            child: Text(
+                              jm_getPKStatus(widget.cellData['status'] ?? 0),
+                              style: jm_text_black_style11,
                             ),
                           )),
                     ],
@@ -74,6 +78,7 @@ class _PKmainListCellState extends State<PKmainListCell> {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Row(
                       children: [
@@ -81,7 +86,7 @@ class _PKmainListCellState extends State<PKmainListCell> {
                           width: widthScale * 3,
                         ),
                         Container(
-                          width: widthScale * 39,
+                          width: selfWidth * 0.5 - widthScale * 4,
                           child: Text(
                             widget.cellData['name'] ?? '',
                             maxLines: 100,
@@ -92,16 +97,19 @@ class _PKmainListCellState extends State<PKmainListCell> {
                     ),
                     Row(
                       children: [
-                        Text(
-                          '时间：' +
-                              (widget.cellData['startTime'] ?? '') +
-                              ' 至 ' +
-                              (widget.cellData['endTime'] ?? ''),
-                          style: TextStyle(fontSize: 10, color: jm_text_gray),
+                        Container(
+                          alignment: Alignment.centerRight,
+                          width: selfWidth * 0.5 - widthScale * 4,
+                          child: Text(
+                            '时间：' +
+                                (widget.cellData['startTime'] ?? '') +
+                                ' 至 ' +
+                                (widget.cellData['endTime'] ?? ''),
+                            style: TextStyle(fontSize: 10, color: jm_text_gray),
+                            maxLines: 100,
+                          ),
                         ),
-                        SizedBox(
-                          width: widthScale * 3,
-                        ),
+                        SizedBox(width: widthScale * 3)
                       ],
                     )
                   ],
@@ -125,7 +133,12 @@ class _PKmainListCellState extends State<PKmainListCell> {
     if ((widget.cellData['raceRankList']) != null &&
         (widget.cellData['raceRankList']) is List &&
         (widget.cellData['raceRankList']).length > 0) {
-      for (var i = 0; i < 1; i++) {
+      for (var i = 0;
+          i <
+              ((widget.cellData['raceRankList'] as List).length > 3
+                  ? 3
+                  : (widget.cellData['raceRankList'] as List).length);
+          i++) {
         Map<String, dynamic> data = (widget.cellData['raceRankList'])[i];
         cells.add(Row(
           children: [
@@ -133,11 +146,8 @@ class _PKmainListCellState extends State<PKmainListCell> {
               height: cellLineHeight,
               width: margin,
             ),
-            Icon(
-              Icons.emoji_events,
-              size: 15,
-              color: jm_appTheme,
-            ),
+            Image.asset(
+                'assets/images/icon/icon_pk_rank${(i + 1).toString()}.png'),
             SizedBox(width: widthScale * 4),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -153,9 +163,7 @@ class _PKmainListCellState extends State<PKmainListCell> {
                   style: jm_text_black_style14,
                 ),
                 Text(
-                  data['commission'] != null
-                      ? (data['commission']).toString()
-                      : '',
+                  '${data["number"] != null && data["number"] != 0 ? (data["number"]).toString() + "套  " : ""}${(data["commission"] != null ? data["commission"].toString() + "元  " : "")}${data["saleRate"] != null ? "成交率" + (data["saleRate"] * 100).toString() + "%" : ""}',
                   style: jm_text_gray_style12,
                 ),
                 SizedBox(

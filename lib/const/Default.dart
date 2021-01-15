@@ -4,6 +4,7 @@ import 'package:JMrealty/Login/components/ZZInput.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum Sex { boy, girl }
 
@@ -11,10 +12,12 @@ typedef IndexClick = Function();
 
 const Color jm_appTheme = Color.fromRGBO(230, 184, 92, 1);
 const Color jm_appTheme_splash = Color.fromRGBO(230, 184, 92, 0.2);
-const Color jm_line_color = Color.fromRGBO(0, 0, 0, 0.12);
+const Color jm_line_color = Color(0xFFF0F2F5);
+// const Color jm_line_color = Color.fromRGBO(0, 0, 0, 0.12);
 const Color jm_text_black = Color(0xff404351);
 const Color jm_text_gray = Color(0xffaaacb2);
 const Color jm_placeholder_color = Color(0xffaab2bd);
+const Color jm_bg_gray_color = Color(0xFFF0F2F5);
 const IconData jm_naviBack = Icons.navigate_before;
 const Icon jm_naviBack_icon = Icon(
   jm_naviBack,
@@ -26,6 +29,19 @@ const Icon jm_naviAdd_icon = Icon(
   size: 40,
   color: Colors.white,
 );
+
+void callPhone(String phone) {
+  if (phone != null) {
+    print('拨打电话--tel://$phone');
+    launch('tel://$phone');
+  }
+}
+
+void push(Widget widget, BuildContext context) {
+  Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+    return widget;
+  }));
+}
 
 String jm_getPKStatus(int status) {
   switch (status) {
@@ -250,6 +266,10 @@ const TextStyle jm_text_black_bold_style19 =
     TextStyle(fontSize: 19, color: jm_text_black, fontWeight: FontWeight.bold);
 const TextStyle jm_text_black_bold_style20 =
     TextStyle(fontSize: 20, color: jm_text_black, fontWeight: FontWeight.bold);
+const TextStyle jm_text_black_bold_style21 =
+    TextStyle(fontSize: 21, color: jm_text_black, fontWeight: FontWeight.bold);
+const TextStyle jm_text_black_bold_style22 =
+    TextStyle(fontSize: 22, color: jm_text_black, fontWeight: FontWeight.bold);
 
 class Global {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

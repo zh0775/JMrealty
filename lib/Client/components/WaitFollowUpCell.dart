@@ -1,4 +1,6 @@
+import 'package:JMrealty/Client/components/LevelIcon.dart';
 import 'package:JMrealty/Client/viewModel/ClientListViewModel.dart';
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/cupertino.dart';
@@ -44,7 +46,6 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
   double cellHeight;
   double cellWidth;
   double widthScale;
-  String level = '';
   String name = '';
   String sex = '';
   String houseType = '';
@@ -58,9 +59,9 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
   @override
   void initState() {
     lineHeight = 35;
-    cellHeight = 200;
+    // cellHeight = 200;
     if (widget.pool) {
-      cellHeight = 140;
+      // cellHeight = 140;
     }
     super.initState();
   }
@@ -76,26 +77,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
     model = widget.model;
     cellWidth = SizeConfig.screenWidth;
     widthScale = SizeConfig.blockSizeHorizontal;
-    Color levelColor = Colors.transparent;
-    if (model['desireId'] != null) {
-      switch (model['desireId']) {
-        case 1:
-          level = 'A级';
-          levelColor = Color.fromRGBO(233, 193, 112, 1);
-          break;
-        case 2:
-          level = 'B级';
-          levelColor = Color.fromRGBO(91, 93, 106, 1);
-          break;
-        case 3:
-          level = 'C级';
-          levelColor = Color.fromRGBO(40, 143, 255, 1);
-          break;
-        default:
-          level = '';
-          levelColor = Colors.transparent;
-      }
-    }
+
     if (model['name'] != null) {
       name = model['name'];
     }
@@ -133,7 +115,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
       },
       child: Container(
         width: cellWidth,
-        height: cellHeight,
+        // height: cellHeight,
         decoration: BoxDecoration(
             border: Border(
           bottom: BorderSide(color: jm_line_color, width: 0.5),
@@ -145,83 +127,55 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
               width: cellWidth,
               margin: EdgeInsets.only(
                   left: SizeConfig.blockSizeHorizontal * 4, top: 10),
-              child: Row(
-                children: [
-                  // 客户级别
-                  Container(
-                    width: SizeConfig.blockSizeHorizontal * 10,
+              child: Row(children: [
+                // 客户级别
+                LevelIcon(desireId: model['desireId'] ?? 0),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * 2),
+                // 客户姓名
+                frameText(name,
+                    width: SizeConfig.blockSizeHorizontal * 23,
                     height: lineHeight - 10,
-                    decoration: BoxDecoration(
-                        color: levelColor,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular((lineHeight - 10) / 2),
-                          bottomLeft: Radius.circular((lineHeight - 10) / 2),
-                          bottomRight: Radius.circular((lineHeight - 10) / 2),
-                        )),
-                    child: Center(
+                    fontSize: 16,
+                    textColor: Colors.black),
+                // 客户性别
+                Container(
+                  // width: SizeConfig.blockSizeHorizontal * 12,
+                  height: lineHeight - 10,
+                  decoration: BoxDecoration(
+                      color: Color.fromRGBO(243, 249, 255, 1),
+                      borderRadius:
+                          BorderRadius.circular((lineHeight - 10) / 2)),
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: widthScale * 3),
                       child: Text(
-                        level,
-                        style: TextStyle(color: Colors.white, fontSize: 13),
+                        sex ?? '',
+                        style: jm_text_black_style13,
                       ),
                     ),
                   ),
-                  SizedBox(width: SizeConfig.blockSizeHorizontal * 2),
-                  // 客户姓名
-                  frameText(name,
-                      width: SizeConfig.blockSizeHorizontal * 23,
-                      height: lineHeight - 10,
-                      fontSize: 16,
-                      textColor: Colors.black),
-                  // 客户性别
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Color.fromRGBO(243, 249, 255, 1),
-                        borderRadius:
-                            BorderRadius.circular((lineHeight - 10) / 2)),
-                    child: frameText(sex,
-                        width: SizeConfig.blockSizeHorizontal * 12,
-                        height: lineHeight - 10,
-                        fontSize: 13,
-                        textColor: Colors.black),
-                  ),
-                  SizedBox(width: SizeConfig.blockSizeHorizontal * 2),
-                  // 是否新房
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Color.fromRGBO(243, 249, 255, 1),
-                        borderRadius:
-                            BorderRadius.circular((lineHeight - 10) / 2)),
-                    child: frameText(houseType,
-                        width: SizeConfig.blockSizeHorizontal * 12,
-                        height: lineHeight - 10,
-                        fontSize: 13,
-                        textColor: Colors.black),
-                  ),
-                  SizedBox(
-                    width: SizeConfig.blockSizeHorizontal * 10,
-                  ),
-                  // 联系电话
-                  GestureDetector(
-                    onTap: () {
-                      // callPhone(clientPhoneNum);
-                    },
-                    child: Row(
-                      children: [
-                        frameText('联系电话',
-                            width: SizeConfig.blockSizeHorizontal * 16,
-                            height: lineHeight - 10,
-                            fontSize: 15,
-                            textColor: Colors.black),
-                        Image.asset(
-                          'assets/images/icon_client_phone.png',
-                          height: SizeConfig.blockSizeHorizontal * 6,
-                          width: SizeConfig.blockSizeHorizontal * 6,
-                        )
-                      ],
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * 2),
+                // 房子类型
+                Container(
+                  // width: SizeConfig.blockSizeHorizontal * 12,
+                  height: lineHeight - 10,
+                  decoration: BoxDecoration(
+                      color: Color.fromRGBO(243, 249, 255, 1),
+                      borderRadius:
+                          BorderRadius.circular((lineHeight - 10) / 2)),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: widthScale * 3),
+                    child: Center(
+                      child: Text(
+                        houseType ?? '',
+                        style: jm_text_black_style13,
+                      ),
                     ),
-                  )
-                ],
-              ),
+                  ),
+                ),
+                ...callPhoneView(),
+              ]),
             ),
             Container(
               height: lineHeight,
@@ -229,49 +183,17 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
               child: Row(
                 children: [
                   SizedBox(
-                    width: SizeConfig.blockSizeHorizontal * 14,
+                    width: SizeConfig.blockSizeHorizontal * 16.5,
                   ),
                   // 房间数量
-                  roomCount != ''
-                      ? frameText(roomCount,
-                          height: lineHeight - 10,
-                          width: SizeConfig.blockSizeHorizontal * 10,
-                          textColor: Color.fromRGBO(98, 103, 125, 1),
-                          fontSize: 14)
-                      : SizedBox(),
-                  roomCount != ''
-                      ? Container(
-                          width: 1,
-                          height: lineHeight - 28,
-                          color: Color.fromRGBO(98, 103, 125, 1),
-                        )
-                      : SizedBox(),
-                  // frameText(roomCount, height: lineHeight - 10, width: SizeConfig.blockSizeHorizontal * 10, textColor: Color.fromRGBO(98,103,125, 1), fontSize: 14),
-                  SizedBox(
-                    width: SizeConfig.blockSizeHorizontal * 2,
-                  ),
-                  // 房子大小
-                  Text(
-                    houseSize,
-                    style: TextStyle(
-                        color: Color.fromRGBO(98, 103, 125, 1), fontSize: 14),
-                  ),
-                  SizedBox(
-                    width: SizeConfig.blockSizeHorizontal * 2,
-                  ),
                   Container(
-                    width: 1,
-                    height: lineHeight - 28,
-                    color: Color.fromRGBO(98, 103, 125, 1),
-                  ),
-                  SizedBox(
-                    width: SizeConfig.blockSizeHorizontal * 2,
-                  ),
-                  // 房子价格
-                  Text(
-                    housePrice,
-                    style: TextStyle(
-                        color: Color.fromRGBO(98, 103, 125, 1), fontSize: 14),
+                    width: SizeConfig.blockSizeHorizontal * (100 - 16.5 - 4),
+                    // height: 40,
+                    // color: Colors.red,
+                    child: Text(
+                      '${model['area'] ?? '-'} | ${model['paymentsBudget'] ?? '-'} | ${model['source'] ?? '-'}',
+                      style: jm_text_black_style13,
+                    ),
                   ),
                 ],
               ),
@@ -279,17 +201,52 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
             ...followInfoWidget(),
             Container(
               margin: EdgeInsets.only(top: 13),
-              height: lineHeight - 5,
+              // height: lineHeight - 5,
               width: cellWidth,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [...buttons()],
               ),
+            ),
+            SizedBox(
+              height: 10,
             )
           ],
         ),
       ),
     );
+  }
+
+  List<Widget> callPhoneView() {
+    if (!widget.pool) {
+      return [
+        SizedBox(
+          width: SizeConfig.blockSizeHorizontal * 10,
+        ),
+        // 联系电话
+        GestureDetector(
+          onTap: () {
+            callPhone(widget.model['phone']);
+          },
+          child: Row(
+            children: [
+              frameText('联系电话',
+                  width: SizeConfig.blockSizeHorizontal * 16,
+                  height: lineHeight - 10,
+                  fontSize: 15,
+                  textColor: Colors.black),
+              Image.asset(
+                'assets/images/icon_client_phone.png',
+                height: SizeConfig.blockSizeHorizontal * 6,
+                width: SizeConfig.blockSizeHorizontal * 6,
+              )
+            ],
+          ),
+        )
+      ];
+    } else {
+      return [NoneV()];
+    }
   }
 
   List<Widget> buttons() {
@@ -335,7 +292,8 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
           width: SizeConfig.blockSizeHorizontal * 4,
         ),
       ];
-    } else {
+    } else if (widget.status != ClientStatus.deal &&
+        widget.status != ClientStatus.water) {
       Color whiteButtonTextColor = Color.fromRGBO(87, 93, 116, 1);
       return [
         RawMaterialButton(
@@ -449,6 +407,8 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
           width: SizeConfig.blockSizeHorizontal * 4,
         )
       ];
+    } else {
+      return [NoneV()];
     }
   }
 
@@ -473,31 +433,28 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
             ],
           ),
         ),
-        Container(
-          height: lineHeight,
-          width: cellWidth,
-          child: Row(
-            children: [
-              // 客户意向
-              Container(
-                margin:
-                    EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 16),
+        Row(
+          children: [
+            // 客户意向
+            Container(
+              margin:
+                  EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 16),
+              // padding:
+              //     EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 3),
+              // height: lineHeight,
+              width: SizeConfig.blockSizeHorizontal * 80,
+              decoration: BoxDecoration(
+                  color: Color.fromRGBO(247, 248, 251, 1),
+                  borderRadius: BorderRadius.circular(8)),
+              child: Padding(
                 padding:
-                    EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 3),
-                height: lineHeight,
-                width: SizeConfig.blockSizeHorizontal * 80,
-                decoration: BoxDecoration(
-                    color: Color.fromRGBO(247, 248, 251, 1),
-                    borderRadius: BorderRadius.circular(8)),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(clientIntention,
-                      style: TextStyle(
-                          color: Color.fromRGBO(55, 58, 73, 1), fontSize: 15)),
-                ),
-              )
-            ],
-          ),
+                    EdgeInsets.fromLTRB(widthScale * 3, 8, widthScale * 3, 8),
+                child: Text(clientIntention,
+                    style: TextStyle(
+                        color: Color.fromRGBO(55, 58, 73, 1), fontSize: 15)),
+              ),
+            )
+          ],
         ),
       ];
     }
@@ -510,12 +467,12 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
       @required double fontSize}) {
     return Container(
       width: width,
-      height: height,
-      child: Center(
-        child: Text(
-          text,
-          style: TextStyle(color: textColor, fontSize: fontSize),
-        ),
+      // height: height,
+      alignment: Alignment.centerLeft,
+      child: Text(
+        text,
+        maxLines: 100,
+        style: TextStyle(color: textColor, fontSize: fontSize),
       ),
     );
   }

@@ -46,8 +46,16 @@ class PKaddViewModel extends BaseViewModel {
         if (success != null) {
           success(true);
         }
-      } else {}
-    }, fail: (reason, code) {});
+      } else {
+        if (success != null) {
+          success(false);
+        }
+      }
+    }, fail: (reason, code) {
+      if (success != null) {
+        success(false);
+      }
+    });
   }
 
   loadPkType({Function(List data) success}) {

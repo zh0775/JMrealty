@@ -1,8 +1,7 @@
 import 'package:JMrealty/StartAppPage.dart';
-// import 'package:JMrealty/const/ChineseCupertinoLocalizations.dart';
-import 'package:JMrealty/const/Config.dart';
 import 'package:JMrealty/const/Routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:JMrealty/const/Default.dart';
 // import 'package:jpush_flutter/jpush_flutter.dart';
@@ -51,10 +50,16 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: (setting) {
         return Routes.findRoutes(setting);
       },
+      builder: EasyLoading.init(),
       home: StartAppPage(),
       theme: ThemeData(
           primaryColor: jm_appTheme,
           splashColor: jm_appTheme,
+          // primaryTextTheme: TextTheme(headline4: jm_text_apptheme_style15),
+          // dialogTheme: DialogTheme(
+          //     contentTextStyle: jm_text_apptheme_style15,
+          //     titleTextStyle: jm_text_apptheme_style15),
+          colorScheme: ColorScheme.light(primary: jm_appTheme),
           highlightColor: Color.fromRGBO(255, 255, 255, 0.5),
           textButtonTheme: TextButtonThemeData(
               style: ButtonStyle(

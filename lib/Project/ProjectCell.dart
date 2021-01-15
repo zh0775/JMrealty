@@ -1,3 +1,4 @@
+import 'package:JMrealty/base/image_loader.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
@@ -17,107 +18,129 @@ class _ProjectCellState extends State<ProjectCell> {
   double insideMargin;
   double labelSpace = 3;
   double axisSpace = 14;
+
+  double imageWidth;
+  double otherWidth;
   @override
   Widget build(BuildContext context) {
     widthScale = SizeConfig.blockSizeHorizontal;
     outMargin = widthScale * 4;
-    insideMargin = widthScale * 6;
-
+    insideMargin = widthScale * 3;
+    imageWidth = widthScale * 36;
+    otherWidth = SizeConfig.screenWidth - imageWidth - insideMargin * 3;
     return Container(
-      width: SizeConfig.screenWidth - insideMargin,
+      width: SizeConfig.screenWidth,
       decoration: BoxDecoration(
           border: Border(bottom: BorderSide(color: jm_line_color, width: 0.5))),
-      child: Padding(
-        padding: EdgeInsets.only(left: insideMargin),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: axisSpace,
+      child: Row(
+        children: [
+          SizedBox(
+            width: insideMargin,
+          ),
+          Container(
+            height: imageWidth - widthScale * 3,
+            // color: Colors.red,
+            width: imageWidth,
+            child: ImageLoader(
+              widget.data['headIcon'],
+              fit: BoxFit.fill,
             ),
-            Text(
-              widget.data['name'] ?? '',
-              style: jm_text_black_style18,
-            ),
-            SizedBox(
-              height: labelSpace,
-            ),
-            Text(
-              widget.data['address'] ?? '',
-              style: jm_text_gray_style14,
-            ),
-            SizedBox(
-              height: labelSpace,
-            ),
-            RichText(
-                text: TextSpan(
-                    text: '均',
-                    style: TextStyle(fontSize: 14, color: Colors.red),
-                    children: [
-                  TextSpan(
-                      text: widget.data['averagePrice'] != null
-                          ? (widget.data['averagePrice']).toString()
-                          : '',
-                      style: TextStyle(fontSize: 20, color: Colors.red)),
-                  TextSpan(
-                      text: '元/平',
-                      style: TextStyle(fontSize: 14, color: Colors.red)),
-                ])),
-            SizedBox(
-              height: labelSpace,
-            ),
-            Row(
-              children: [
-                Text(
-                  widget.data['architecture'] != null
-                      ? (widget.data['architecture'] + ' | ')
-                      : '',
-                  style: jm_text_gray_style14,
+          ),
+          SizedBox(
+            width: insideMargin,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: axisSpace,
+              ),
+              SizedBox(
+                width: otherWidth,
+                child: Text(
+                  widget.data['name'] ?? '',
+                  style: jm_text_black_style16,
+                  maxLines: 100,
                 ),
-                Text(
-                  widget.data['property'] != null
-                      ? (widget.data['property'] + ' - ')
-                      : '',
-                  style: jm_text_gray_style14,
+              ),
+              SizedBox(
+                height: labelSpace,
+              ),
+              SizedBox(
+                width: otherWidth,
+                child: Text(
+                  widget.data['address'] ?? '',
+                  style: jm_text_gray_style13,
                 ),
-                Text(
-                  widget.data['city'] != null
-                      ? (widget.data['city'] + ' - ')
-                      : '',
-                  style: jm_text_gray_style14,
+              ),
+              SizedBox(
+                height: labelSpace,
+              ),
+              SizedBox(
+                width: otherWidth,
+                child: RichText(
+                    maxLines: 100,
+                    text: TextSpan(
+                        text: '均',
+                        style: TextStyle(fontSize: 13, color: Colors.red),
+                        children: [
+                          TextSpan(
+                              text: widget.data['averagePrice'] != null
+                                  ? (widget.data['averagePrice']).toString()
+                                  : '',
+                              style:
+                                  TextStyle(fontSize: 19, color: Colors.red)),
+                          TextSpan(
+                              text: '元/平',
+                              style:
+                                  TextStyle(fontSize: 13, color: Colors.red)),
+                        ])),
+              ),
+              SizedBox(
+                height: labelSpace,
+              ),
+              SizedBox(
+                width: otherWidth,
+                child: Text(
+                  (widget.data['architecture'] != null
+                          ? (widget.data['architecture'] + ' | ')
+                          : '') +
+                      (widget.data['property'] != null
+                          ? (widget.data['property'] + ' - ')
+                          : '') +
+                      (widget.data['city'] != null
+                          ? (widget.data['city'] + ' - ')
+                          : '') +
+                      (widget.data['region'] != null
+                          ? (widget.data['region'] + ' | ')
+                          : '') +
+                      (widget.data['areaMin'] != null
+                          ? (widget.data['areaMin'] + '-')
+                          : '') +
+                      (widget.data['areaMax'] != null
+                          ? (widget.data['areaMax'] + '平')
+                          : ''),
+                  style: jm_text_gray_style13,
                 ),
-                Text(
-                  widget.data['region'] != null
-                      ? (widget.data['region'] + ' | ')
-                      : '',
-                  style: jm_text_gray_style14,
+              ),
+              SizedBox(
+                height: labelSpace,
+              ),
+              SizedBox(
+                width: otherWidth,
+                child: Wrap(
+                  children: [
+                    ...getTagList(),
+                  ],
                 ),
-                Text(
-                  widget.data['areaMin'] != null
-                      ? (widget.data['areaMin'] + '-')
-                      : '',
-                  style: jm_text_gray_style14,
-                ),
-                Text(
-                  widget.data['areaMax'] != null
-                      ? (widget.data['areaMax'] + '平')
-                      : '',
-                  style: jm_text_gray_style14,
-                ),
-              ],
-            ),
-            SizedBox(
-              height: labelSpace,
-            ),
-            Row(
-              children: [...getTagList()],
-            ),
-            SizedBox(
-              height: axisSpace,
-            ),
-          ],
-        ),
+              ),
+              SizedBox(
+                height: axisSpace - 8,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -139,7 +162,8 @@ class _ProjectCellState extends State<ProjectCell> {
   Widget getTag(String title) {
     return Container(
       // height: 20,
-      margin: EdgeInsets.only(right: widthScale * 3),
+      margin: EdgeInsets.only(right: widthScale * 3, bottom: 8),
+      constraints: BoxConstraints(minWidth: widthScale * 10, minHeight: 22),
       color: jm_line_color,
       child: Padding(
         padding: EdgeInsets.fromLTRB(7, 1, 7, 1),

@@ -1,23 +1,32 @@
 import 'package:JMrealty/Report/viewmodel/ReportUploadViewModel.dart';
 import 'package:JMrealty/base/image_loader.dart';
+import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/SelectImageView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class CustomGridImageV extends StatelessWidget {
   final List<String> imageUrls;
+  final List imageAssets;
   final bool needButton;
   final double width;
   final int count;
-  final Function(List<String> images) addImages;
+  final Function(List images) addImages;
+  final Function(dynamic images) deleteImage;
+  final Function(int index) imageClick;
 
   const CustomGridImageV(
       {this.imageUrls = const [],
+      this.imageAssets = const [],
       this.needButton = false,
+      this.imageClick,
       this.count = 3,
       this.width,
-      this.addImages});
+      this.addImages,
+      this.deleteImage});
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +35,9 @@ class CustomGridImageV extends StatelessWidget {
     double imgHeight = widthScale * 26;
     double imgWidth = widthScale * 26;
     double heightSpace = 10;
+    List l = needButton ? imageAssets : imageUrls;
     double selfHeight =
-        (((imageUrls == null ? 0 : imageUrls.length) + (needButton ? 1 : 0)) /
-                    count)
-                .ceil() *
+        (((l == null ? 0 : l.length) + (needButton ? 1 : 0)) / count).ceil() *
             (imgHeight + heightSpace);
     double margin =
         width != null ? (SizeConfig.screenWidth - width) / 2 : widthScale * 5;
@@ -57,6 +65,7 @@ class CustomGridImageV extends StatelessWidget {
     if (imageUrls != null) {
       int count = imageUrls.length;
       if (needButton) {
+        count = imageAssets.length;
         count++;
       }
       for (var i = 0; i < count; i++) {
@@ -68,16 +77,27 @@ class CustomGridImageV extends StatelessWidget {
             height: imgHeight,
             child: GestureDetector(
                 onTap: () {
+                  if (imageAssets.length >= 9) {
+                    ShowToast.normal('最多上传9张照片，长按照片可删除');
+                    return;
+                  }
                   SelectImageView(
                     count: 9,
                     imageSelected: (images) {
                       if (images != null) {
-                        ReportUploadViewModel().upLoadReportImages(images,
-                            callBack: (List strImages) {
-                          if (addImages != null) {
-                            addImages(strImages);
+                        if (addImages != null) {
+                          if ((imageAssets.length + images.length) >= 9) {
+                            ShowToast.normal('最多上传9张照片，长按照片可删除');
                           }
-                        });
+                          addImages(images);
+                        }
+
+                        // ReportUploadViewModel().upLoadReportImages(images,
+                        //     callBack: (List strImages) {
+                        //   if (addImages != null) {
+                        //     addImages(strImages);
+                        //   }
+                        // });
                       }
                     },
                   ).showImage(context);
@@ -94,7 +114,7 @@ class CustomGridImageV extends StatelessWidget {
                 )),
           ));
         } else {
-          String element = imageUrls[i];
+          dynamic element = needButton ? imageAssets[i] : imageUrls[i];
           imgs.add(Positioned(
             left: x,
             top: y,
@@ -102,12 +122,27 @@ class CustomGridImageV extends StatelessWidget {
             height: imgHeight,
             child: GestureDetector(
                 onTap: () {
-                  selectImage(element, i);
+                  if (imageClick != null) {
+                    imageClick(i);
+                  }
                 },
-                child: ImageLoader(
-                  element,
-                  height: imgHeight,
-                )),
+                onLongPress: () {
+                  CustomAlert(content: '是否确认删除该照片').show(
+                    confirmClick: () {
+                      if (deleteImage != null) {
+                        deleteImage(element);
+                      }
+                    },
+                  );
+                },
+                child: needButton
+                    ? Image(
+                        image: AssetThumbImageProvider(element,
+                            height: imgHeight.round(), width: imgWidth.round()))
+                    : ImageLoader(
+                        element,
+                        height: imgHeight,
+                      )),
           ));
         }
         if ((i + 1) % 3 == 0) {
@@ -119,9 +154,5 @@ class CustomGridImageV extends StatelessWidget {
       }
     }
     return imgs;
-  }
-
-  void selectImage(String imageUrl, int index) {
-    print('imageUrl === $imageUrl ----- index === $index');
   }
 }

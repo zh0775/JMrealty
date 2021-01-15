@@ -4,6 +4,8 @@ PODS:
     - BSGridCollectionViewLayout (= 1.2.5)
     - BSImageView (= 1.0.3)
   - BSImageView (1.0.3)
+  - easy_contact_picker (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
   - fluttertoast (0.0.2):
     - Flutter
@@ -36,6 +38,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - easy_contact_picker (from `.symlinks/plugins/easy_contact_picker/ios`)
   - Flutter (from `Flutter`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - jpush_flutter (from `.symlinks/plugins/jpush_flutter/ios`)
@@ -58,6 +61,8 @@ SPEC REPOS:
     - Toast
 
 EXTERNAL SOURCES:
+  easy_contact_picker:
+    :path: ".symlinks/plugins/easy_contact_picker/ios"
   Flutter:
     :path: Flutter
   fluttertoast:
@@ -83,6 +88,7 @@ SPEC CHECKSUMS:
   BSGridCollectionViewLayout: 333dcb457a5a3bdd9212607ab5756553dcfe06cb
   BSImagePicker: 07404254f2fcdaf5a2eb403c0f8c337267ce8738
   BSImageView: a149459433a2687157d034c78e059d30ac7f2544
+  easy_contact_picker: 9ab9dc70e8ddde6e76a19ffc482d7bf899868730
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a

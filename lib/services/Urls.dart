@@ -132,6 +132,8 @@ class Urls {
   static const String tasksType = '/system/dict/type/typeId?dictId=122';
   // 新增任务 下拉 任务紧急
   static const String tasksUrgency = '/system/dict/type/typeId?dictId=123';
+  // 修改任务状态
+  static const String changeTaskStatus = '/comps/task/taskStatus';
 
   //消息
   // 消息列表

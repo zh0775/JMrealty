@@ -4,8 +4,14 @@ import 'package:flutter/material.dart';
 
 class CustomMarkInput extends StatefulWidget {
   final Function(String value) valueChange;
+  final String hintText;
   final String text;
-  CustomMarkInput({this.valueChange, this.text = ''});
+  final int maxLength;
+  CustomMarkInput(
+      {this.valueChange,
+      this.text = '',
+      this.maxLength,
+      this.hintText = '请输入'});
   @override
   _CustomMarkInputState createState() => _CustomMarkInputState();
 }
@@ -18,20 +24,21 @@ class _CustomMarkInputState extends State<CustomMarkInput> {
     marginSpace = SizeConfig.blockSizeHorizontal * 6;
     return Container(
       constraints: BoxConstraints(
-          maxHeight: 90,
-          minHeight: 90,
+          // minHeight: 200,
+          // maxHeight: widget.maxLength != null ? 120 : 90,
+          // minHeight: widget.maxLength != null ? 120 : 120,
           minWidth: SizeConfig.screenWidth - marginSpace * 2),
       // width: SizeConfig.screenWidth - marginSpace * 2,
       padding: EdgeInsets.fromLTRB(marginSpace, 10, marginSpace, 10),
       child: TextField(
-        maxLines: 100,
+        maxLines: null,
         controller: TextEditingController.fromValue(TextEditingValue(
           text: widget.text ?? '',
           selection: TextSelection.fromPosition(TextPosition(
               affinity: TextAffinity.downstream,
               offset: widget.text.length ?? 0)),
         )),
-        minLines: 3,
+        maxLength: widget.maxLength,
         decoration: InputDecoration(
             contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
             // border: OutlineInputBorder(

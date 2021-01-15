@@ -1,9 +1,10 @@
 import 'package:JMrealty/Client/FollowTrack.dart';
 import 'package:JMrealty/Client/components/ClientSuccessWidget.dart';
-import 'package:JMrealty/Client/components/WriteFollow.dart';
+import 'package:JMrealty/Client/components/LevelIcon.dart';
 import 'package:JMrealty/Client/viewModel/ClientDetailViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/components/ShowLoading.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -24,9 +25,7 @@ class _ClientDetailState extends State<ClientDetail> {
   double widthScale;
   double contentWidth;
   double lineHeight1;
-  String level;
   String sex;
-  Color levelColor;
 
   @override
   void initState() {
@@ -36,33 +35,17 @@ class _ClientDetailState extends State<ClientDetail> {
     if (widget.clientData['sex'] != null) {
       sex = widget.clientData['sex'] == 0 ? '先生' : '女士';
     }
-    if (widget.clientData['desireId'] != null) {
-      switch (widget.clientData['desireId']) {
-        case 3:
-          level = 'A级';
-          levelColor = Color.fromRGBO(233, 193, 112, 1);
-          break;
-        case 2:
-          level = 'B级';
-          levelColor = Color.fromRGBO(91, 93, 106, 1);
-          break;
-        case 1:
-          level = 'C级';
-          levelColor = Color.fromRGBO(40, 143, 255, 1);
-          break;
-      }
-    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // print('123===${widget.clientData}');
     SizeConfig().init(context);
     widthScale = SizeConfig.blockSizeHorizontal;
     margin = widthScale * 5;
     contentWidth = SizeConfig.screenWidth - margin * 2;
     return Scaffold(
+        backgroundColor: jm_line_color,
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: jm_appTheme,
@@ -108,262 +91,294 @@ class _ClientDetailState extends State<ClientDetail> {
   Widget getBody(Map clientData) {
     Map customerVO = clientData['customerVO'];
     List customerProgress = clientData['customerProgress'];
-    String clientStatus = '已跟进';
-    String phone = '';
-    if (customerVO['phone'] != null) {
-      phone = customerVO['isSensitive'] == 1
-          ? (customerVO['phone'] as String).replaceRange(3, 7, '****')
-          : customerVO['phone'];
-    }
-    String clientYY = '';
-    if (customerVO['type'] != null) {
-      clientYY += customerVO['type'] + ' | ';
-    }
-    if (customerVO['area'] != null) {
-      clientYY += customerVO['area'] + ' | ';
-    }
-    if (customerVO['floor'] != null) {
-      clientYY += customerVO['floor'] + '楼' + ' | ';
-    }
 
-    if (clientYY != '') {
-      clientYY =
-          clientYY.replaceRange(clientYY.length - 2, clientYY.length, '');
-    }
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getTop(customerVO),
+          JMline(width: SizeConfig.screenWidth, height: 0.5),
+          getClientInfo(customerVO, clientData),
+          JMline(width: SizeConfig.screenWidth, height: 15),
+          // 成交信息
+          clientData['reportShopDetailVOS'] != null &&
+                  (clientData['reportShopDetailVOS'] is List) &&
+                  (clientData['reportShopDetailVOS'] as List).length > 0
+              ? successInfo(clientData['reportShopDetailVOS'])
+              : NoneV(),
+          clientData['progressSize'] != null && clientData['progressSize'] > 0
+              ? getCell(
+                  isFollow: true,
+                  count: clientData['progressSize'],
+                  followData: customerProgress)
+              : NoneV(),
+          Container(
+            width: SizeConfig.screenWidth,
+            height: 0.5,
+            color: Color(0xfff0f2f5),
+          ),
+          clientData['custmoerReportSize'] != null &&
+                  clientData['custmoerReportSize'] > 0
+              ? getCell(
+                  isFollow: false,
+                  count: clientData['custmoerReportSize'],
+                  followData: clientData['custmoerReportInfoVOS'] != null &&
+                          (clientData['custmoerReportInfoVOS'] is List)
+                      ? clientData['custmoerReportInfoVOS']
+                      : [])
+              : NoneV(),
+          SizedBox(
+            height: 40,
+          )
+        ],
+      ),
+    );
+  }
 
+  String yyFormat(dynamic str) {
+    String yyData = '';
+    if (str == null) {
+      return '-';
+    }
+    if (!(str is String)) {
+      yyData = str.toString();
+    } else {
+      yyData = str;
+    }
+    if (yyData.length > 0) {
+      return yyData;
+    }
+    return '-';
+  }
+
+  getTop(Map customerVO) {
+    String clientStatus = '待跟进';
     switch (customerVO['status']) {
-      case 1:
+      case 0:
         clientStatus = '待跟进';
         break;
-      case 2:
+      case 10:
         clientStatus = '已带看';
         break;
-      case 3:
+      case 20:
         clientStatus = '已预约';
         break;
-      case 4:
+      case 30:
         clientStatus = '已成交';
         break;
-      case 5:
-        clientStatus = '水客';
+      case 40:
+        clientStatus = '公开';
         break;
       default:
     }
 
-    return ListView(
-      children: [
-        Align(
-          child: Container(
-            height: 90,
-            width: contentWidth,
-            child: Stack(
+    return Container(
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: margin),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 20),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                    width: contentWidth - widthScale * 20,
                     child: Text(
                       customerVO['name'],
-                      style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: jm_text_black),
-                    ),
-                  ),
+                      style: jm_text_black_bold_style22,
+                      maxLines: 100,
+                    )),
+                SizedBox(
+                  height: 5,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 13),
-                  child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Row(
-                      children: [
-                        // 级别
-                        Container(
-                          width: SizeConfig.blockSizeHorizontal * 10,
-                          height: lineHeight1,
-                          decoration: BoxDecoration(
-                              color: levelColor,
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular((lineHeight1) / 2),
-                                bottomLeft: Radius.circular((lineHeight1) / 2),
-                                bottomRight: Radius.circular((lineHeight1) / 2),
-                              )),
-                          child: Center(
+                Row(
+                  children: [
+                    LevelIcon(desireId: widget.clientData['desireId'] ?? 0),
+                    SizedBox(width: SizeConfig.blockSizeHorizontal * 2),
+                    // 性别
+                    Container(
+                        height: lineHeight1,
+                        decoration: BoxDecoration(
+                            color: Color.fromRGBO(243, 249, 255, 1),
+                            borderRadius:
+                                BorderRadius.circular((lineHeight1) / 2)),
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: widthScale * 3),
                             child: Text(
-                              level,
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 13),
+                              sex,
+                              style: jm_text_black_style13,
                             ),
                           ),
-                        ),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal * 2),
-                        // 性别
-                        Container(
-                          decoration: BoxDecoration(
-                              color: Color.fromRGBO(243, 249, 255, 1),
-                              borderRadius:
-                                  BorderRadius.circular((lineHeight1) / 2)),
-                          child: frameText(sex,
-                              width: SizeConfig.blockSizeHorizontal * 12,
-                              height: lineHeight1,
-                              fontSize: 13,
-                              textColor: Colors.black),
-                        ),
-                        SizedBox(width: SizeConfig.blockSizeHorizontal * 2),
-                        // // 是否新房
-                        // Container(
-                        //   decoration: BoxDecoration(
-                        //       color: Color.fromRGBO(243, 249, 255, 1),
-                        //       borderRadius:
-                        //           BorderRadius.circular((lineHeight1) / 2)),
-                        //   child: frameText(widget.clientData['type'],
-                        //       width: SizeConfig.blockSizeHorizontal * 12,
-                        //       height: lineHeight1,
-                        //       fontSize: 13,
-                        //       textColor: Colors.black),
-                        // ),
-                      ],
-                    ),
-                  ),
+                        )),
+                  ],
                 ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.check_circle_outline,
-                        size: 40,
-                        color: jm_appTheme,
-                      ),
-                      SizedBox(
-                        height: 2,
-                      ),
-                      Text(
-                        clientStatus,
-                        style: TextStyle(fontSize: 12, color: jm_text_black),
-                      )
-                    ],
-                  ),
+                SizedBox(
+                  height: 20,
                 )
               ],
             ),
           ),
-        ),
-        // line
-        Container(
-          height: 0.5,
-          width: SizeConfig.screenWidth,
-          color: jm_line_color,
-        ),
-        Align(
-          child: Container(
-            height: 150,
-            width: contentWidth,
-            // color: jm_line_color,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          Padding(
+            padding: EdgeInsets.only(right: margin),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              // mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/images/icon/icon_client_status.png'),
+                SizedBox(
+                  height: 2,
+                ),
+                Text(
+                  clientStatus,
+                  style: TextStyle(fontSize: 12, color: jm_text_black),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  getClientInfo(Map customerVO, Map clientData) {
+    String phone = '';
+    if (customerVO['phone'] != null) {
+      phone = customerVO['isSensitive'] == 1 &&
+              (customerVO['phone'] as String).length > 7
+          ? (customerVO['phone'] as String).replaceRange(3, 7, '****')
+          : customerVO['phone'];
+    }
+    return Container(
+        color: Colors.white,
+        width: SizeConfig.screenWidth,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: margin),
+            child: Text(
+              '联系电话',
+              textAlign: TextAlign.start,
+              style: TextStyle(fontSize: 13, color: jm_text_gray),
+            ),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          RawMaterialButton(
+              splashColor: Colors.transparent,
+              // highlightColor: Colors.transparent,
+              padding: EdgeInsets.only(left: margin),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              constraints: BoxConstraints(minHeight: 0),
+              onPressed: () {
+                callPhone(phone);
+              },
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '联系电话',
-                    textAlign: TextAlign.start,
-                    style: TextStyle(fontSize: 13, color: jm_text_gray),
-                  ),
-                  TextButton(
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            phone,
-                            style:
-                                TextStyle(fontSize: 17, color: jm_text_black),
-                          ),
-                          SizedBox(
-                            width: widthScale * 2,
-                          ),
-                          Image.asset(
-                            'assets/images/icon_client_phone.png',
-                            height: SizeConfig.blockSizeHorizontal * 5,
-                            width: SizeConfig.blockSizeHorizontal * 5,
-                          )
-                        ],
-                      )),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    '客户要求',
-                    textAlign: TextAlign.start,
-                    style: TextStyle(fontSize: 13, color: jm_text_gray),
+                    phone,
+                    style: TextStyle(fontSize: 17, color: jm_text_black),
                   ),
                   SizedBox(
-                    height: 5,
+                    width: widthScale * 2,
                   ),
-                  Text(
-                    clientYY,
-                    textAlign: TextAlign.start,
-                    maxLines: 2,
-                    style: TextStyle(fontSize: 13, color: jm_text_black),
-                  ),
+                  Image.asset(
+                    'assets/images/icon_client_phone.png',
+                    height: SizeConfig.blockSizeHorizontal * 5,
+                    width: SizeConfig.blockSizeHorizontal * 5,
+                  )
                 ],
-              ),
+              )),
+          SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: margin),
+            child: Text(
+              '客户要求',
+              textAlign: TextAlign.start,
+              style: TextStyle(fontSize: 13, color: jm_text_gray),
             ),
           ),
+          SizedBox(
+            height: 5,
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: margin),
+            child: Text(
+              '${yyFormat(customerVO['area'])} | ${yyFormat(customerVO['paymentsBudget'])} | ${yyFormat(customerVO['source'])} | ${yyFormat(clientData['project'])} | ${yyFormat(customerVO['type'])}',
+              textAlign: TextAlign.start,
+              maxLines: 2,
+              style: TextStyle(fontSize: 13, color: jm_text_black),
+            ),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          getClientInfoLine('客户职业', customerVO['occupation'] ?? '-'),
+          getClientInfoLine('几次置业', customerVO['shopTimes'] ?? '-'),
+          getClientInfoLine('意向楼层', customerVO['floor'] ?? '-'),
+          getClientInfoLine('决策人', customerVO['policymaker'] ?? '-'),
+          getClientInfoLine('看房时间', customerVO['seeTime'] ?? '-'),
+          getClientInfoLine('特殊要求', customerVO['remarks'] ?? '-',
+              bottomText: true),
+          SizedBox(
+            height: 20,
+          ),
+        ]));
+  }
+
+  Widget getClientInfoLine(String title, dynamic value,
+      {bool bottomText = false}) {
+    String val = value is String ? value : value.toString();
+
+    List<Widget> list = [
+      SizedBox(
+        width: widthScale * 22,
+        height: 28,
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            title,
+            style: jm_text_gray_style13,
+          ),
         ),
-        Container(
-          width: SizeConfig.screenWidth,
-          height: 6,
-          color: Color(0xfff0f2f5),
-        ),
-        clientData['reportShopDetailVOS'] != null &&
-                (clientData['reportShopDetailVOS'] is List)
-            ? Padding(
-                padding: EdgeInsets.only(left: margin),
-                child: successInfo(clientData['reportShopDetailVOS']),
-              )
-            : Container(
-                width: 0.0,
-                height: 0.0,
+      ),
+      SizedBox(
+        height: 6,
+      ),
+      Text(
+        val,
+        style: jm_text_black_style13,
+        maxLines: 100,
+      )
+    ];
+
+    return bottomText
+        ? Padding(
+            padding: EdgeInsets.only(left: margin),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [...list],
+            ),
+          )
+        : Row(
+            children: [
+              SizedBox(
+                width: margin,
               ),
-        getCell(
-            isFollow: true,
-            count: clientData['progressSize'],
-            followData: customerProgress),
-        Container(
-          width: SizeConfig.screenWidth,
-          height: 6,
-          color: Color(0xfff0f2f5),
-        ),
-        getCell(
-            isFollow: false,
-            count: clientData['custmoerReportSize'],
-            followData: clientData['custmoerReportInfoVOS'] != null &&
-                    (clientData['custmoerReportInfoVOS'] is List)
-                ? clientData['custmoerReportInfoVOS']
-                : []),
-        Container(
-          width: SizeConfig.screenWidth,
-          height: 6,
-          color: Color(0xfff0f2f5),
-        ),
-        SizedBox(
-          height: 40,
-        )
-      ],
-      // ),
-      // ProviderWidget<ClientDetailViewModel>(
-      //   model: ClientDetailViewModel(),
-      //   onReady: (model) {
-      //     model.loadClientDetail(widget.clientData['id']);
-      //   },
-      //   builder: (context, model, child) {
-      //     return
-      //   },
-    );
+              ...list
+            ],
+          );
   }
 
   Widget frameText(text,
@@ -396,149 +411,138 @@ class _ClientDetailState extends State<ClientDetail> {
     } else {
       titleText = '带看轨迹' + '(' + count.toString() + ')';
     }
-    return Align(
-      child: Container(
-          width: contentWidth,
-          // height: 180,
-          child: Align(
-              alignment: Alignment.centerLeft,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.satellite_outlined,
-                              size: 20,
-                            ),
-                            SizedBox(
-                              width: widthScale * 1,
-                            ),
-                            Text(
-                              titleText,
-                              style:
-                                  TextStyle(fontSize: 20, color: jm_text_black),
-                            ),
-                          ],
-                        ),
-                        isFollow
-                            ? writeButton(() {
-                                WriteFollow(
-                                    clientData: widget.clientData,
-                                    addFollowConfirm: () {
-                                      clientDetailViewModel.loadClientDetail(
-                                          widget.clientData['id']);
-                                    }).loadNextFollow();
-                              })
-                            : Container(
-                                width: 0.0,
-                                height: 0.0,
-                              )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
-                        Container(
-                          width: 10,
-                          height: 10,
-                          decoration: BoxDecoration(
-                              color: jm_appTheme,
-                              borderRadius: BorderRadius.circular(5)),
-                        ),
-                        SizedBox(
-                          width: widthScale * 3,
-                        ),
-                        progress != null
-                            ? (isFollow
-                                ? Container(
-                                    width: contentWidth -
-                                        10 -
-                                        widthScale * 3 -
-                                        margin,
-                                    child: Text(
-                                      progress['result'] ?? '',
-                                      maxLines: 100,
-                                      style: TextStyle(
-                                          color: jm_text_black, fontSize: 14),
-                                    ),
-                                  )
-                                : Container(
-                                    width: contentWidth -
-                                        10 -
-                                        widthScale * 3 -
-                                        margin,
-                                    child: Text(
-                                      progress['projectName'] ?? '',
-                                      style: TextStyle(
-                                          color: jm_text_black, fontSize: 14),
-                                    ),
-                                  ))
-                            : Container(
-                                width: 0.0,
-                                height: 0.0,
-                              )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 3,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: widthScale * 3 + 10,
-                        ),
-                        progress != null
-                            ? (Text(
-                                isFollow
-                                    ? (progress['visitDate'] ?? '')
-                                    : (progress['createTime'] ?? ''),
-                                style: TextStyle(
-                                    color: jm_text_gray, fontSize: 14)))
-                            : Container(
-                                width: 0.0,
-                                height: 0.0,
-                              )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Container(
-                      width: contentWidth,
-                      height: 40,
-                      decoration: BoxDecoration(
-                          color: Color(0xfffaf1df),
-                          borderRadius: BorderRadius.circular(8)),
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.of(context)
-                              .push(CupertinoPageRoute(builder: (_) {
-                            return FollowTrack(
-                                json: convert.jsonEncode(followData),
-                                isFollow: isFollow);
-                          }));
-                        },
-                        child: Text(
-                          '查看全部' + '(' + count.toString() + ')',
-                          style: TextStyle(fontSize: 18, color: jm_text_black),
-                        ),
+    return Container(
+        padding: EdgeInsets.only(left: margin, bottom: 15),
+        color: Colors.white,
+        width: SizeConfig.screenWidth,
+        // height: 180,
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Image.asset('assets/images/icon/' +
+                          (isFollow
+                              ? 'icon_clientdetail_follow.png'
+                              : 'icon_clientdetail_take.png')),
+                      SizedBox(
+                        width: widthScale * 1,
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    )
-                  ]))),
-    );
+                      Text(
+                        titleText,
+                        style: TextStyle(fontSize: 20, color: jm_text_black),
+                      ),
+                    ],
+                  ),
+                  // 写跟进
+                  // isFollow
+                  //     ? writeButton(() {
+                  //         WriteFollow(
+                  //             clientData: widget.clientData,
+                  //             addFollowConfirm: () {
+                  //               clientDetailViewModel.loadClientDetail(
+                  //                   widget.clientData['id']);
+                  //             }).loadNextFollow();
+                  //       })
+                  //     : Container(
+                  //         width: 0.0,
+                  //         height: 0.0,
+                  //       )
+                ],
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Row(
+                children: [
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                        color: jm_appTheme,
+                        borderRadius: BorderRadius.circular(5)),
+                  ),
+                  SizedBox(
+                    width: widthScale * 3,
+                  ),
+                  progress != null
+                      ? (isFollow
+                          ? Container(
+                              width:
+                                  contentWidth - 10 - widthScale * 3 - margin,
+                              child: Text(
+                                progress['result'] ?? '',
+                                maxLines: 100,
+                                style: TextStyle(
+                                    color: jm_text_black, fontSize: 14),
+                              ),
+                            )
+                          : Container(
+                              width:
+                                  contentWidth - 10 - widthScale * 3 - margin,
+                              child: Text(
+                                progress['projectName'] ?? '',
+                                style: TextStyle(
+                                    color: jm_text_black, fontSize: 14),
+                              ),
+                            ))
+                      : Container(
+                          width: 0.0,
+                          height: 0.0,
+                        )
+                ],
+              ),
+              SizedBox(
+                height: 3,
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: widthScale * 3 + 10,
+                  ),
+                  progress != null
+                      ? (Text(
+                          isFollow
+                              ? '${(progress['visitDate'] ?? '')}  ${progress['userName'] ?? ''} ${progress['postName'] ?? ''}'
+                              : '${(progress['createTime'] ?? '')}  ${progress['employeeName'] ?? ''}  ${progress['employeePosition'] ?? ''}',
+                          style: TextStyle(color: jm_text_gray, fontSize: 14)))
+                      : NoneV()
+                ],
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Container(
+                width: contentWidth,
+                height: 40,
+                decoration: BoxDecoration(
+                    color: Color(0xfffaf1df),
+                    borderRadius: BorderRadius.circular(8)),
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                      return FollowTrack(
+                          json: convert.jsonEncode(followData),
+                          isFollow: isFollow);
+                    }));
+                  },
+                  child: Text(
+                    '查看全部' + '(' + count.toString() + ')',
+                    style: TextStyle(fontSize: 18, color: jm_text_black),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              )
+            ]));
   }
 
   Widget writeButton(void Function() buttonClick) {
@@ -587,10 +591,17 @@ class _ClientDetailState extends State<ClientDetail> {
       Map successData = successList[i];
       successWidgetList.add(ClientSuccessWidget(
         successData: successData,
+        margin: margin,
       ));
     }
-    return Column(
-      children: [...successWidgetList],
+    return Container(
+      padding: EdgeInsets.only(top: 20),
+      margin: EdgeInsets.only(bottom: 15),
+      width: SizeConfig.screenWidth,
+      color: Colors.white,
+      child: Column(
+        children: [...successWidgetList],
+      ),
     );
   }
 }

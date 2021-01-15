@@ -91,8 +91,6 @@ class _ClientState extends State<Client> {
 
   @override
   void dispose() {
-    eventBus.off(NOTIFY_CLIENT_LIST_REFRASH_NORMAL);
-    eventBus.off(NOTIFY_CLIENT_LIST_REFRASH);
     super.dispose();
   }
 
@@ -229,19 +227,28 @@ class _ClientState extends State<Client> {
                         height: selectExpand ? SizeConfig.screenHeight : 40,
                         child: Row(
                           children: [
-                            topButton(value1['title'], () {
+                            topButton(
+                                value1['title'] == '全部'
+                                    ? '级别'
+                                    : value1['title'], () {
                               setState(() {
                                 currentSelectIndex = 1;
                                 selectExpand = !selectExpand;
                               });
                             }),
-                            topButton(value2['title'], () {
+                            topButton(
+                                value2['title'] == '全部'
+                                    ? '类型'
+                                    : value2['title'], () {
                               setState(() {
                                 currentSelectIndex = 2;
                                 selectExpand = !selectExpand;
                               });
                             }),
-                            topButton(value3['title'], () {
+                            topButton(
+                                value3['title'] == '全部'
+                                    ? '面积'
+                                    : value3['title'], () {
                               setState(() {
                                 currentSelectIndex = 3;
                                 selectExpand = !selectExpand;
@@ -402,8 +409,9 @@ class _ClientListState extends State<ClientList>
   GlobalKey easyRefreshKey = GlobalKey();
   EasyRefreshController pullCtr = EasyRefreshController();
   ClientListViewModel listModel = ClientListViewModel();
-  List listData;
+  List listData = [];
   Map statusParams;
+  int totalData = 0;
 
   @override
   void initState() {
@@ -426,12 +434,9 @@ class _ClientListState extends State<ClientList>
         break;
       default:
     }
-    statusParams = Map<String, dynamic>.from({'status': status});
-    listModel.loadClientList(statusParams, success: (data) {
-      setState(() {
-        listData = data;
-      });
-    });
+    statusParams = Map<String, dynamic>.from(
+        {'status': status, 'pageNum': 1, 'pageSize': 10});
+    loadList();
     eventBus.on(NOTIFY_CLIENT_LIST_REFRASH, (arg) {
       if (arg['desireId'] != null) {
         statusParams['desireId'] = arg['desireId'];
@@ -448,16 +453,19 @@ class _ClientListState extends State<ClientList>
       } else {
         statusParams.remove('typeId');
       }
-      pullCtr.callRefresh();
+
+      loadList();
     });
     eventBus.on(NOTIFY_CLIENT_LIST_REFRASH_NORMAL, (arg) {
-      pullCtr.callRefresh();
+      loadList();
     });
     super.initState();
   }
 
   @override
   void dispose() {
+    eventBus.off(NOTIFY_CLIENT_LIST_REFRASH_NORMAL);
+    eventBus.off(NOTIFY_CLIENT_LIST_REFRASH);
     // listModel.dispose();
     super.dispose();
   }
@@ -468,18 +476,21 @@ class _ClientListState extends State<ClientList>
     return EasyRefresh(
       controller: pullCtr,
       header: CustomPullHeader(key: pullHeaderKey),
+      footer: MaterialFooter(backgroundColor: jm_appTheme),
       emptyWidget:
           listData == null || listData.length == 0 ? EmptyView() : null,
       key: easyRefreshKey,
       onRefresh: () async {
         print('statusParams ===== $statusParams');
-        listModel.loadClientList(statusParams, success: (data) {
-          pullCtr.finishRefresh();
-          setState(() {
-            listData = data;
-          });
-        });
+        statusParams['pageNum'] = 1;
+        loadList();
       },
+      onLoad: listData != null && listData.length >= totalData
+          ? null
+          : () async {
+              statusParams['pageNum'] += 1;
+              loadList(isLoad: true);
+            },
       child: ListView.builder(
         itemCount: listData == null ? 0 : listData.length,
         itemBuilder: (context, index) {
@@ -495,6 +506,21 @@ class _ClientListState extends State<ClientList>
         },
       ),
     );
+  }
+
+  loadList({bool isLoad = false}) {
+    listModel.loadClientList(statusParams, success: (data, total) {
+      if (mounted) {
+        setState(() {
+          totalData = total;
+          if (isLoad) {
+            listData.addAll(data);
+          } else {
+            listData = data;
+          }
+        });
+      }
+    });
   }
 
   @override

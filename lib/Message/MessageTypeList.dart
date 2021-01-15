@@ -22,7 +22,7 @@ class _MessageTypeListState extends State<MessageTypeList> {
   List messageList = [];
   @override
   void initState() {
-    loadList();
+    // loadList();
     super.initState();
   }
 
@@ -34,6 +34,7 @@ class _MessageTypeListState extends State<MessageTypeList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: jm_bg_gray_color,
       appBar: CustomAppbar(
         title: jm_getMessageTypeStr(widget.noticeType),
       ),

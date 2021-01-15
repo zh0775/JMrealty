@@ -50,7 +50,10 @@ class _PKmainState extends State<PKmain> {
               left: 0,
               right: 0,
               height: topHeight,
-              child: Image.asset("assets/images/home/bg_pkmain_topbar.png"),
+              child: Image.asset(
+                "assets/images/home/bg_pkmain_topbar.png",
+                fit: BoxFit.fill,
+              ),
             ),
             Positioned(
               left: 0,
@@ -104,13 +107,13 @@ class _PKmainState extends State<PKmain> {
                       ),
                       Tab(
                         child: Text(
-                          '待跟进',
+                          '未开始',
                           style: TextStyle(fontSize: 14, color: tabColor),
                         ),
                       ),
                       Tab(
                         child: Text(
-                          '待跟进',
+                          '进行中',
                           style: TextStyle(fontSize: 14, color: tabColor),
                         ),
                       ),

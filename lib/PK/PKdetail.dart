@@ -1,4 +1,3 @@
-import 'package:JMrealty/PK/viewModel/PKviewModel.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -51,7 +50,7 @@ class _PKdetailState extends State<PKdetail> {
             child: Column(
               children: [
                 SizedBox(
-                  height: 10,
+                  height: 13,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -59,21 +58,40 @@ class _PKdetailState extends State<PKdetail> {
                     Container(
                       width: widthScale * 16,
                       height: 28,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(14),
-                          color: jm_appTheme,
-                          border: Border.all(width: 0.5, color: jm_line_color)),
-                      child: Center(
-                        child: Text(
-                          jm_getPKStatus(widget.pkData['status'] ?? 0),
-                          style: jm_text_black_bold_style15,
-                        ),
+                      child: Stack(
+                        overflow: Overflow.visible,
+                        children: [
+                          Positioned(
+                              right: 0,
+                              top: 0,
+                              width: widthScale * 17,
+                              height: 25,
+                              child: Image.asset(
+                                'assets/images/icon/icon_pk_status_bg.png',
+                                fit: BoxFit.fill,
+                              )),
+                          Positioned(
+                            right: 0,
+                            top: -1,
+                            width: widthScale * 17,
+                            height: 25,
+                            child: Center(
+                              child: Text(
+                                jm_getPKStatus(widget.pkData['status'] ?? 0),
+                                style: jm_text_black_bold_style11,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     SizedBox(
                       width: outMargin,
                     ),
                   ],
+                ),
+                SizedBox(
+                  height: 7,
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,11 +216,19 @@ class _PKdetailState extends State<PKdetail> {
           //   '排名: ' + (data['sort'] != null ? (data['sort']).toString() : ''),
           //   style: jm_text_black_style15,
           // ),
-          Icon(
-            Icons.emoji_events,
-            size: 15,
-            color: jm_appTheme,
-          ),
+          // Icon(
+          //   Icons.emoji_events,
+          //   size: 15,
+          //   color: jm_appTheme,
+          // ),
+          i < 3
+              ? Image.asset(
+                  'assets/images/icon/icon_pk_rank${(i + 1).toString()}.png',
+                  width: widthScale * 5.5,
+                )
+              : SizedBox(
+                  width: widthScale * 5.5,
+                ),
           SizedBox(width: widthScale * 4),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -211,17 +237,24 @@ class _PKdetailState extends State<PKdetail> {
               SizedBox(
                 height: 5,
               ),
-              Text(
-                (data['bussinesName'] != null
-                    ? (data['bussinesName']).toString()
-                    : ''),
-                style: jm_text_black_style14,
+              Container(
+                width:
+                    widthScale * (100 - 5.5 - 4) - outMargin * 2 - margin * 2,
+                child: Text(
+                  (data['bussinesName'] != null
+                      ? (data['bussinesName']).toString()
+                      : ''),
+                  style: jm_text_black_style14,
+                  maxLines: 100,
+                ),
               ),
-              Text(
-                data['commission'] != null
-                    ? (data['commission']).toString()
-                    : '',
-                style: jm_text_gray_style12,
+              Container(
+                width:
+                    widthScale * (100 - 5.5 - 4) - outMargin * 2 - margin * 2,
+                child: Text(
+                  '${data["number"] != null && data["number"] != 0 ? (data["number"]).toString() + "套  " : ""}${(data["commission"] != null ? data["commission"].toString() + "元  " : "")}${data["saleRate"] != null ? "成交率" + (data["saleRate"] * 100).toString() + "%" : ""}',
+                  style: jm_text_gray_style12,
+                ),
               ),
               SizedBox(
                 height: 5,

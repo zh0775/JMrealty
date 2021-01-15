@@ -465,7 +465,7 @@ class _MineTopState extends State<MineTop> {
     }
   }
 
-  String countFormat(double count) {
+  String countFormat(dynamic count) {
     if (count == null) {
       return '0.0元';
     } else if (count >= 10000) {

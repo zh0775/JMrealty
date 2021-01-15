@@ -62,6 +62,7 @@ class _MessageState extends State<Message> {
           itemBuilder: (context, index) {
             return MessageCell(
               data: messageList[index],
+              needRefresh: () => loadList(),
             );
           },
         ),

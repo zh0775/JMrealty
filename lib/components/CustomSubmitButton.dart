@@ -8,12 +8,12 @@ class CustomSubmitButton extends StatelessWidget {
   final String title;
   final Function() buttonClick;
   CustomSubmitButton(
-      {this.height = 50, this.margin, this.title = '提交', this.buttonClick});
+      {this.height = 65, this.margin, this.title = '提交', this.buttonClick});
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     double selfMargin =
-        margin != null ? margin : SizeConfig.blockSizeHorizontal * 6;
+        margin != null ? margin : SizeConfig.blockSizeHorizontal * 30;
     return UnconstrainedBox(
       child: RawMaterialButton(
         constraints: BoxConstraints(
@@ -25,7 +25,7 @@ class CustomSubmitButton extends StatelessWidget {
         highlightElevation: 2,
         shape: RoundedRectangleBorder(
             borderRadius:
-                BorderRadius.circular(SizeConfig.blockSizeHorizontal * 3)),
+                BorderRadius.circular(SizeConfig.blockSizeHorizontal * 2)),
         onPressed: () {
           FocusScope.of(context).requestFocus(FocusNode());
           if (buttonClick != null) {
@@ -35,7 +35,7 @@ class CustomSubmitButton extends StatelessWidget {
         child: Text(
           title,
           style: TextStyle(
-              fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
+              fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );

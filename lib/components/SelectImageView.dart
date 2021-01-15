@@ -80,7 +80,7 @@ class SelectImageView {
       maxImages: count,
       enableCamera: isCamera,
     );
-    if (resultList != null) {
+    if (resultList != null && imageSelected != null) {
       imageSelected(resultList);
       // List<Future> list = List.generate(resultList.length, (index) {
       //   Asset asset = resultList[index];

@@ -87,7 +87,7 @@ class WriteFollow {
             onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
             child: Center(
               child: Container(
-                height: 260,
+                height: 270,
                 width: width,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -291,6 +291,9 @@ class WriteFollow {
                             )
                           ],
                         ),
+                      ),
+                      SizedBox(
+                        height: 10,
                       )
                     ],
                   ),

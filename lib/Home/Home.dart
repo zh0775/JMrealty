@@ -13,6 +13,7 @@ import 'package:JMrealty/Report/Report.dart';
 import 'package:JMrealty/Report/SmartReport.dart';
 import 'package:JMrealty/base/image_loader.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
+import 'package:JMrealty/components/CustomWebV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
@@ -82,9 +83,9 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   HomeViewModel homeVM = HomeViewModel();
-  EasyRefreshController pullCtr = EasyRefreshController();
-  GlobalKey pullKey = GlobalKey();
-  GlobalKey pullHeaderKey = GlobalKey();
+  // EasyRefreshController pullCtr = EasyRefreshController();
+  // GlobalKey pullKey = GlobalKey();
+  // GlobalKey pullHeaderKey = GlobalKey();
   List homeScheduleToDoData = [];
   var bannerList = [];
   List menus = [];
@@ -116,7 +117,6 @@ class _HomeState extends State<Home> {
   }
 
   void loadReqest() async {
-    homeVM.loadUserInfo();
     String token = await UserDefault.get(ACCESS_TOKEN);
 
     getBanner();
@@ -127,37 +127,42 @@ class _HomeState extends State<Home> {
         });
       }
     });
-    String userInfoJson = await UserDefault.get(USERINFO);
-    if (userInfoJson != null) {
-      Map userInfo = convert.jsonDecode(userInfoJson);
-      homeVM.getHomeNotice(
-          Map<String, dynamic>.from(
-              {'userId': userInfo['userId'], 'deptId': userInfo['deptId']}),
-          (noticeList, success) {
-        if (success) {
-          setState(() {
-            notices = noticeList.map((e) {
-              return {...e, 'zzTitle': e['noticeTitle']};
-            }).toList();
-          });
-        }
-      });
-    }
-
-    homeVM.getGladNotice((gladNoticeList, success) {
-      if (success) {
-        setState(() {
-          gladNotices = gladNoticeList.map((e) {
-            return {...e, 'zzTitle': e['content']};
-          }).toList();
-        });
-      }
-    });
     if (token != null && token.length > 0) {
+      homeVM.loadUserInfo(
+        finish: () {
+          UserDefault.get(USERINFO).then((value) {
+            Map userInfo = convert.jsonDecode(value);
+            if (userInfo != null && userInfo.isNotEmpty) {
+              homeVM.getHomeNotice(
+                  Map<String, dynamic>.from({
+                    'userId': userInfo['userId'],
+                    'deptId': userInfo['deptId']
+                  }), (noticeList, success) {
+                if (success) {
+                  setState(() {
+                    notices = noticeList.map((e) {
+                      return {...e, 'zzTitle': e['noticeTitle']};
+                    }).toList();
+                  });
+                }
+              });
+            }
+          });
+        },
+      );
       homeVM.getHomeWaitToDo((waitToDoList, success) {
         if (success) {
           setState(() {
             homeScheduleToDoData = waitToDoList;
+          });
+        }
+      });
+      homeVM.getGladNotice((gladNoticeList, success) {
+        if (success) {
+          setState(() {
+            gladNotices = gladNoticeList.map((e) {
+              return {...e, 'zzTitle': e['content']};
+            }).toList();
           });
         }
       });
@@ -171,155 +176,142 @@ class _HomeState extends State<Home> {
     return MediaQuery.removePadding(
       removeTop: true,
       context: context,
-      child: EasyRefresh(
-        controller: pullCtr,
-        key: pullKey,
-        header: CustomPullHeader(key: pullHeaderKey),
-        onRefresh: () async {
-          loadReqest();
-        },
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              HomeNaviBar(
-                bannerDatas: bannerList,
-              ),
-              HomeAnno(
-                dataList: notices ?? [],
-                noticeClick: (index) {},
-              ),
-              HomeGoodDeed(
-                dataList: gladNotices ?? [],
-                noticeClick: (index) {},
-              ),
-              HomeScheduleToDo(
-                data: homeScheduleToDoData,
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Wrap(
-                children: [
-                  ...buttons((int buttonIndex, Map buttonData) {
-                    if (buttonData['menuId'] == 2061) {
-                      // 新增报备
-                      Navigator.of(context)
-                          .push(CupertinoPageRoute(builder: (_) {
-                        return AddReport();
-                      }));
-                    } else if (buttonData['menuId'] == 2063) {
-                      // 报备记录
-                      Navigator.of(context)
-                          .push(CupertinoPageRoute(builder: (_) {
-                        return Report();
-                      }));
-                    } else if (buttonData['menuId'] == 2080) {
-                      // PK赛
-                      Navigator.of(context)
-                          .push(CupertinoPageRoute(builder: (_) {
-                        return PKmain();
-                      }));
-                    } else if (buttonIndex == 100) {
-                      // 跟进记录
-                      UserDefault.get(ACCESS_TOKEN).then((token) {
-                        if (token != null) {
-                          UserDefault.get(USERINFO).then((userInfo) {
-                            if (userInfo != null) {
-                              Map<String, dynamic> userInfoMap =
-                                  Map<String, dynamic>.from(
-                                      convert.jsonDecode(userInfo));
-                              Navigator.of(context)
-                                  .push(CupertinoPageRoute(builder: (_) {
-                                return Follow(
-                                  token: token,
-                                  deptId: userInfoMap['deptId'],
-                                );
-                              }));
-                            } else {
-                              homeVM.loadUserInfo();
-                            }
-                          });
-                        } else {
-                          Global.toLogin(isLogin: true);
-                        }
-                      });
-                    } else if (buttonData['menuId'] == 2146) {
-                      // 客户池
-                      Navigator.of(context)
-                          .push(CupertinoPageRoute(builder: (_) {
-                        return ClientPool();
-                      }));
-                    } else if (buttonData['menuId'] == 2086) {
-                      // 我的任务
-                      Navigator.of(context)
-                          .push(CupertinoPageRoute(builder: (_) {
-                        return MyTasks();
-                      }));
-                    } else if (buttonData['menuId'] == 2084) {
-                      // 智能报备
-                      Navigator.of(context)
-                          .push(CupertinoPageRoute(builder: (_) {
-                        return SmartReport();
-                      }));
-                    } else if (buttonData['menuId'] == 2092) {
-                      // 每日总结
-                      UserDefault.get(ACCESS_TOKEN).then((token) {
-                        if (token != null) {
-                          UserDefault.get(USERINFO).then((userInfo) {
-                            if (userInfo != null) {
-                              Map<String, dynamic> userInfoMap =
-                                  Map<String, dynamic>.from(
-                                      convert.jsonDecode(userInfo));
-                              Navigator.of(context)
-                                  .push(CupertinoPageRoute(builder: (_) {
-                                return Follow(
-                                  token: token,
-                                  deptId: userInfoMap['deptId'],
-                                );
-                              }));
-                            } else {
-                              homeVM.loadUserInfo();
-                            }
-                          });
-                        } else {
-                          Global.toLogin(isLogin: true);
-                        }
-                      });
-                    } else if (buttonData['menuId'] == 2082) {
-                      // 榜单
-                    } else if (buttonIndex == 100) {
-                      // 跟进记录
-                      UserDefault.get(ACCESS_TOKEN).then((token) {
-                        if (token != null) {
-                          UserDefault.get(USERINFO).then((userInfo) {
-                            if (userInfo != null) {
-                              Map<String, dynamic> userInfoMap =
-                                  Map<String, dynamic>.from(
-                                      convert.jsonDecode(userInfo));
-                              Navigator.of(context)
-                                  .push(CupertinoPageRoute(builder: (_) {
-                                return Follow(
-                                  token: token,
-                                  deptId: userInfoMap['deptId'],
-                                );
-                              }));
-                            } else {
-                              homeVM.loadUserInfo();
-                            }
-                          });
-                        } else {
-                          Global.toLogin(isLogin: true);
-                        }
-                      });
-                    }
-                  }),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              )
-            ],
-          ),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            HomeNaviBar(
+              bannerDatas: bannerList,
+            ),
+            HomeAnno(
+              dataList: notices ?? [],
+              noticeClick: (index) {},
+            ),
+            HomeGoodDeed(
+              dataList: gladNotices ?? [],
+              noticeClick: (index) {},
+            ),
+            HomeScheduleToDo(
+              data: homeScheduleToDoData,
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            Wrap(
+              children: [
+                ...buttons((int buttonIndex, Map buttonData) {
+                  if (buttonData['menuId'] == 2061) {
+                    // 新增报备
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                      return AddReport();
+                    }));
+                  } else if (buttonData['menuId'] == 2063) {
+                    // 报备记录
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                      return Report();
+                    }));
+                  } else if (buttonData['menuId'] == 2080) {
+                    // PK赛
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                      return PKmain();
+                    }));
+                  } else if (buttonIndex == 100) {
+                    // 跟进记录
+                    UserDefault.get(ACCESS_TOKEN).then((token) {
+                      if (token != null) {
+                        UserDefault.get(USERINFO).then((userInfo) {
+                          if (userInfo != null) {
+                            Map<String, dynamic> userInfoMap =
+                                Map<String, dynamic>.from(
+                                    convert.jsonDecode(userInfo));
+                            Navigator.of(context)
+                                .push(CupertinoPageRoute(builder: (_) {
+                              return Follow(
+                                token: token,
+                                deptId: userInfoMap['deptId'],
+                              );
+                            }));
+                          } else {
+                            homeVM.loadUserInfo();
+                          }
+                        });
+                      } else {
+                        Global.toLogin(isLogin: true);
+                      }
+                    });
+                  } else if (buttonData['menuId'] == 2078) {
+                    // 客户池
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                      return ClientPool();
+                    }));
+                  } else if (buttonData['menuId'] == 2086) {
+                    // 我的任务
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                      return MyTasks();
+                    }));
+                  } else if (buttonData['menuId'] == 2084) {
+                    // 智能报备
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                      return SmartReport();
+                    }));
+                  } else if (buttonData['menuId'] == 2092) {
+                    // 每日总结
+                    // UserDefault.get(ACCESS_TOKEN).then((token) {
+                    //   if (token != null) {
+                    //     UserDefault.get(USERINFO).then((userInfo) {
+                    //       if (userInfo != null) {
+                    //         Map<String, dynamic> userInfoMap =
+                    //             Map<String, dynamic>.from(
+                    //                 convert.jsonDecode(userInfo));
+                    //         Navigator.of(context)
+                    //             .push(CupertinoPageRoute(builder: (_) {
+                    //           return Follow(
+                    //             token: token,
+                    //             deptId: userInfoMap['deptId'],
+                    //           );
+                    //         }));
+                    //       } else {
+                    //         homeVM.loadUserInfo();
+                    //       }
+                    //     });
+                    //   } else {
+                    //     Global.toLogin(isLogin: true);
+                    //   }
+                    // });
+                    push(CustomWebV(path: WebPath.statisticsMain), context);
+                  } else if (buttonData['menuId'] == 2082) {
+                    // 榜单
+                  } else if (buttonIndex == 100) {
+                    // 跟进记录
+                    UserDefault.get(ACCESS_TOKEN).then((token) {
+                      if (token != null) {
+                        UserDefault.get(USERINFO).then((userInfo) {
+                          if (userInfo != null) {
+                            Map<String, dynamic> userInfoMap =
+                                Map<String, dynamic>.from(
+                                    convert.jsonDecode(userInfo));
+                            Navigator.of(context)
+                                .push(CupertinoPageRoute(builder: (_) {
+                              return Follow(
+                                token: token,
+                                deptId: userInfoMap['deptId'],
+                              );
+                            }));
+                          } else {
+                            homeVM.loadUserInfo();
+                          }
+                        });
+                      } else {
+                        Global.toLogin(isLogin: true);
+                      }
+                    });
+                  }
+                }),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            )
+          ],
         ),
       ),
     );

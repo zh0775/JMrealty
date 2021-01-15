@@ -69,19 +69,25 @@ class ClientViewModel extends BaseViewModel {
         // Map<String, dynamic> data = json['data'];
         if (json['code'] == 200) {
           // state = BaseState.CONTENT;
-          reqSuccess(true);
+          if (reqSuccess != null) {
+            reqSuccess(true);
+          }
         } else {
           // state = BaseState.FAIL;
-          reqSuccess(false);
+          if (reqSuccess != null) {
+            reqSuccess(false);
+          }
         }
-        ShowToast.normal(json['msg']);
+        // ShowToast.normal(json['msg']);
         // notifyListeners();
       },
       fail: (reason, code) {
         // state = BaseState.FAIL;
         // notifyListeners();
-        reqSuccess(false);
-        ShowToast.normal(reason);
+        if (reqSuccess != null) {
+          reqSuccess(false);
+        }
+        // ShowToast.normal(reason);
       },
       after: () {},
     );

@@ -176,6 +176,7 @@ class _MineState extends State<Mine> {
                 getCell('退出登录', Icons.info, () {
                   CustomAlert(content: '确定要退出登录吗？').show(
                     confirmClick: () {
+                      UserDefault.saveStr(USERINFO, null);
                       UserDefault.saveStr(ACCESS_TOKEN, null).then((value) {
                         if (value) {
                           Global.toLogin();

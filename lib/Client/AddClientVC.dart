@@ -1,15 +1,26 @@
 import 'package:JMrealty/Client/model/ClientModel.dart';
 import 'package:JMrealty/Client/viewModel/ClientViewModel.dart';
-import 'package:JMrealty/Login/components/RegistSelectInput.dart';
+import 'package:JMrealty/Report/viewmodel/ReportViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
+import 'package:JMrealty/components/CustomAlert.dart';
+import 'package:JMrealty/components/CustomMarkInput.dart';
+import 'package:JMrealty/components/CustomSubmitButton.dart';
+import 'package:JMrealty/components/CustomTextF.dart';
+import 'package:JMrealty/components/DropdownSelectV.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/tTools.dart';
+import 'package:JMrealty/utils/toast.dart';
 import 'package:JMrealty/utils/user_default.dart';
+import 'package:easy_contact_picker/easy_contact_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
+
+import 'package:permission_handler/permission_handler.dart';
 
 class AddClientVC extends StatefulWidget {
   @override
@@ -17,28 +28,37 @@ class AddClientVC extends StatefulWidget {
 }
 
 class _AddClientVCState extends State<AddClientVC> {
+  EventBus _bus = EventBus();
+  final EasyContactPicker _contactPicker = new EasyContactPicker();
+  ReportViewModel projectVM = ReportViewModel();
   bool firstBuild;
   ClientModel clientModel;
+  String housesName;
   Map<String, dynamic> addClientParams;
   bool clientIsMan; // 是否男士
   bool sensitive; //是否脱敏
-  int clientYY; //客户意愿星级
   double otherWidth;
   double labelWidth;
   double lineHeight = 50;
   double marginSpace;
   double widthScale;
   TextStyle labelStyle;
+
   @override
   void initState() {
     firstBuild = true;
     labelStyle = jm_text_black_style14;
-    clientYY = 1;
-    clientIsMan = false;
+    clientIsMan = true;
     sensitive = false;
     clientModel = ClientModel();
     addClientParams = {};
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    projectVM.dispose();
+    super.dispose();
   }
 
   @override
@@ -91,489 +111,504 @@ class _AddClientVCState extends State<AddClientVC> {
             }
             if (model.listData['desireGrade'] != null &&
                 model.listData['desireGrade'] is List &&
-                model.listData['desireGrade'].length > 2) {
-              switch (clientYY) {
-                case 1:
-                  addClientParams['desireId'] =
-                      ((model.listData['desireGrade'])[2])['value'];
-                  break;
-                case 2:
-                  addClientParams['desireId'] =
-                      ((model.listData['desireGrade'])[1])['value'];
-                  break;
-                case 3:
-                  addClientParams['desireId'] =
-                      ((model.listData['desireGrade'])[0])['value'];
-                  break;
-              }
+                model.listData['desireGrade'].length > 0) {
+              addClientParams['desireId'] =
+                  ((model.listData['desireGrade'])[0])['value'];
             }
+
+            if (model.listData['customersOccupation'] != null &&
+                model.listData['customersOccupation'] is List &&
+                model.listData['customersOccupation'].length > 0) {
+              addClientParams['occupationId'] =
+                  ((model.listData['customersOccupation'])[0])['value'];
+              addClientParams['occupation'] =
+                  ((model.listData['customersOccupation'])[0])['title'];
+            }
+            if (model.listData['intentionProductType'] != null &&
+                model.listData['intentionProductType'] is List &&
+                model.listData['intentionProductType'].length > 0) {
+              addClientParams['typeId'] =
+                  ((model.listData['intentionProductType'])[0])['value'];
+              addClientParams['type'] =
+                  ((model.listData['intentionProductType'])[0])['title'];
+            }
+
+            if (model.listData['intentionArea'] != null &&
+                model.listData['intentionArea'] is List &&
+                model.listData['intentionArea'].length > 0) {
+              addClientParams['areaId'] =
+                  ((model.listData['intentionArea'])[0])['value'];
+              addClientParams['area'] =
+                  ((model.listData['intentionArea'])[0])['title'];
+            }
+            if (model.listData['decisionMaker'] != null &&
+                model.listData['decisionMaker'] is List &&
+                model.listData['decisionMaker'].length > 0) {
+              addClientParams['policymakerId'] =
+                  ((model.listData['decisionMaker'])[0])['value'];
+              addClientParams['policymaker'] =
+                  ((model.listData['decisionMaker'])[0])['title'];
+            }
+
+            if (model.listData['customersOfSource'] != null &&
+                model.listData['customersOfSource'] is List &&
+                model.listData['customersOfSource'].length > 0) {
+              addClientParams['sourceId'] =
+                  ((model.listData['customersOfSource'])[0])['value'];
+              addClientParams['source'] =
+                  ((model.listData['customersOfSource'])[0])['title'];
+            }
+
+            addClientParams['shopTimes'] = 1;
             firstBuild = false;
           }
           return GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-            child: ListView(
-              children: [
-                // title 通讯录导入
-                Container(
-                  height: lineHeight,
-                  width: SizeConfig.screenWidth,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: marginSpace),
-                        child: Text(
-                          '基本信息',
-                          style: TextStyle(
-                              color: jm_text_black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Container(
-                          width: widthScale * 30,
-                          height: lineHeight,
-                          margin: EdgeInsets.only(right: marginSpace),
-                          child: RawMaterialButton(
-                            highlightElevation: 0,
-                            elevation: 0,
-                            onPressed: () {
-                              // 通讯录导入
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Icon(
-                                  Icons.class_,
-                                  size: 15,
-                                  color: jm_appTheme,
-                                ),
-                                SizedBox(
-                                  width: 6,
-                                ),
-                                Text(
-                                  '通讯录导入',
-                                  style: TextStyle(
-                                      fontSize: 14, color: jm_text_black),
-                                )
-                              ],
-                            ),
-                          )),
-                    ],
-                  ),
-                ),
-                // line
-                getLine(true),
-                // 客户姓名
-                getInput('姓名', (value) {
-                  addClientParams['name'] = value;
-                }, hintText: '请输入客户姓名', must: true),
-                // line
-                getLine(false),
-                // 性别按钮
-                lineContent(true, '性别', [
-                  sexButton(context, true, (sex) {
-                    if (model.listData['sex'] != null &&
-                        model.listData['sex'] is List &&
-                        model.listData['sex'].length > 1) {
-                      addClientParams['sex'] =
-                          ((model.listData['sex'])[0])['value'];
-                    }
-                    setState(() {
-                      clientIsMan = sex;
-                    });
-                  }),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  sexButton(context, false, (sex) {
-                    if (model.listData['sex'] != null &&
-                        model.listData['sex'] is List &&
-                        model.listData['sex'].length > 1) {
-                      addClientParams['sex'] =
-                          ((model.listData['sex'])[1])['value'];
-                    }
-                    setState(() {
-                      clientIsMan = sex;
-                    });
-                  })
-                ]),
-                // line
-                getLine(false),
-                lineContent(true, '手机号', [
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // title 通讯录导入
                   Container(
-                    width: otherWidth,
                     height: lineHeight,
+                    width: SizeConfig.screenWidth,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('前三尾四录入'),
-                        SizedBox(
-                          width: widthScale * 3,
+                        Padding(
+                          padding: EdgeInsets.only(left: marginSpace),
+                          child: Text(
+                            '基本信息',
+                            style: TextStyle(
+                                color: jm_text_black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
-                        CupertinoSwitch(
-                            value: sensitive,
-                            onChanged: (bool value) {
-                              if (model.listData['sensitive'] != null &&
-                                  model.listData['sensitive'] is List &&
-                                  model.listData['sensitive'].length > 1) {
-                                addClientParams['isSensitive'] = sensitive
-                                    ? ((model
-                                        .listData['sensitive'])[0])['value']
-                                    : ((model
-                                        .listData['sensitive'])[1])['value'];
-                              }
-                              setState(() {
-                                sensitive = value;
-                              });
-                            })
-                      ],
-                    ),
-                  )
-                ]),
-                Padding(
-                  padding: EdgeInsets.only(left: marginSpace),
-                  child: Text(
-                    '不可更改，将作为核查带看依据',
-                    style: TextStyle(fontSize: 12, color: jm_text_gray),
-                  ),
-                ),
-                // 手机号输入
-                Align(
-                  child: Container(
-                    width: SizeConfig.screenWidth - marginSpace * 2,
-                    height: lineHeight,
-                    child: Row(
-                      children: [
                         Container(
-                            width: labelWidth,
+                            width: widthScale * 30,
                             height: lineHeight,
+                            margin: EdgeInsets.only(right: marginSpace),
                             child: RawMaterialButton(
                               highlightElevation: 0,
                               elevation: 0,
                               onPressed: () {
                                 // 通讯录导入
+                                _requestPermission();
                               },
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Icon(
-                                    Icons.add_circle_outline,
+                                    Icons.class_,
                                     size: 15,
-                                    color: jm_text_black,
+                                    color: jm_appTheme,
                                   ),
-                                  // SizedBox(
-                                  //   width: 6,
-                                  // ),
+                                  SizedBox(
+                                    width: 6,
+                                  ),
                                   Text(
-                                    '+86',
+                                    '通讯录导入',
                                     style: TextStyle(
                                         fontSize: 14, color: jm_text_black),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_drop_down,
-                                    size: 20,
-                                    color: jm_text_gray,
-                                  ),
+                                  )
                                 ],
                               ),
                             )),
-                        // ZZInput(
-                        //   height: lineHeight,
-                        //   width: otherWidth,
-                        //   leftPadding: 0,
-                        //   keyboardType: TextInputType.phone,
-                        //   backgroundColor: Colors.transparent,
-                        //   needCleanButton: true,
-                        //   valueChange: (value) {
-                        //     addClientParams['phone'] = value;
-                        //     // clientModel.clientPhoneNum = value;
-                        //   },
-                        //   hintText: '客户手机号',
-                        // )
-                        Container(
-                          // color: Colors.red,
-                          constraints: BoxConstraints(
-                              maxHeight: lineHeight, maxWidth: otherWidth),
-                          child: TextField(
-                            onChanged: (value) {
-                              addClientParams['phone'] = value;
-                            },
-                            keyboardType: TextInputType.phone,
-                            style: jm_text_black_style15,
-                            decoration: InputDecoration(
-                              hintText: '客户手机号',
-                              border: OutlineInputBorder(
-                                  // borderRadius: widget.borderRadius,
-                                  borderSide: BorderSide.none),
-                            ),
-                          ),
-                        )
                       ],
                     ),
                   ),
-                ),
-                getLine(false),
-                // 客户意愿
-                lineContent(true, '客户意愿', [
-                  Container(
-                    width: lineHeight * 0.7,
-                    height: lineHeight,
-                    child: IconButton(
-                        padding: EdgeInsets.zero,
-                        splashColor: Colors.transparent,
-                        icon: Icon(
-                          Icons.grade,
-                          color: clientYY >= 1 ? jm_appTheme : jm_text_gray,
-                          size: lineHeight * 0.5,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            setClientYY(1, model);
-                            // clientYY = 1;
-                          });
-                        }),
+                  // line
+                  getLine(true),
+                  // 客户姓名
+                  CustomTextF(
+                    text: addClientParams['name'] ?? '',
+                    bottomLine: true,
+                    labelText: '客户姓名',
+                    placeholder: '请输入客户姓名',
+                    must: true,
+                    valueChange: (value) {
+                      addClientParams['name'] = value;
+                    },
                   ),
-                  Container(
-                    width: lineHeight * 0.7,
-                    height: lineHeight,
-                    child: IconButton(
-                        padding: EdgeInsets.zero,
-                        splashColor: Colors.transparent,
-                        icon: Icon(
-                          Icons.grade,
-                          color: clientYY >= 2 ? jm_appTheme : jm_text_gray,
-                          size: lineHeight * 0.5,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            setClientYY(2, model);
-                            // clientYY = 2;
-                          });
-                        }),
-                  ),
-                  Container(
-                    width: lineHeight * 0.7,
-                    height: lineHeight,
-                    child: IconButton(
-                        padding: EdgeInsets.zero,
-                        splashColor: Colors.transparent,
-                        icon: Icon(
-                          Icons.grade,
-                          color: clientYY >= 3 ? jm_appTheme : jm_text_gray,
-                          size: lineHeight * 0.5,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            setClientYY(3, model);
-                            // clientYY = 3;
-                          });
-                        }),
-                  )
-                ]),
-                // line
-                getLine(true, height: 8, color: Color(0xfff0f2f5)),
-                // 客户职业
-                getSelect(
-                    '客户职业',
-                    (model.state == BaseState.CONTENT &&
-                            model.listData['customersOccupation'] != null)
-                        ? model.listData['customersOccupation']
-                        : [], (value, data) {
-                  // print('客户职业 value == $value --- data == $data');
-                  addClientParams['occupationId'] = value;
-                  addClientParams['occupation'] = data;
-                }),
-                // line
-                getLine(false),
-                // 用途
-                getSelect(
-                    '用途',
-                    (model.state == BaseState.CONTENT &&
-                            model.listData['intentionProductType'] != null)
-                        ? model.listData['intentionProductType']
-                        : [], (value, data) {
-                  // print('用途 value == $value --- data == $data');
-                  addClientParams['typeId'] = value;
-                  addClientParams['type'] = data;
-                }),
-                // line
-                getLine(false),
-                // 意向面积
-                getSelect(
-                    '意向面积',
-                    (model.state == BaseState.CONTENT &&
-                            model.listData['intentionArea'] != null)
-                        ? model.listData['intentionArea']
-                        : [], (value, data) {
-                  // print('意向面积 value == $value --- data == $data');
-                  addClientParams['areaId'] = value;
-                  addClientParams['area'] = data;
-                }),
-                // line
-                getLine(false),
-                // 意向面积
-                getInput('几次置业', (value) {
-                  // print('几次置业 value === $value');
-                  addClientParams['shopTimes'] = value;
-                }, hintText: '几次置业', keyboardType: TextInputType.number),
-                // line
-                getLine(false),
-                // 意向楼层
-                getInput('意向楼层', (value) {
-                  // print('意向楼层 value === $value');
-                  addClientParams['floor'] = value;
-                }, hintText: '意向楼层', keyboardType: TextInputType.number),
-                // line
-                getLine(false),
-                // 决策人
-                getSelect(
-                    '决策人',
-                    (model.state == BaseState.CONTENT &&
-                            model.listData['decisionMaker'] != null)
-                        ? model.listData['decisionMaker']
-                        : [], (value, data) {
-                  // print('决策人 value == $value --- data == $data');
-                  addClientParams['policymakerId'] = value;
-                  addClientParams['policymaker'] = data;
-                }),
-                // line
-                getLine(false),
-                // 首付预算
-                getInput('首付预算·万', (value) {
-                  print('首付预算 value === $value');
-                }, hintText: '请输入首付预算', keyboardType: TextInputType.number),
-                // line
-                getLine(false),
-                // 看房时间
-                getInput('看房时间', (value) {
-                  // print('看房时间 value === $value');
-                  addClientParams['seeTime'] = value;
-                }, hintText: '请输入看房时间'),
-                // line
-                getLine(false),
-                // 客户来源
-                getSelect(
-                    '客户来源',
-                    (model.state == BaseState.CONTENT &&
-                            model.listData['customersOfSource'] != null)
-                        ? model.listData['customersOfSource']
-                        : [], (value, data) {
-                  // print('客户来源 value == $value --- data == $data');
-                  addClientParams['sourceId'] = value;
-                  addClientParams['source'] = data;
-                }),
-                // line
-                getLine(false),
-                // 意向楼盘
-                getInput('意向楼盘', (value) {
-                  // print('意向楼盘 value === $value');
-                  addClientParams['region'] = value;
-                }, hintText: '请输入客户意向楼盘'),
-                // line
-                getLine(false),
-                // 特殊要求
-                Container(
-                  height: lineHeight,
-                  margin: EdgeInsets.only(left: marginSpace),
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '特殊要求',
-                    style: labelStyle,
-                  ),
-                ),
-                Container(
-                  constraints: BoxConstraints(maxHeight: 90, minHeight: 90),
-                  width: SizeConfig.screenWidth - marginSpace * 2,
-                  padding:
-                      EdgeInsets.fromLTRB(marginSpace, 10, marginSpace, 10),
-                  child: TextField(
-                    maxLines: 10,
-                    minLines: 3,
-                    decoration: InputDecoration(
-                        contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                        // border: OutlineInputBorder(
-                        //     borderRadius: BorderRadius.circular(10),
-                        //     borderSide:
-                        //         BorderSide(width: 0.1, color: Colors.red)),
-                        // fillColor: Color(0xfff7f8fb),
-                        // contentPadding: EdgeInsets.all(20.0),
-                        hintText: '请输入',
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
-                          //未选中时候的颜色
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            color: jm_line_color,
+                  // getInput('姓名', (value) {
+                  //   addClientParams['name'] = value;
+                  // }, hintText: '请输入客户姓名', must: true),
+                  // // line
+                  // getLine(false),
+                  // 性别按钮
+                  lineContent(true, '性别', [
+                    sexButton(context, true, (sex) {
+                      if (model.listData['sex'] != null &&
+                          model.listData['sex'] is List &&
+                          model.listData['sex'].length > 1) {
+                        addClientParams['sex'] =
+                            ((model.listData['sex'])[0])['value'];
+                      }
+                      setState(() {
+                        clientIsMan = sex;
+                      });
+                    }),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    sexButton(context, false, (sex) {
+                      if (model.listData['sex'] != null &&
+                          model.listData['sex'] is List &&
+                          model.listData['sex'].length > 1) {
+                        addClientParams['sex'] =
+                            ((model.listData['sex'])[1])['value'];
+                      }
+                      setState(() {
+                        clientIsMan = sex;
+                      });
+                    })
+                  ]),
+                  // line
+                  getLine(false),
+                  lineContent(true, '手机号', [
+                    Container(
+                      width: otherWidth,
+                      height: lineHeight,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text('前三尾四录入'),
+                          SizedBox(
+                            width: widthScale * 3,
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          //选中时外边框颜色
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            color: jm_line_color,
-                          ),
-                        )),
-                    onChanged: (value) {
-                      // print('特殊要求 value === $value');
+                          CupertinoSwitch(
+                              value: sensitive,
+                              onChanged: (bool value) {
+                                if (model.listData['sensitive'] != null &&
+                                    model.listData['sensitive'] is List &&
+                                    model.listData['sensitive'].length > 1) {
+                                  addClientParams['isSensitive'] = sensitive
+                                      ? ((model
+                                          .listData['sensitive'])[0])['value']
+                                      : ((model
+                                          .listData['sensitive'])[1])['value'];
+                                }
+                                setState(() {
+                                  sensitive = value;
+                                });
+                              })
+                        ],
+                      ),
+                    )
+                  ]),
+                  Padding(
+                    padding: EdgeInsets.only(left: marginSpace),
+                    child: Text(
+                      '不可更改，将作为核查带看依据',
+                      style: TextStyle(fontSize: 12, color: jm_text_gray),
+                    ),
+                  ),
+                  // 客户手机号
+                  CustomTextF(
+                    text: addClientParams['phone'] ?? '',
+                    placeholder: '请输入手机号',
+                    keyboardType: TextInputType.phone,
+                    valueChange: (value) {
+                      addClientParams['phone'] = value;
+                    },
+                  ),
+                  getLine(false),
+
+                  DropdownSelectV(
+                    labelText: '客户意愿',
+                    must: true,
+                    // defalultValue: true,
+                    currentValue: addClientParams['desireId'] ?? '',
+                    dataList: model.listData['desireGrade'] ?? [],
+                    valueChange: (value, data) {
+                      setState(() {
+                        addClientParams['desireId'] = data['value'] ?? '';
+                      });
+                    },
+                  ),
+                  // line
+                  getLine(true, height: 8, color: Color(0xfff0f2f5)),
+                  // 客户职业
+                  DropdownSelectV(
+                    labelText: '客户职业',
+                    must: true,
+                    // defalultValue: true,
+                    currentValue: addClientParams['occupationId'] ?? '',
+                    dataList: model.listData['customersOccupation'] ?? [],
+                    valueChange: (value, data) {
+                      setState(() {
+                        addClientParams['occupationId'] = value ?? 0;
+                        addClientParams['occupation'] = data['title'] ?? '';
+                      });
+                    },
+                  ),
+                  // line
+                  getLine(false),
+                  // 用途
+                  DropdownSelectV(
+                    labelText: '用途',
+                    // defalultValue: true,
+                    currentValue: addClientParams['typeId'] ?? '',
+                    dataList: model.listData['intentionProductType'] ?? [],
+                    valueChange: (value, data) {
+                      setState(() {
+                        addClientParams['typeId'] = value ?? 0;
+                        addClientParams['type'] = data['title'] ?? '';
+                      });
+                    },
+                  ),
+                  // line
+                  getLine(false),
+                  // 意向面积
+                  DropdownSelectV(
+                    labelText: '意向面积',
+                    // defalultValue: true,
+                    currentValue: addClientParams['areaId'] ?? '',
+                    dataList: model.listData['intentionArea'] ?? [],
+                    valueChange: (value, data) {
+                      setState(() {
+                        addClientParams['areaId'] = value ?? 0;
+                        addClientParams['area'] = data['title'] ?? '';
+                      });
+                    },
+                  ),
+
+                  // line
+                  getLine(false),
+                  // 几次置业
+                  DropdownSelectV(
+                    labelText: '几次置业',
+                    defalultValue: true,
+                    currentValue: addClientParams['shopTimes'],
+                    dataList: [
+                      {'value': 1, 'title': '1次'},
+                      {'value': 2, 'title': '2次'},
+                      {'value': 3, 'title': '3次'},
+                      {'value': 4, 'title': '4次'},
+                      {'value': 5, 'title': '5次'},
+                      {'value': 6, 'title': '多次'},
+                    ],
+                    valueChange: (value, data) {
+                      setState(() {
+                        addClientParams['shopTimes'] = value;
+                      });
+                    },
+                  ),
+                  // line
+                  getLine(false),
+                  // 意向楼层
+                  CustomTextF(
+                    labelText: '意向楼层',
+                    placeholder: '意向楼层',
+                    text: addClientParams['floor'] ?? '',
+                    keyboardType: TextInputType.number,
+                    valueChange: (value) {
+                      addClientParams['floor'] = value;
+                    },
+                  ),
+                  // line
+                  getLine(false),
+                  // 决策人
+                  DropdownSelectV(
+                    labelText: '决策人',
+                    // defalultValue: true,
+                    currentValue: addClientParams['policymakerId'] ?? '',
+                    dataList: model.listData['decisionMaker'] ?? [],
+                    valueChange: (value, data) {
+                      setState(() {
+                        addClientParams['policymakerId'] = value ?? 0;
+                        addClientParams['policymaker'] = data['title'] ?? '';
+                      });
+                    },
+                  ),
+                  // line
+                  getLine(false),
+                  // 首付预算
+                  CustomTextF(
+                    labelText: '首付预算',
+                    placeholder: '请输入首付预算',
+                    text: addClientParams['paymentsBudget'] ?? '',
+                    keyboardType: TextInputType.number,
+                    valueChange: (value) {
+                      addClientParams['paymentsBudget'] = value;
+                    },
+                  ),
+                  // line
+                  getLine(false),
+                  // 看房时间
+                  CustomTextF(
+                    labelText: '看房时间',
+                    placeholder: '请输入看房时间',
+                    text: addClientParams['seeTime'] ?? '',
+                    // keyboardType: TextInputType.number,
+                    valueChange: (value) {
+                      addClientParams['seeTime'] = value;
+                    },
+                  ),
+                  // line
+                  getLine(false),
+                  // 客户来源
+                  DropdownSelectV(
+                    labelText: '客户来源',
+                    // defalultValue: true,
+                    currentValue: addClientParams['sourceId'] ?? '',
+                    dataList: model.listData['customersOfSource'] ?? [],
+                    valueChange: (value, data) {
+                      setState(() {
+                        addClientParams['sourceId'] = value ?? 0;
+                        addClientParams['source'] = data['title'] ?? '';
+                      });
+                    },
+                  ),
+                  // line
+                  getLine(false),
+                  // 意向楼盘
+                  CustomInput(
+                    labelWidth: widthScale * 24,
+                    title: '意向楼盘',
+                    text: housesName ?? '',
+                    hintText: '请输入搜索内容',
+                    valueChangeAndShowList: (value, state) {
+                      housesName = value;
+                      if (housesName != null && housesName.length > 0) {
+                        projectVM.loadProjectList(
+                          housesName,
+                          success: (data) {
+                            if (data != null && data.length > 0) {
+                              state.showList(data);
+                            }
+                          },
+                        );
+                      }
+                    },
+                    showListClick: (data) {
+                      if (addClientParams['customerProject'] == null) {
+                        addClientParams['customerProject'] = [];
+                      }
+                      bool isHave = false;
+                      (addClientParams['customerProject'] as List)
+                          .forEach((element) {
+                        if (data['id'] == element['id']) {
+                          isHave = true;
+                        }
+                      });
+
+                      if (!isHave) {
+                        setState(() {
+                          (addClientParams['customerProject'] as List).add({
+                            'id': data['id'],
+                            'projectId': data['id'],
+                            'projectName': data['name'],
+                          });
+                        });
+                      } else {
+                        ShowToast.normal('已经选择该楼盘');
+                      }
+                    },
+                  ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Column(
+                        children: [...getProjects()],
+                      ),
+                      SizedBox(
+                        width: marginSpace,
+                      )
+                    ],
+                  ),
+                  // getInput('意向楼盘', (value) {
+                  //   // print('意向楼盘 value === $value');
+                  //   addClientParams['region'] = value;
+                  // }, hintText: '请输入客户意向楼盘'),
+                  // line
+                  getLine(false),
+                  // 特殊要求
+                  Container(
+                    height: lineHeight,
+                    margin: EdgeInsets.only(left: marginSpace),
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '特殊要求',
+                      style: labelStyle,
+                    ),
+                  ),
+                  CustomMarkInput(
+                    text: addClientParams['remarks'] ?? '',
+                    maxLength: 200,
+                    valueChange: (value) {
                       addClientParams['remarks'] = value;
                     },
                   ),
-                ),
-                // 客源录入合规告知书
-                Container(
-                  width: SizeConfig.screenWidth,
-                  height: lineHeight * 0.6,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: RichText(
-                        text: TextSpan(
-                            text: '请保护用户隐私，确保遵守',
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: Color.fromRGBO(133, 133, 134, 1)),
-                            children: <TextSpan>[
-                          TextSpan(
-                            text: '《客源录入合规告知书》',
-                            style: TextStyle(fontSize: 12, color: Colors.red),
-                          )
-                        ])),
+                  // 客源录入合规告知书
+                  Container(
+                    width: SizeConfig.screenWidth,
+                    height: lineHeight * 0.6,
+                    child: TextButton(
+                      onPressed: () {},
+                      child: RichText(
+                          text: TextSpan(
+                              text: '请保护用户隐私，确保遵守',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color.fromRGBO(133, 133, 134, 1)),
+                              children: <TextSpan>[
+                            TextSpan(
+                              text: '《客源录入合规告知书》',
+                              style: TextStyle(fontSize: 12, color: Colors.red),
+                            )
+                          ])),
+                    ),
                   ),
-                ),
-                Align(
-                  child: Container(
-                      // 提交注册按钮
-                      width: SizeConfig.screenWidth - marginSpace * 2,
-                      height: lineHeight,
-                      margin: EdgeInsets.only(bottom: 50),
-                      decoration: BoxDecoration(
-                          color: jm_appTheme,
-                          borderRadius: BorderRadius.all(Radius.circular(8))),
-                      child: TextButton(
-                        onPressed: () {
-                          FocusScope.of(context).requestFocus(FocusNode());
-                          // sendRegist();
-                          UserDefault.get(USERINFO).then((value) {
-                            Map userInfo = convert.jsonDecode(value);
-                            addClientParams['employeeId'] = userInfo['userId'];
-                            model.sendAddClientRequest(addClientParams,
-                                (bool success) {
-                              if (success) {
-                                Future.delayed(Duration(seconds: 1), () {
-                                  Navigator.pop(context);
-                                });
-                              }
-                            });
+                  SizedBox(
+                    height: 10,
+                  ),
+                  CustomSubmitButton(
+                    buttonClick: () {
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      CustomAlert(title: '提示', content: '是否确认提交？').show(
+                          confirmClick: () {
+                        UserDefault.get(USERINFO).then((value) {
+                          Map userInfo = convert.jsonDecode(value);
+                          addClientParams['employeeId'] = userInfo['userId'];
+
+                          model.sendAddClientRequest(addClientParams,
+                              (bool success) {
+                            if (success) {
+                              _bus.emit(NOTIFY_CLIENT_LIST_REFRASH_NORMAL);
+                              ShowToast.normal('提交成功');
+                              Future.delayed(Duration(seconds: 1), () {
+                                Navigator.pop(context);
+                              });
+                            }
                           });
-                        },
-                        child: Text(
-                          '提交',
-                          style: TextStyle(fontSize: 15, color: Colors.white),
-                        ),
-                      )),
-                ),
-              ],
+                        });
+                      });
+                      // sendRegist();
+                    },
+                  ),
+                  // Align(
+                  //   child: Container(
+                  //       // 提交注册按钮
+                  //       width: SizeConfig.screenWidth - marginSpace * 2,
+                  //       height: lineHeight,
+                  //       margin: EdgeInsets.only(bottom: 50),
+                  //       decoration: BoxDecoration(
+                  //           color: jm_appTheme,
+                  //           borderRadius: BorderRadius.all(Radius.circular(8))),
+                  //       child: TextButton(
+                  //         onPressed: () {
+
+                  //         },
+                  //         child: Text(
+                  //           '提交',
+                  //           style: TextStyle(fontSize: 15, color: Colors.white),
+                  //         ),
+                  //       )),
+                  // ),
+                ],
+              ),
             ),
           );
         },
@@ -581,36 +616,30 @@ class _AddClientVCState extends State<AddClientVC> {
     );
   }
 
-  Widget getInput(String title, Function(String value) valueChange,
-      {String hintText = '',
-      bool must = false,
-      TextInputType keyboardType = TextInputType.text}) {
-    return Align(
-      child: Container(
-        width: SizeConfig.screenWidth - marginSpace * 2,
-        height: lineHeight,
-        child: Row(
-          children: [
-            Container(width: labelWidth, child: getlabel(title, must)),
-            Container(
-              // color: Colors.red,
-              constraints:
-                  BoxConstraints(maxHeight: lineHeight, maxWidth: otherWidth),
-              child: TextField(
-                onChanged: valueChange,
-                style: jm_text_black_style15,
-                decoration: InputDecoration(
-                  hintText: hintText,
-                  border: OutlineInputBorder(
-                      // borderRadius: widget.borderRadius,
-                      borderSide: BorderSide.none),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
+  void _requestPermission() async {
+    print('通讯录导入');
+    var status = await Permission.contacts.status;
+    if (status.isDenied) {
+      await [
+        Permission.contacts,
+      ].request();
+    } else {
+      Contact contact = await _contactPicker.selectContactWithNative();
+      setState(() {
+        addClientParams['phone'] =
+            contact.phoneNumber != null ? stringTrim(contact.phoneNumber) : '';
+        addClientParams['name'] = contact.fullName ?? '';
+      });
+    }
+
+    if (status.isGranted) {
+      Contact contact = await _contactPicker.selectContactWithNative();
+      setState(() {
+        addClientParams['phone'] =
+            contact.phoneNumber != null ? stringTrim(contact.phoneNumber) : '';
+        addClientParams['name'] = contact.fullName ?? '';
+      });
+    }
   }
 
   Widget getLine(bool full,
@@ -707,44 +736,68 @@ class _AddClientVCState extends State<AddClientVC> {
     ));
   }
 
-  Widget getSelect(String title, List dataList,
-      Function(int value, dynamic data) selectValueChange) {
-    return Padding(
-      padding: EdgeInsets.only(left: marginSpace),
-      child: RegistSelectInput(
-        title: title,
-        width: SizeConfig.screenWidth - marginSpace * 2,
-        labelWidth: labelWidth,
-        dataList: dataList,
-        hintText: '请选择' + title,
-        height: lineHeight,
-        border: Border.all(color: Colors.transparent, width: 0.0),
-        selectedChange: selectValueChange,
-      ),
-    );
+  List<Widget> getProjects() {
+    double buttonHeight = 35;
+    List<Widget> list = [];
+    if (addClientParams['customerProject'] != null &&
+        (addClientParams['customerProject'] is List)) {
+      List projectList = addClientParams['customerProject'];
+      for (var i = 0; i < projectList.length; i++) {
+        Map data = projectList[i];
+        list.add(SizedBox(
+          height: 6,
+        ));
+        list.add(RawMaterialButton(
+          onPressed: () {
+            deleteProject(i);
+          },
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          constraints: BoxConstraints(
+              minHeight: buttonHeight, minWidth: widthScale * 50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(buttonHeight / 2),
+            side: BorderSide(color: jm_line_color, width: 0.5),
+          ),
+          child: Container(
+            width: widthScale * 60,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: widthScale * 4),
+                  child: Text(
+                    // node.label ?? '',
+                    data['projectName'] ?? '',
+                    style: jm_text_black_style14,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(right: widthScale * 1),
+                  child: Icon(
+                    Icons.cancel,
+                    size: buttonHeight * 0.9,
+                    color: jm_line_color,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
+      }
+      list.add(SizedBox(
+        height: 15,
+      ));
+    }
+    return list;
   }
 
-  void setClientYY(int value, ClientViewModel model) {
-    clientYY = value;
-    if (model.state == BaseState.CONTENT &&
-        model.listData['desireGrade'] != null &&
-        model.listData['desireGrade'] is List &&
-        model.listData['desireGrade'].length > 0) {
-      // addClientParams['desireId'] = ((model.listData['desireGrade'])[value - 1])['value'];
-      switch (clientYY) {
-        case 1:
-          addClientParams['desireId'] =
-              ((model.listData['desireGrade'])[2])['value'];
-          break;
-        case 2:
-          addClientParams['desireId'] =
-              ((model.listData['desireGrade'])[1])['value'];
-          break;
-        case 3:
-          addClientParams['desireId'] =
-              ((model.listData['desireGrade'])[0])['value'];
-          break;
-      }
+  void deleteProject(int index) {
+    if (addClientParams['customerProject'] != null &&
+        (addClientParams['customerProject'] is List)) {
+      setState(() {
+        (addClientParams['customerProject'] as List).removeAt(index);
+      });
     }
   }
 }

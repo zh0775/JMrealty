@@ -1,10 +1,12 @@
 import 'package:JMrealty/Project/ProjectCell.dart';
+import 'package:JMrealty/Project/ProjectSearch.dart';
 import 'package:JMrealty/Project/ProjectViewModel.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
@@ -43,22 +45,27 @@ class _ProjectState extends State<Project> {
           centerTitle: true,
           backgroundColor: jm_appTheme,
           automaticallyImplyLeading: false,
+          leading: IconButton(
+              icon: Icon(
+                Icons.search,
+                color: Colors.white,
+                size: 30,
+              ),
+              onPressed: () {
+                Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                  return ProjectSearch(
+                    projectList: projectListData,
+                  );
+                }));
+              }),
           title: Text(
             '项目',
             style: TextStyle(color: Colors.white, fontSize: 22),
           ),
-          actions: [
-            IconButton(
-                icon: Icon(
-                  Icons.search,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                onPressed: () {})
-          ]),
+          actions: []),
       body: EasyRefresh(
-        enableControlFinishRefresh: true,
-        enableControlFinishLoad: true,
+        // enableControlFinishRefresh: true,
+        // enableControlFinishLoad: true,
         key: _easyRefreshKey,
         controller: pullCtr,
         header: CustomPullHeader(key: _pullHeaderKey),
@@ -66,7 +73,7 @@ class _ProjectState extends State<Project> {
         firstRefresh: true,
         onRefresh: () async {
           projectVM.loadProjectList((projectList, success) {
-            pullCtr.finishRefresh();
+            // pullCtr.finishRefresh();
             if (success) {
               setState(() {
                 projectListData = projectList;

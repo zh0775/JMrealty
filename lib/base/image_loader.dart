@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 class ImageLoader extends StatelessWidget {
   final String imgUrl;
   final double height;
-
-  ImageLoader(this.imgUrl, {this.height});
+  final BoxFit fit;
+  ImageLoader(this.imgUrl, {this.height, this.fit = BoxFit.cover});
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +15,8 @@ class ImageLoader extends StatelessWidget {
       placeholderFadeInDuration: Duration(milliseconds: 1),
       fadeOutDuration: Duration(milliseconds: 1),
       imageUrl: imgUrl,
+      height: this.height,
+
       // placeholder: (context, url) {
       //   return Image.asset(
       //     'assets/images/home/motivation_monochromatic.png',
@@ -29,7 +31,7 @@ class ImageLoader extends StatelessWidget {
       //   );
       // },
       // height: height,
-      fit: BoxFit.cover,
+      fit: fit,
     );
   }
 }

@@ -159,11 +159,9 @@ class _ReportDetailState extends State<ReportDetail> {
         // SizedBox(
         //   height: 15,
         // ),
-        Padding(
-          padding: EdgeInsets.only(left: outMargin),
-          child: ClientSuccessWidget(
-            successData: data['reportShopDetailVO'],
-          ),
+        ClientSuccessWidget(
+          margin: outMargin,
+          successData: data['reportShopDetailVO'],
         )
       ],
     );
@@ -339,7 +337,7 @@ class _ReportDetailState extends State<ReportDetail> {
         ),
         getLabel('报备公司'),
         Text(
-          widget.data['projectName'] ?? '无',
+          widget.data['company'] ?? '无',
           style: jm_text_black_style15,
         )
       ],

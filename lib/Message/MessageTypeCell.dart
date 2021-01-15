@@ -1,4 +1,3 @@
-import 'package:JMrealty/base/image_loader.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
@@ -40,65 +39,68 @@ class _MessageTypeCellState extends State<MessageTypeCell> {
         //   },
         // ));
       },
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: axisSpace),
-        width: SizeConfig.screenWidth,
-        decoration: BoxDecoration(
-            border:
-                Border(bottom: BorderSide(color: jm_line_color, width: 0.5))),
-        child: Row(
-          children: [
-            SizedBox(
-              width: margin,
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, widthScale * 5, 0, widthScale * 3),
+            child: Text(widget.data['createTime'] ?? ''),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: margin),
+            width: SizeConfig.screenWidth - margin * 2,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(widthScale * 4),
             ),
-            Column(
+            child: Row(
               children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  child: ImageLoader('imgUrl'),
-                )
-              ],
-            ),
-            SizedBox(
-              width: margin,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: SizeConfig.screenWidth - margin * 3 - 60,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    // crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.data['name'] ?? '',
-                        style: jm_text_black_style15,
-                      ),
-                      Text(
-                        widget.data['createTime'] ?? '',
-                        style: jm_text_black_style15,
-                      ),
-                    ],
-                  ),
-                ),
                 SizedBox(
-                  height: 16,
+                  width: margin,
                 ),
-                Container(
-                  width: SizeConfig.screenWidth - margin * 3 - 60,
-                  child: Text(
-                    widget.data['content'] ?? '',
-                    style: jm_text_black_style15,
-                    maxLines: 100,
-                  ),
-                )
+                // Column(
+                //   children: [
+                //     Container(
+                //       width: 60,
+                //       height: 60,
+                //       child: ImageLoader('imgUrl'),
+                //     )
+                //   ],
+                // ),
+                // SizedBox(
+                //   width: margin,
+                // ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      // margin: EdgeInsets.symmetric(horizontal: margin),
+                      // width: SizeConfig.screenWidth - margin * 3 - 60,
+                      child: Text(
+                        widget.data['name'] ?? '',
+                        style: jm_text_black_bold_style15,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: JMline(
+                          width: SizeConfig.screenWidth - margin * 4,
+                          height: 0.5),
+                    ),
+                    Container(
+                      width: SizeConfig.screenWidth - margin * 4,
+                      child: Text(
+                        widget.data['content'] ?? '',
+                        style: jm_text_black_style14,
+                        maxLines: 100,
+                      ),
+                    )
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

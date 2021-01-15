@@ -4,16 +4,17 @@ import 'package:flutter/material.dart';
 
 class ClientSuccessWidget extends StatelessWidget {
   final Map successData;
-  const ClientSuccessWidget({this.successData});
+  final double margin;
+  const ClientSuccessWidget({this.successData, this.margin});
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     double widthScale = SizeConfig.blockSizeHorizontal;
-    double margin = widthScale * 4;
+    double selfMargin = (margin != null ? margin : widthScale * 4);
     double lineHeight = 22;
     return Container(
       child: Column(
-        children: [...successInfo(widthScale, margin, lineHeight)],
+        children: [...successInfo(widthScale, selfMargin, lineHeight)],
       ),
     );
   }
@@ -21,6 +22,7 @@ class ClientSuccessWidget extends StatelessWidget {
   Widget getInfoRow(String title, String value,
       {double widthScale, double margin, double lineHeight}) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
           width: margin,
@@ -33,9 +35,13 @@ class ClientSuccessWidget extends StatelessWidget {
             style: jm_text_gray_style14,
           ),
         ),
-        Text(
-          value,
-          style: TextStyle(fontSize: 14, color: jm_text_black),
+        Container(
+          width: widthScale * (100 - 26) - margin * 2,
+          child: Text(
+            value,
+            style: TextStyle(fontSize: 14, color: jm_text_black),
+            maxLines: 100,
+          ),
         )
       ],
     );
@@ -47,11 +53,10 @@ class ClientSuccessWidget extends StatelessWidget {
         [
       Row(
         children: [
-          Icon(
-            Icons.thumb_up_alt,
-            size: 20,
-            color: jm_appTheme,
+          SizedBox(
+            width: margin,
           ),
+          Image.asset('assets/images/icon/icon_client_deal.png'),
           SizedBox(
             width: widthScale * 1,
           ),
@@ -62,7 +67,7 @@ class ClientSuccessWidget extends StatelessWidget {
         ],
       ),
       SizedBox(
-        height: 5,
+        height: 15,
       ),
       getInfoRow('成交渠道', successData['companyName'] ?? '',
           widthScale: widthScale, lineHeight: lineHeight, margin: margin),
@@ -94,12 +99,12 @@ class ClientSuccessWidget extends StatelessWidget {
       SizedBox(
         height: 5,
       ),
-      getInfoRow('成交面积·平方', successData['houseArea'] ?? '',
+      getInfoRow('成交面积', '${successData['houseArea'] ?? ''}  平方米',
           widthScale: widthScale, lineHeight: lineHeight, margin: margin),
       SizedBox(
         height: 5,
       ),
-      getInfoRow('成交总价·万', (successData['dealTotal']).toString() ?? '',
+      getInfoRow('成交总价', '${(successData['dealTotal']).toString() ?? ''}  元',
           widthScale: widthScale, lineHeight: lineHeight, margin: margin),
       SizedBox(
         height: 5,
@@ -114,6 +119,11 @@ class ClientSuccessWidget extends StatelessWidget {
       SizedBox(
         height: 5,
       ),
+      getInfoRow('备注', successData['remark'] ?? '',
+          widthScale: widthScale, lineHeight: lineHeight, margin: margin),
+      SizedBox(
+        height: 15,
+      ),
       ...getCommissionRow(widthScale, margin)
     ];
   }
@@ -126,17 +136,12 @@ class ClientSuccessWidget extends StatelessWidget {
       widgetList.add(
         Row(
           children: [
-            Icon(
-              Icons.thumb_up_alt,
-              size: 20,
-              color: jm_appTheme,
-            ),
             SizedBox(
-              width: widthScale * 1,
+              width: margin,
             ),
             Text(
-              '佣金明细',
-              style: TextStyle(fontSize: 18, color: jm_text_black),
+              '佣金规则',
+              style: jm_text_gray_style15,
             )
           ],
         ),
@@ -147,7 +152,7 @@ class ClientSuccessWidget extends StatelessWidget {
         widgetList.add(Column(
           children: [
             SizedBox(
-              height: 10,
+              height: i == 0 ? 15 : 10,
             ),
             Row(children: [
               SizedBox(
@@ -158,16 +163,17 @@ class ClientSuccessWidget extends StatelessWidget {
                 width: widthScale * 26,
                 child: Text(
                   commissionData['userName'] ?? '',
-                  style: jm_text_black_style14,
+                  style: jm_text_black_style15,
                 ),
               ),
               Text(
-                commissionData['userPhone'] != null
-                    ? ('手机号：' + commissionData['userPhone'])
-                    : '',
-                style: jm_text_black_style14,
+                commissionData['userPhone'] ?? '',
+                style: jm_text_black_style15,
               ),
             ]),
+            SizedBox(
+              height: 3,
+            ),
             Row(
               children: [
                 SizedBox(
@@ -178,14 +184,14 @@ class ClientSuccessWidget extends StatelessWidget {
                   width: widthScale * 26,
                   child: Text(
                     '佣金比例',
-                    style: jm_text_black_style14,
+                    style: jm_text_apptheme_style15,
                   ),
                 ),
                 Text(
                   commissionData['ratio'] != null
                       ? ((commissionData['ratio']).toString() + '%')
                       : '',
-                  style: jm_text_black_style14,
+                  style: jm_text_black_style15,
                 ),
                 SizedBox(
                   width: widthScale * 4,
@@ -194,9 +200,12 @@ class ClientSuccessWidget extends StatelessWidget {
                   commissionData['userCommission'] != null
                       ? ((commissionData['userCommission']).toString() + '元')
                       : '',
-                  style: jm_text_black_style14,
+                  style: jm_text_black_style15,
                 )
               ],
+            ),
+            SizedBox(
+              height: i == commissionList.length - 1 ? 20 : 0,
             ),
           ],
         ));

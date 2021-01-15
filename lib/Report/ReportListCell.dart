@@ -77,13 +77,11 @@ class _ReportListCellState extends State<ReportListCell> {
         }
       },
       onTap: () {
-        Navigator.of(context).push(CupertinoPageRoute(
-          builder: (context) {
-            return ReportDetail(
+        push(
+            ReportDetail(
               data: widget.data,
-            );
-          },
-        ));
+            ),
+            context);
       },
       child: Container(
         width: SizeConfig.screenWidth,
@@ -132,10 +130,10 @@ class _ReportListCellState extends State<ReportListCell> {
                   height: labelSpace,
                 ),
                 getNum(),
-                SizedBox(
-                  height: 15,
-                ),
-                JMline(width: SizeConfig.screenWidth, height: 0.5),
+                // SizedBox(
+                //   height: 15,
+                // ),
+                // JMline(width: SizeConfig.screenWidth, height: 0.5),
                 SizedBox(
                   height: 6,
                 ),
@@ -371,13 +369,24 @@ class _ReportListCellState extends State<ReportListCell> {
     double space =
         ((SizeConfig.screenWidth - outMargin * 2) - widthScale * 75) / 4;
     return Container(
-        width: SizeConfig.screenWidth - outMargin * 2,
-        margin: EdgeInsets.only(left: space, bottom: 10, top: 4),
-        child: Wrap(
-          // alignment: WrapAlignment.spaceAround,
-          spacing: space,
+        // color: Colors.red,
+        width: SizeConfig.screenWidth,
+        margin: EdgeInsets.only(top: 8),
+        decoration: BoxDecoration(
+            border: Border(
+                top: buttons.length > 0
+                    ? BorderSide(width: 0.5, color: jm_line_color)
+                    : BorderSide.none)),
+        // margin: EdgeInsets.only(left: space, bottom: 10, top: 4),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(space, buttons.length > 0 ? 10 : 0,
+              space, buttons.length > 0 ? 10 : 0),
+          child: Wrap(
+            // alignment: WrapAlignment.spaceAround,
+            spacing: space,
 
-          children: [...buttons],
+            children: [...buttons],
+          ),
         )
         // Column(
         //   children: [
@@ -550,7 +559,7 @@ class _ReportListCellState extends State<ReportListCell> {
             ));
           });
         };
-        titlt = '认购';
+        titlt = '成交';
         break;
       case ReportCellButtonStatus.sign:
         buttonClick = () {

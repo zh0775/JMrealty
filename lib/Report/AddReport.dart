@@ -1,6 +1,9 @@
 import 'package:JMrealty/Report/viewmodel/ReportViewModel.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
+import 'package:JMrealty/components/CustomSubmitButton.dart';
+import 'package:JMrealty/components/DropdownSelectV.dart';
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -8,6 +11,8 @@ import 'package:JMrealty/utils/toast.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
+
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class AddReport extends StatefulWidget {
   final Map userData;
@@ -22,23 +27,22 @@ class _AddReportState extends State<AddReport> {
       Widget w = addClientWidgets[i];
       if (identical(w, widget)) {
         clientsData[i] = clientData;
-
         break;
       }
     }
     print('clientsData ==== ${clientsData}');
   }
 
-  ReportViewModel model;
+  ReportViewModel model = ReportViewModel();
   double widthScale;
   double margin;
   double lineHeight;
-  int addClientCount;
-  List<Widget> addClientWidgets;
+  int addClientCount = 0;
+  List<Widget> addClientWidgets = [];
   List<Map> clientsData = [];
   Map projectData; // 项目数据
   Map agentData; // 经纪人数据
-  String mark;
+  String mark = '';
   Map userInfo;
   // String jjrSearchStr;
   // String clientSearchStr;
@@ -56,10 +60,12 @@ class _AddReportState extends State<AddReport> {
       });
     });
 
-    mark = '';
-    model = ReportViewModel();
-    addClientCount = 0;
-    addClientWidgets = [];
+    if (widget.userData != null) {
+      Future.delayed(Duration.zero, () {
+        addClient(client: widget.userData);
+      });
+    }
+
     super.initState();
   }
 
@@ -84,8 +90,8 @@ class _AddReportState extends State<AddReport> {
           title: '报备',
           backClick: () {
             CustomAlert(
-                    cancelText: '退出',
-                    confirmText: '继续添加',
+                    cancelText: '返回首页',
+                    confirmText: '继续报备',
                     title: '退出',
                     content: '退出后信息将不再保存，是否确定退出')
                 .show(
@@ -103,7 +109,7 @@ class _AddReportState extends State<AddReport> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  '项目1',
+                  '项目',
                   style: jm_text_black_bold_style17,
                 ),
               ),
@@ -158,6 +164,28 @@ class _AddReportState extends State<AddReport> {
                   : '',
               enable: false,
             ),
+            projectData != null
+                ? Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      margin:
+                          EdgeInsets.only(left: widthScale * 30, bottom: 10),
+                      width:
+                          SizeConfig.screenWidth - margin * 2 - widthScale * 24,
+                      // color: Colors.red,
+                      child: Text(
+                        '该项目要求提前报备' +
+                            projectData['reportBeforeTime'].toString() +
+                            '分钟;' +
+                            (projectData['isSensitive'] == 1
+                                ? '要求手机号前三后四;'
+                                : '要求全号报备'),
+                        style: jm_text_gray_style12,
+                        maxLines: null,
+                      ),
+                    ),
+                  )
+                : NoneV(),
             JMline(
               width: SizeConfig.screenWidth - margin,
               height: 0.5,
@@ -178,6 +206,7 @@ class _AddReportState extends State<AddReport> {
               width: SizeConfig.screenWidth,
               height: 6,
             ),
+            ...addClientWidgets,
             GestureDetector(
               onTap: () {
                 setState(() {
@@ -206,7 +235,6 @@ class _AddReportState extends State<AddReport> {
                 ),
               ),
             ),
-            ...addClientWidgets,
             JMline(
               width: SizeConfig.screenWidth,
               height: 6,
@@ -218,8 +246,8 @@ class _AddReportState extends State<AddReport> {
               text: agentData != null && agentData['showName'] != null
                   ? agentData['showName']
                   : '',
-              title: '搜索内容',
-              hintText: '请输入名称和手机号码',
+              title: '搜索',
+              hintText: '请输入名称',
               valueChange: (value) {},
               valueChangeAndShowList: (value, state) {
                 if (value != '') {
@@ -325,114 +353,82 @@ class _AddReportState extends State<AddReport> {
             SizedBox(
               height: 8,
             ),
-            Align(
-              child: Container(
-                  // 提交按钮
-                  width: SizeConfig.screenWidth - margin * 2,
-                  height: lineHeight,
-                  margin: EdgeInsets.only(bottom: 50),
-                  decoration: BoxDecoration(
-                      color: jm_appTheme,
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
-                  child: TextButton(
-                    onPressed: () {
-                      FocusScope.of(context).requestFocus(FocusNode());
+            CustomSubmitButton(
+              buttonClick: () {
+                FocusScope.of(context).requestFocus(FocusNode());
 
-                      if (projectData == null) {
-                        ShowToast.normal('请选择项目信息');
-                        return;
-                      }
+                if (projectData == null) {
+                  ShowToast.normal('请选择项目信息');
+                  return;
+                }
 
-                      List clients = [];
-                      if (clientsData == null || clientsData.length == 0) {
-                        ShowToast.normal('请选择客源信息');
-                        return;
-                      }
+                List clients = [];
+                if (clientsData == null || clientsData.length == 0) {
+                  ShowToast.normal('请选择客源信息');
+                  return;
+                }
 
-                      clientsData.forEach((e) {
-                        // print(e);
-                        // if (e['name'] != null && e['csutomerPhone'] != null) {
-                        clients.add(e);
-                        // }
-                      });
-                      print('clientsData ==== $clients');
-                      model.addReportRequest({
-                        'client': clients,
-                        'agent': agentData,
-                        'project': projectData,
-                        'mark': mark
-                      }, (bool success) {
-                        if (success) {
-                          Future.delayed(Duration(seconds: 1), () {
-                            Navigator.pop(context);
-                          });
-                        }
-                      });
-                    },
-                    child: Text(
-                      '提交',
-                      style: TextStyle(fontSize: 15, color: Colors.white),
-                    ),
-                  )),
-            )
+                clientsData.forEach((e) {
+                  // print(e);
+                  // if (e['name'] != null && e['csutomerPhone'] != null) {
+                  clients.add(e);
+                  // }
+                });
+                model.addReportRequest({
+                  'client': clients,
+                  'agent': agentData,
+                  'project': projectData,
+                  'mark': mark
+                }, (bool success) {
+                  if (success) {
+                    ShowToast.normal('提交成功');
+                    Future.delayed(Duration(seconds: 1), () {
+                      Navigator.pop(context);
+                    });
+                  }
+                });
+              },
+            ),
           ],
         ),
       ),
     );
   }
 
-  void addClient() {
-    // addClientWidgets.add(value)
-    // Container()
+  void addClient({Map client}) {
     FocusScope.of(context).requestFocus(FocusNode());
     addClientCount++;
     if (clientsData == null) {
       clientsData = [];
     }
-    Map map = {'sex': 1};
-    clientsData.insert(0, map);
-    addClientWidgets.insert(
-        0,
-        ClientSourceWidget(
-          key: ValueKey(addClientCount.toString()),
-          margin: SizeConfig.blockSizeHorizontal * 6,
-          title: '客源' + addClientCount.toString(),
-          deleteClick: (widget) {
-            int index = 0;
-            for (var i = 0; i < addClientWidgets.length; i++) {
-              Widget w = addClientWidgets[i];
-              if (identical(w, widget)) {
-                index = i;
-                addClientWidgets.remove(w);
-                addClientCount--;
-                break;
-              }
-            }
-            clientsData.removeAt(index);
-            setState(() {});
-          },
-          clientDataUpdate: clientDataUpdate,
-        ));
-    // addClientWidgets.add(ClientSourceWidget(
-    //   key: ValueKey(addClientCount.toString()),
-    //   margin: SizeConfig.blockSizeHorizontal * 6,
-    //   title: '客源' + addClientCount.toString(),
-    //   deleteClick: (widget) {
-    //     for (var i = 0; i < addClientWidgets.length; i++) {
-    //       Widget w = addClientWidgets[i];
-    //       if (w == widget) {
-    //         addClientWidgets.remove(w);
-    //         addClientCount--;
-    //         break;
-    //       }
-    //     }
-    //     setState(() {});
-    //   },
-    // ));
+    Map map = client ?? {'sex': 0};
+    clientsData.add(map);
+    addClientWidgets.add(ClientSourceWidget(
+      key: ValueKey(addClientCount.toString()),
+      margin: SizeConfig.blockSizeHorizontal * 6,
+      title: '客源' + addClientCount.toString(),
+      clientData: client,
+      deleteClick: (widget) {
+        int index = 0;
+        for (var i = 0; i < addClientWidgets.length; i++) {
+          Widget w = addClientWidgets[i];
+          if (identical(w, widget)) {
+            index = i;
+            addClientWidgets.remove(w);
+            addClientCount--;
+            break;
+          }
+        }
+        clientsData.removeAt(index);
+        setState(() {});
+      },
+      clientDataUpdate: clientDataUpdate,
+    ));
   }
 }
 
 class ClientSourceWidget extends StatefulWidget {
+  final Map clientData;
   final double margin;
   final String title;
   final double lineHeight;
@@ -444,6 +440,7 @@ class ClientSourceWidget extends StatefulWidget {
       this.margin,
       this.deleteClick,
       this.lineHeight = 50,
+      this.clientData,
       Key key,
       this.clientDataUpdate})
       : super(key: key);
@@ -454,21 +451,24 @@ class ClientSourceWidget extends StatefulWidget {
 enum ClientSourceStatus { normal, clientSource, input }
 
 class _ClientSourceWidgetState extends State<ClientSourceWidget> {
-  ReportViewModel model;
+  ReportViewModel model = ReportViewModel();
   ClientSourceStatus status;
   double margin;
-  List reportType;
-  Sex sex;
-  Map clientData = Map<String, dynamic>.from({'sex': 1});
+  List reportType = [
+    {'title': '客源报备', 'value': 0},
+    {'title': '录入手机号报备', 'value': 1}
+  ];
+  Sex sex = Sex.boy;
+  Map clientData;
+  bool searchSuccess = false;
+
   @override
   void initState() {
-    model = ReportViewModel();
-    sex = Sex.boy;
-    reportType = [
-      {'title': '客源报备', 'value': 0},
-      {'title': '录入手机号报备', 'value': 1}
-    ];
-    status = ClientSourceStatus.normal;
+    status = widget.clientData != null
+        ? ClientSourceStatus.input
+        : ClientSourceStatus.normal;
+    clientData = Map<String, dynamic>.from(
+        widget.clientData != null ? widget.clientData : {'sex': 0});
     super.initState();
   }
 
@@ -511,11 +511,15 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
           ),
         ),
         JMline(width: SizeConfig.screenWidth, height: 0.5),
-        SelectView(
-          title: '报备方式',
-          dataList: reportType,
-          margin: margin,
-          selectValueChange: (value, data) {
+        DropdownSelectV(
+          labelStyle: jm_text_black_bold_style14,
+          style: jm_text_black_style15,
+          labelText: '报备方式',
+          placeholder: '请选择报备方式',
+          dataList: reportType ?? [],
+          textPadding:
+              EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 0.5),
+          valueChange: (value, data) {
             if (value == 0) {
               if (status != ClientSourceStatus.clientSource) {
                 setState(() {
@@ -537,126 +541,126 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
   }
 
   Widget changeWidget() {
-    if (status == ClientSourceStatus.clientSource) {
-      return Column(
-        children: [
-          CustomInput(
-            labelStyle: jm_text_black_bold_style14,
-            textStyle: jm_text_black_style15,
-            title: '搜索内容',
-            hintText: '请输入搜索用户信息',
-            valueChangeAndShowList: (value, state) {
-              if (value != '') {
-                model.loadClientSearchData(
-                  value,
-                  success: (data) {
-                    if (data != null && data.length > 0) {
-                      state.showList(data);
-                    }
-                  },
-                );
-              } else {
-                state.removeList();
-              }
-            },
-            showListClick: (data) {
-              if (widget.clientDataUpdate != null) {
-                widget.clientDataUpdate(widget, data);
-              }
-              setState(() {
-                status = ClientSourceStatus.input;
-              });
-              Future.delayed(Duration(milliseconds: 100), () {
-                setState(() {
-                  clientData = Map.from(data);
-                });
-              });
-            },
-          ),
-        ],
-      );
-    } else if (status == ClientSourceStatus.input) {
-      return Column(
-        children: [
-          CustomInput(
-            key: ValueKey('CustomInput_client_1'),
-            labelStyle: jm_text_black_bold_style14,
-            textStyle: jm_text_black_style15,
-            title: '客户姓名',
-            hintText: '请输入客户姓名',
-            text: clientData != null && clientData['name'] != null
-                ? clientData['name']
-                : '',
-            valueChange: (value) {
-              if (clientData == null) {
-                clientData = {};
-              }
-              clientData['name'] = value;
-              if (widget.clientDataUpdate != null) {
-                widget.clientDataUpdate(widget, clientData);
-              }
-            },
-          ),
-          SexCell(
-            labelStyle: jm_text_black_bold_style14,
-            margin: margin,
-            title: '客户性别',
-            lineHeight: widget.lineHeight,
-            sex: clientData != null && clientData['sex'] != null
-                ? (clientData['sex'] == 1 ? Sex.boy : Sex.girl)
-                : sex,
-            valueChange: (newSex) {
-              if (clientData == null) {
-                clientData = {};
-              }
-              clientData['sex'] = (newSex == Sex.boy ? 1 : 2);
-              if (widget.clientDataUpdate != null) {
-                widget.clientDataUpdate(widget, clientData);
-              }
-            },
-          ),
-          CustomInput(
-            key: ValueKey('CustomInput_client_4'),
-            labelStyle: jm_text_black_bold_style14,
-            textStyle: jm_text_black_style15,
-            title: '手机号',
-            hintText: '请输入客户手机号码',
-            keyboardType: TextInputType.phone,
-            text: clientData != null && clientData['phone'] != null
-                ? clientData['phone']
-                : '',
-            valueChange: (value) {
-              if (clientData == null) {
-                clientData = {};
-              }
-              clientData['phone'] = value;
-              if (widget.clientDataUpdate != null) {
-                widget.clientDataUpdate(widget, clientData);
-              }
-            },
-          ),
-          CustomInput(
-            key: ValueKey('CustomInput_client_5'),
-            labelStyle: jm_text_black_bold_style14,
-            textStyle: jm_text_black_style15,
-            title: '身份证（选填）',
-            hintText: '请输入身份证',
-            valueChange: (value) {
-              if (clientData == null) {
-                clientData = {};
-              }
-              clientData['custmoerCard'] = value;
-              if (widget.clientDataUpdate != null) {
-                widget.clientDataUpdate(widget, clientData);
-              }
-            },
-          ),
-        ],
-      );
-    }
-    return Container(
-      width: 0.0,
-      height: 0.0,
+    return Column(
+      children: [
+        status == ClientSourceStatus.clientSource
+            ? CustomInput(
+                labelStyle: jm_text_black_bold_style14,
+                textStyle: jm_text_black_style15,
+                title: '搜索内容',
+                hintText: '请输入搜索用户信息',
+                valueChangeAndShowList: (value, state) {
+                  if (value != '') {
+                    model.loadClientSearchData(
+                      value,
+                      success: (data) {
+                        if (data != null && data.length > 0) {
+                          state.showList(data);
+                        }
+                      },
+                    );
+                  } else {
+                    state.removeList();
+                  }
+                },
+                showListClick: (data) {
+                  if (widget.clientDataUpdate != null) {
+                    widget.clientDataUpdate(widget, data);
+                  }
+                  // setState(() {
+                  //   status = ClientSourceStatus.input;
+                  // });
+                  Future.delayed(Duration(milliseconds: 100), () {
+                    setState(() {
+                      searchSuccess = true;
+                      clientData = Map.from(data);
+                    });
+                  });
+                },
+              )
+            : NoneV(),
+        searchSuccess || status == ClientSourceStatus.input
+            ? CustomInput(
+                key: ValueKey('CustomInput_client_1'),
+                labelStyle: jm_text_black_bold_style14,
+                textStyle: jm_text_black_style15,
+                title: '客户姓名',
+                hintText: '请输入客户姓名',
+                text: clientData != null && clientData['name'] != null
+                    ? clientData['name']
+                    : '',
+                valueChange: (value) {
+                  if (clientData == null) {
+                    clientData = {};
+                  }
+                  clientData['name'] = value;
+                  if (widget.clientDataUpdate != null) {
+                    widget.clientDataUpdate(widget, clientData);
+                  }
+                },
+              )
+            : NoneV(),
+        searchSuccess || status == ClientSourceStatus.input
+            ? SexCell(
+                labelStyle: jm_text_black_bold_style14,
+                margin: margin,
+                title: '客户性别',
+                lineHeight: widget.lineHeight,
+                sex: clientData != null && clientData['sex'] != null
+                    ? (clientData['sex'] == 0 ? Sex.boy : Sex.girl)
+                    : sex,
+                valueChange: (newSex) {
+                  if (clientData == null) {
+                    clientData = {};
+                  }
+                  clientData['sex'] = (newSex == Sex.boy ? 0 : 1);
+                  if (widget.clientDataUpdate != null) {
+                    widget.clientDataUpdate(widget, clientData);
+                  }
+                },
+              )
+            : NoneV(),
+        searchSuccess || status == ClientSourceStatus.input
+            ? CustomInput(
+                key: ValueKey('CustomInput_client_4'),
+                labelStyle: jm_text_black_bold_style14,
+                textStyle: jm_text_black_style15,
+                title: '手机号',
+                hintText: '请输入客户手机号码',
+                keyboardType: TextInputType.phone,
+                text: clientData != null && clientData['phone'] != null
+                    ? clientData['phone']
+                    : '',
+                valueChange: (value) {
+                  if (clientData == null) {
+                    clientData = {};
+                  }
+                  clientData['phone'] = value;
+                  if (widget.clientDataUpdate != null) {
+                    widget.clientDataUpdate(widget, clientData);
+                  }
+                },
+              )
+            : NoneV(),
+        searchSuccess || status == ClientSourceStatus.input
+            ? CustomInput(
+                key: ValueKey('CustomInput_client_5'),
+                labelStyle: jm_text_black_bold_style14,
+                textStyle: jm_text_black_style15,
+                title: '身份证（选填）',
+                hintText: '请输入身份证',
+                valueChange: (value) {
+                  if (clientData == null) {
+                    clientData = {};
+                  }
+                  clientData['custmoerCard'] = value;
+                  if (widget.clientDataUpdate != null) {
+                    widget.clientDataUpdate(widget, clientData);
+                  }
+                },
+              )
+            : NoneV(),
+      ],
     );
   }
 }

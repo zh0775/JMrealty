@@ -1,9 +1,13 @@
 import 'package:JMrealty/MyTasks/viewModel/MyTasksViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportViewModel.dart';
+import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
+import 'package:JMrealty/components/DropdownSelectV.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/utils/EventBus.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +19,7 @@ class AddTask extends StatefulWidget {
 }
 
 class _AddTaskState extends State<AddTask> {
+  EventBus _bus = EventBus();
   MyTasksViewModel tasksVM = MyTasksViewModel();
   ReportViewModel searchAgentVM = ReportViewModel();
   double widthScale;
@@ -24,8 +29,10 @@ class _AddTaskState extends State<AddTask> {
   String taskRecipient = '';
   List typeList = [];
   List urgencyList = [];
-  DateTime startDate = DateTime.now();
-  DateTime endDate = DateTime.now().add(Duration(days: 7));
+  // DateTime startDate = DateTime.now();
+  // DateTime endDate = DateTime.now().add(Duration(days: 7));
+  DateTime startDate;
+  DateTime endDate;
   DateFormat dateFormat = DateFormat('yyyy-MM-dd');
   DateFormat timeFormat = DateFormat('HH:mm:ss');
   DateFormat allFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
@@ -33,8 +40,8 @@ class _AddTaskState extends State<AddTask> {
   List agentList = [];
   @override
   void initState() {
-    params['startTime'] = allFormat.format(startDate);
-    params['expireTime'] = allFormat.format(endDate);
+    // params['startTime'] = allFormat.format(startDate);
+    // params['expireTime'] = allFormat.format(endDate);
     params['receiveIdList'] = [];
     tasksVM.loadTasksType((data, success) {
       if (success) {
@@ -77,7 +84,23 @@ class _AddTaskState extends State<AddTask> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // SizedBox(
+              //   height: 8,
+              // ),
+              Container(
+                height: 60,
+                width: selfWidth,
+                margin: EdgeInsets.only(left: margin),
+                // color: Colors.red,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '任务明细',
+                  style: jm_text_black_bold_style22,
+                ),
+              ),
+              JMline(width: SizeConfig.screenWidth, height: 0.5),
               CustomInput(
+                labelStyle: jm_text_black_bold_style15,
                 title: '任务名称',
                 text: params['name'] ?? '',
                 hintText: '请输入任务名称',
@@ -86,29 +109,78 @@ class _AddTaskState extends State<AddTask> {
                 },
               ),
               JMline(width: selfWidth, height: 0.5),
-              SelectView(
-                margin: margin,
-                dataList: typeList,
-                title: '任务类型',
-                selectValueChange: (value, data) {
-                  params['type'] = value;
-                },
+              // SelectView(
+              //   margin: margin,
+              //   dataList: typeList,
+              //   title: '任务类型',
+              //   selectValueChange: (value, data) {
+              //     params['type'] = value;
+              //   },
+              // ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: widthScale * 6,
+                  ),
+                  DropdownSelectV(
+                    // margin: margin,
+                    width: selfWidth - widthScale * 6,
+                    dataList: typeList,
+                    placeholder: '请选择任务类型',
+                    labelText: '任务类型',
+                    labelStyle: jm_text_black_bold_style15,
+                    valueChange: (value, data) {
+                      setState(() {
+                        params['type'] = value;
+                      });
+                    },
+                  ),
+                  Icon(
+                    Icons.keyboard_arrow_right,
+                    size: widthScale * 6,
+                  )
+                ],
               ),
               JMline(width: selfWidth, height: 0.5),
-              SelectView(
-                margin: margin,
-                dataList: urgencyList,
-                title: '紧急程度',
-                selectValueChange: (value, data) {
-                  params['priority'] = value;
-                },
+              // SelectView(
+              //   margin: margin,
+              //   dataList: urgencyList,
+              //   title: '紧急程度',
+              //   selectValueChange: (value, data) {
+              //     params['priority'] = value;
+              //   },
+              // ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: widthScale * 6,
+                  ),
+                  DropdownSelectV(
+                    // margin: margin,
+                    labelStyle: jm_text_black_bold_style15,
+                    width: selfWidth - widthScale * 6,
+                    dataList: urgencyList ?? [],
+                    placeholder: '请选择紧急程度',
+                    labelText: '紧急程度',
+                    valueChange: (value, data) {
+                      setState(() {
+                        params['priority'] = value;
+                      });
+                    },
+                  ),
+                  Icon(
+                    Icons.keyboard_arrow_right,
+                    size: widthScale * 6,
+                  )
+                ],
               ),
               JMline(width: selfWidth, height: 0.5),
-              getDateWidget(title: '发布时间', start: true),
+              getDateWidget(title: '开始时间', start: true),
               JMline(width: selfWidth, height: 0.5),
-              getDateWidget(title: '截止时间', start: false),
+              getDateWidget(title: '结束时间', start: false),
               JMline(width: selfWidth, height: 0.5),
               CustomInput(
+                labelStyle: jm_text_black_bold_style15,
                 title: '任务接收人',
                 hintText: '搜索添加任务接收人',
                 text: taskRecipient ?? '',
@@ -148,14 +220,17 @@ class _AddTaskState extends State<AddTask> {
               ),
               JMline(width: selfWidth, height: 0.5),
               SizedBox(
-                height: 10,
+                height: 20,
               ),
               Padding(
                 padding: EdgeInsets.only(left: margin),
                 child: Text(
                   '任务说明',
-                  style: jm_text_black_style15,
+                  style: jm_text_black_bold_style15,
                 ),
+              ),
+              SizedBox(
+                height: 10,
               ),
               CustomMarkInput(
                 text: params['taskExplain'] ?? '',
@@ -186,18 +261,37 @@ class _AddTaskState extends State<AddTask> {
                       ShowToast.normal('请选择任务紧急程度');
                       return;
                     }
+                    if (params['startTime'] == null ||
+                        (params['startTime'] as String).length == 0) {
+                      ShowToast.normal('请选择开始时间');
+                      return;
+                    }
+                    if (params['expireTime'] == null ||
+                        (params['expireTime'] as String).length == 0) {
+                      ShowToast.normal('请输入结束时间');
+                      return;
+                    }
+                    if (allFormat
+                        .parse(params['startTime'])
+                        .isAfter(allFormat.parse(params['expireTime']))) {
+                      ShowToast.normal('结束时间不能小于开始时间');
+                      return;
+                    }
                     if (params['taskExplain'] == null ||
                         params['taskExplain'] == '') {
                       ShowToast.normal('请输入任务说明');
                       return;
                     }
-
-                    tasksVM.addTasksRequest(params, (success) {
-                      if (success) {
-                        ShowToast.normal('新增成功');
-                        Future.delayed(
-                            Duration(seconds: 1), () => Navigator.pop(context));
-                      }
+                    CustomAlert(title: '提示', content: '是否确认提交？').show(
+                        confirmClick: () {
+                      tasksVM.addTasksRequest(params, (success) {
+                        if (success) {
+                          _bus.emit(NOTIFY_TASKS_LIST_REFRASH);
+                          ShowToast.normal('新增成功');
+                          Future.delayed(Duration(seconds: 1),
+                              () => Navigator.pop(context));
+                        }
+                      });
                     });
                   },
                 ),
@@ -213,7 +307,11 @@ class _AddTaskState extends State<AddTask> {
   }
 
   Widget getDateWidget({@required String title, bool start = true}) {
-    double labelWidth = widthScale * 22;
+    double labelWidth = widthScale * 24;
+    dynamic dateData = start ? params['startTime'] : params['expireTime'];
+    TextStyle textStyle = dateData != null && dateData != ''
+        ? jm_text_black_style15
+        : TextStyle(color: jm_placeholder_color, fontSize: 15);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
@@ -229,22 +327,20 @@ class _AddTaskState extends State<AddTask> {
             width: labelWidth,
             child: Text(
               title,
-              style: jm_text_black_style15,
+              style: jm_text_black_bold_style15,
             ),
           ),
           Container(
-            width: selfWidth - labelWidth - widthScale * 8,
+            width: selfWidth - labelWidth - widthScale * 6,
             child: Text(
               // dateFormat.format(start ? startDate : endDate),
-              start
-                  ? (params['startTime'] ?? '')
-                  : (params['expireTime'] ?? ''),
-              style: jm_text_black_style15,
+              dateData ?? (start ? '请选择发布时间' : '请选择结束时间'),
+              style: textStyle,
             ),
           ),
           Icon(
             Icons.keyboard_arrow_right,
-            size: widthScale * 8,
+            size: widthScale * 6,
           )
         ],
       ),
@@ -252,9 +348,11 @@ class _AddTaskState extends State<AddTask> {
   }
 
   Future<void> showDatePick(bool isStart) async {
+    dynamic dateData = isStart ? startDate : endDate;
     final DateTime date = await showDatePicker(
         context: context,
-        initialDate: isStart ? startDate : endDate,
+        initialDate:
+            dateData != null && dateData != '' ? dateData : DateTime.now(),
         firstDate: DateTime(2018, 1),
         lastDate: DateTime(2022, 1),
         locale: Locale('zh'));

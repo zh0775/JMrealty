@@ -14,7 +14,7 @@ class PKviewModel extends BaseViewModel {
     }
     Http().get(Urls.pkList, params, success: (json) {
       if (json['code'] == 200) {
-        listData = json['data'];
+        listData = json['data'] != null ? (json['data'])['rows'] : [];
         if (success != null) {
           success(listData);
         }

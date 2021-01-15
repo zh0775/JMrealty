@@ -1,5 +1,8 @@
 import 'package:JMrealty/MyTasks/AddTask.dart';
 import 'package:JMrealty/MyTasks/MyTasksList.dart';
+import 'package:JMrealty/MyTasks/components/taskSelectButton.dart';
+import 'package:JMrealty/MyTasks/viewModel/MyTasksViewModel.dart';
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
@@ -13,21 +16,37 @@ class MyTasks extends StatefulWidget {
 }
 
 class _MyTasksState extends State<MyTasks> {
-  Map<String, dynamic> listParams = Map<String, dynamic>.from({'status': 1});
+  Map<String, dynamic> listParams = Map<String, dynamic>.from({});
+  Map value1 = {'title': '任务类型', 'value': -1};
+  MyTasksViewModel myTaskVM = MyTasksViewModel();
   double topStatusBarHeight = 20;
   double appBarBottomHeight = 40;
   double widthScale;
   int topIndex = 0;
   int statusIndex = 1;
+  bool showSelect = false;
   EventBus _eventBus = EventBus();
+  List taskTypeList = [];
   // MyTasksViewModel tasksVM = MyTasksViewModel();
   // EasyRefreshController pullCtr = EasyRefreshController();
   // GlobalKey _easyRefreshKey = GlobalKey();
   // List tasksListData = [];
 
   @override
+  void initState() {
+    myTaskVM.loadTasksUrgency((data, success) {
+      if (success) {
+        setState(() {
+          taskTypeList = data;
+        });
+      }
+    });
+    super.initState();
+  }
+
+  @override
   void dispose() {
-    _eventBus.off(NOTIFY_TASKS_LIST_REFRASH);
+    // _eventBus.off(NOTIFY_TASKS_LIST_REFRASH);
     // pullCtr.dispose();
     super.dispose();
   }
@@ -36,147 +55,213 @@ class _MyTasksState extends State<MyTasks> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     widthScale = SizeConfig.blockSizeHorizontal;
-    return Scaffold(
-      // appBar: AppBar(
-      //     centerTitle: true,
-      //     backgroundColor: jm_appTheme,
-      //     automaticallyImplyLeading: false,
-      //     title: Text(
-      //       '我的任务',
-      //       style: TextStyle(color: Colors.white, fontSize: 22),
-      //     ),
-      //     actions: [
-      //       IconButton(
-      //           icon: Icon(
-      //             Icons.search,
-      //             color: Colors.white,
-      //             size: 30,
-      //           ),
-      //           onPressed: () {})
-      //     ]),
-      body: Container(
-        width: SizeConfig.screenWidth,
-        height: SizeConfig.screenHeight,
-        child: Column(
-          children: [
-            Container(
-              width: SizeConfig.screenWidth,
-              height: kToolbarHeight + topStatusBarHeight + appBarBottomHeight,
-              color: jm_appTheme,
-              child: Stack(
-                children: [
-                  Positioned(
-                      top: topStatusBarHeight,
-                      left: 0,
-                      child: IconButton(
-                        icon: jm_naviBack_icon,
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      )),
-                  Positioned(
-                      top: topStatusBarHeight,
-                      right: 0,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.add,
-                          size: 40,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          Navigator.of(context)
-                              .push(CupertinoPageRoute(builder: (_) {
-                            return AddTask();
-                          }));
-                        },
-                      )),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        topButton(0, topButtonClick),
-                        topButton(1, topButtonClick)
-                      ],
+    return DefaultTabController(
+        length: 3,
+        child: Scaffold(
+            appBar: AppBar(
+              title: TaskSelectButton(
+                clickIndex: (clickIndex) {
+                  setState(() {
+                    topIndex = clickIndex;
+                  });
+                  _eventBus
+                      .emit(NOTIFY_TASKS_LIST_REFRASH, {'topIndex': topIndex});
+                },
+              ),
+              leading: IconButton(
+                icon: jm_naviBack_icon,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              actions: [
+                IconButton(
+                    icon: Icon(
+                      Icons.add_circle_outline,
+                      size: 30,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(CupertinoPageRoute(builder: (_) {
+                        return AddTask();
+                      }));
+                    })
+              ],
+              bottom: TabBar(
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicatorColor: Colors.white,
+                indicatorWeight: 4.0,
+                indicatorPadding:
+                    EdgeInsets.symmetric(horizontal: widthScale * 14),
+                tabs: [
+                  Tab(
+                    child: Text(
+                      '未完成',
+                      style: TextStyle(fontSize: 14, color: Colors.white),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          width: widthScale * 2,
-                        ),
-                        bottomButton('未完成', 1, buttonButtonClick),
-                        bottomButton('进行中', 2, buttonButtonClick),
-                        bottomButton('已完成', 3, buttonButtonClick),
-                        bottomButton('已延期', 4, buttonButtonClick),
-                        bottomButton('已取消', 5, buttonButtonClick),
-                      ],
+                  Tab(
+                    child: Text(
+                      '已延期',
+                      style: TextStyle(fontSize: 14, color: Colors.white),
                     ),
-                  )
+                  ),
+                  Tab(
+                    child: Text(
+                      '已完成',
+                      style: TextStyle(fontSize: 14, color: Colors.white),
+                    ),
+                  ),
                 ],
               ),
             ),
-            Expanded(
-                child: MyTasksList(
-              topIndex: topIndex,
-              params: listParams,
-            ))
+            body: Container(
+              width: SizeConfig.screenWidth,
+              height: double.infinity,
+              child: Stack(
+                children: [
+                  Positioned(
+                      top: 40,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: TabBarView(
+                        children: [
+                          MyTasksList(
+                            topIndex: topIndex,
+                            status: 1,
+                          ),
+                          MyTasksList(
+                            topIndex: topIndex,
+                            status: 4,
+                          ),
+                          MyTasksList(
+                            topIndex: topIndex,
+                            status: 3,
+                          )
+                        ],
+                      )),
+                  Positioned(
+                      top: 0,
+                      left: 0,
+                      child: GestureDetector(
+                        onTap: () {
+                          if (showSelect) {
+                            setState(() {
+                              showSelect = !showSelect;
+                            });
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: showSelect
+                                  ? Color.fromRGBO(0, 0, 0, 0.3)
+                                  : Colors.white,
+                              border: Border(
+                                  bottom: BorderSide(
+                                      width: 0.5, color: jm_line_color))),
+                          height: showSelect ? SizeConfig.screenHeight : 40,
+                          width: SizeConfig.screenWidth,
+                          alignment: Alignment.topLeft,
+                          child: Row(
+                            children: [
+                              topButton(
+                                  value1['title'] == '全部'
+                                      ? '任务类型'
+                                      : value1['title'], () {
+                                setState(() {
+                                  showSelect = !showSelect;
+                                });
+                              }),
+                              Expanded(
+                                  child: Container(
+                                height: 40,
+                                color: Colors.white,
+                              )),
+                            ],
+                          ),
+                        ),
+                      )),
+                  showSelect
+                      ? Positioned(
+                          top: 40,
+                          left: 0,
+                          right: 0,
+                          child: selectList(taskTypeList ?? [], (Map item) {
+                            value1 = item;
+                            _eventBus.emit(NOTIFY_TASKS_LIST_REFRASH,
+                                {'type': value1['value']});
+                            setState(() {
+                              showSelect = false;
+                            });
+                          }))
+                      : NoneV()
+                ],
+              ),
+            )));
+  }
+
+  Widget topButton(String title, void Function() click) {
+    return GestureDetector(
+      onTap: click,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          // border:
+          //     Border(bottom: BorderSide(width: 0.5, color: jm_line_color))
+        ),
+        width: SizeConfig.screenWidth / 3,
+        height: 40,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: TextStyle(color: jm_text_black, fontSize: 14),
+            ),
+            SizedBox(
+              width: SizeConfig.blockSizeHorizontal * 1.5,
+            ),
+            Icon(Icons.arrow_drop_down_outlined)
           ],
         ),
       ),
     );
   }
 
-  topButtonClick(int index) {
-    print('index === $index)');
-    setState(() {
-      // listParams['index'] = index;
-      topIndex = index;
-    });
-    _eventBus.emit(NOTIFY_TASKS_LIST_REFRASH,
-        {'topIndex': topIndex, 'params': listParams});
-  }
-
-  buttonButtonClick(int index) {
-    setState(() {
-      listParams['status'] = index;
-      statusIndex = index;
-    });
-    _eventBus.emit(NOTIFY_TASKS_LIST_REFRASH,
-        {'topIndex': topIndex, 'params': listParams});
-  }
-
-  Widget topButton(int index, Function(int index) topButtonClick) {
-    return RawMaterialButton(
-      onPressed: () {
-        if (topButtonClick != null) {
-          topButtonClick(index);
-        }
-      },
-      constraints: BoxConstraints(minWidth: widthScale * 20, minHeight: 30),
-      textStyle: index == topIndex
-          ? TextStyle(fontSize: 15, color: Colors.white)
-          : jm_text_gray_style15,
-      child: Text(index == 0 ? '我发布的' : '我接收的'),
-    );
-  }
-
-  Widget bottomButton(
-      String title, int index, Function(int index) buttonButtonClick) {
-    return RawMaterialButton(
-      onPressed: () {
-        if (buttonButtonClick != null) {
-          buttonButtonClick(index);
-        }
-      },
-      constraints: BoxConstraints(minWidth: widthScale * 15, minHeight: 30),
-      textStyle: index == statusIndex
-          ? TextStyle(fontSize: 15, color: Colors.white)
-          : jm_text_gray_style15,
-      child: Text(title),
+  Widget selectList(List data, void Function(Map value) itemClick) {
+    List textButtons = [];
+    double buttonHeight = 40;
+    for (var i = 0; i < data.length; i++) {
+      Map e = data[i];
+      Widget button = RawMaterialButton(
+        constraints: BoxConstraints(
+            minHeight: buttonHeight, minWidth: SizeConfig.screenWidth),
+        onPressed: () {
+          itemClick(e);
+        },
+        child: Container(
+          width: SizeConfig.screenWidth,
+          height: buttonHeight,
+          alignment: Alignment.centerLeft,
+          padding: EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 12),
+          child: Text(e['title'],
+              style: TextStyle(fontSize: 14, color: jm_text_black)),
+        ),
+      );
+      textButtons.add(button);
+    }
+    return Container(
+      width: SizeConfig.screenWidth,
+      // height: cHeight,
+      color: Colors.white,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [...textButtons],
+        ),
+      ),
     );
   }
 }

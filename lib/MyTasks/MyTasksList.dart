@@ -9,41 +9,41 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 
 class MyTasksList extends StatefulWidget {
   final int topIndex;
-  final Map params;
-  const MyTasksList({this.topIndex = 0, this.params = const {}});
+  final int status;
+  final int type;
+  const MyTasksList({this.topIndex, this.status, this.type = -1});
   @override
   _MyTasksListState createState() => _MyTasksListState();
 }
 
-class _MyTasksListState extends State<MyTasksList> {
+class _MyTasksListState extends State<MyTasksList>
+    with AutomaticKeepAliveClientMixin {
   MyTasksViewModel tasksVM = MyTasksViewModel();
   EasyRefreshController pullCtr = EasyRefreshController();
   GlobalKey _easyRefreshKey = GlobalKey();
   GlobalKey _pullHeaderKey = GlobalKey();
   List tasksListData = [];
   EventBus eventBus = EventBus();
-  int topIndex;
-  Map params;
   @override
   void initState() {
-    topIndex = widget.topIndex;
-    params = widget.params;
     eventBus.on(NOTIFY_TASKS_LIST_REFRASH, (arg) {
-      topIndex = arg['topIndex'];
-      params = arg['params'];
-      refrashList();
+      if (mounted) {
+        refrashList(arg);
+      }
     });
     super.initState();
   }
 
   @override
   void dispose() {
+    eventBus.off(NOTIFY_TASKS_LIST_REFRASH);
     pullCtr.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return EasyRefresh(
       enableControlFinishRefresh: true,
       enableControlFinishLoad: true,
@@ -53,21 +53,44 @@ class _MyTasksListState extends State<MyTasksList> {
       emptyWidget: tasksListData.length == 0 ? EmptyView() : null,
       firstRefresh: true,
       onRefresh: () async {
-        refrashList();
+        if (mounted) {
+          refrashList(null);
+        }
       },
       child: ListView.builder(
         itemCount: tasksListData.length,
         itemBuilder: (context, index) {
           return MyTasksCell(
             data: tasksListData[index],
-            status: widget.params['status'],
+            status: widget.status,
+            needRefreshList: () {
+              if (mounted) {
+                refrashList(null);
+              }
+            },
           );
         },
       ),
     );
   }
 
-  refrashList() {
+  refrashList(Map parameter) {
+    int topIndex = widget.topIndex;
+    Map params = {'status': widget.status};
+    if (widget.type != -1) {
+      params['type'] = widget.type;
+    }
+    if (parameter != null) {
+      if (parameter['topIndex'] != null) {
+        topIndex = parameter['topIndex'];
+      }
+      if (parameter['status'] != null) {
+        params['status'] = parameter['status'];
+      }
+      if (parameter['type'] != null && parameter['type'] != -1) {
+        params['type'] = parameter['type'];
+      }
+    }
     if (topIndex == 0) {
       tasksVM.loadTasksPublishedList((tasksList, success) {
         pullCtr.finishRefresh();
@@ -88,4 +111,7 @@ class _MyTasksListState extends State<MyTasksList> {
       }, params: Map<String, dynamic>.from(params));
     }
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

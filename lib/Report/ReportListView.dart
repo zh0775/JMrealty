@@ -149,7 +149,7 @@ class _ReportListViewState extends State<ReportListView>
       // easyRefreshCtr.resetLoadState();
       easyRefreshCtr.finishRefresh();
       // easyRefreshCtr.finishLoad();
-      if (success) {
+      if (success && mounted) {
         setState(() {
           total = reportListVM.listData['total'];
           dataList = reportListVM.listData['rows'];

@@ -13,18 +13,18 @@ enum ClientStatus {
 
 class ClientListViewModel extends BaseViewModel {
   List listData = [];
-  loadClientList(Map params, {Function(List data) success}) {
+  loadClientList(Map params, {Function(List data, int total) success}) {
     state = BaseState.LOADING;
     notifyListeners();
     Http().get(
       Urls.clientList,
-      params,
+      {'isAsc': 'desc', 'orderByColumn': 'update_time', ...params},
       success: (json) {
         Map<String, dynamic> data = json['data'];
         if (json['code'] == 200) {
           listData = data['rows'];
           if (success != null) {
-            success(listData);
+            success(listData, data['total']);
           }
           state = BaseState.CONTENT;
         } else {

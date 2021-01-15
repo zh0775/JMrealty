@@ -5,9 +5,10 @@ import 'package:JMrealty/Report/viewmodel/ReportViewModel.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomGridImageV.dart';
+import 'package:JMrealty/components/CustomImagePage.dart';
+import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
-import 'package:JMrealty/components/SelectImageView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
@@ -29,14 +30,14 @@ class _ReportSuccessState extends State<ReportSuccess> {
   ReportViewModel searchAgentVM = ReportViewModel();
   ReportDetailViewModel reportDetailModel = ReportDetailViewModel();
   Map detailData; // data
-  SelectImageView imgSelectV; // 选择图片视图
+  // SelectImageView imgSelectV; // 选择图片视图
   double cellHeight;
   double widthScale;
   double outMargin;
   double labelSpace;
   String mark;
   dynamic img;
-  List<String> imgUrls;
+  List imgAssets = [];
   Map successParams = Map<String, dynamic>.from({});
   String payPhone;
   String dealTotal;
@@ -53,39 +54,38 @@ class _ReportSuccessState extends State<ReportSuccess> {
       'userPhone': userInfo['phonenumber'],
       'ratio': 100
     });
+    // imgSelectV = SelectImageView(
+    //   count: 9,
+    //   imageSelected: (images) {
+    //     if (images != null) {
+    //       setState(() {});
 
-    imgSelectV = SelectImageView(
-      count: 9,
-      imageSelected: (images) {
-        if (images != null) {
-          ReportUploadViewModel().upLoadReportImages(images,
-              callBack: (List strImages) {
-            if (strImages != null && strImages.length > 0) {
-              setState(() {
-                imgUrls = strImages;
-              });
-              // if (widget.changeInfo != null) {
-              //   widget.changeInfo(Map<String, dynamic>.from(
-              //       {'avatar': avatarPath, 'userId': widget.data['userId']}));
-              // }
-            }
-          });
-        }
-      },
-    );
+    //       ReportUploadViewModel().upLoadReportImages(images,
+    //           callBack: (List strImages) {
+    //         if (strImages != null && strImages.length > 0) {
+    //           setState(() {
+    //             imgAssets = strImages;
+    //           });
+    //           // if (widget.changeInfo != null) {
+    //           //   widget.changeInfo(Map<String, dynamic>.from(
+    //           //       {'avatar': avatarPath, 'userId': widget.data['userId']}));
+    //           // }
+    //         }
+    //       });
+    //     }
+    //   },
+    // );
     payPhone = '';
     dealTotal = '';
     houseArea = '';
     buildNo = '';
     detailData = {};
-    imgUrls = [];
     labelSpace = 3;
     super.initState();
   }
 
   @override
   void dispose() {
-    _eventBus.off(NOTIFY_REPORT_LIST_REFRASH);
     super.dispose();
   }
 
@@ -96,7 +96,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
     outMargin = widthScale * 6;
     return Scaffold(
         appBar: CustomAppbar(
-          title: '成交信息录入',
+          title: '上传成交资料',
         ),
         body: GestureDetector(
             onTap: () {
@@ -110,7 +110,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
   }
 
   addImage() {
-    imgSelectV.showImage(context);
+    // imgSelectV.showImage(context);
   }
 
   Widget getBody(BuildContext context) {
@@ -158,7 +158,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
           labelStyle: jm_text_black_bold_style14,
           textStyle: jm_text_black_style15,
           title: '楼栋房号',
-          hintText: '楼栋房号',
+          hintText: '请输入房号',
           text: successParams['buildNo'] ?? '',
           valueChange: (value) {
             // buildNo = value;
@@ -174,7 +174,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
           labelStyle: jm_text_black_bold_style14,
           textStyle: jm_text_black_style15,
           title: '认购名称',
-          hintText: '认购名称',
+          hintText: '请输入认购名称',
           text: successParams['payName'] ?? '',
           valueChange: (value) {
             // buildNo = value;
@@ -191,7 +191,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
           labelStyle: jm_text_black_bold_style14,
           textStyle: jm_text_black_style15,
           title: '认购电话',
-          hintText: '认购电话',
+          hintText: '请输入认购电话',
           keyboardType: TextInputType.phone,
           text: successParams['payPhone'] ?? '',
           valueChange: (value) {
@@ -208,7 +208,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
           labelStyle: jm_text_black_bold_style14,
           textStyle: jm_text_black_style15,
           title: '身份证号',
-          hintText: '身份证号',
+          hintText: '请输入身份证号',
           keyboardType: TextInputType.text,
           text: successParams['idCard'] ?? '',
           valueChange: (value) {
@@ -224,9 +224,9 @@ class _ReportSuccessState extends State<ReportSuccess> {
           key: ValueKey('CustomInput_report_success_5'),
           labelStyle: jm_text_black_bold_style14,
           textStyle: jm_text_black_style15,
-          title: '房屋面积',
+          title: '成交面积',
           lastLabelText: '平方米',
-          hintText: '房屋面积',
+          hintText: '请输入成交面积',
           keyboardType: TextInputType.number,
           text: successParams['houseArea'] ?? '',
           valueChange: (value) {
@@ -243,9 +243,9 @@ class _ReportSuccessState extends State<ReportSuccess> {
           labelStyle: jm_text_black_bold_style14,
           textStyle: jm_text_black_style15,
           keyboardType: TextInputType.number,
-          title: '成交总价格',
+          title: '成交总价',
           lastLabelText: '元',
-          hintText: '成交总价格',
+          hintText: '请输入成交总价',
           text: successParams['dealTotal'] ?? '',
           valueChange: (value) {
             // dealTotal = value;
@@ -261,8 +261,12 @@ class _ReportSuccessState extends State<ReportSuccess> {
           height: 15,
         ),
         getTitleRow('备注'),
-
-        CustomMarkInput(),
+        CustomMarkInput(
+          text: successParams['remark'] ?? '',
+          valueChange: (value) {
+            successParams['remark'] = value;
+          },
+        ),
         SizedBox(
           height: 15,
         ),
@@ -323,14 +327,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
             successParams['beforeStatus'] = widget.data['status'];
             successParams['reportId'] = widget.data['id'];
             successParams['customerId'] = widget.data['customerId'];
-            if (imgUrls != null && imgUrls.length > 0) {
-              String imageStr = '';
-              imgUrls.forEach((element) {
-                imageStr += element + ',';
-              });
-              imageStr = imageStr.substring(0, imageStr.length - 1);
-              successParams['images'] = imageStr;
-            }
+            successParams['images'] = '';
             if (successParams['buildNo'] == null ||
                 successParams['buildNo'] == '') {
               ShowToast.normal('请输入楼栋房号');
@@ -364,18 +361,37 @@ class _ReportSuccessState extends State<ReportSuccess> {
                 successParams['reportShopPartnerBOList'].add(bo);
               }
             });
-            CustomAlert(title: '提示', content: '确认提交吗').show(
+            (successParams['reportShopPartnerBOList'] as List).removeAt(0);
+            // return;
+            CustomAlert(title: '提示', content: '是否确认提交？').show(
               confirmClick: () {
-                ReportSuccessViewModel().reportSuccessRequest(successParams,
-                    (success) {
-                  if (success) {
-                    ShowToast.normal('恭喜，提交成功');
-                    _eventBus.emit(NOTIFY_REPORT_LIST_REFRASH);
-                    Future.delayed(Duration(seconds: 2)).then((value) {
-                      Navigator.pop(context);
-                    });
-                  }
-                });
+                CustomLoading().show();
+                if (imgAssets != null && imgAssets.length > 0) {
+                  ReportUploadViewModel().upLoadReportImages(
+                    imgAssets,
+                    callBack: (strImg) {
+                      String imageStr = '';
+                      strImg.forEach((element) {
+                        imageStr += element + ',';
+                      });
+                      imageStr = imageStr.substring(0, imageStr.length - 1);
+                      successParams['images'] = imageStr;
+                      ReportSuccessViewModel()
+                          .reportSuccessRequest(successParams, (success) {
+                        if (success) {
+                          successBack();
+                        }
+                      });
+                    },
+                  );
+                } else {
+                  ReportSuccessViewModel().reportSuccessRequest(successParams,
+                      (success) {
+                    if (success) {
+                      successBack();
+                    }
+                  });
+                }
               },
             );
           },
@@ -385,6 +401,15 @@ class _ReportSuccessState extends State<ReportSuccess> {
         )
       ],
     );
+  }
+
+  void successBack() {
+    CustomLoading().hide();
+    ShowToast.normal('恭喜，提交成功');
+    Future.delayed(Duration(seconds: 2)).then((value) {
+      _eventBus.emit(NOTIFY_REPORT_LIST_REFRASH);
+      Navigator.pop(context);
+    });
   }
 
   // 姓名电话
@@ -546,26 +571,43 @@ class _ReportSuccessState extends State<ReportSuccess> {
         Padding(
           padding: EdgeInsets.only(left: outMargin),
           child: CustomGridImageV(
-            imageUrls: imgUrls,
+            // imageUrls: imgAssets,
+            imageAssets: imgAssets,
             width: SizeConfig.screenWidth - outMargin * 2,
             needButton: true,
             addImages: (images) {
               setState(() {
-                imgUrls.addAll(images);
+                imgAssets.addAll(images);
+                if (imgAssets.length >= 9) {
+                  imgAssets.removeRange(9, imgAssets.length);
+                }
               });
+            },
+            deleteImage: (images) {
+              if (mounted) {
+                setState(() {
+                  imgAssets.remove(images);
+                });
+              }
+            },
+            imageClick: (index) {
+              Navigator.of(context).push(PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) {
+                  return ScaleTransition(
+                      scale: animation,
+                      alignment: Alignment.center,
+                      child: CustomImagePage(
+                        imageList: imgAssets ?? [],
+                        index: index,
+                        count: imgAssets?.length,
+                      ));
+                },
+              ));
             },
           ),
         ),
       ],
     );
-  }
-
-  List getImgUrls(String str) {
-    if (str == null || str.length == 0) {
-      return <String>[];
-    } else {
-      return str.split(',');
-    }
   }
 
   Widget getTitleRow(String title) {

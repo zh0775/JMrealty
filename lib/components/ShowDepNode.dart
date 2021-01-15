@@ -10,8 +10,12 @@ class ShowDepNode {
   final void Function(TreeNode node) nodeSelected;
   final void Function(List<TreeNode> nodes) nodesSelected;
   final Size size;
-  ShowDepNode({@required this.treeData, this.nodesSelected,this.nodeSelected,@required this.size});
-  show () {
+  ShowDepNode(
+      {@required this.treeData,
+      this.nodesSelected,
+      this.nodeSelected,
+      @required this.size});
+  show() {
     showGeneralDialog(
         context: Global.navigatorKey.currentContext,
         barrierDismissible: true,
@@ -35,10 +39,10 @@ class ShowDepNode {
             },
             nodesSelected: (nodes) {
               if (nodesSelected != null) {
-                 nodesSelected(nodes);
+                nodesSelected(nodes);
               }
             },
           );
         });
-    }
   }
+}

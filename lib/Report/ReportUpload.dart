@@ -1,14 +1,19 @@
 import 'package:JMrealty/Report/viewmodel/ReportUploadViewModel.dart';
-import 'package:JMrealty/base/image_loader.dart';
+import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
+import 'package:JMrealty/components/CustomImagePage.dart';
+import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/SelectImageView.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/utils/EventBus.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 // import 'package:flutter/services.dart';
 enum ReportUploadStatus {
@@ -33,8 +38,10 @@ class ReportUpload extends StatefulWidget {
 
 class _ReportUploadState extends State<ReportUpload> {
   ReportUploadViewModel viewModel = ReportUploadViewModel();
+  EventBus _eventBus = EventBus();
   SelectImageView imgSelectV; // 选择图片视图
-  String timeStr = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+  // String timeStr = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+  String timeStr = '';
   double cellHeight;
   double widthScale;
   double outMargin;
@@ -47,11 +54,13 @@ class _ReportUploadState extends State<ReportUpload> {
     imgSelectV = SelectImageView(
       count: 9,
       imageSelected: (images) {
-        if (images != null) {
-          viewModel.upLoadReportImages(images, callBack: (strImages) {
-            setState(() {
-              imageList.addAll(strImages);
-            });
+        if (images != null && mounted) {
+          setState(() {
+            imageList.addAll(images);
+            if (imageList.length >= 9) {
+              ShowToast.normal('最多上传9张照片，长按照片可删除');
+              imageList.removeRange(9, imageList.length);
+            }
           });
         }
       },
@@ -175,49 +184,56 @@ class _ReportUploadState extends State<ReportUpload> {
                   style: jm_text_black_bold_style17,
                 )),
             CustomMarkInput(
+              maxLength: 200,
               text: mark ?? '',
               valueChange: (value) {
                 mark = value;
               },
             ),
+            SizedBox(
+              height: 15,
+            ),
             CustomSubmitButton(
               buttonClick: () {
                 Map<String, dynamic> mapParams = {};
                 mapParams['images'] = '';
-                if (imageList != null && imageList.length > 0) {
-                  String imageStr = '';
-                  imageList.forEach((element) {
-                    imageStr += element + ',';
-                  });
-                  imageStr = imageStr.substring(0, imageStr.length - 1);
-                  mapParams['images'] = imageStr;
-                } else {
-                  ShowToast.normal('请上传图片');
-                  return;
-                }
-                // print('data ==== ${widget.data}');
-                // print('images ==== $mapParams');
-                // print('123 === ${widget.data['status']}');
                 if (widget.data['status'] != null) {
                   mapParams['beforeStatus'] = widget.data['status'];
                 }
                 if (widget.data['id'] != null) {
                   mapParams['reportId'] = widget.data['id'];
                 }
-                if (mark == null || mark.length == 0) {
-                  ShowToast.normal('请填写备注信息');
-                  return;
-                }
                 mapParams['remark'] = mark ?? '';
                 if (widget.uploadStatus == ReportUploadStatus.sign) {
                   mapParams['visaTime'] = timeStr ?? '';
                 }
 
-                viewModel.uploadReportRecord(mapParams, (success) {
-                  if (success) {
-                    successBack();
+                CustomAlert(title: '提示', content: '是否确认提交？').show(
+                    confirmClick: () {
+                  CustomLoading().show();
+                  if (imageList != null && imageList.length > 0) {
+                    viewModel.upLoadReportImages(imageList,
+                        callBack: (strImages) {
+                      String imageStr = '';
+                      strImages.forEach((element) {
+                        imageStr += element + ',';
+                      });
+                      imageStr = imageStr.substring(0, imageStr.length - 1);
+                      mapParams['images'] = imageStr;
+                      viewModel.uploadReportRecord(mapParams, (success) {
+                        if (success) {
+                          successBack();
+                        } else {}
+                      }, uploadStatus: widget.uploadStatus);
+                    });
+                  } else {
+                    viewModel.uploadReportRecord(mapParams, (success) {
+                      if (success) {
+                        successBack();
+                      }
+                    }, uploadStatus: widget.uploadStatus);
                   }
-                }, uploadStatus: widget.uploadStatus);
+                });
               },
             ),
           ],
@@ -227,17 +243,34 @@ class _ReportUploadState extends State<ReportUpload> {
   }
 
   successBack() {
-    ShowToast.normal('上传成功');
+    CustomLoading().hide();
+    ShowToast.normal('提交成功');
     Future.delayed(Duration(seconds: 1)).then((value) {
+      _eventBus.emit(NOTIFY_REPORT_LIST_REFRASH);
       Navigator.pop(context);
     });
   }
 
   checkImg(int index) {
-    print(index);
+    Navigator.of(context).push(PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return ScaleTransition(
+            scale: animation,
+            alignment: Alignment.center,
+            child: CustomImagePage(
+              imageList: imageList ?? [],
+              index: index,
+              count: imageList?.length,
+            ));
+      },
+    ));
   }
 
   addImage() {
+    if (imageList.length >= 9) {
+      ShowToast.normal('最多上传9张照片，长按照片可删除');
+      return;
+    }
     imgSelectV.showImage(context);
   }
 
@@ -275,30 +308,46 @@ class _ReportUploadState extends State<ReportUpload> {
               onTap: () {
                 checkImg(i);
               },
+              onLongPress: () {
+                CustomAlert(content: '是否确认删除该照片').show(
+                  confirmClick: () {
+                    if (mounted) {
+                      setState(() {
+                        imageList.removeAt(i);
+                      });
+                    }
+                  },
+                );
+              },
               child: Container(
                 width: widthScale * 29.3,
                 height: widthScale * 30.0,
                 child: Align(
                   child: Container(
-                    width: widthScale * 25.3,
-                    height: widthScale * 25.3,
-                    // color: jm_line_color,
-                    child: ImageLoader(
-                      imageList[i],
+                      width: widthScale * 25.3,
                       height: widthScale * 25.3,
-                    ),
-                    // Image.memory(imageList[i].buffer.asUint8List(),fit: BoxFit.cover,height: widthScale * 25.3,width: widthScale * 25.3,)
-                    //   FutureBuilder<dynamic>(
-                    //       future: imageList[i].getThumbByteData((widthScale * 25.3).round(), (widthScale * 25.3).round()),
-                    //       builder: (context,snapshot) {
-                    //         if (snapshot.connectionState == ConnectionState.done) {
-                    //           return Image.memory(snapshot.data.buffer.asUint8List(),fit: BoxFit.cover,height: widthScale * 25.3,width: widthScale * 25.3,);
-                    //         } else {
-                    //           return Container(width: 0.0,height: 0.0,);
-                    //         }
-                    //       },
-                    // ),
-                  ),
+                      // color: jm_line_color,
+                      child: Image(
+                          image: AssetThumbImageProvider(imageList[i],
+                              width: (widthScale * 25.3).round(),
+                              height: (widthScale * 25.3).round()))
+
+                      // ImageLoader(
+                      //   imageList[i],
+                      //   height: widthScale * 25.3,
+                      // ),
+                      // Image.memory(imageList[i].buffer.asUint8List(),fit: BoxFit.cover,height: widthScale * 25.3,width: widthScale * 25.3,)
+                      //   FutureBuilder<dynamic>(
+                      //       future: imageList[i].getThumbByteData((widthScale * 25.3).round(), (widthScale * 25.3).round()),
+                      //       builder: (context,snapshot) {
+                      //         if (snapshot.connectionState == ConnectionState.done) {
+                      //           return Image.memory(snapshot.data.buffer.asUint8List(),fit: BoxFit.cover,height: widthScale * 25.3,width: widthScale * 25.3,);
+                      //         } else {
+                      //           return Container(width: 0.0,height: 0.0,);
+                      //         }
+                      //       },
+                      // ),
+                      ),
                 ),
               )));
         }
@@ -474,6 +523,13 @@ class _ReportUploadState extends State<ReportUpload> {
   Future<void> showDatePick() async {
     final DateTime date = await showDatePicker(
         context: context,
+        // builder: (context, child) {
+        //   return Theme(
+        //     isMaterialAppTheme: true,
+        //     data: ThemeData.dark(),
+        //     child: child,
+        //   );
+        // },
         initialDate: DateTime.now(),
         firstDate: DateTime(2015, 1),
         lastDate: DateTime(2022, 1),
@@ -532,8 +588,10 @@ class _ReportUploadState extends State<ReportUpload> {
                 widthScale * 8,
             child: Text(
               // dateFormat.format(start ? startDate : endDate),
-              timeStr ?? '',
-              style: jm_text_black_style15,
+              timeStr == null || timeStr.length == 0 ? '请选择签约时间' : timeStr,
+              style: timeStr == null || timeStr.length == 0
+                  ? TextStyle(color: jm_placeholder_color, fontSize: 15)
+                  : jm_text_black_style15,
             ),
           ),
           Icon(

@@ -36,9 +36,9 @@ class ReportUploadViewModel extends BaseViewModel {
         } else {
           success(false);
         }
-        if (json['msg'] != null) {
-          ShowToast.normal(json['msg']);
-        }
+        // if (json['msg'] != null) {
+        //   ShowToast.normal(json['msg']);
+        // }
       },
       fail: (reason, code) {
         success(false);
