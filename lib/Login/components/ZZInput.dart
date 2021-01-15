@@ -1,3 +1,4 @@
+import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 
@@ -37,25 +38,17 @@ class ZZInput extends StatefulWidget {
 }
 
 class _ZZInputState extends State<ZZInput> {
-  TextEditingController phoneCtr; // 登录手机号输入框controller
+  // 登录手机号输入框controller
   bool phoneNeedClean; // 登录页手机号输入框清空标记
 
   @override
   void initState() {
-    phoneCtr = TextEditingController();
     phoneNeedClean = false;
     super.initState();
   }
 
   @override
-  void didUpdateWidget(covariant ZZInput oldWidget) {
-    phoneCtr.text = widget.text;
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
   void dispose() {
-    phoneCtr.dispose();
     super.dispose();
   }
 
@@ -75,7 +68,12 @@ class _ZZInputState extends State<ZZInput> {
                   // textAlignVertical: TextAlignVertical.bottom,
                   enabled: widget.enable,
                   keyboardType: widget.keyboardType,
-                  controller: phoneCtr,
+                  controller: TextEditingController.fromValue(TextEditingValue(
+                    text: widget.text ?? '',
+                    selection: TextSelection.fromPosition(TextPosition(
+                        affinity: TextAffinity.downstream,
+                        offset: widget.text != null ? widget.text.length : 0)),
+                  )),
                   maxLines: 1,
                   style: widget.textStyle,
                   onChanged: (value) {
@@ -111,6 +109,8 @@ class _ZZInputState extends State<ZZInput> {
                     fillColor: widget.backgroundColor,
                     // contentPadding: EdgeInsets.all(20.0),
                     hintText: widget.hintText,
+                    hintStyle:
+                        TextStyle(color: jm_placeholder_color, fontSize: 15),
                     filled: true,
                   )),
             ),

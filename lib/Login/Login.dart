@@ -4,6 +4,7 @@ import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportUploadViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
+import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/SelectImageView.dart';
 import 'package:JMrealty/const/Default.dart';
@@ -137,7 +138,49 @@ class _LoginState extends State<Login> {
                         fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 20),
-                  phoneInput(context),
+                  // phoneInput(context),
+
+                  Container(
+                    width: SizeConfig.screenWidth - 80,
+                    padding: EdgeInsets.only(
+                        right: SizeConfig.blockSizeHorizontal * 1.5),
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(0, 0, 0, 0.1),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    alignment: Alignment.centerLeft,
+                    constraints: BoxConstraints(minHeight: 50),
+                    child: CupertinoTextField(
+                      // suffix: Icon(
+                      //   Icons.highlight_off,
+                      //   color: jm_line_color,
+                      // ),
+                      // controller: Tex,
+                      clearButtonMode: OverlayVisibilityMode.always,
+
+                      keyboardType: TextInputType.phone,
+                      placeholderStyle:
+                          TextStyle(color: jm_placeholder_color, fontSize: 15),
+                      controller:
+                          TextEditingController.fromValue(TextEditingValue(
+                        text: phoneNumString ?? '',
+                        selection: TextSelection.fromPosition(TextPosition(
+                            affinity: TextAffinity.downstream,
+                            offset: phoneNumString != null
+                                ? phoneNumString.length
+                                : 0)),
+                      )),
+                      decoration: BoxDecoration(color: Colors.transparent),
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      // obscureText: true,
+                      placeholder: '请输入手机号',
+                      // clearButtonMode: OverlayVisibilityMode.always,
+                      onChanged: (value) {
+                        phoneNumString = value;
+                      },
+                    ),
+                  ),
+
                   SizedBox(
                     height: 20,
                   ),
@@ -165,12 +208,14 @@ class _LoginState extends State<Login> {
                       //   color: jm_line_color,
                       // ),
                       // controller: Tex,
+                      placeholderStyle:
+                          TextStyle(color: jm_placeholder_color, fontSize: 15),
                       controller:
                           TextEditingController.fromValue(TextEditingValue(
                         text: password ?? '',
                         selection: TextSelection.fromPosition(TextPosition(
                             affinity: TextAffinity.downstream,
-                            offset: password.length ?? 0)),
+                            offset: password != null ? password.length : 0)),
                       )),
                       decoration: BoxDecoration(color: Colors.transparent),
                       padding: EdgeInsets.symmetric(horizontal: 20),
@@ -202,16 +247,19 @@ class _LoginState extends State<Login> {
                       //   ShowToast.normal('请输入验证码');
                       //   return;
                       // }
-
+                      CustomLoading().show();
                       LoginViewModel().requestLogin(phoneNumString, password,
-                          () {
-                        _eventBus.emit(NOTIFY_LOGIN_SUCCESS);
-                        ShowToast.normal('登录成功');
-                        Future.delayed(Duration(seconds: 1), () {
-                          FocusScope.of(context).requestFocus(FocusNode());
-                          Global.showLogin = false;
-                          Navigator.pop(context);
-                        });
+                          (success) {
+                        CustomLoading().hide();
+                        if (success) {
+                          _eventBus.emit(NOTIFY_LOGIN_SUCCESS);
+                          ShowToast.normal('登录成功');
+                          Future.delayed(Duration(seconds: 1), () {
+                            FocusScope.of(context).requestFocus(FocusNode());
+                            Global.showLogin = false;
+                            Navigator.pop(context);
+                          });
+                        }
                       });
                     },
                   ),
@@ -301,7 +349,7 @@ class _LoginState extends State<Login> {
       height: 48,
       hintText: '请输入手机号',
       needCleanButton: true,
-      text: phoneNumString,
+      text: phoneNumString ?? '',
       keyboardType: TextInputType.phone,
       valueChange: (String value) {
         // setState(() {

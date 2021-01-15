@@ -282,9 +282,11 @@ class _HomeState extends State<Home> {
                     //     Global.toLogin(isLogin: true);
                     //   }
                     // });
-                    push(CustomWebV(path: WebPath.statisticsMain), context);
+                    push(CustomWebV(path: WebPath.summary), context);
+                    // push(CustomWebV(path: WebPath.statisticsMain), context);
                   } else if (buttonData['menuId'] == 2082) {
                     // 榜单
+                    push(CustomWebV(path: WebPath.rankingList), context);
                   } else if (buttonIndex == 100) {
                     // 跟进记录
                     UserDefault.get(ACCESS_TOKEN).then((token) {

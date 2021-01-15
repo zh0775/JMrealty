@@ -255,7 +255,7 @@ class LoginViewModel extends BaseViewModel {
     );
   }
 
-  requestLogin(String phone, String code, void Function() success) {
+  requestLogin(String phone, String code, void Function(bool success) success) {
     state = BaseState.LOADING;
     notifyListeners();
     Http().post(
@@ -269,12 +269,13 @@ class LoginViewModel extends BaseViewModel {
           UserDefault.saveStr(ACCESS_TOKEN, data[ACCESS_TOKEN])
               .then((bool value) {
             if (value) {
-              success();
+              success(true);
               HomeViewModel().loadUserInfo();
             }
           });
         } else {
           state = BaseState.FAIL;
+          success(false);
         }
         notifyListeners();
       },
@@ -282,6 +283,7 @@ class LoginViewModel extends BaseViewModel {
         // print('reason ==== $reason --- code === $code');
         state = BaseState.FAIL;
         notifyListeners();
+        success(false);
       },
       after: () {},
     );

@@ -7,7 +7,7 @@ import 'dart:convert' as convert;
 class MessageViewModel {
   loadMessageList(Function(List messageList, bool success) success) {
     UserDefault.get(USERINFO).then((userInfo) {
-      if (userInfo != null) {
+      if (userInfo != null && userInfo != 'null') {
         Map<String, dynamic> userInfoMap =
             Map<String, dynamic>.from(convert.jsonDecode(userInfo));
 
