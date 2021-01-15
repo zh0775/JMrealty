@@ -42,6 +42,12 @@ class _ProjectState extends State<Project> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    fit: BoxFit.fill,
+                    image: AssetImage('assets/images/icon/bg_appbar_01.png'))),
+          ),
           centerTitle: true,
           backgroundColor: jm_appTheme,
           automaticallyImplyLeading: false,

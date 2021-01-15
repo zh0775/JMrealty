@@ -69,6 +69,9 @@ class _ReportListViewState extends State<ReportListView>
 
   @override
   void dispose() {
+    _eventBus.off(NOTIFY_REPORT_SELECT_REFRASH);
+    _eventBus.off(NOTIFY_REPORT_LIST_REFRASH);
+    _eventBus.off(NOTIFY_REPORT_SELECT_COPY_REFRASH);
     // unNeedDispose = false;
     if (easyRefreshCtr != null) {
       easyRefreshCtr.dispose();

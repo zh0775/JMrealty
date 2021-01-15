@@ -260,7 +260,8 @@ class LoginViewModel extends BaseViewModel {
     notifyListeners();
     Http().post(
       Urls.userLogin,
-      {'phonenumber': phone, 'code': code},
+      // {'phonenumber': phone, 'code': code},
+      {'phonenumber': phone, 'password': code},
       success: (json) {
         Map<String, dynamic> data = json['data'];
         if (json['code'] == 200 && data[ACCESS_TOKEN] != null) {

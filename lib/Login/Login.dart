@@ -4,6 +4,7 @@ import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportUploadViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
+import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/SelectImageView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/services/Urls.dart';
@@ -34,6 +35,8 @@ class _LoginState extends State<Login> {
   String phoneNumString; // 登录手机号
   String codeNumString; //登录验证码
   String registCodeNumString; // 注册验证码
+  String registPassword; // 注册密码
+  String password; // 登录密码
   bool isLoginSend;
   bool isRegistSend;
   bool isLogin; // 登录或注册
@@ -110,18 +113,6 @@ class _LoginState extends State<Login> {
       // color: Colors.blue,
       child: Stack(
         children: [
-          // Positioned(
-          //     top: 60,
-          //     right: 0,
-          //     child: TextButton(
-          //         onPressed: () {
-          //           Navigator.of(context).pop();
-          //         },
-          //         child: Icon(
-          //           Icons.close,
-          //           size: 40,
-          //           color: Color.fromRGBO(65, 68, 83, 1),
-          //         ))),
           Positioned(
               top: 100,
               // bottom: 100,
@@ -150,62 +141,80 @@ class _LoginState extends State<Login> {
                   SizedBox(
                     height: 20,
                   ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 40,
-                      ),
-                      authCodeInput(context, SizeConfig.screenWidth - 80 - 100),
-                      getCodeButton(context)
-                    ],
+                  // Row(
+                  //   children: [
+                  //     SizedBox(
+                  //       width: 40,
+                  //     ),
+                  //     authCodeInput(context, SizeConfig.screenWidth - 80 - 100),
+                  //     getCodeButton(context)
+                  //   ],
+                  // ),
+
+                  Container(
+                    width: SizeConfig.screenWidth - 80,
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(0, 0, 0, 0.1),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    alignment: Alignment.centerLeft,
+                    constraints: BoxConstraints(minHeight: 50),
+                    child: CupertinoTextField(
+                      // suffix: Icon(
+                      //   Icons.highlight_off,
+                      //   color: jm_line_color,
+                      // ),
+                      // controller: Tex,
+                      controller:
+                          TextEditingController.fromValue(TextEditingValue(
+                        text: password ?? '',
+                        selection: TextSelection.fromPosition(TextPosition(
+                            affinity: TextAffinity.downstream,
+                            offset: password.length ?? 0)),
+                      )),
+                      decoration: BoxDecoration(color: Colors.transparent),
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      obscureText: true,
+                      placeholder: '请输入6~18位密码',
+                      // clearButtonMode: OverlayVisibilityMode.always,
+                      onChanged: (value) {
+                        password = value;
+                      },
+                    ),
                   ),
                   SizedBox(
                     height: 25,
                   ),
-                  Container(
-                      width: SizeConfig.screenWidth - 80,
-                      height: 48,
-                      decoration: BoxDecoration(
-                          color: jm_appTheme,
-                          borderRadius: BorderRadius.all(Radius.circular(8))),
-                      child: ProviderWidget<LoginViewModel>(
-                        model: LoginViewModel(),
-                        builder: (context, value, child) {
-                          return TextButton(
-                            onPressed: () {
-                              FocusScope.of(context).requestFocus(FocusNode());
-                              if (!strNoEmpty(phoneNumString)) {
-                                ShowToast.normal('请输入您的手机号码');
-                                return;
-                              }
-                              if (!isMobilePhoneNumber(phoneNumString)) {
-                                ShowToast.normal('请输入正确的的手机号码');
-                                return;
-                              }
-                              if (!strNoEmpty(codeNumString)) {
-                                ShowToast.normal('请输入验证码');
-                                return;
-                              }
-                              value.requestLogin(phoneNumString, codeNumString,
-                                  () {
-                                _eventBus.emit(NOTIFY_LOGIN_SUCCESS);
-                                ShowToast.normal('登录成功');
-                                Future.delayed(Duration(seconds: 1), () {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-                                  Global.showLogin = false;
-                                  Navigator.pop(context);
-                                });
-                              });
-                            },
-                            child: Text(
-                              '确认登录',
-                              style:
-                                  TextStyle(fontSize: 15, color: Colors.white),
-                            ),
-                          );
-                        },
-                      )),
+                  CustomSubmitButton(
+                    height: 60,
+                    title: '确认登录',
+                    buttonClick: () {
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      if (!strNoEmpty(phoneNumString)) {
+                        ShowToast.normal('请输入您的手机号码');
+                        return;
+                      }
+                      if (!isMobilePhoneNumber(phoneNumString)) {
+                        ShowToast.normal('请输入正确的的手机号码');
+                        return;
+                      }
+                      // if (!strNoEmpty(codeNumString)) {
+                      //   ShowToast.normal('请输入验证码');
+                      //   return;
+                      // }
+
+                      LoginViewModel().requestLogin(phoneNumString, password,
+                          () {
+                        _eventBus.emit(NOTIFY_LOGIN_SUCCESS);
+                        ShowToast.normal('登录成功');
+                        Future.delayed(Duration(seconds: 1), () {
+                          FocusScope.of(context).requestFocus(FocusNode());
+                          Global.showLogin = false;
+                          Navigator.pop(context);
+                        });
+                      });
+                    },
+                  ),
                   SizedBox(
                     height: 10,
                   ),

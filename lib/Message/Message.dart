@@ -41,6 +41,12 @@ class _MessageState extends State<Message> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  fit: BoxFit.fill,
+                  image: AssetImage('assets/images/icon/bg_appbar_01.png'))),
+        ),
         title: Text(
           '消息',
           style: TextStyle(color: Colors.white, fontSize: 22),

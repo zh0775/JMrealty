@@ -16,3 +16,4 @@ const String NOTIFY_CLIENT_POOL_LIST_REFRASH =
     'notify_client_pool_list_refrash';
 
 const String NOTIFY_PK_LIST_REFRASH = 'notify_pk_list_refrash';
+const String NOTIFY_CLIENTWAIT_COUNT = 'notify_clientwait_count';

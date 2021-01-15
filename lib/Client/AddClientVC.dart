@@ -1,4 +1,5 @@
 import 'package:JMrealty/Client/model/ClientModel.dart';
+import 'package:JMrealty/Client/viewModel/ClientListViewModel.dart';
 import 'package:JMrealty/Client/viewModel/ClientViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
@@ -318,6 +319,7 @@ class _AddClientVCState extends State<AddClientVC> {
                     labelText: '客户意愿',
                     must: true,
                     // defalultValue: true,
+                    textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['desireId'] ?? '',
                     dataList: model.listData['desireGrade'] ?? [],
                     valueChange: (value, data) {
@@ -333,6 +335,7 @@ class _AddClientVCState extends State<AddClientVC> {
                     labelText: '客户职业',
                     must: true,
                     // defalultValue: true,
+                    textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['occupationId'] ?? '',
                     dataList: model.listData['customersOccupation'] ?? [],
                     valueChange: (value, data) {
@@ -348,6 +351,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   DropdownSelectV(
                     labelText: '用途',
                     // defalultValue: true,
+                    textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['typeId'] ?? '',
                     dataList: model.listData['intentionProductType'] ?? [],
                     valueChange: (value, data) {
@@ -363,6 +367,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   DropdownSelectV(
                     labelText: '意向面积',
                     // defalultValue: true,
+                    textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['areaId'] ?? '',
                     dataList: model.listData['intentionArea'] ?? [],
                     valueChange: (value, data) {
@@ -379,6 +384,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   DropdownSelectV(
                     labelText: '几次置业',
                     defalultValue: true,
+                    textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['shopTimes'],
                     dataList: [
                       {'value': 1, 'title': '1次'},
@@ -412,6 +418,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   DropdownSelectV(
                     labelText: '决策人',
                     // defalultValue: true,
+                    textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['policymakerId'] ?? '',
                     dataList: model.listData['decisionMaker'] ?? [],
                     valueChange: (value, data) {
@@ -451,6 +458,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   DropdownSelectV(
                     labelText: '客户来源',
                     // defalultValue: true,
+                    textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['sourceId'] ?? '',
                     dataList: model.listData['customersOfSource'] ?? [],
                     valueChange: (value, data) {
@@ -581,6 +589,14 @@ class _AddClientVCState extends State<AddClientVC> {
                               Future.delayed(Duration(seconds: 1), () {
                                 Navigator.pop(context);
                               });
+
+                              ClientListViewModel clVM = ClientListViewModel();
+                              clVM.loadClientList(
+                                {'status': 0},
+                                success: (data, total) {
+                                  _bus.emit(NOTIFY_CLIENTWAIT_COUNT, total);
+                                },
+                              );
                             }
                           });
                         });
@@ -607,6 +623,9 @@ class _AddClientVCState extends State<AddClientVC> {
                   //         ),
                   //       )),
                   // ),
+                  SizedBox(
+                    height: 40,
+                  )
                 ],
               ),
             ),

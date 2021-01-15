@@ -527,11 +527,8 @@ class _ClientDetailState extends State<ClientDetail> {
                     borderRadius: BorderRadius.circular(8)),
                 child: TextButton(
                   onPressed: () {
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                      return FollowTrack(
-                          json: convert.jsonEncode(followData),
-                          isFollow: isFollow);
-                    }));
+                    push(FollowTrack(data: followData, isFollow: isFollow),
+                        context);
                   },
                   child: Text(
                     '查看全部' + '(' + count.toString() + ')',

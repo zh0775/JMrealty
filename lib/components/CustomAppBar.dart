@@ -5,16 +5,27 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final void Function() backClick;
   final PreferredSizeWidget bottom;
+  final Widget flexibleSpace;
   @override
   // final Size preferredSize;
   const CustomAppbar(
       {this.title = '',
       this.backClick,
+      this.flexibleSpace,
       // this.preferredSize = const Size.fromHeight(kToolbarHeight+ bottom.preferredSize),
       this.bottom});
   @override
   Widget build(BuildContext context) {
     return AppBar(
+        flexibleSpace: flexibleSpace != null
+            ? flexibleSpace
+            : Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image:
+                            AssetImage('assets/images/icon/bg_appbar_01.png'))),
+              ),
         centerTitle: true,
         backgroundColor: jm_appTheme,
         automaticallyImplyLeading: false,

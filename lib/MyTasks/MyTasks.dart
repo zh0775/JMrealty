@@ -59,6 +59,13 @@ class _MyTasksState extends State<MyTasks> {
         length: 3,
         child: Scaffold(
             appBar: AppBar(
+              flexibleSpace: Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image:
+                            AssetImage('assets/images/icon/bg_appbar_01.png'))),
+              ),
               title: TaskSelectButton(
                 clickIndex: (clickIndex) {
                   setState(() {

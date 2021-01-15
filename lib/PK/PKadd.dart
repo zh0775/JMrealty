@@ -5,6 +5,7 @@ import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/CustomTextF.dart';
+import 'package:JMrealty/components/DepSelectView.dart';
 import 'package:JMrealty/components/DropdownSelectV.dart';
 import 'package:JMrealty/components/ShowDepNode.dart';
 import 'package:JMrealty/components/TreeNode.dart';
@@ -182,11 +183,19 @@ class _PKaddState extends State<PKadd> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
+                          SizedBox(
+                            height:
+                                unitList != null && unitList.length > 0 ? 6 : 0,
+                          ),
                           ...getUnitList(),
                           RawMaterialButton(
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
                               key: ValueKey('addUnit_button'),
                               constraints: BoxConstraints(
-                                  maxHeight: lineHeight, maxWidth: 50),
+                                  maxHeight: lineHeight,
+                                  maxWidth: 50,
+                                  minHeight: 40),
                               child: Row(
                                 children: [
                                   Icon(
@@ -201,17 +210,31 @@ class _PKaddState extends State<PKadd> {
                                 ],
                               ),
                               onPressed: () {
-                                ShowDepNode(
-                                    size: Size(
-                                      SizeConfig.blockSizeHorizontal * 80,
-                                      SizeConfig.blockSizeVertical * 80,
+                                // ShowDepNode(
+                                //     size: Size(
+                                //       SizeConfig.blockSizeHorizontal * 80,
+                                //       SizeConfig.blockSizeVertical * 80,
+                                //     ),
+                                //     treeData: treeData,
+                                //     nodeSelected: (TreeNode node) {
+                                //       setState(() {
+                                //         unitList.add(node);
+                                //       });
+                                //     }).show();
+                                push(
+                                    DepSelectView(
+                                      treeData: treeData,
+                                      singleSelect: false,
+                                      nodesSelected: (nodes) {
+                                        if (mounted) {
+                                          setState(() {
+                                            unitList.addAll(nodes);
+                                            unitDistinct();
+                                          });
+                                        }
+                                      },
                                     ),
-                                    treeData: treeData,
-                                    nodeSelected: (TreeNode node) {
-                                      setState(() {
-                                        unitList.add(node);
-                                      });
-                                    }).show();
+                                    context);
                               }),
                         ],
                       ),
@@ -750,5 +773,28 @@ class _PKaddState extends State<PKadd> {
             )),
           );
         });
+  }
+
+  void unitDistinct() {
+    List<TreeNode> _h = [];
+    if (unitList != null && unitList.length > 0) {
+      Set _a = Set();
+      unitList.forEach((e) {
+        _a.add((e as TreeNode).id);
+      });
+      List _b = _a.toList();
+
+      for (int j = 0; j < _a.length; j++) {
+        for (int i = 0; i < unitList.length; i++) {
+          if (_b[j] == (unitList[i] as TreeNode).id) {
+            _h.add(unitList[i]);
+            break;
+          }
+        }
+      }
+    }
+    if (mounted) {
+      unitList = _h;
+    }
   }
 }

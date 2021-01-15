@@ -1,4 +1,5 @@
 import 'package:JMrealty/base/image_loader.dart';
+import 'package:JMrealty/components/CustomWebV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
@@ -28,119 +29,132 @@ class _ProjectCellState extends State<ProjectCell> {
     insideMargin = widthScale * 3;
     imageWidth = widthScale * 36;
     otherWidth = SizeConfig.screenWidth - imageWidth - insideMargin * 3;
-    return Container(
-      width: SizeConfig.screenWidth,
-      decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: jm_line_color, width: 0.5))),
-      child: Row(
-        children: [
-          SizedBox(
-            width: insideMargin,
-          ),
-          Container(
-            height: imageWidth - widthScale * 3,
-            // color: Colors.red,
-            width: imageWidth,
-            child: ImageLoader(
-              widget.data['headIcon'],
-              fit: BoxFit.fill,
+    return GestureDetector(
+      onTap: () {
+        push(
+            CustomWebV(
+              path: WebPath.projectInfo,
+              otherParams: {
+                'projectId': [widget.data['id']]
+              },
             ),
-          ),
-          SizedBox(
-            width: insideMargin,
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: axisSpace,
+            context);
+      },
+      child: Container(
+        width: SizeConfig.screenWidth,
+        decoration: BoxDecoration(
+            border:
+                Border(bottom: BorderSide(color: jm_line_color, width: 0.5))),
+        child: Row(
+          children: [
+            SizedBox(
+              width: insideMargin,
+            ),
+            Container(
+              height: imageWidth - widthScale * 3,
+              // color: Colors.red,
+              width: imageWidth,
+              child: ImageLoader(
+                widget.data['headIcon'],
+                fit: BoxFit.fill,
               ),
-              SizedBox(
-                width: otherWidth,
-                child: Text(
-                  widget.data['name'] ?? '',
-                  style: jm_text_black_style16,
-                  maxLines: 100,
+            ),
+            SizedBox(
+              width: insideMargin,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: axisSpace,
                 ),
-              ),
-              SizedBox(
-                height: labelSpace,
-              ),
-              SizedBox(
-                width: otherWidth,
-                child: Text(
-                  widget.data['address'] ?? '',
-                  style: jm_text_gray_style13,
-                ),
-              ),
-              SizedBox(
-                height: labelSpace,
-              ),
-              SizedBox(
-                width: otherWidth,
-                child: RichText(
+                SizedBox(
+                  width: otherWidth,
+                  child: Text(
+                    widget.data['name'] ?? '',
+                    style: jm_text_black_style16,
                     maxLines: 100,
-                    text: TextSpan(
-                        text: '均',
-                        style: TextStyle(fontSize: 13, color: Colors.red),
-                        children: [
-                          TextSpan(
-                              text: widget.data['averagePrice'] != null
-                                  ? (widget.data['averagePrice']).toString()
-                                  : '',
-                              style:
-                                  TextStyle(fontSize: 19, color: Colors.red)),
-                          TextSpan(
-                              text: '元/平',
-                              style:
-                                  TextStyle(fontSize: 13, color: Colors.red)),
-                        ])),
-              ),
-              SizedBox(
-                height: labelSpace,
-              ),
-              SizedBox(
-                width: otherWidth,
-                child: Text(
-                  (widget.data['architecture'] != null
-                          ? (widget.data['architecture'] + ' | ')
-                          : '') +
-                      (widget.data['property'] != null
-                          ? (widget.data['property'] + ' - ')
-                          : '') +
-                      (widget.data['city'] != null
-                          ? (widget.data['city'] + ' - ')
-                          : '') +
-                      (widget.data['region'] != null
-                          ? (widget.data['region'] + ' | ')
-                          : '') +
-                      (widget.data['areaMin'] != null
-                          ? (widget.data['areaMin'] + '-')
-                          : '') +
-                      (widget.data['areaMax'] != null
-                          ? (widget.data['areaMax'] + '平')
-                          : ''),
-                  style: jm_text_gray_style13,
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: labelSpace,
-              ),
-              SizedBox(
-                width: otherWidth,
-                child: Wrap(
-                  children: [
-                    ...getTagList(),
-                  ],
+                SizedBox(
+                  height: labelSpace,
                 ),
-              ),
-              SizedBox(
-                height: axisSpace - 8,
-              ),
-            ],
-          ),
-        ],
+                SizedBox(
+                  width: otherWidth,
+                  child: Text(
+                    widget.data['address'] ?? '',
+                    style: jm_text_gray_style13,
+                  ),
+                ),
+                SizedBox(
+                  height: labelSpace,
+                ),
+                SizedBox(
+                  width: otherWidth,
+                  child: RichText(
+                      maxLines: 100,
+                      text: TextSpan(
+                          text: '均',
+                          style: TextStyle(fontSize: 13, color: Colors.red),
+                          children: [
+                            TextSpan(
+                                text: widget.data['averagePrice'] != null
+                                    ? (widget.data['averagePrice']).toString()
+                                    : '',
+                                style:
+                                    TextStyle(fontSize: 19, color: Colors.red)),
+                            TextSpan(
+                                text: '元/平',
+                                style:
+                                    TextStyle(fontSize: 13, color: Colors.red)),
+                          ])),
+                ),
+                SizedBox(
+                  height: labelSpace,
+                ),
+                SizedBox(
+                  width: otherWidth,
+                  child: Text(
+                    (widget.data['architecture'] != null
+                            ? (widget.data['architecture'] + ' | ')
+                            : '') +
+                        (widget.data['property'] != null
+                            ? (widget.data['property'] + ' - ')
+                            : '') +
+                        (widget.data['city'] != null
+                            ? (widget.data['city'] + ' - ')
+                            : '') +
+                        (widget.data['region'] != null
+                            ? (widget.data['region'] + ' | ')
+                            : '') +
+                        (widget.data['areaMin'] != null
+                            ? (widget.data['areaMin'] + '-')
+                            : '') +
+                        (widget.data['areaMax'] != null
+                            ? (widget.data['areaMax'] + '平')
+                            : ''),
+                    style: jm_text_gray_style13,
+                  ),
+                ),
+                SizedBox(
+                  height: labelSpace,
+                ),
+                SizedBox(
+                  width: otherWidth,
+                  child: Wrap(
+                    children: [
+                      ...getTagList(),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: axisSpace - 8,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

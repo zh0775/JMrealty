@@ -8,6 +8,7 @@ import 'package:JMrealty/Report/AddReport.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
@@ -24,6 +25,7 @@ class Client extends StatefulWidget {
 }
 
 class _ClientState extends State<Client> {
+  int waitFollowCount = 8;
   bool selectExpand = false;
   int currentSelectIndex;
   Map value1 = {'title': '级别', 'value': '-1'};
@@ -58,6 +60,13 @@ class _ClientState extends State<Client> {
     eventBus.on(NOTIFY_LOGIN_SUCCESS, (arg) {
       refrashList();
     });
+    eventBus.on(NOTIFY_CLIENTWAIT_COUNT, (arg) {
+      if (mounted) {
+        setState(() {
+          waitFollowCount = arg;
+        });
+      }
+    });
     topSelectVM.loadSelectData(success: (data) {
       setState(() {
         selectData = data;
@@ -91,6 +100,8 @@ class _ClientState extends State<Client> {
 
   @override
   void dispose() {
+    eventBus.off(NOTIFY_LOGIN_SUCCESS);
+    eventBus.off(NOTIFY_CLIENTWAIT_COUNT);
     super.dispose();
   }
 
@@ -101,6 +112,13 @@ class _ClientState extends State<Client> {
       length: 5,
       child: Scaffold(
           appBar: AppBar(
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      fit: BoxFit.fill,
+                      image:
+                          AssetImage('assets/images/icon/bg_appbar_01.png'))),
+            ),
             centerTitle: true,
             backgroundColor: jm_appTheme,
             automaticallyImplyLeading: false,
@@ -125,14 +143,41 @@ class _ClientState extends State<Client> {
               indicatorSize: TabBarIndicatorSize.label,
               indicatorColor: Colors.white,
               indicatorWeight: 2.0,
-              indicatorPadding: EdgeInsets.only(bottom: 5),
+              indicatorPadding: EdgeInsets.only(bottom: 5, left: 13, right: 13),
               tabs: [
                 Tab(
-                  child: Text(
-                    '待跟进',
-                    style: TextStyle(fontSize: 14, color: Colors.white),
+                    child: Container(
+                  width: 50,
+                  height: 30,
+                  alignment: Alignment.center,
+                  child: Stack(
+                    overflow: Overflow.visible,
+                    children: [
+                      Text(
+                        '待跟进',
+                        style: TextStyle(fontSize: 14, color: Colors.white),
+                      ),
+                      waitFollowCount > 0
+                          ? Positioned(
+                              right: -11,
+                              top: -6,
+                              child: Container(
+                                width: 18,
+                                height: 18,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(9)),
+                                child: Text(
+                                  waitFollowCount.toString(),
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 10),
+                                ),
+                              ))
+                          : NoneV()
+                    ],
                   ),
-                ),
+                )),
                 Tab(
                   child: Text(
                     '已带看',

@@ -6,11 +6,22 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:convert' as convert;
 
-enum WebPath { statisticsMain }
+enum WebPath {
+  statisticsMain, // deptId
+  follow,
+  lowPer,
+  breakingRate, // deptId
+  summary, // deptId
+  followProgress, //deptId
+  projectInfo, // projectId
+  rankingList,
+  backlog
+}
 
 class CustomWebV extends StatefulWidget {
   final WebPath path;
-  const CustomWebV({@required this.path});
+  final Map otherParams;
+  const CustomWebV({@required this.path, this.otherParams});
   @override
   _CustomWebVState createState() => _CustomWebVState();
 }
@@ -43,16 +54,25 @@ class _CustomWebVState extends State<CustomWebV> {
 
   Future<Widget> getView() async {
     String token = await UserDefault.get(ACCESS_TOKEN);
+    String userInfo = await UserDefault.get(USERINFO);
+    Map info = convert.jsonDecode(userInfo);
+
     if (token != null && token.length > 0) {
       return SafeArea(
         child: WebView(
-          initialUrl: WEB_URL + '/' + getPath(widget.path),
+          initialUrl: WEB_URL + getPath(widget.path),
           javascriptMode: JavascriptMode.unrestricted,
           onWebViewCreated: (controller) {
             _controller = controller;
           },
           onPageFinished: (url) {
-            String json = convert.jsonEncode({'token': token});
+            Map params = Map<String, dynamic>.from({});
+            params['token'] = token;
+            params['deptId'] = info['deptId'];
+            if (widget.otherParams != null && widget.otherParams.isNotEmpty) {
+              params.addAll(widget.otherParams);
+            }
+            String json = convert.jsonEncode(params);
             String js_String = "let json = " +
                 "'" +
                 json +
@@ -107,6 +127,30 @@ class _CustomWebVState extends State<CustomWebV> {
     switch (webPath) {
       case WebPath.statisticsMain:
         return 'statisticsMain';
+        break;
+      case WebPath.follow:
+        return 'follow';
+        break;
+      case WebPath.lowPer:
+        return 'lowPer';
+        break;
+      case WebPath.breakingRate:
+        return 'breakingRate';
+        break;
+      case WebPath.summary:
+        return 'summary';
+        break;
+      case WebPath.followProgress:
+        return 'followProgress';
+        break;
+      case WebPath.projectInfo:
+        return 'projectInfo';
+        break;
+      case WebPath.rankingList:
+        return 'rankingList';
+        break;
+      case WebPath.backlog:
+        return 'backlog';
         break;
       default:
         return '';

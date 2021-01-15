@@ -57,6 +57,13 @@ class _ReportState extends State<Report> {
       length: 10,
       child: Scaffold(
         appBar: AppBar(
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      fit: BoxFit.fill,
+                      image:
+                          AssetImage('assets/images/icon/bg_appbar_01.png'))),
+            ),
             centerTitle: true,
             backgroundColor: jm_appTheme,
             automaticallyImplyLeading: false,

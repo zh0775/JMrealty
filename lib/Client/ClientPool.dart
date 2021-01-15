@@ -60,6 +60,12 @@ class _ClientPoolState extends State<ClientPool> {
     // print('key === $key');
     return Scaffold(
         appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    fit: BoxFit.fill,
+                    image: AssetImage('assets/images/icon/bg_appbar_01.png'))),
+          ),
           centerTitle: true,
           backgroundColor: jm_appTheme,
           automaticallyImplyLeading: false,

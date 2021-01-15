@@ -1,5 +1,6 @@
 import 'dart:convert' as convert;
 import 'package:JMrealty/Client/ClientPool.dart';
+import 'package:JMrealty/Client/viewModel/ClientListViewModel.dart';
 import 'package:JMrealty/Follow/Follow.dart';
 import 'package:JMrealty/Home/components/HomeAnno.dart';
 import 'package:JMrealty/Home/components/HomeGoodDeed.dart';
@@ -165,6 +166,10 @@ class _HomeState extends State<Home> {
             }).toList();
           });
         }
+      });
+      ClientListViewModel().loadClientList({'status': 0},
+          success: (data, total) {
+        _eventBus.emit(NOTIFY_CLIENTWAIT_COUNT, total);
       });
     }
   }
