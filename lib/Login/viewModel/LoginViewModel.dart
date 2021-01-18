@@ -2,6 +2,7 @@ import 'package:JMrealty/Home/viewModel/HomeViewModel.dart';
 import 'package:JMrealty/Login/model/PostListModel.dart';
 import 'package:JMrealty/Login/model/login_model.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
+import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/TreeNode.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
@@ -35,25 +36,40 @@ class LoginViewModel extends BaseViewModel {
         notifyListeners();
         ShowToast.normal(reason);
       },
-      after: () {},
+      after: () {
+        CustomLoading().hide();
+      },
     );
   }
 
-  loadRegistPostSelectList() {
+  loadRegistPostSelectList({Function(bool success, List postList) success}) {
     state = BaseState.LOADING;
     notifyListeners();
     Http().get(
       Urls.registerPostList,
       {},
       success: (json) {
-        compute(decodePostListToMapList, json).then((value) {
-          postDataList = value;
-          state = BaseState.CONTENT;
+        if (json['code'] == 200) {
+          compute(decodePostListToMapList, json).then((value) {
+            postDataList = value;
+            if (success != null) {
+              success(true, postDataList);
+            }
+            state = BaseState.CONTENT;
+            notifyListeners();
+          });
+        } else {
+          if (success != null) {
+            success(false, null);
+          }
+          state = BaseState.FAIL;
           notifyListeners();
-        });
+        }
       },
       fail: (reason, code) {
-        ShowToast.normal(reason);
+        if (success != null) {
+          success(false, null);
+        }
         state = BaseState.FAIL;
         notifyListeners();
       },
@@ -84,16 +100,27 @@ class LoginViewModel extends BaseViewModel {
       Urls.registerDeptList,
       {},
       success: (json) {
-        compute(decodeDepListToList, json).then((value) {
-          depTreeDataList = value;
+        if (json['code'] == 200) {
+          compute(decodeDepListToList, json).then((value) {
+            depTreeDataList = value;
+            if (success != null) {
+              success(depTreeDataList);
+            }
+            state = BaseState.CONTENT;
+            notifyListeners();
+          });
+        } else {
           if (success != null) {
-            success(depTreeDataList);
+            success(null);
           }
-          state = BaseState.CONTENT;
+          state = BaseState.FAIL;
           notifyListeners();
-        });
+        }
       },
       fail: (reason, code) {
+        if (success != null) {
+          success(null);
+        }
         state = BaseState.FAIL;
         notifyListeners();
       },
@@ -103,7 +130,6 @@ class LoginViewModel extends BaseViewModel {
 
   static List<TreeNode> decodeDepListToList(dynamic json) {
     print('json ==== ${json.runtimeType}');
-
     List<TreeNode> dataList = [];
     List datas = json['data'];
     if (datas == null) {
@@ -276,6 +302,9 @@ class LoginViewModel extends BaseViewModel {
         } else {
           state = BaseState.FAIL;
           success(false);
+          if (json['msg'] != null && (json['msg'] as String).length > 0) {
+            ShowToast.normal(json['msg']);
+          }
         }
         notifyListeners();
       },

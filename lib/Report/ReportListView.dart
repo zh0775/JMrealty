@@ -1,4 +1,5 @@
 import 'package:JMrealty/Report/viewmodel/ReportListViewModel.dart';
+import 'package:JMrealty/components/CustomPullFooter.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/utils/EventBus.dart';
@@ -28,8 +29,7 @@ class _ReportListViewState extends State<ReportListView>
   GlobalKey pullHeaderKey = GlobalKey();
 
   int total = 0;
-  int currentPage = 1;
-  int pageSize = 10;
+  int pageNum = 1;
   List dataList = [];
   List copyList = [];
   int projectId;
@@ -90,10 +90,7 @@ class _ReportListViewState extends State<ReportListView>
     return EasyRefresh(
       controller: easyRefreshCtr,
       header: CustomPullHeader(key: pullHeaderKey),
-      // header: PhoenixHeader(),
-      // footer: PhoenixFooter(),
-      enableControlFinishRefresh: true,
-      enableControlFinishLoad: true,
+      footer: CustomPullFooter(),
       key: _easyRefreshKey,
 
       emptyWidget: dataList.length == 0 ? EmptyView() : null,
@@ -101,6 +98,12 @@ class _ReportListViewState extends State<ReportListView>
       onRefresh: () async {
         loadList();
       },
+      onLoad: dataList != null && dataList.length >= total
+          ? null
+          : () async {
+              pageNum++;
+              loadList(isLoad: true, page: pageNum);
+            },
       child: ListView.builder(
         itemCount: dataList.length,
         itemBuilder: (context, index) {
@@ -146,16 +149,23 @@ class _ReportListViewState extends State<ReportListView>
     );
   }
 
-  loadList() {
-    reportListVM.loadListData(widget.status, projectId: projectId,
-        success: (success) {
-      // easyRefreshCtr.resetLoadState();
-      easyRefreshCtr.finishRefresh();
-      // easyRefreshCtr.finishLoad();
+  loadList({int pageSize = 10, int page = 1, bool isLoad = false}) {
+    if (!isLoad) {
+      pageNum = 1;
+    }
+    Map<String, dynamic> params = Map<String, dynamic>.from(
+        {'status': widget.status, 'pageSize': pageSize, 'pageNum': page});
+
+    reportListVM.loadListData(params, projectId: projectId,
+        success: (List list, success, total) {
       if (success && mounted) {
         setState(() {
-          total = reportListVM.listData['total'];
-          dataList = reportListVM.listData['rows'];
+          total = total;
+          if (isLoad) {
+            dataList.addAll(list);
+          } else {
+            dataList = list;
+          }
         });
       }
     });

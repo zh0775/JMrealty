@@ -481,9 +481,11 @@ class _AddClientVCState extends State<AddClientVC> {
                       if (housesName != null && housesName.length > 0) {
                         projectVM.loadProjectList(
                           housesName,
-                          success: (data) {
-                            if (data != null && data.length > 0) {
-                              state.showList(data);
+                          success: (data, success, total) {
+                            if (success) {
+                              if (data != null && data.length > 0) {
+                                state.showList(data);
+                              }
                             }
                           },
                         );

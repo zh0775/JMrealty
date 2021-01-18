@@ -4,32 +4,33 @@ import 'package:JMrealty/services/http.dart';
 import 'package:JMrealty/utils/toast.dart';
 
 class ReportListViewModel extends BaseViewModel {
-  Map listData;
-  loadListData(int status, {int projectId, Function(bool success) success}) {
-    Map params = {'status': status};
+  loadListData(Map param,
+      {int projectId,
+      Function(List reportList, bool success, int total) success}) {
+    Map params = Map<String, dynamic>.from(param);
+    // {'status': status};
     if (projectId != null) {
       params['projectId'] = projectId;
     }
     Http().get(
       Urls.reportRecordList,
-      Map<String, dynamic>.from(params),
+      params,
       success: (json) {
         if (json['code'] == 200) {
-          listData = Map<String, dynamic>.from(json['data']);
           if (success != null) {
-            success(true);
+            success((json['data'])['rows'], true, json['total'] ?? 0);
           }
         } else {
-          ShowToast.normal(json['msg']);
+          // ShowToast.normal(json['msg']);
           if (success != null) {
-            success(false);
+            success(null, false, 0);
           }
         }
       },
       fail: (reason, code) {
         ShowToast.normal(reason);
         if (success != null) {
-          success(false);
+          success(null, false, 0);
         }
       },
     );

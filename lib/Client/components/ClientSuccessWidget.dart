@@ -56,7 +56,11 @@ class ClientSuccessWidget extends StatelessWidget {
           SizedBox(
             width: margin,
           ),
-          Image.asset('assets/images/icon/icon_client_deal.png'),
+          Image.asset(
+            'assets/images/icon/icon_client_deal.png',
+            width: widthScale * 7,
+            height: widthScale * 7,
+          ),
           SizedBox(
             width: widthScale * 1,
           ),

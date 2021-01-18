@@ -1,6 +1,7 @@
 import 'package:JMrealty/Project/ProjectCell.dart';
 import 'package:JMrealty/Project/ProjectSearch.dart';
 import 'package:JMrealty/Project/ProjectViewModel.dart';
+import 'package:JMrealty/components/CustomPullFooter.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/const/Default.dart';
@@ -24,6 +25,8 @@ class _ProjectState extends State<Project> {
   GlobalKey _easyRefreshKey = GlobalKey();
   GlobalKey _pullHeaderKey = GlobalKey();
   List projectListData = [];
+  int total = 0;
+  int pageNum = 1;
   @override
   void dispose() {
     pullCtr.dispose();
@@ -75,18 +78,18 @@ class _ProjectState extends State<Project> {
         key: _easyRefreshKey,
         controller: pullCtr,
         header: CustomPullHeader(key: _pullHeaderKey),
+        footer: CustomPullFooter(),
         emptyWidget: projectListData.length == 0 ? EmptyView() : null,
         firstRefresh: true,
         onRefresh: () async {
-          projectVM.loadProjectList((projectList, success) {
-            // pullCtr.finishRefresh();
-            if (success) {
-              setState(() {
-                projectListData = projectList;
-              });
-            }
-          });
+          loadProjectList();
         },
+        onLoad: projectListData != null && projectListData.length >= total
+            ? null
+            : () async {
+                pageNum++;
+                loadProjectList(isLoad: true, page: pageNum);
+              },
         child: ListView.builder(
           itemCount: projectListData.length,
           itemBuilder: (context, index) {
@@ -97,5 +100,26 @@ class _ProjectState extends State<Project> {
         ),
       ),
     );
+  }
+
+  loadProjectList({int pageSize = 10, int page = 1, bool isLoad = false}) {
+    if (!isLoad) {
+      pageNum = 1;
+    }
+    Map<String, dynamic> params =
+        Map<String, dynamic>.from({'pageSize': pageSize, 'pageNum': page});
+    projectVM.loadProjectList(params, (projectList, success, total) {
+      // pullCtr.finishRefresh();
+      if (success) {
+        total = total;
+        setState(() {
+          if (isLoad) {
+            projectListData.addAll(projectList);
+          } else {
+            projectListData = projectList;
+          }
+        });
+      }
+    });
   }
 }

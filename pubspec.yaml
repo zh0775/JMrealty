@@ -46,6 +46,7 @@ dependencies:
   jpush_flutter: 0.6.1
   url_launcher: ^5.7.10
   flutter_easyloading: ^2.2.2
+  package_info: ^0.4.3+2
 dev_dependencies:
   flutter_test:
     sdk: flutter

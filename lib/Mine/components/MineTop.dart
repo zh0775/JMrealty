@@ -138,12 +138,9 @@ class _MineTopState extends State<MineTop> {
                           child: backgroundPath != null &&
                                   backgroundPath.length > 0
                               ? ImageLoader(widget.data['background'])
-                              : Container(
-                                  color: Colors.grey,
-                                  // child: Image.asset(
-                                  // 'assets/images/home/motivation_monochromatic.png',)
-                                  // width: 0.0,
-                                  // height: 0.0,
+                              : Image.asset(
+                                  'assets/images/icon/bg_appbar_03.png',
+                                  fit: BoxFit.fill,
                                 ),
                         )),
                     // 遮挡照片一部分的
@@ -189,24 +186,24 @@ class _MineTopState extends State<MineTop> {
                           headImgSelectV.showImage(context);
                         },
                         child: Container(
-                          width: widthScale * 20,
-                          height: widthScale * 20,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(widthScale * 3),
-                          ),
-                          child: avatarPath != null && avatarPath.length > 0
-                              ? Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.circular(widthScale * 2),
-                                      child: ImageLoader(avatarPath)),
-                                )
-                              : Container(
-                                  color: Colors.grey,
-                                ),
-                        ),
+                            width: widthScale * 20,
+                            height: widthScale * 20,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.circular(widthScale * 3),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.circular(widthScale * 2),
+                                  child: avatarPath != null &&
+                                          avatarPath.length > 0
+                                      ? ImageLoader(avatarPath)
+                                      : Image.asset(
+                                          'assets/images/icon/icon_default_head.png')),
+                            )),
                       )),
                 ],
               ),

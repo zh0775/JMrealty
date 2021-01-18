@@ -80,7 +80,7 @@ class Http {
           Map<String, dynamic> data = response.data;
           if (data['code'] != 200) {
             if (data['msg'] != null) {
-              ShowToast.normal(data['msg']);
+              // ShowToast.normal(data['msg']);
             }
           }
           if (success != null) {
@@ -117,7 +117,7 @@ class Http {
           Map<String, dynamic> data = response.data;
           if (data['code'] != 200) {
             if (data['msg'] != null) {
-              ShowToast.normal(data['msg']);
+              // ShowToast.normal(data['msg']);
             }
           }
           if (success != null) {
@@ -154,7 +154,7 @@ class Http {
           Map<String, dynamic> data = response.data;
           if (data['code'] != 200) {
             if (data['msg'] != null) {
-              ShowToast.normal(data['msg']);
+              // ShowToast.normal(data['msg']);
             }
           }
           if (success != null) {
@@ -191,7 +191,7 @@ class Http {
           Map<String, dynamic> data = response.data;
           if (data['code'] != 200) {
             if (data['msg'] != null) {
-              ShowToast.normal(data['msg']);
+              // ShowToast.normal(data['msg']);
             }
           }
           if (success != null) {

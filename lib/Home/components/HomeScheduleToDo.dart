@@ -2,6 +2,7 @@ import 'package:JMrealty/components/CustomWebV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class HomeScheduleToDo extends StatefulWidget {
   final List data;
@@ -19,18 +20,24 @@ class _HomeScheduleToDoState extends State<HomeScheduleToDo> {
     dateButtonList = [];
     DateTime date = DateTime.now();
     if (dateButtonIndex == -1) {
-      dateButtonIndex = date.weekday - 1;
+      dateButtonIndex = (date.weekday - 7).abs();
+    }
+    DateTime startTime = DateTime.now();
+    if (startTime.weekday != 7) {
+      startTime = startTime.subtract(Duration(days: startTime.weekday));
     }
     for (var i = 0; i < 7; i++) {
-      DateTime iTime = date.subtract(Duration(days: date.weekday - 1 - i));
+      DateTime iTime = date.add(Duration(days: i));
+      // DateTime iTime = date.subtract(Duration(days: date.weekday - i));
       bool havePoint = false;
       if (widget.data != null && widget.data.length > 0) {
         for (var j = 0; j < widget.data.length; j++) {
           var sche = widget.data[j];
           // print((iTime.toString().split(' '))[0]);
-          if ((iTime.toString().split(' '))[0] == sche['date']) {
+          if (DateFormat('yyyy-MM-dd').format(iTime) == sche['date']) {
             scheData[i] = sche['scheduleList'];
             havePoint = true;
+            break;
           }
         }
       }
@@ -50,7 +57,7 @@ class _HomeScheduleToDoState extends State<HomeScheduleToDo> {
     double top = -5;
     return Container(
         width: double.infinity,
-        height: 185,
+        height: 110,
         margin: EdgeInsets.only(top: 15),
         decoration: BoxDecoration(
             // color: Colors.red,

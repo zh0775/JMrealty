@@ -1,6 +1,7 @@
 import 'package:JMrealty/Message/MessageTypeCell.dart';
 import 'package:JMrealty/Message/viewModel/MessageViewModel.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
+import 'package:JMrealty/components/CustomPullFooter.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/const/Default.dart';
@@ -20,6 +21,8 @@ class _MessageTypeListState extends State<MessageTypeList> {
   GlobalKey _easyRefreshKey = GlobalKey();
   GlobalKey _pullHeaderKey = GlobalKey();
   List messageList = [];
+  int total = 0;
+  int pageNum = 1;
   @override
   void initState() {
     // loadList();
@@ -40,6 +43,7 @@ class _MessageTypeListState extends State<MessageTypeList> {
       ),
       body: EasyRefresh(
         header: CustomPullHeader(key: _pullHeaderKey),
+        footer: CustomPullFooter(),
         enableControlFinishRefresh: true,
         enableControlFinishLoad: true,
         key: _easyRefreshKey,
@@ -49,6 +53,12 @@ class _MessageTypeListState extends State<MessageTypeList> {
         onRefresh: () async {
           loadList();
         },
+        onLoad: messageList != null && messageList.length >= total
+            ? null
+            : () async {
+                pageNum++;
+                loadList(isLoad: true, page: pageNum);
+              },
         child: ListView.builder(
           itemCount: messageList.length,
           itemBuilder: (context, index) {
@@ -61,12 +71,25 @@ class _MessageTypeListState extends State<MessageTypeList> {
     );
   }
 
-  loadList() {
-    messageVM.loadMessageTypeList(widget.noticeType, (message, success) {
+  loadList({int pageSize = 10, int page = 1, bool isLoad = false}) {
+    if (!isLoad) {
+      pageNum = 1;
+    }
+    messageVM.loadMessageTypeList(
+        Map<String, dynamic>.from({
+          'noticeType': widget.noticeType,
+          'pageSize': pageSize,
+          'pageNum': page
+        }), (message, success, total) {
       pullCtr.finishRefresh();
       if (success) {
         setState(() {
-          messageList = message;
+          total = total;
+          if (isLoad) {
+            messageList.addAll(message);
+          } else {
+            messageList = message;
+          }
         });
       }
     });

@@ -1,62 +1,71 @@
-import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
-import 'package:JMrealty/utils/toast.dart';
 
-class LevelTargetViewModel extends BaseViewModel {
-  List levelTarget;
-
-  loadTarget(int depId) {
-    state = BaseState.LOADING;
-    notifyListeners();
-    Http().post(
-      Urls.targetRuleList,
-      {'organizationId': depId},
+class LevelTargetViewModel {
+  getDepCityList(Function(bool success, List cityList) success) {
+    Http().get(
+      Urls.getDepCityList,
+      {'isCity': 1},
       success: (json) {
         if (json['code'] == 200) {
-          levelTarget = json['data'];
-          state = BaseState.CONTENT;
-          notifyListeners();
+          if (success != null) {
+            success(true, json['data']);
+          }
         } else {
-          state = BaseState.FAIL;
-          notifyListeners();
-          if (json['msg'] != null) {
-            ShowToast.normal(json['msg']);
+          if (success != null) {
+            success(false, null);
           }
         }
       },
       fail: (reason, code) {
-        state = BaseState.FAIL;
-        notifyListeners();
-        if (reason != null) {
-          ShowToast.normal(reason);
+        if (success != null) {
+          success(false, null);
         }
       },
     );
   }
 
-  addTargetSetting(Map params, Function() success) {
-    state = BaseState.LOADING;
-    notifyListeners();
+  loadTarget(int depId, Function(bool success, List targetList) success) {
     Http().post(
-      Urls.addTargetRule,
-      params,
+      Urls.targetRuleList,
+      {'organizationId': depId},
       success: (json) {
-        state = BaseState.CONTENT;
-        notifyListeners();
         if (json['code'] == 200) {
           if (success != null) {
-            success();
+            success(true, json['data']);
           }
         } else {
-          if (json['msg'] != null) {
-            ShowToast.normal(json['msg']);
+          if (success != null) {
+            success(false, null);
           }
         }
       },
       fail: (reason, code) {
-        if (reason != null) {
-          ShowToast.normal(reason);
+        if (success != null) {
+          success(false, null);
+        }
+      },
+    );
+  }
+
+  addTargetSetting(Map params, Function(bool success) success) {
+    Http().post(
+      Urls.addTargetRule,
+      params,
+      success: (json) {
+        if (json['code'] == 200) {
+          if (success != null) {
+            success(true);
+          }
+        } else {
+          if (success != null) {
+            success(false);
+          }
+        }
+      },
+      fail: (reason, code) {
+        if (success != null) {
+          success(false);
         }
       },
     );
@@ -76,18 +85,12 @@ class LevelTargetViewModel extends BaseViewModel {
             success(true);
           }
         } else {
-          if (json['msg'] != null) {
-            ShowToast.normal(json['msg']);
-          }
           if (success != null) {
             success(false);
           }
         }
       },
       fail: (reason, code) {
-        if (reason != null) {
-          ShowToast.normal(reason);
-        }
         if (success != null) {
           success(false);
         }

@@ -1,4 +1,5 @@
 import 'package:JMrealty/Home/viewModel/HomeViewModel.dart';
+import 'package:JMrealty/Mine/About.dart';
 import 'package:JMrealty/Mine/LevelTargetSetting.dart';
 import 'package:JMrealty/Mine/SetTargetView.dart';
 import 'package:JMrealty/Mine/components/MineTop.dart';
@@ -23,6 +24,7 @@ class Mine extends StatefulWidget {
 }
 
 class _MineState extends State<Mine> {
+  List menuData = [];
   HomeViewModel homeVM = HomeViewModel();
   MineViewModel mineVM = MineViewModel();
   EasyRefreshController pullCtr = EasyRefreshController();
@@ -38,11 +40,20 @@ class _MineState extends State<Mine> {
   var bus = EventBus();
   @override
   void initState() {
+    bus.on(NOTIFY_HOME_MENUS, (arg) {
+      if (mounted) {
+        setState(() {
+          menuData = convert.jsonDecode(arg);
+        });
+      }
+    });
     loadMineRequest();
     bus.on(NOTIFY_USER_INFO, (arg) {
-      setState(() {
-        userInfo = Map<String, dynamic>.from(convert.jsonDecode(arg));
-      });
+      if (mounted) {
+        setState(() {
+          userInfo = Map<String, dynamic>.from(convert.jsonDecode(arg));
+        });
+      }
     });
     bus.on(NOTIFY_LOGIN_SUCCESS, (arg) {
       loadMineRequest();
@@ -52,6 +63,9 @@ class _MineState extends State<Mine> {
 
   @override
   void dispose() {
+    bus.off(NOTIFY_LOGIN_SUCCESS);
+    bus.off(NOTIFY_HOME_MENUS);
+    bus.off(NOTIFY_USER_INFO);
     super.dispose();
   }
 
@@ -62,7 +76,7 @@ class _MineState extends State<Mine> {
           setState(() {
             userInfo = Map<String, dynamic>.from(convert.jsonDecode(value));
             mineVM.loadMonthTarget(userInfo['userId'], (success, data) {
-              if (success) {
+              if (success && mounted) {
                 setState(() {
                   targetData = data;
                 });
@@ -168,7 +182,9 @@ class _MineState extends State<Mine> {
                     margin: margin,
                     width: SizeConfig.screenWidth - margin,
                     height: 0.5),
-                getCell('关于', Icons.info, () {}),
+                getCell('关于', Icons.info, () {
+                  push(About(), context);
+                }),
                 JMline(
                     margin: margin,
                     width: SizeConfig.screenWidth - margin,

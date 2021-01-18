@@ -2,7 +2,8 @@ import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
 
 class MyTasksViewModel {
-  loadTasksPublishedList(Function(List tasksList, bool success) success,
+  loadTasksPublishedList(
+      Function(List tasksList, bool success, int total) success,
       {Map params = const {}}) {
     Http().get(
       Urls.tasksPublishedList,
@@ -10,17 +11,17 @@ class MyTasksViewModel {
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
-            success((json['data'])['rows'], true);
+            success((json['data'])['rows'], true, json['total']);
           }
         } else {
           if (success != null) {
-            success(null, false);
+            success(null, false, 0);
           }
         }
       },
       fail: (reason, code) {
         if (success != null) {
-          success(null, false);
+          success(null, false, 0);
         }
       },
     );

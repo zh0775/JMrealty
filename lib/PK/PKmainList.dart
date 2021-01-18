@@ -1,5 +1,6 @@
 import 'package:JMrealty/PK/components/PKmainListCell.dart';
 import 'package:JMrealty/PK/viewModel/PKviewModel.dart';
+import 'package:JMrealty/components/CustomPullFooter.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
@@ -28,7 +29,8 @@ class _PKmainListState extends State<PKmainList> {
   GlobalKey pullKey = GlobalKey();
   GlobalKey pullHeaderKey = GlobalKey();
   PKviewModel pkVM = PKviewModel();
-
+  int total = 0;
+  int pageNum = 1;
   @override
   void initState() {
     cellClick = (Map cellData, int index) {
@@ -53,11 +55,23 @@ class _PKmainListState extends State<PKmainList> {
     super.dispose();
   }
 
-  void loadList() {
-    pkVM.loadPKList(widget.status, success: (dataList) {
-      setState(() {
-        pkListData = dataList;
-      });
+  void loadList({int pageSize = 10, int page = 1, bool isLoad = false}) {
+    if (!isLoad) {
+      pageNum = 1;
+    }
+    Map<String, dynamic> params = Map<String, dynamic>.from(
+        {'status': widget.status, 'pageSize': pageSize, 'pageNum': page});
+    pkVM.loadPKList(params, success: (dataList, success, total) {
+      if (success && mounted) {
+        total = total;
+        setState(() {
+          if (isLoad) {
+            pkListData.addAll(dataList);
+          } else {
+            pkListData = dataList;
+          }
+        });
+      }
     });
   }
 
@@ -67,9 +81,16 @@ class _PKmainListState extends State<PKmainList> {
       key: pullKey,
       controller: pullCtr,
       header: CustomPullHeader(key: pullHeaderKey),
+      footer: CustomPullFooter(),
       onRefresh: () async {
         loadList();
       },
+      onLoad: pkListData != null && pkListData.length >= total
+          ? null
+          : () async {
+              pageNum++;
+              loadList(isLoad: true, page: pageNum);
+            },
       child: ListView.builder(
         padding: EdgeInsets.only(top: 15),
         itemCount: pkListData.length,

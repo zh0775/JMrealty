@@ -34,7 +34,7 @@ class DropdownSelectV extends StatefulWidget {
       this.width,
       this.margin,
       this.height = 50,
-      this.rowHeight = 48.0,
+      this.rowHeight = 45.0,
       this.bottomLine = false,
       this.labelWidth = 0.0,
       this.labelText,
@@ -115,6 +115,7 @@ class _DropdownSelectVState extends State<DropdownSelectV> {
 
     return UnconstrainedBox(
       child: Container(
+        key: _globalKey,
         width: selfWidth,
         height: widget.height,
         decoration: BoxDecoration(
@@ -140,6 +141,7 @@ class _DropdownSelectVState extends State<DropdownSelectV> {
             ),
             GestureDetector(
               onTap: () {
+                FocusScope.of(context).requestFocus(FocusNode());
                 RenderBox renderBox =
                     _globalKey.currentContext.findRenderObject();
                 Rect box =
@@ -154,17 +156,24 @@ class _DropdownSelectVState extends State<DropdownSelectV> {
                         content: Material(
                           child: Card(
                             elevation: 4.0,
-                            child: Column(
-                              children: [
-                                ...buttons(widget.dataList ?? [],
-                                    renderBox.size.width, widget.valueChange),
-                              ],
+                            child: SizedBox(
+                              height: widget.rowHeight * 6,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    ...buttons(
+                                        widget.dataList ?? [],
+                                        renderBox.size.width,
+                                        widget.valueChange),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         )));
               },
               child: Container(
-                  key: _globalKey,
+                  // key: _globalKey,
                   width: otherWidth,
                   alignment: Alignment.centerLeft,
                   color: widget.backgroundColor ?? Colors.white,
@@ -267,7 +276,10 @@ class _DropDownMenuRoute extends PopupRoute {
     return CustomSingleChildLayout(
       delegate:
           _DropDownMenuRouteLayout(position: position, menuHeight: menuHeight),
-      child: SizeTransition(
+      child:
+          // content ?? NoneV(),
+          // PositionedTransition
+          SizeTransition(
         sizeFactor: Tween<double>(begin: 0.0, end: 1.0).animate(animation),
         child: content ?? NoneV(),
       ),

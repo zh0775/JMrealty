@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/services/http_config.dart';
 import 'package:JMrealty/utils/notify_default.dart';
@@ -7,15 +9,16 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:convert' as convert;
 
 enum WebPath {
-  statisticsMain, // deptId
-  follow,
-  lowPer,
-  breakingRate, // deptId
-  summary, // deptId
-  followProgress, //deptId
-  projectInfo, // projectId
-  rankingList,
-  backlog
+  statisticsMain, // 统计 deptId
+  follow, // 未开单
+  lowPer, // 低绩效
+  breakingRate, //破壳率 deptId
+  summary, // 每日总结 deptId
+  followProgress, // 跟进进度 deptId
+  projectInfo, // 项目详情 projectId
+  rankingList, // 榜单
+  backlog, //待办事项
+  agree,
 }
 
 class CustomWebV extends StatefulWidget {
@@ -27,29 +30,40 @@ class CustomWebV extends StatefulWidget {
 }
 
 class _CustomWebVState extends State<CustomWebV> {
-  WebViewController _controller;
+  // WebViewController _controller;
+  final Completer<WebViewController> _controller =
+      Completer<WebViewController>();
+
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder(
-        future: getView(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              return snapshot.data;
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext ctx) {
+    print('url == ${WEB_URL + getPath(widget.path)}');
+    return Scaffold(body: Builder(
+      builder: (context) {
+        return FutureBuilder(
+          future: getView(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasData) {
+                return snapshot.data;
+              } else {
+                return EmptyView(
+                  tips: '出现错误',
+                );
+              }
             } else {
               return EmptyView(
-                tips: '出现错误',
+                tips: '请稍等',
               );
             }
-          } else {
-            return EmptyView(
-              tips: '请稍等',
-            );
-          }
-        },
-      ),
-    );
+          },
+        );
+      },
+    ));
   }
 
   Future<Widget> getView() async {
@@ -58,36 +72,54 @@ class _CustomWebVState extends State<CustomWebV> {
     Map info = convert.jsonDecode(userInfo);
 
     if (token != null && token.length > 0) {
-      return SafeArea(
-        child: WebView(
-          initialUrl: WEB_URL + getPath(widget.path),
-          javascriptMode: JavascriptMode.unrestricted,
-          onWebViewCreated: (controller) {
-            _controller = controller;
-          },
-          onPageFinished: (url) {
-            Map params = Map<String, dynamic>.from({});
-            params['token'] = token;
-            params['deptId'] = info['deptId'];
-            if (widget.otherParams != null && widget.otherParams.isNotEmpty) {
-              params.addAll(widget.otherParams);
-            }
-            String json = convert.jsonEncode(params);
-            String js_String = "let json = " +
-                "'" +
-                json +
-                "'" +
-                '; ' +
-                'getDataFromNative(json);';
-            print('js_String === $js_String');
-            // "var title_1 = 30; var price_1 = 40; var title_2 = 10; var price_2 = 50; setData([{title:title_1,price:price_1},{title:title_2,price:price_2}])";
-            _controller?.evaluateJavascript(js_String)?.then((result) {});
-          },
-          javascriptChannels: <JavascriptChannel>[
-            _getJavascriptChannel(context),
-            _backJavascriptChannel(context)
-          ].toSet(),
-        ),
+      return WebView(
+        initialUrl: WEB_URL + getPath(widget.path),
+        // initialUrl: 'https://www.bilibili.com/',
+        javascriptMode: JavascriptMode.unrestricted,
+        onWebViewCreated: (controller) {
+          _controller.complete(controller);
+          // _controller = controller;
+        },
+        onPageFinished: (url) {
+          Map params = Map<String, dynamic>.from(
+              {'token': token, 'deptId': info['deptId']});
+
+          if (widget.otherParams != null && widget.otherParams.isNotEmpty) {
+            params = {...params, ...widget.otherParams};
+          }
+          String json = convert.jsonEncode(params);
+          // String js_String = "let json = " +
+          //     "'" +
+          //     json +
+          //     "'" +
+          //     '; ' +
+          //     'getDataFromNative(json);';
+          String jsString = "getDataFromNative('$json');";
+          print('js_String === $jsString');
+          // Future.delayed(Duration(seconds: 1), () {
+          _controller.future.then((value) {
+            value?.evaluateJavascript(jsString)?.then((result) {
+              print('result ==== $result');
+            });
+          });
+          // });
+          // _controller?.evaluateJavascript(jsString);
+        },
+        navigationDelegate: (NavigationRequest request) {
+          // if (request.url.startsWith('https://www.youtube.com/')) {
+          //   print('blocking navigation to $request}');
+          //   return NavigationDecision.prevent;
+          // }
+          print('allowing navigation to $request');
+          return NavigationDecision.navigate;
+        },
+        onWebResourceError: (error) {
+          print('web_view_error == $error');
+        },
+        javascriptChannels: <JavascriptChannel>[
+          _getJavascriptChannel(context),
+          _backJavascriptChannel(context)
+        ].toSet(),
       );
     } else {
       return EmptyView(
@@ -151,6 +183,9 @@ class _CustomWebVState extends State<CustomWebV> {
         break;
       case WebPath.backlog:
         return 'backlog';
+        break;
+      case WebPath.agree:
+        return 'agree';
         break;
       default:
         return '';

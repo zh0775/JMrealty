@@ -1,5 +1,6 @@
 import 'package:JMrealty/MyTasks/MyTasksCell.dart';
 import 'package:JMrealty/MyTasks/viewModel/MyTasksViewModel.dart';
+import 'package:JMrealty/components/CustomPullFooter.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/utils/EventBus.dart';
@@ -24,6 +25,8 @@ class _MyTasksListState extends State<MyTasksList>
   GlobalKey _pullHeaderKey = GlobalKey();
   List tasksListData = [];
   EventBus eventBus = EventBus();
+  int total = 0;
+  int pageNum = 1;
   @override
   void initState() {
     eventBus.on(NOTIFY_TASKS_LIST_REFRASH, (arg) {
@@ -45,11 +48,12 @@ class _MyTasksListState extends State<MyTasksList>
   Widget build(BuildContext context) {
     super.build(context);
     return EasyRefresh(
-      enableControlFinishRefresh: true,
-      enableControlFinishLoad: true,
+      // enableControlFinishRefresh: true,
+      // enableControlFinishLoad: true,
       key: _easyRefreshKey,
       controller: pullCtr,
       header: CustomPullHeader(key: _pullHeaderKey),
+      footer: CustomPullFooter(),
       emptyWidget: tasksListData.length == 0 ? EmptyView() : null,
       firstRefresh: true,
       onRefresh: () async {
@@ -57,6 +61,12 @@ class _MyTasksListState extends State<MyTasksList>
           refrashList(null);
         }
       },
+      onLoad: tasksListData != null && tasksListData.length >= total
+          ? null
+          : () async {
+              pageNum++;
+              refrashList(null, isLoad: true, page: pageNum);
+            },
       child: ListView.builder(
         itemCount: tasksListData.length,
         itemBuilder: (context, index) {
@@ -74,7 +84,11 @@ class _MyTasksListState extends State<MyTasksList>
     );
   }
 
-  refrashList(Map parameter) {
+  refrashList(Map parameter,
+      {int pageSize = 10, int page = 1, bool isLoad = false}) {
+    if (!isLoad) {
+      pageNum = 1;
+    }
     int topIndex = widget.topIndex;
     Map params = {'status': widget.status};
     if (widget.type != -1) {
@@ -91,12 +105,18 @@ class _MyTasksListState extends State<MyTasksList>
         params['type'] = parameter['type'];
       }
     }
+    params['pageSize'] = pageSize;
+    params['pageNum'] = page;
     if (topIndex == 0) {
-      tasksVM.loadTasksPublishedList((tasksList, success) {
+      tasksVM.loadTasksPublishedList((tasksList, success, total) {
         pullCtr.finishRefresh();
         if (success) {
           setState(() {
-            tasksListData = tasksList;
+            if (isLoad) {
+              tasksListData.addAll(tasksList);
+            } else {
+              tasksListData = tasksList;
+            }
           });
         }
       }, params: Map<String, dynamic>.from(params));
@@ -105,7 +125,11 @@ class _MyTasksListState extends State<MyTasksList>
         pullCtr.finishRefresh();
         if (success) {
           setState(() {
-            tasksListData = tasksList;
+            if (isLoad) {
+              tasksListData.addAll(tasksList);
+            } else {
+              tasksListData = tasksList;
+            }
           });
         }
       }, params: Map<String, dynamic>.from(params));

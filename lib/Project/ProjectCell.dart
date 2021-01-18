@@ -34,9 +34,7 @@ class _ProjectCellState extends State<ProjectCell> {
         push(
             CustomWebV(
               path: WebPath.projectInfo,
-              otherParams: {
-                'projectId': [widget.data['id']]
-              },
+              otherParams: {'projectId': widget.data['id']},
             ),
             context);
       },

@@ -2,50 +2,51 @@ import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
 
 class ProjectViewModel {
-  loadProjectList(Function(List projectList, bool success) success) {
+  loadProjectList(
+      Map params, Function(List projectList, bool success, int total) success) {
     Http().get(
       Urls.projectList,
-      {},
+      Map<String, dynamic>.from(params),
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
             success((json['data']) != null ? (json['data'])['rows'] ?? [] : [],
-                true);
+                true, json['total']);
           }
         } else {
           if (success != null) {
-            success(null, false);
+            success(null, false, 0);
           }
         }
       },
       fail: (reason, code) {
         if (success != null) {
-          success(null, false);
+          success(null, false, 0);
         }
       },
     );
   }
 
   searchProject(
-      String searchStr, Function(List projectList, bool success) success) {
+      Map params, Function(List projectList, bool success, int total) success) {
     Http().get(
       Urls.projectList,
-      {'name': searchStr},
+      params,
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
             success((json['data']) != null ? (json['data'])['rows'] ?? [] : [],
-                true);
+                true, json['total']);
           }
         } else {
           if (success != null) {
-            success(null, false);
+            success(null, false, 0);
           }
         }
       },
       fail: (reason, code) {
         if (success != null) {
-          success(null, false);
+          success(null, false, 0);
         }
       },
     );

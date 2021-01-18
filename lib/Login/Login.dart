@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:JMrealty/Login/Regist.dart';
 import 'package:JMrealty/Login/model/login_model.dart';
 import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportUploadViewModel.dart';
@@ -101,7 +102,15 @@ class _LoginState extends State<Login> {
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: SingleChildScrollView(
-        child: isLogin ? loginWidget(context) : registWidget(context),
+        child: isLogin
+            ? loginWidget(context)
+            : Regist(
+                toLogin: () {
+                  setState(() {
+                    isLogin = true;
+                  });
+                },
+              ),
       ),
     ));
   }
@@ -115,7 +124,7 @@ class _LoginState extends State<Login> {
       child: Stack(
         children: [
           Positioned(
-              top: 100,
+              top: 130,
               // bottom: 100,
               left: 0,
               right: 0,
@@ -123,7 +132,7 @@ class _LoginState extends State<Login> {
                 children: [
                   Image.asset(
                     'assets/images/home/icon_login.png',
-                    width: SizeConfig.screenWidth * (114 / 375),
+                    width: SizeConfig.screenWidth * (134 / 375),
                     height: SizeConfig.screenWidth * (114 / 375),
                     fit: BoxFit.fill,
                   ),

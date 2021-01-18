@@ -1,6 +1,7 @@
 import 'package:JMrealty/Report/viewmodel/ReportViewModel.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
+import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/DropdownSelectV.dart';
 import 'package:JMrealty/components/NoneV.dart';
@@ -11,8 +12,6 @@ import 'package:JMrealty/utils/toast.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
-
-import 'package:multi_image_picker/multi_image_picker.dart';
 
 class AddReport extends StatefulWidget {
   final Map userData;
@@ -43,6 +42,7 @@ class _AddReportState extends State<AddReport> {
   Map projectData; // 项目数据
   Map agentData; // 经纪人数据
   String mark = '';
+  List projectContact = [];
   Map userInfo;
   // String jjrSearchStr;
   // String clientSearchStr;
@@ -65,7 +65,6 @@ class _AddReportState extends State<AddReport> {
         addClient(client: widget.userData);
       });
     }
-
     super.initState();
   }
 
@@ -132,9 +131,11 @@ class _AddReportState extends State<AddReport> {
                 if (value != '') {
                   model.loadProjectList(
                     value,
-                    success: (data) {
-                      if (data != null && data.length > 0) {
-                        state.showList(data);
+                    success: (data, success, total) {
+                      if (success) {
+                        if (data != null && data.length > 0) {
+                          state.showList(data);
+                        }
                       }
                     },
                   );
@@ -146,6 +147,20 @@ class _AddReportState extends State<AddReport> {
                 setState(() {
                   projectData = data;
                 });
+
+                CustomLoading().show();
+                model.projectContact(
+                  data['id'],
+                  (success, data) {
+                    // CustomLoading().hide();
+                    if (success) {
+                      projectContact = data;
+                    }
+                  },
+                  after: () {
+                    CustomLoading().hide();
+                  },
+                );
               },
             ),
             JMline(
@@ -374,21 +389,44 @@ class _AddReportState extends State<AddReport> {
                   clients.add(e);
                   // }
                 });
-                model.addReportRequest({
-                  'client': clients,
-                  'agent': agentData,
-                  'project': projectData,
-                  'mark': mark
-                }, (bool success) {
-                  if (success) {
-                    ShowToast.normal('提交成功');
-                    Future.delayed(Duration(seconds: 1), () {
-                      Navigator.pop(context);
-                    });
-                  }
+                CustomAlert(title: '提示', content: '是否确认提交？').show(
+                    confirmClick: () {
+                  CustomLoading().show();
+                  model.addReportRequest({
+                    'client': clients,
+                    'agent': agentData,
+                    'project': projectData,
+                    'mark': mark
+                  }, (bool success) {
+                    CustomLoading().hide();
+                    if (success) {
+                      CustomAlert(
+                              title: '报备成功',
+                              content: '提前' +
+                                  projectData['reportBeforeTime'].toString() +
+                                  '分钟报备，' +
+                                  (projectData['isSensitive'] == 1
+                                      ? '手机号前三后四，'
+                                      : '全号报备，') +
+                                  '有效保护期' +
+                                  projectData['reportProtect'].toString() +
+                                  '天，以看房确认单为准。' +
+                                  contactsFormat(),
+                              confirmText: '继续报备',
+                              cancelText: '返回首页')
+                          .show(
+                        cancelClick: () {
+                          Navigator.pop(context);
+                        },
+                      );
+                    }
+                  });
                 });
               },
             ),
+            SizedBox(
+              height: 40,
+            )
           ],
         ),
       ),
@@ -424,6 +462,60 @@ class _AddReportState extends State<AddReport> {
       },
       clientDataUpdate: clientDataUpdate,
     ));
+  }
+
+  String contactsFormat() {
+    String str1 = '';
+    String str2 = '';
+    String str3 = '';
+    String str4 = '';
+
+    if (projectContact == null || projectContact.length > 0) {
+      projectContact.forEach((e) {
+        switch (e['contactType'] ?? -1) {
+          case 0:
+            {
+              if (str1 == null || str1.length == 0) {
+                str1 += '项目驻场\n';
+              }
+              str1 += '${e['contactName'] ?? ""}：${e['contactPhone'] ?? ""}\n';
+            }
+            break;
+          case 1:
+            {
+              if (str2 == null || str2.length == 0) {
+                str2 += '项目负责人\n';
+              }
+              str2 += '${e['contactName'] ?? ""}：${e['contactPhone'] ?? ""}\n';
+            }
+            break;
+          case 2:
+            {
+              if (str3 == null || str3.length == 0) {
+                str3 += '项目经理\n';
+              }
+              str3 += '${e['contactName'] ?? ""}：${e['contactPhone'] ?? ""}\n';
+            }
+            break;
+          case 3:
+            {
+              if (str4 == null || str4.length == 0) {
+                str4 += '项目总监\n';
+              }
+              str4 += '${e['contactName'] ?? ""}：${e['contactPhone'] ?? ""}\n';
+            }
+            break;
+          default:
+        }
+      });
+      // switch () {
+      //   case :
+
+      //     break;
+      //   default:
+      // }
+    }
+    return '\n' + str1 + str2 + str3 + str4;
   }
 }
 

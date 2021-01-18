@@ -6,9 +6,15 @@ class CustomSubmitButton extends StatelessWidget {
   final double height;
   final double margin;
   final String title;
+  final TextStyle style;
   final Function() buttonClick;
   CustomSubmitButton(
-      {this.height = 65, this.margin, this.title = '提交', this.buttonClick});
+      {this.height = 65,
+      this.margin,
+      this.title = '提交',
+      this.buttonClick,
+      this.style = const TextStyle(
+          fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)});
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -32,11 +38,7 @@ class CustomSubmitButton extends StatelessWidget {
             buttonClick();
           }
         },
-        child: Text(
-          title,
-          style: TextStyle(
-              fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
-        ),
+        child: Text(title, style: style),
       ),
     );
   }

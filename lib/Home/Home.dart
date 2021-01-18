@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert' as convert;
 import 'package:JMrealty/Client/ClientPool.dart';
 import 'package:JMrealty/Client/viewModel/ClientListViewModel.dart';
@@ -13,7 +14,6 @@ import 'package:JMrealty/Report/AddReport.dart';
 import 'package:JMrealty/Report/Report.dart';
 import 'package:JMrealty/Report/SmartReport.dart';
 import 'package:JMrealty/base/image_loader.dart';
-import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/CustomWebV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
@@ -22,7 +22,6 @@ import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
 import '../tabbar.dart';
 import '../Project/Project.dart';
 import '../Client/Client.dart';
@@ -84,6 +83,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   HomeViewModel homeVM = HomeViewModel();
+  ClientListViewModel clientVM = ClientListViewModel();
+  Timer reqestTimer;
   // EasyRefreshController pullCtr = EasyRefreshController();
   // GlobalKey pullKey = GlobalKey();
   // GlobalKey pullHeaderKey = GlobalKey();
@@ -117,29 +118,34 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    if (reqestTimer != null) {
+      reqestTimer.cancel();
+      reqestTimer = null;
+    }
+    super.dispose();
+  }
+
   void loadReqest() async {
     String token = await UserDefault.get(ACCESS_TOKEN);
 
     getBanner();
-    homeVM.getHomeMenus((menuList, success) {
-      if (success) {
-        setState(() {
-          menus = (menuList[3])['menu'];
-        });
-      }
-    });
+
     if (token != null && token.length > 0) {
+      // 获取用户信息
       homeVM.loadUserInfo(
         finish: () {
           UserDefault.get(USERINFO).then((value) {
             Map userInfo = convert.jsonDecode(value);
             if (userInfo != null && userInfo.isNotEmpty) {
+              // 获取消息
               homeVM.getHomeNotice(
                   Map<String, dynamic>.from({
                     'userId': userInfo['userId'],
                     'deptId': userInfo['deptId']
                   }), (noticeList, success) {
-                if (success) {
+                if (success && mounted) {
                   setState(() {
                     notices = noticeList.map((e) {
                       return {...e, 'zzTitle': e['noticeTitle']};
@@ -151,15 +157,18 @@ class _HomeState extends State<Home> {
           });
         },
       );
+      // 待办
       homeVM.getHomeWaitToDo((waitToDoList, success) {
-        if (success) {
+        if (success && mounted) {
           setState(() {
             homeScheduleToDoData = waitToDoList;
           });
         }
       });
+
+      // app首页【成交喜报】列表
       homeVM.getGladNotice((gladNoticeList, success) {
-        if (success) {
+        if (success && mounted) {
           setState(() {
             gladNotices = gladNoticeList.map((e) {
               return {...e, 'zzTitle': e['content']};
@@ -167,10 +176,48 @@ class _HomeState extends State<Home> {
           });
         }
       });
-      ClientListViewModel().loadClientList({'status': 0},
-          success: (data, total) {
-        _eventBus.emit(NOTIFY_CLIENTWAIT_COUNT, total);
+
+      // 当日待跟进客户数量
+      clientVM.loadCountProgress((success, count) {
+        if (success) {
+          _eventBus.emit(NOTIFY_CLIENTWAIT_COUNT, count);
+        }
       });
+      // app菜单权限
+      homeVM.getHomeMenus((menuList, success) {
+        if (success && mounted) {
+          setState(() {
+            menus = (menuList[3])['menu'];
+          });
+        }
+      });
+
+      // 强制客户跟进提醒
+      clientVM.findOvertime((success, data) {
+        if (success && mounted) {}
+      });
+      if (reqestTimer == null) {
+        reqestTimer = Timer.periodic(Duration(seconds: 60), (Timer timer) {
+          // 定时获取当日待跟进客户数量
+          clientVM.loadCountProgress((success, count) {
+            if (success) {
+              _eventBus.emit(NOTIFY_CLIENTWAIT_COUNT, count);
+            }
+          });
+          // 定时获取强制客户跟进提醒
+          clientVM.findOvertime((success, data) {
+            if (success) {}
+          });
+          // 定时获取app菜单权限
+          homeVM.getHomeMenus((menuList, success) {
+            if (success && mounted) {
+              setState(() {
+                menus = (menuList[3])['menu'];
+              });
+            }
+          });
+        });
+      }
     }
   }
 
@@ -204,62 +251,25 @@ class _HomeState extends State<Home> {
             Wrap(
               children: [
                 ...buttons((int buttonIndex, Map buttonData) {
-                  if (buttonData['menuId'] == 2061) {
+                  if (buttonData['path'] == 'app:main:report:list') {
                     // 新增报备
                     Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
                       return AddReport();
                     }));
-                  } else if (buttonData['menuId'] == 2063) {
+                  } else if (buttonData['path'] == 'app:report:list') {
                     // 报备记录
                     Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
                       return Report();
                     }));
-                  } else if (buttonData['menuId'] == 2080) {
+                  } else if (buttonData['path'] == 'app:pk competition:list') {
                     // PK赛
                     Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
                       return PKmain();
                     }));
-                  } else if (buttonIndex == 100) {
+                  } else if (buttonData['path'] ==
+                      'app:Follow up on progress:list') {
                     // 跟进记录
-                    UserDefault.get(ACCESS_TOKEN).then((token) {
-                      if (token != null) {
-                        UserDefault.get(USERINFO).then((userInfo) {
-                          if (userInfo != null) {
-                            Map<String, dynamic> userInfoMap =
-                                Map<String, dynamic>.from(
-                                    convert.jsonDecode(userInfo));
-                            Navigator.of(context)
-                                .push(CupertinoPageRoute(builder: (_) {
-                              return Follow(
-                                token: token,
-                                deptId: userInfoMap['deptId'],
-                              );
-                            }));
-                          } else {
-                            homeVM.loadUserInfo();
-                          }
-                        });
-                      } else {
-                        Global.toLogin(isLogin: true);
-                      }
-                    });
-                  } else if (buttonData['menuId'] == 2078) {
-                    // 客户池
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                      return ClientPool();
-                    }));
-                  } else if (buttonData['menuId'] == 2086) {
-                    // 我的任务
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                      return MyTasks();
-                    }));
-                  } else if (buttonData['menuId'] == 2084) {
-                    // 智能报备
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                      return SmartReport();
-                    }));
-                  } else if (buttonData['menuId'] == 2092) {
-                    // 每日总结
+
                     // UserDefault.get(ACCESS_TOKEN).then((token) {
                     //   if (token != null) {
                     //     UserDefault.get(USERINFO).then((userInfo) {
@@ -282,9 +292,28 @@ class _HomeState extends State<Home> {
                     //     Global.toLogin(isLogin: true);
                     //   }
                     // });
+                    push(CustomWebV(path: WebPath.followProgress), context);
+                  } else if (buttonData['path'] == 'app:customer pool:list') {
+                    // 客户池
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                      return ClientPool();
+                    }));
+                  } else if (buttonData['path'] == 'app:task:list') {
+                    // 我的任务
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                      return MyTasks();
+                    }));
+                  } else if (buttonData['path'] ==
+                      'app:lntelligent report:list') {
+                    // 智能报备
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                      return SmartReport();
+                    }));
+                  } else if (buttonData['path'] == 'app:summary:list') {
+                    // 每日总结
                     push(CustomWebV(path: WebPath.summary), context);
                     // push(CustomWebV(path: WebPath.statisticsMain), context);
-                  } else if (buttonData['menuId'] == 2082) {
+                  } else if (buttonData['path'] == 'app:Top of the list:list') {
                     // 榜单
                     push(CustomWebV(path: WebPath.rankingList), context);
                   } else if (buttonIndex == 100) {
@@ -311,6 +340,20 @@ class _HomeState extends State<Home> {
                         Global.toLogin(isLogin: true);
                       }
                     });
+                  } else if (buttonData['path'] ==
+                      'app:unidentified personnel:list') {
+                    // 未开单人员
+                    push(CustomWebV(path: WebPath.follow), context);
+                  } else if (buttonData['path'] ==
+                      'app:shell breaking rate:list') {
+                    // 破壳率
+                    push(CustomWebV(path: WebPath.breakingRate), context);
+                  } else if (buttonData['path'] == 'app:statistics:list') {
+                    // 统计
+                    push(CustomWebV(path: WebPath.statisticsMain), context);
+                  } else if (buttonData['path'] == 'app:main:lower') {
+                    // 低绩效
+                    push(CustomWebV(path: WebPath.lowPer), context);
                   }
                 }),
               ],

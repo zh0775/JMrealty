@@ -141,7 +141,13 @@ class HomeViewModel extends BaseViewModel {
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
-            success(json['data'], true);
+            UserDefault.saveStr(HOME_MENUS, convert.jsonEncode(json['data']))
+                .then((value) {
+              if (value) {
+                bus.emit(NOTIFY_HOME_MENUS, convert.jsonEncode(json['data']));
+                success(json['data'], true);
+              }
+            });
           }
         } else {
           if (success != null) {

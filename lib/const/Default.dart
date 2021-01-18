@@ -620,11 +620,13 @@ class SexCell extends StatefulWidget {
   final double lineHeight;
   final double labelWidth;
   final TextStyle labelStyle;
+  final bool must;
   final Sex sex;
   final Function(Sex newSex) valueChange;
   SexCell(
       {this.margin,
       this.title = '',
+      this.must = false,
       this.lineHeight = 50,
       this.labelWidth,
       this.labelStyle = jm_text_black_style14,
@@ -661,10 +663,16 @@ class _SexCellState extends State<SexCell> {
         children: [
           Container(
             width: labelWidth,
-            child: Text(
-              widget.title,
-              style: widget.labelStyle,
-            ),
+            child: widget.must
+                ? RichText(
+                    text: TextSpan(
+                        text: '*',
+                        style: TextStyle(color: Colors.red, fontSize: 12),
+                        children: [
+                        TextSpan(
+                            text: widget.title ?? '', style: widget.labelStyle)
+                      ]))
+                : Text(widget.title ?? '', style: widget.labelStyle),
           ),
           sexButton(context, Sex.boy, (Sex value) {
             setState(() {

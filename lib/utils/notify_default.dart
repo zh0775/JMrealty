@@ -1,6 +1,7 @@
 // user_default
 const String USERINFO = 'userInfo';
 const String ACCESS_TOKEN = 'access_token';
+const String HOME_MENUS = 'home_menus';
 // notification
 const String NOTIFY_USER_INFO = 'notify_user_info';
 const String NOTIFY_CLIENT_LIST_REFRASH = 'notify_client_list_refrash';
@@ -17,3 +18,5 @@ const String NOTIFY_CLIENT_POOL_LIST_REFRASH =
 
 const String NOTIFY_PK_LIST_REFRASH = 'notify_pk_list_refrash';
 const String NOTIFY_CLIENTWAIT_COUNT = 'notify_clientwait_count';
+
+const String NOTIFY_HOME_MENUS = 'notify_home_menus';

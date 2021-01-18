@@ -40,4 +40,48 @@ class ClientListViewModel extends BaseViewModel {
       after: () {},
     );
   }
+
+  loadCountProgress(Function(bool success, int count) success) {
+    Http().get(
+      Urls.countProgress,
+      {},
+      success: (json) {
+        if (json['code'] == 200) {
+          if (success != null) {
+            success(true, json['total']);
+          }
+        } else {
+          if (success != null) {
+            success(false, 0);
+          }
+        }
+      },
+      fail: (reason, code) {
+        if (success != null) {
+          success(false, 0);
+        }
+      },
+    );
+  }
+
+  findOvertime(Function(bool success, Map data) success) {
+    Http().post(
+      Urls.findOvertime,
+      {},
+      success: (json) {
+        if (json['code'] == 200) {
+          success(true, json['data']);
+        } else {
+          if (success != null) {
+            success(false, null);
+          }
+        }
+      },
+      fail: (reason, code) {
+        if (success != null) {
+          success(false, null);
+        }
+      },
+    );
+  }
 }

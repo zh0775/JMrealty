@@ -24,7 +24,7 @@ class _ReportState extends State<Report> {
   List projectListData = [];
   @override
   void initState() {
-    projectVM.loadProjectList((projectList, success) {
+    projectVM.loadProjectList({}, (projectList, success, total) {
       if (success) {
         List listFormat = projectList.map((e) {
           return {'title': e['name'], 'value': e['id']};

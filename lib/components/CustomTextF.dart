@@ -3,10 +3,12 @@ import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextF extends StatefulWidget {
+  final bool onlyTap;
   final double width;
   final double margin;
   final double height;
   final double labelWidth;
+  final bool hideText;
   final String labelText;
   final String text;
   final String placeholder;
@@ -18,10 +20,16 @@ class CustomTextF extends StatefulWidget {
   final BorderSide border;
   final bool enable;
   final Color backgroundColor;
+  final BorderRadius borderRadius;
   final Function(String value) valueChange;
   final FocusNode focusNode;
+  final double leftTextPadding;
+  final Function() labelClick;
   const CustomTextF(
       {Key key,
+      this.hideText = false,
+      this.onlyTap = false,
+      this.labelClick,
       this.width,
       this.margin,
       this.height = 50,
@@ -30,10 +38,12 @@ class CustomTextF extends StatefulWidget {
       this.labelText,
       this.placeholder = '',
       this.text = '',
+      this.leftTextPadding = 10,
       this.must = false,
       this.labelStyle = jm_text_black_style14,
       this.style = jm_text_black_style14,
       this.keyboardType = TextInputType.text,
+      this.borderRadius,
       this.enable = true,
       this.backgroundColor = Colors.transparent,
       this.valueChange,
@@ -51,6 +61,12 @@ class _CustomTextFState extends State<CustomTextF> {
   double selfWidth;
   double margin;
   String selfValue = '';
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -99,37 +115,51 @@ class _CustomTextFState extends State<CustomTextF> {
               width: otherWidth,
               constraints: BoxConstraints(
                   minWidth: otherWidth, minHeight: widget.height - 2),
-              child: TextField(
-                textAlign: TextAlign.left,
-                textAlignVertical: TextAlignVertical.center,
-                controller: TextEditingController.fromValue(TextEditingValue(
-                  text: widget.text ?? '',
-                  selection: TextSelection.fromPosition(TextPosition(
-                      affinity: TextAffinity.downstream,
-                      offset: widget.text.length ?? 0)),
-                )),
-                enabled: widget.enable,
-                keyboardType: widget.keyboardType,
-                style: widget.style,
-                focusNode: widget.focusNode,
-                decoration: InputDecoration(
-                  hintText: widget.placeholder,
-                  filled: true,
-                  fillColor: widget.backgroundColor,
-                  focusedBorder: OutlineInputBorder(borderSide: widget.border),
-                  disabledBorder: OutlineInputBorder(borderSide: widget.border),
-                  enabledBorder: OutlineInputBorder(borderSide: widget.border),
-                  contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  border: OutlineInputBorder(
-                      // borderRadius: widget.borderRadius,
-                      borderSide: widget.border),
-                ),
-                onChanged: (value) {
-                  selfValue = value;
-                  if (widget.valueChange != null) {
-                    widget.valueChange(value);
+              child: GestureDetector(
+                onTap: () {
+                  if (widget.labelClick != null) {
+                    widget.labelClick();
                   }
                 },
+                child: TextField(
+                  obscureText: widget.hideText,
+                  textAlign: TextAlign.left,
+                  textAlignVertical: TextAlignVertical.center,
+                  controller: TextEditingController.fromValue(TextEditingValue(
+                    text: widget.text ?? '',
+                    selection: TextSelection.fromPosition(TextPosition(
+                        affinity: TextAffinity.downstream,
+                        offset: widget.text.length ?? 0)),
+                  )),
+                  enabled: widget.enable && !widget.onlyTap ? true : false,
+                  keyboardType: widget.keyboardType,
+                  style: widget.style,
+                  focusNode: widget.focusNode,
+                  cursorRadius: Radius.circular(10),
+                  decoration: InputDecoration(
+                    hintText: widget.placeholder,
+                    filled: true,
+                    fillColor: widget.backgroundColor,
+                    focusedBorder:
+                        OutlineInputBorder(borderSide: widget.border),
+                    disabledBorder:
+                        OutlineInputBorder(borderSide: widget.border),
+                    enabledBorder:
+                        OutlineInputBorder(borderSide: widget.border),
+                    contentPadding:
+                        EdgeInsets.fromLTRB(widget.leftTextPadding, 0, 10, 0),
+                    border: OutlineInputBorder(
+                        borderRadius: widget.borderRadius ?? BorderRadius.zero,
+                        // borderRadius: widget.borderRadius,
+                        borderSide: widget.border),
+                  ),
+                  onChanged: (value) {
+                    selfValue = value;
+                    if (widget.valueChange != null) {
+                      widget.valueChange(value);
+                    }
+                  },
+                ),
               ),
             )
           ],

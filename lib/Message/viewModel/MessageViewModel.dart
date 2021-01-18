@@ -36,7 +36,7 @@ class MessageViewModel {
   }
 
   loadMessageTypeList(
-      int noticeType, Function(List messageList, bool success) success) {
+      Map params, Function(List messageList, bool success, int total) success) {
     UserDefault.get(USERINFO).then((userInfo) {
       if (userInfo != null) {
         Map<String, dynamic> userInfoMap =
@@ -47,23 +47,23 @@ class MessageViewModel {
           {
             'userId': userInfoMap['userId'],
             'deptId': userInfoMap['deptId'],
-            'noticeType': noticeType
+            ...params,
           },
           success: (json) {
             if (json['code'] == 200) {
               if (success != null) {
-                success(
-                    json['data'] != null ? (json['data'])['rows'] : [], true);
+                success(json['data'] != null ? (json['data'])['rows'] : [],
+                    true, json['total']);
               }
             } else {
               if (success != null) {
-                success(null, false);
+                success(null, false, 0);
               }
             }
           },
           fail: (reason, code) {
             if (success != null) {
-              success(null, false);
+              success(null, false, 0);
             }
           },
         );

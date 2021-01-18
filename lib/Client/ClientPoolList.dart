@@ -1,5 +1,6 @@
 import 'package:JMrealty/Client/viewModel/ClientPoolViewModel.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
+import 'package:JMrealty/components/CustomPullFooter.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/utils/EventBus.dart';
@@ -26,6 +27,8 @@ class _ClientPoolListState extends State<ClientPoolList>
   ClientPoolViewModel clientPoolVM = ClientPoolViewModel();
   List dataList = [];
   Map data = {};
+  int totalData = 0;
+  int pageNum = 1;
   EventBus _eventBus = EventBus();
   @override
   void initState() {
@@ -47,6 +50,7 @@ class _ClientPoolListState extends State<ClientPoolList>
     super.build(context);
     return EasyRefresh(
         header: CustomPullHeader(key: pullHeaderKey),
+        footer: CustomPullFooter(),
         key: pullKey,
         controller: pullCtr,
         firstRefresh: true,
@@ -55,6 +59,12 @@ class _ClientPoolListState extends State<ClientPoolList>
         onRefresh: () async {
           loadRequest();
         },
+        onLoad: dataList != null && dataList.length >= totalData
+            ? null
+            : () async {
+                pageNum++;
+                loadRequest(isLoad: true, page: pageNum);
+              },
         child: ListView.builder(
           itemCount: dataList.length,
           // itemCount: model.listData.length,
@@ -79,14 +89,26 @@ class _ClientPoolListState extends State<ClientPoolList>
         ));
   }
 
-  loadRequest() {
+  loadRequest({int pageSize = 10, int page = 1, bool isLoad = false}) {
+    if (!isLoad) {
+      pageNum = 1;
+    }
     clientPoolVM.loadClientPoolList(
-        params: Map<String, dynamic>.from(
-            {...widget.clientPoolParams, 'customerPoolTepe': widget.poolType}),
+        params: Map<String, dynamic>.from({
+          ...widget.clientPoolParams,
+          'customerPoolTepe': widget.poolType,
+          'pageSize': pageSize,
+          'pageNum': page
+        }),
         success: (data) {
           setState(() {
+            totalData = data['total'];
             data = Map<String, dynamic>.from(data);
-            dataList = data['rows'];
+            if (isLoad) {
+              dataList.addAll(data['rows']);
+            } else {
+              dataList = data['rows'];
+            }
           });
         });
   }

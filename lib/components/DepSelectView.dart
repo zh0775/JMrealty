@@ -56,6 +56,11 @@ class _DepSelectViewState extends State<DepSelectView> {
           if (widget.nodesSelected != null) {
             widget.nodesSelected(seletedNodes);
           }
+          if (widget.nodeSelected != null &&
+              seletedNodes != null &&
+              seletedNodes.length > 0) {
+            widget.nodeSelected(seletedNodes[0]);
+          }
           Navigator.pop(context);
         },
       ),

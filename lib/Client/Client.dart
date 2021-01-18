@@ -6,6 +6,7 @@ import 'package:JMrealty/Client/viewModel/ClientListSelectViewModel.dart';
 import 'package:JMrealty/Client/viewModel/ClientListViewModel.dart';
 import 'package:JMrealty/Report/AddReport.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
+import 'package:JMrealty/components/CustomPullFooter.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/components/NoneV.dart';
@@ -68,9 +69,11 @@ class _ClientState extends State<Client> {
       }
     });
     topSelectVM.loadSelectData(success: (data) {
-      setState(() {
-        selectData = data;
-      });
+      if (mounted) {
+        setState(() {
+          selectData = data;
+        });
+      }
     });
     cellClientOpenClick =
         (ClientStatus status, int index, Map model, BuildContext context) {
@@ -117,7 +120,7 @@ class _ClientState extends State<Client> {
                   image: DecorationImage(
                       fit: BoxFit.fill,
                       image:
-                          AssetImage('assets/images/icon/bg_appbar_01.png'))),
+                          AssetImage('assets/images/icon/bg_appbar_02.png'))),
             ),
             centerTitle: true,
             backgroundColor: jm_appTheme,
@@ -257,7 +260,7 @@ class _ClientState extends State<Client> {
                     top: 0,
                     child: GestureDetector(
                       onTap: () {
-                        if (selectExpand) {
+                        if (selectExpand && mounted) {
                           setState(() {
                             selectExpand = !selectExpand;
                           });
@@ -457,7 +460,8 @@ class _ClientListState extends State<ClientList>
   List listData = [];
   Map statusParams;
   int totalData = 0;
-
+  int pageNum = 1;
+  int pageSize = 10;
   @override
   void initState() {
     int status = 0;
@@ -479,8 +483,8 @@ class _ClientListState extends State<ClientList>
         break;
       default:
     }
-    statusParams = Map<String, dynamic>.from(
-        {'status': status, 'pageNum': 1, 'pageSize': 10});
+    statusParams =
+        Map<String, dynamic>.from({'status': status, 'pageSize': pageSize});
     loadList();
     eventBus.on(NOTIFY_CLIENT_LIST_REFRASH, (arg) {
       if (arg['desireId'] != null) {
@@ -509,8 +513,8 @@ class _ClientListState extends State<ClientList>
 
   @override
   void dispose() {
-    eventBus.off(NOTIFY_CLIENT_LIST_REFRASH_NORMAL);
-    eventBus.off(NOTIFY_CLIENT_LIST_REFRASH);
+    // eventBus.off(NOTIFY_CLIENT_LIST_REFRASH_NORMAL);
+    // eventBus.off(NOTIFY_CLIENT_LIST_REFRASH);
     // listModel.dispose();
     super.dispose();
   }
@@ -521,7 +525,7 @@ class _ClientListState extends State<ClientList>
     return EasyRefresh(
       controller: pullCtr,
       header: CustomPullHeader(key: pullHeaderKey),
-      footer: MaterialFooter(backgroundColor: jm_appTheme),
+      footer: CustomPullFooter(),
       emptyWidget:
           listData == null || listData.length == 0 ? EmptyView() : null,
       key: easyRefreshKey,
@@ -533,8 +537,11 @@ class _ClientListState extends State<ClientList>
       onLoad: listData != null && listData.length >= totalData
           ? null
           : () async {
-              statusParams['pageNum'] += 1;
-              loadList(isLoad: true);
+              pageNum++;
+              loadList(
+                isLoad: true,
+                page: pageNum,
+              );
             },
       child: ListView.builder(
         itemCount: listData == null ? 0 : listData.length,
@@ -553,7 +560,11 @@ class _ClientListState extends State<ClientList>
     );
   }
 
-  loadList({bool isLoad = false}) {
+  loadList({bool isLoad = false, int page = 1}) {
+    if (!isLoad) {
+      pageNum = 1;
+    }
+    statusParams['pageNum'] = page;
     listModel.loadClientList(statusParams, success: (data, total) {
       if (mounted) {
         setState(() {

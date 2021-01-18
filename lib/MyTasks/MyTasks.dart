@@ -35,7 +35,7 @@ class _MyTasksState extends State<MyTasks> {
   @override
   void initState() {
     myTaskVM.loadTasksUrgency((data, success) {
-      if (success) {
+      if (success && mounted) {
         setState(() {
           taskTypeList = data;
         });

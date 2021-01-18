@@ -6,7 +6,8 @@ import 'package:intl/intl.dart';
 
 class ReportViewModel extends BaseViewModel {
   List projectData;
-  loadProjectList(String name, {Function(List data) success}) {
+  loadProjectList(String name,
+      {Function(List data, bool success, int total) success}) {
     Http().get(
       Urls.projectFuzzySearch,
       {'name': name},
@@ -14,12 +15,20 @@ class ReportViewModel extends BaseViewModel {
         if (json['code'] != null && json['code'] == 200) {
           projectData = (json['data'])['rows'];
           if (success != null) {
-            success(projectData);
+            success(projectData, true, json['total']);
+          }
+        } else {
+          if (success != null) {
+            success(null, false, 0);
           }
         }
         // print('projectFuzzySearch === $json');
       },
-      fail: (reason, code) {},
+      fail: (reason, code) {
+        if (success != null) {
+          success(null, false, 0);
+        }
+      },
     );
   }
 
@@ -139,6 +148,31 @@ class ReportViewModel extends BaseViewModel {
           ShowToast.normal(reason);
         }
       },
+    );
+  }
+
+  projectContact(int projectId, Function(bool success, List data) success,
+      {Function() after}) {
+    Http().get(
+      Urls.projectContact,
+      {'projectId': projectId},
+      success: (json) {
+        if (json['code'] == 200) {
+          if (success != null) {
+            success(true, json['data']);
+          }
+        } else {
+          if (success != null) {
+            success(false, null);
+          }
+        }
+      },
+      fail: (reason, code) {
+        if (success != null) {
+          success(false, null);
+        }
+      },
+      after: after,
     );
   }
 }

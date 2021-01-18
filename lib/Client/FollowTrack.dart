@@ -51,7 +51,7 @@ class _FollowTrackState extends State<FollowTrack> {
           _controller = controller;
         },
         onPageFinished: (url) {
-          String json = convert.jsonEncode(widget.data);
+          String json = convert.jsonEncode({'list': widget.data});
           String js_String = "let json = " +
               "'" +
               json +

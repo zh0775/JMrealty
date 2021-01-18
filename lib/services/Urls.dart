@@ -26,6 +26,9 @@ class Urls {
   static const String getHomeWaitToDo = '/comps/todo/findByTime';
   // 获取首页菜单
   static const String getHomeMenus = '/system/user/findMenuByUserId';
+  // 查询部门是省，市，区 所有信息集合
+  static const String getDepCityList =
+      '/system/deptDetail/deptDetailIsCtiyList';
 
   // 客户
   // 新增接口下拉数据接口
@@ -54,6 +57,11 @@ class Urls {
   // 员工把客户放入客户池
   static const String customToPoll = '/customer/customer/increaseCustomerPool';
 
+  // 获取当天待跟进的客户数量
+  static const String countProgress = '/customer/progress/countProgress';
+
+  // 强制提醒获取接口
+  static const String findOvertime = '/customer/progress/findOvertime';
   // 报备
   // 项目名称模糊查询
   static const String projectFuzzySearch = '/customer/project/fuzzySearch';
@@ -88,16 +96,19 @@ class Urls {
   static const String reportCopy = '/customer/report/copyReport';
   // 智能报备
   static const String smartReport = '/customer/report/intelligenceReport';
+  // 跟进项目ID查询联系人列表（不分页）
+  static const String projectContact =
+      '/customer/projectContact/findByProjectId';
 
   //业绩规划
   // 查询业绩规则列表
-  static const String targetRuleList = '/customer/targetRule/list';
+  static const String targetRuleList = '/comps/targetRule/list';
   // 修改业绩规则
-  static const String targetRuleChange = '/customer/targetRule/edit';
+  static const String targetRuleChange = '/comps/targetRule/edit';
   // 新增业绩规则
-  static const String addTargetRule = '/customer/targetRule/add';
+  static const String addTargetRule = '/comps/targetRule/add';
   // 删除业绩规则信息
-  static String deleteTargetRule(String id) => '/customer/targetRule/$id';
+  static String deleteTargetRule(String id) => '/comps/targetRule/$id';
 
   // 删除业绩规则信息
   static const String deleteTargetRuleById = '/customer/targetRule';
@@ -142,9 +153,6 @@ class Urls {
   static const String messageRead = '/comps/notice/readAdd';
   // 消息类型列表
   static const String messageTypeList = '/comps/notice/selectNoticeMessageList';
-
-  // 强制提醒
-  static const String findOvertime = '/customer/progress/findOvertime';
 
   //我的
   // 个人信息 // findUserInfo

@@ -230,7 +230,11 @@ class _ClientDetailState extends State<ClientDetail> {
               mainAxisAlignment: MainAxisAlignment.center,
               // mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/images/icon/icon_client_status.png'),
+                Image.asset(
+                  'assets/images/icon/icon_client_status.png',
+                  width: widthScale * 10,
+                  height: widthScale * 10,
+                ),
                 SizedBox(
                   height: 2,
                 ),
