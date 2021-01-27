@@ -128,7 +128,7 @@ class _ClientPoolState extends State<ClientPool> {
               Positioned(
                   left: 0,
                   right: 0,
-                  top: 80,
+                  top: filterBarHeight * 2,
                   bottom: 0,
                   child: TabBarView(children: [
                     ClientPoolList(
@@ -157,7 +157,9 @@ class _ClientPoolState extends State<ClientPool> {
                           : Colors.transparent,
                       width: SizeConfig.screenWidth,
                       alignment: Alignment.topLeft,
-                      height: selectExpand ? SizeConfig.screenHeight : filterBarHeight,
+                      height: selectExpand
+                          ? SizeConfig.screenHeight
+                          : filterBarHeight,
                       child: Row(
                         children: [
                           topButton(
@@ -190,7 +192,7 @@ class _ClientPoolState extends State<ClientPool> {
                   )),
               selectExpand
                   ? Positioned(
-                      top: 80,
+                      top: filterBarHeight * 2,
                       left: 0,
                       child: selectList(selectData[key] ?? [], (Map item) {
                         switch (currentSelectIndex) {

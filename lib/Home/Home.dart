@@ -178,7 +178,6 @@ class _HomeState extends State<Home> {
           });
         }
       });
-
       // 当日待跟进客户数量
       clientVM.loadCountProgress((success, count) {
         if (success) {
@@ -218,17 +217,18 @@ class _HomeState extends State<Home> {
               });
             }
           });
+          homeVM.getHomeWaitToDo((waitToDoList, success) {
+            if (success && mounted) {
+              setState(() {
+                homeScheduleToDoData = waitToDoList;
+              });
+            }
+          });
+          // banner
+          getBanner();
         });
         // 待办
-        homeVM.getHomeWaitToDo((waitToDoList, success) {
-          if (success && mounted) {
-            setState(() {
-              homeScheduleToDoData = waitToDoList;
-            });
-          }
-        });
-        // banner
-        getBanner();
+
       }
     }
   }

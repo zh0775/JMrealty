@@ -43,7 +43,7 @@ class _HomeNaviBarState extends State<HomeNaviBar> {
       ),
       Positioned(
           left: SizeConfig.blockSizeHorizontal * 6,
-          top: 44,
+          top: 64,
           child: ProjectSearchBar(
             toProjectSearch: true,
           ))

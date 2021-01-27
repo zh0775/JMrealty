@@ -57,4 +57,28 @@ class MineViewModel {
       }
     });
   }
+
+  getMedelList(
+      int userId,
+      Function(
+    bool success,
+    List medelList,
+  )
+          success) {
+    Http().get(Urls.medalList, {'userId': userId}, success: (json) {
+      if (json['code'] == 200) {
+        if (success != null) {
+          success(true, json['data']);
+        }
+      } else {
+        if (success != null) {
+          success(false, null);
+        }
+      }
+    }, fail: (String reason, int code) {
+      if (success != null) {
+        success(false, null);
+      }
+    });
+  }
 }

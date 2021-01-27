@@ -225,16 +225,19 @@ String getStatusString(int status) {
       return '带看资料';
       break;
     case 22:
-      return '待确认';
+      return '预约审核资料';
+      break;
+    case 24:
+      return '成交审核资料';
       break;
     case 21:
-      return '预约';
+      return '预约资料';
       break;
     case 30:
-      return '成交';
+      return '成交资料';
       break;
     case 40:
-      return '签约';
+      return '签约资料';
       break;
     case 50:
       return '结款';
@@ -255,6 +258,24 @@ String getStatusString(int status) {
       return '其他';
       break;
   }
+}
+
+// NumberFormat('0,000').format(widget.data['amount'] ?? 0)
+String numberFormat(dynamic number) {
+  if (number == null) return '';
+  if (number is int || number is double) {
+    if (number < 1000) return number.toString();
+    List l = number.toString().split('.');
+    if (l.length > 1) {
+      return NumberFormat('0,000').format(int.parse(l[0])).toString() +
+          '.' +
+          l[1];
+    } else {
+      return NumberFormat('0,000').format(number);
+    }
+    // List l = number.
+  }
+  return '';
 }
 
 Size calculateTextSize(

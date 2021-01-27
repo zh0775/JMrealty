@@ -326,6 +326,7 @@ class JMline extends StatelessWidget {
       width: width,
       height: height,
       color: jm_line_color,
+      // color: Colors.red,
       margin: EdgeInsets.only(left: margin),
     );
   }
@@ -764,6 +765,7 @@ class _SexCellState extends State<SexCell> {
           child: Text(
             buttonSex == Sex.boy ? '男' : '女',
             style: TextStyle(
+                height: 1.28,
                 // textBaseline: TextBaseline.alphabetic,
                 fontSize: 15,
                 color: buttonSex != sex

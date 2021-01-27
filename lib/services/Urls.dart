@@ -182,6 +182,8 @@ class Urls {
   static const String queryEmployeeTarget = '/comps/employee/query';
   // 员工设置目标
   static const String employeeSetTarget = '/comps/employee/setTarget';
-
+  // 修改签名
   static const String updateSign = '/system/user/updateSign';
+  // 奖章列表
+  static const String medalList = '/comps/detail/findByUserId';
 }

@@ -35,7 +35,8 @@ class CustomTextF extends StatefulWidget {
       this.width,
       this.margin,
       this.height = 50,
-      this.hintStyle,
+      this.hintStyle =
+          const TextStyle(color: jm_placeholder_color, fontSize: 14),
       this.controller,
       this.bottomLine = false,
       this.labelWidth = 0.0,

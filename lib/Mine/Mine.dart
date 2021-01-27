@@ -25,6 +25,7 @@ class Mine extends StatefulWidget {
 
 class _MineState extends State<Mine> {
   List menuData = [];
+
   HomeViewModel homeVM = HomeViewModel();
   MineViewModel mineVM = MineViewModel();
   EasyRefreshController pullCtr = EasyRefreshController();
@@ -36,6 +37,7 @@ class _MineState extends State<Mine> {
   double selfWidth;
 
   Map userInfo = {};
+  List medalDataList = [];
   Map targetData = {};
   var bus = EventBus();
   @override
@@ -75,13 +77,20 @@ class _MineState extends State<Mine> {
         UserDefault.get(USERINFO).then((value) {
           setState(() {
             userInfo = Map<String, dynamic>.from(convert.jsonDecode(value));
-            mineVM.loadMonthTarget(userInfo['userId'], (success, data) {
-              if (success && mounted) {
-                setState(() {
-                  targetData = data;
-                });
-              }
-            });
+          });
+          mineVM.loadMonthTarget(userInfo['userId'], (success, data) {
+            if (success && mounted) {
+              setState(() {
+                targetData = data;
+              });
+            }
+          });
+          mineVM.getMedelList(userInfo['userId'], (success, data) {
+            if (success && mounted) {
+              setState(() {
+                medalDataList = data;
+              });
+            }
           });
         });
       },
@@ -125,6 +134,7 @@ class _MineState extends State<Mine> {
               children: [
                 MineTop(
                   data: userInfo,
+                  medelList: medalDataList ?? [],
                   height: topHeight,
                   targetData: targetData,
                   changeInfo: changeInfo,
@@ -139,7 +149,7 @@ class _MineState extends State<Mine> {
                       elevation: 2,
                       highlightElevation: 2,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(widthScale * 3),
+                        borderRadius: BorderRadius.circular(widthScale * 2),
                       ),
                       onPressed: () {
                         Navigator.of(context)
@@ -164,7 +174,7 @@ class _MineState extends State<Mine> {
                               width: widthScale * 1,
                             ),
                             Text(
-                              '设置目标',
+                              '设置业绩',
                               style:
                                   TextStyle(color: Colors.white, fontSize: 15),
                             )

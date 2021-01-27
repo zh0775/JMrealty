@@ -344,8 +344,8 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
             }
           },
           constraints: BoxConstraints(
-            minHeight: lineHeight - 5,
-            minWidth: SizeConfig.blockSizeHorizontal * 17,
+            minHeight: lineHeight - 8,
+            minWidth: SizeConfig.blockSizeHorizontal * 16,
           ),
           shape: RoundedRectangleBorder(
             side: BorderSide(width: 0.5, color: whiteButtonTextColor),
@@ -372,8 +372,8 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
           width: SizeConfig.blockSizeHorizontal * 3,
         ),
         Container(
-            width: SizeConfig.blockSizeHorizontal * 20,
-            height: lineHeight - 5,
+            width: SizeConfig.blockSizeHorizontal * 18,
+            height: lineHeight - 8,
             child: RawMaterialButton(
               highlightElevation: 0,
               elevation: 0,
@@ -397,7 +397,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
                     color: whiteButtonTextColor,
                   ),
                   SizedBox(
-                    width: 6,
+                    width: 3,
                   ),
                   Text(
                     '写跟进',
@@ -410,8 +410,8 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
           width: SizeConfig.blockSizeHorizontal * 3,
         ),
         Container(
-            width: SizeConfig.blockSizeHorizontal * 16,
-            height: lineHeight - 5,
+            width: SizeConfig.blockSizeHorizontal * 15,
+            height: lineHeight - 8,
             child: RawMaterialButton(
               highlightElevation: 0,
               elevation: 0,
@@ -434,7 +434,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
                     color: Colors.white,
                   ),
                   SizedBox(
-                    width: 6,
+                    width: 5,
                   ),
                   Text(
                     '报备',

@@ -146,70 +146,85 @@ class _ClientState extends State<Client> {
                     push(AddClientVC(), context);
                   })
             ],
-            bottom: TabBar(
-              indicatorSize: TabBarIndicatorSize.label,
-              indicatorColor: Colors.black,
-              indicatorWeight: 2.0,
-              indicatorPadding: EdgeInsets.only(bottom: 5, left: 13, right: 13),
-              tabs: [
-                Tab(
-                    child: Container(
-                  width: 50,
-                  height: 30,
-                  alignment: Alignment.center,
-                  child: Stack(
-                    overflow: Overflow.visible,
-                    children: [
-                      Text(
-                        '待跟进',
-                        style: jm_text_black_style14,
-                      ),
-                      waitFollowCount > 0
-                          ? Positioned(
-                              right: -11,
-                              top: -6,
-                              child: Container(
-                                width: 18,
-                                height: 18,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(9)),
-                                child: Text(
-                                  waitFollowCount.toString(),
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 10),
-                                ),
-                              ))
-                          : NoneV()
-                    ],
-                  ),
-                )),
-                Tab(
-                  child: Text(
-                    '已带看',
-                    style: jm_text_black_style14,
+            bottom: PreferredSize(
+              preferredSize: Size(SizeConfig.screenWidth, 55),
+              child: Container(
+                height: 55,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    height: 50,
+                    child: TabBar(
+                      indicatorSize: TabBarIndicatorSize.label,
+                      indicatorColor: Colors.black,
+                      indicatorWeight: 2.0,
+                      indicatorPadding:
+                          EdgeInsets.only(bottom: 5, left: 13, right: 13),
+                      tabs: [
+                        Tab(
+                            child: Container(
+                          width: 50,
+                          height: 30,
+                          alignment: Alignment.center,
+                          child: Stack(
+                            overflow: Overflow.visible,
+                            children: [
+                              Text(
+                                '待跟进',
+                                style: jm_text_black_style14,
+                              ),
+                              waitFollowCount > 0
+                                  ? Positioned(
+                                      right: -11,
+                                      top: -6,
+                                      child: Container(
+                                        width: 18,
+                                        height: 18,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            borderRadius:
+                                                BorderRadius.circular(9)),
+                                        child: Text(
+                                          waitFollowCount.toString(),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10),
+                                        ),
+                                      ))
+                                  : NoneV()
+                            ],
+                          ),
+                        )),
+                        Tab(
+                          child: Text(
+                            '已带看',
+                            style: jm_text_black_style14,
+                          ),
+                        ),
+                        Tab(
+                          child: Text(
+                            '已预约',
+                            style: jm_text_black_style14,
+                          ),
+                        ),
+                        Tab(
+                          child: Text(
+                            '已成交',
+                            style: jm_text_black_style14,
+                          ),
+                        ),
+                        Tab(
+                          child: Text(
+                            '公开',
+                            style: jm_text_black_style14,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-                Tab(
-                  child: Text(
-                    '已预约',
-                    style: jm_text_black_style14,
-                  ),
-                ),
-                Tab(
-                  child: Text(
-                    '已成交',
-                    style: jm_text_black_style14,
-                  ),
-                ),
-                Tab(
-                  child: Text(
-                    '公开',
-                    style: jm_text_black_style14,
-                  ),
-                )
-              ],
+              ),
             ),
           ),
           backgroundColor: Colors.white,
@@ -266,25 +281,25 @@ class _ClientState extends State<Client> {
                       elevation: 0.0,
                       highlightElevation: 0.5,
                       constraints: BoxConstraints(
-                        minWidth: widthScale * 20,
-                        minHeight: 40,
+                        minWidth: widthScale * 21,
+                        minHeight: 44,
                       ),
                       fillColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: BorderSide(width: 4, color: Color(0x3362677D))),
+                          borderRadius: BorderRadius.circular(22),
+                          side: BorderSide(width: 5, color: Color(0x3362677D))),
                       child: Row(
                         children: [
                           Image.asset(
                               'assets/images/icon/icon_clientlist_addclient.png',
-                              width: widthScale * 4.5,
-                              height: widthScale * 4.5),
+                              width: widthScale * 5,
+                              height: widthScale * 5),
                           SizedBox(
-                            width: widthScale * 1.2,
+                            width: widthScale * 1,
                           ),
                           Text(
                             '新增',
-                            style: jm_text_black_style14,
+                            style: jm_text_black_style15,
                           )
                         ],
                       ),

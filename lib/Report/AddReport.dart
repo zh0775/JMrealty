@@ -113,395 +113,392 @@ class _AddReportState extends State<AddReport> {
             );
           },
         ),
-        body: ListView(
-          children: [
-            Container(
-              height: 50,
-              margin: EdgeInsets.only(left: margin),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  '项目',
-                  style: jm_text_black_bold_style20,
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                height: 50,
+                margin: EdgeInsets.only(left: margin),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '项目',
+                    style: jm_text_black_bold_style20,
+                  ),
                 ),
               ),
-            ),
-            JMline(
-              width: SizeConfig.screenWidth - margin,
-              height: 1,
-              margin: margin,
-            ),
-            CustomInput(
-              key: ValueKey('CustomInput_project_1'),
-              text: projectData != null && projectData['name'] != null
-                  ? projectData['name']
-                  : '',
-              labelStyle: jm_text_black_bold_style16,
-              textStyle: jm_text_black_style15,
-              controller: projectInputCtr,
-              labelWidth: labelWidth,
-              title: '项目搜索',
-              hintText: '请输入项目名称',
-              valueChangeAndShowList: (value, state) {
-                if (value != '') {
-                  model.loadProjectList(
-                    value,
-                    success: (data, success, total) {
-                      if (success) {
-                        if (data != null && data.length > 0) {
-                          state.showList(data);
+              JMline(
+                width: SizeConfig.screenWidth,
+                height: 1,
+              ),
+              CustomInput(
+                key: ValueKey('CustomInput_project_1'),
+                text: projectData != null && projectData['name'] != null
+                    ? projectData['name']
+                    : '',
+                labelStyle: jm_text_black_bold_style16,
+                textStyle: jm_text_black_style15,
+                controller: projectInputCtr,
+                labelWidth: labelWidth,
+                title: '项目搜索',
+                hintText: '请输入项目名称',
+                valueChangeAndShowList: (value, state) {
+                  if (value != '') {
+                    model.loadProjectList(
+                      value,
+                      success: (data, success, total) {
+                        if (success) {
+                          if (data != null && data.length > 0) {
+                            state.showList(data);
+                          }
                         }
+                      },
+                    );
+                  } else {
+                    state.removeList();
+                  }
+                },
+                showListClick: (data) {
+                  projectInputCtr.text = data['name'] ?? '';
+                  projectTimeInputCtr.text = data['approachDate'] ?? '';
+                  projectCompanyInputCtr.text = data['companyName'] ?? '';
+                  setState(() {
+                    projectData = data;
+                  });
+
+                  CustomLoading().show();
+                  model.projectContact(
+                    data['id'],
+                    (success, data) {
+                      // CustomLoading().hide();
+                      if (success) {
+                        projectContact = data;
                       }
                     },
+                    after: () {
+                      CustomLoading().hide();
+                    },
                   );
-                } else {
-                  state.removeList();
-                }
-              },
-              showListClick: (data) {
-                projectInputCtr.text = data['name'] ?? '';
-                projectTimeInputCtr.text = data['approachDate'] ?? '';
-                projectCompanyInputCtr.text = data['companyName'] ?? '';
-                setState(() {
-                  projectData = data;
-                });
-
-                CustomLoading().show();
-                model.projectContact(
-                  data['id'],
-                  (success, data) {
-                    // CustomLoading().hide();
-                    if (success) {
-                      projectContact = data;
-                    }
-                  },
-                  after: () {
-                    CustomLoading().hide();
-                  },
-                );
-              },
-            ),
-            JMline(
-              width: SizeConfig.screenWidth - margin,
-              height: 1,
-              margin: margin,
-            ),
-            CustomInput(
-              labelWidth: labelWidth,
-              key: ValueKey('CustomInput_project_2'),
-              labelStyle: jm_text_black_bold_style16,
-              textStyle: jm_text_black_style15,
-              controller: projectTimeInputCtr,
-              title: '最早到场时间',
-              hintText: '选择项目后自动生成',
-              text: projectData != null && projectData['approachDate'] != null
-                  ? projectData['approachDate']
-                  : '',
-              enable: false,
-            ),
-            projectData != null
-                ? Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                      margin:
-                          EdgeInsets.only(left: widthScale * 30, bottom: 10),
-                      width:
-                          SizeConfig.screenWidth - margin * 2 - widthScale * 24,
-                      // color: Colors.red,
-                      child: Text(
-                        '该项目要求提前报备' +
-                            projectData['reportBeforeTime'].toString() +
-                            '分钟。' +
-                            (projectData['isSensitive'] == null
-                                ? ''
-                                : (projectData['isSensitive'] == 1
-                                    ? '要求手机号前三后四'
-                                    : '要求全号报备')),
-                        style: jm_text_gray_style12,
-                        maxLines: null,
-                      ),
-                    ),
-                  )
-                : NoneV(),
-            JMline(
-              width: SizeConfig.screenWidth - margin,
-              height: 1,
-              margin: margin,
-            ),
-            CustomInput(
-              labelWidth: labelWidth,
-              key: ValueKey('CustomInput_project_3'),
-              labelStyle: jm_text_black_bold_style16,
-              textStyle: jm_text_black_style15,
-              controller: projectCompanyInputCtr,
-              title: '对接公司',
-              hintText: '选择项目后自动生成',
-              text: projectData != null && projectData['companyName'] != null
-                  ? projectData['companyName']
-                  : '',
-              enable: false,
-            ),
-            JMline(
-              width: SizeConfig.screenWidth - margin,
-              height: 1,
-              margin: margin,
-            ),
-            CustomInput(
-              labelWidth: labelWidth,
-              key: ValueKey('CustomInput_Sensitive_project_4'),
-              title: '前三后四录入',
-              labelStyle: jm_text_black_bold_style16,
-              contentWidet: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Transform.scale(
-                      scale: 0.9,
-                      child: CupertinoSwitch(
-                        value: isSensitive == 0 || isSensitive == null
-                            ? false
-                            : true,
-                        activeColor: jm_appTheme,
-                        onChanged: (value) {
-                          setState(() {
-                            isSensitive = value ? 1 : 0;
-                          });
-                        },
-                      ))
-                ],
+                },
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: margin),
-              child: Text(
-                '选择前三后四仍需输入全号，不过再系统中会显示前三后四',
-                style: jm_text_gray_style12,
+              JMline(
+                width: SizeConfig.screenWidth - margin * 2,
+                height: 1,
               ),
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            JMline(
-              width: SizeConfig.screenWidth,
-              height: 6,
-            ),
-            ...addClientWidgets,
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                setState(() {
-                  addClient();
-                });
-              },
-              child: Container(
-                margin: EdgeInsets.only(left: margin),
-                height: lineHeight,
-                width: SizeConfig.screenWidth - margin,
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.add_circle_outline,
-                      size: 20,
-                      color: jm_appTheme,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 5),
-                      child: Text(
-                        '添加客源',
-                        style: jm_text_apptheme_style15,
+              CustomInput(
+                labelWidth: labelWidth,
+                key: ValueKey('CustomInput_project_2'),
+                labelStyle: jm_text_black_bold_style16,
+                textStyle: jm_text_black_style15,
+                controller: projectTimeInputCtr,
+                title: '最早到场时间',
+                hintText: '选择项目后自动生成',
+                text: projectData != null && projectData['approachDate'] != null
+                    ? projectData['approachDate']
+                    : '',
+                enable: false,
+              ),
+              projectData != null
+                  ? Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        margin:
+                            EdgeInsets.only(left: widthScale * 30, bottom: 10),
+                        width: SizeConfig.screenWidth -
+                            margin * 2 -
+                            widthScale * 24,
+                        // color: Colors.red,
+                        child: Text(
+                          '该项目要求提前报备' +
+                              projectData['reportBeforeTime'].toString() +
+                              '分钟。' +
+                              (projectData['isSensitive'] == null
+                                  ? ''
+                                  : (projectData['isSensitive'] == 1
+                                      ? '要求手机号前三后四'
+                                      : '要求全号报备')),
+                          style: jm_text_gray_style12,
+                          maxLines: null,
+                        ),
                       ),
                     )
+                  : NoneV(),
+              JMline(
+                width: SizeConfig.screenWidth - margin * 2,
+                height: 1,
+              ),
+              CustomInput(
+                labelWidth: labelWidth,
+                key: ValueKey('CustomInput_project_3'),
+                labelStyle: jm_text_black_bold_style16,
+                textStyle: jm_text_black_style15,
+                controller: projectCompanyInputCtr,
+                title: '对接公司',
+                hintText: '选择项目后自动生成',
+                text: projectData != null && projectData['companyName'] != null
+                    ? projectData['companyName']
+                    : '',
+                enable: false,
+              ),
+              JMline(
+                width: SizeConfig.screenWidth - margin * 2,
+                height: 1,
+              ),
+              CustomInput(
+                labelWidth: labelWidth,
+                key: ValueKey('CustomInput_Sensitive_project_4'),
+                title: '前三后四录入',
+                labelStyle: jm_text_black_bold_style16,
+                contentWidet: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Transform.scale(
+                        scale: 0.9,
+                        child: CupertinoSwitch(
+                          value: isSensitive == 0 || isSensitive == null
+                              ? false
+                              : true,
+                          activeColor: jm_appTheme,
+                          onChanged: (value) {
+                            setState(() {
+                              isSensitive = value ? 1 : 0;
+                            });
+                          },
+                        ))
                   ],
                 ),
               ),
-            ),
-            JMline(
-              width: SizeConfig.screenWidth,
-              height: 6,
-            ),
-            CustomInput(
-              labelWidth: labelWidth,
-              key: ValueKey('CustomInput_agent_1'),
-              labelStyle: jm_text_black_bold_style16,
-              textStyle: jm_text_black_style15,
-              text: agentData != null && agentData['showName'] != null
-                  ? agentData['showName']
-                  : '',
-              title: '搜索',
-              hintText: '请输入用户名称',
-              valueChange: (value) {},
-              valueChangeAndShowList: (value, state) {
-                if (value != '') {
-                  model.loadAgentSearchData(
-                    value,
-                    success: (data) {
-                      if (data != null && data.length > 0) {
-                        state.showList(data);
-                      }
-                    },
-                  );
-                } else {
-                  state.removeList();
-                }
-              },
-              showListClick: (data) {
-                setState(() {
-                  agentData = data;
-                  agentData['showName'] = data['userName'];
-                });
-              },
-            ),
-            JMline(
-              width: SizeConfig.screenWidth - margin,
-              height: 1,
-              margin: margin,
-            ),
-            CustomInput(
-              labelWidth: labelWidth,
-              key: ValueKey('CustomInput_agent_2'),
-              labelStyle: jm_text_black_bold_style16,
-              textStyle: jm_text_black_style15,
-              title: '客户经理',
-              text: agentData != null && agentData['userName'] != null
-                  ? agentData['userName']
-                  : '',
-              enable: false,
-            ),
-            JMline(
-              width: SizeConfig.screenWidth - margin,
-              height: 1,
-              margin: margin,
-            ),
-            CustomInput(
-              labelWidth: labelWidth,
-              key: ValueKey('CustomInput_agent_3'),
-              labelStyle: jm_text_black_bold_style16,
-              textStyle: jm_text_black_style15,
-              title: '联系方式',
-              text: agentData != null && agentData['phonenumber'] != null
-                  ? agentData['phonenumber']
-                  : '',
-              enable: false,
-            ),
-            JMline(
-              width: SizeConfig.screenWidth,
-              height: 6,
-            ),
-            Container(
-              height: lineHeight,
-              margin: EdgeInsets.only(left: margin),
-              alignment: Alignment.centerLeft,
-              child: Text('备注（选填）', style: jm_text_black_bold_style20),
-            ),
-            Container(
-              constraints: BoxConstraints(maxHeight: 100, minHeight: 90),
-              width: SizeConfig.screenWidth - margin * 2,
-              padding: EdgeInsets.fromLTRB(margin, 10, margin, 10),
-              child: TextField(
-                maxLength: 200,
-                buildCounter: (BuildContext context,
-                    {int currentLength, bool isFocused, int maxLength}) {
-                  return Text(
-                    "$currentLength/$maxLength",
-                    style: jm_text_black_style13,
-                  ); //字符统计
+              Padding(
+                padding: EdgeInsets.only(left: margin),
+                child: Text(
+                  '选择前三后四仍需输入全号，不过再系统中会显示前三后四',
+                  style: jm_text_gray_style12,
+                ),
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              JMline(
+                width: SizeConfig.screenWidth,
+                height: 6,
+              ),
+              ...addClientWidgets,
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  setState(() {
+                    addClient();
+                  });
                 },
-                maxLines: 10,
-                minLines: 3,
-                decoration: InputDecoration(
-                    contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    // border: OutlineInputBorder(
-                    //     borderRadius: BorderRadius.circular(10),
-                    //     borderSide:
-                    //         BorderSide(width: 0.1, color: Colors.red)),
-                    // fillColor: Color(0xfff7f8fb),
-                    // contentPadding: EdgeInsets.all(20.0),
-                    hintText: '请输入备注内容',
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                      //未选中时候的颜色
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: jm_line_color,
+                child: Container(
+                  margin: EdgeInsets.only(left: margin),
+                  height: lineHeight,
+                  width: SizeConfig.screenWidth - margin,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.add_circle_outline,
+                        size: 20,
+                        color: jm_appTheme,
                       ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      //选中时外边框颜色
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: jm_line_color,
-                      ),
-                    )),
-                onChanged: (value) {
-                  mark = value;
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: Text(
+                          '添加客源',
+                          style: jm_text_apptheme_style15,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              JMline(
+                width: SizeConfig.screenWidth,
+                height: 6,
+              ),
+              CustomInput(
+                labelWidth: labelWidth,
+                key: ValueKey('CustomInput_agent_1'),
+                labelStyle: jm_text_black_bold_style16,
+                textStyle: jm_text_black_style15,
+                text: agentData != null && agentData['showName'] != null
+                    ? agentData['showName']
+                    : '',
+                title: '搜索',
+                hintText: '请输入用户名称',
+                valueChange: (value) {},
+                valueChangeAndShowList: (value, state) {
+                  if (value != '') {
+                    model.loadAgentSearchData(
+                      value,
+                      success: (data) {
+                        if (data != null && data.length > 0) {
+                          state.showList(data);
+                        }
+                      },
+                    );
+                  } else {
+                    state.removeList();
+                  }
+                },
+                showListClick: (data) {
+                  setState(() {
+                    agentData = data;
+                    agentData['showName'] = data['userName'];
+                  });
                 },
               ),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            CustomSubmitButton(
-              buttonClick: () {
-                FocusScope.of(context).requestFocus(FocusNode());
+              JMline(
+                width: SizeConfig.screenWidth - margin * 2,
+                height: 1,
+              ),
+              CustomInput(
+                labelWidth: labelWidth,
+                key: ValueKey('CustomInput_agent_2'),
+                labelStyle: jm_text_black_bold_style16,
+                textStyle: jm_text_black_style15,
+                title: '客户经理',
+                text: agentData != null && agentData['userName'] != null
+                    ? agentData['userName']
+                    : '',
+                enable: false,
+              ),
+              JMline(
+                width: SizeConfig.screenWidth - margin * 2,
+                height: 1,
+              ),
+              CustomInput(
+                labelWidth: labelWidth,
+                key: ValueKey('CustomInput_agent_3'),
+                labelStyle: jm_text_black_bold_style16,
+                textStyle: jm_text_black_style15,
+                title: '联系方式',
+                text: agentData != null && agentData['phonenumber'] != null
+                    ? agentData['phonenumber']
+                    : '',
+                enable: false,
+              ),
+              JMline(
+                width: SizeConfig.screenWidth,
+                height: 6,
+              ),
+              Container(
+                height: lineHeight,
+                margin: EdgeInsets.only(left: margin),
+                alignment: Alignment.centerLeft,
+                child: Text('备注（选填）', style: jm_text_black_bold_style20),
+              ),
+              Container(
+                constraints: BoxConstraints(maxHeight: 100, minHeight: 90),
+                width: SizeConfig.screenWidth - margin * 2,
+                padding: EdgeInsets.fromLTRB(margin, 10, margin, 10),
+                child: TextField(
+                  maxLength: 200,
+                  buildCounter: (BuildContext context,
+                      {int currentLength, bool isFocused, int maxLength}) {
+                    return Text(
+                      "$currentLength/$maxLength",
+                      style: jm_text_black_style13,
+                    ); //字符统计
+                  },
+                  maxLines: 10,
+                  minLines: 3,
+                  decoration: InputDecoration(
+                      contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      // border: OutlineInputBorder(
+                      //     borderRadius: BorderRadius.circular(10),
+                      //     borderSide:
+                      //         BorderSide(width: 0.1, color: Colors.red)),
+                      // fillColor: Color(0xfff7f8fb),
+                      // contentPadding: EdgeInsets.all(20.0),
+                      hintText: '请输入备注内容',
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        //未选中时候的颜色
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: jm_line_color,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        //选中时外边框颜色
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: jm_line_color,
+                        ),
+                      )),
+                  onChanged: (value) {
+                    mark = value;
+                  },
+                ),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              CustomSubmitButton(
+                buttonClick: () {
+                  FocusScope.of(context).requestFocus(FocusNode());
 
-                if (projectData == null) {
-                  ShowToast.normal('请选择项目信息');
-                  return;
-                }
+                  if (projectData == null) {
+                    ShowToast.normal('请选择项目信息');
+                    return;
+                  }
 
-                List clients = [];
-                if (clientsData == null || clientsData.length == 0) {
-                  ShowToast.normal('请选择客源信息');
-                  return;
-                }
+                  List clients = [];
+                  if (clientsData == null || clientsData.length == 0) {
+                    ShowToast.normal('请选择客源信息');
+                    return;
+                  }
 
-                clientsData.forEach((e) {
-                  // print(e);
-                  // if (e['name'] != null && e['csutomerPhone'] != null) {
-                  clients.add(e);
-                  // }
-                });
-                CustomAlert(title: '提示', content: '是否确认提交？').show(
-                    confirmClick: () {
-                  CustomLoading().show();
-                  model.addReportRequest({
-                    'client': clients,
-                    'agent': agentData,
-                    'project': projectData,
-                    'mark': mark,
-                    'isSensitive': isSensitive,
-                  }, (bool success) {
-                    CustomLoading().hide();
-                    if (success) {
-                      CustomAlert(
-                              title: '报备成功',
-                              content: '提前' +
-                                  projectData['reportBeforeTime'].toString() +
-                                  '分钟报备，' +
-                                  (projectData['isSensitive'] == null
-                                      ? ''
-                                      : (projectData['isSensitive'] == 1
-                                          ? '手机号前三后四，'
-                                          : '全号报备，')) +
-                                  '有效保护期' +
-                                  projectData['reportProtect'].toString() +
-                                  '天，以看房确认单为准。' +
-                                  contactsFormat(),
-                              confirmText: '继续报备',
-                              cancelText: '返回首页')
-                          .show(
-                        cancelClick: () {
-                          Navigator.pop(context);
-                        },
-                      );
-                    }
+                  clientsData.forEach((e) {
+                    // print(e);
+                    // if (e['name'] != null && e['csutomerPhone'] != null) {
+                    clients.add(e);
+                    // }
                   });
-                });
-              },
-            ),
-            SizedBox(
-              height: 40,
-            )
-          ],
+                  CustomAlert(title: '提示', content: '是否确认提交？').show(
+                      confirmClick: () {
+                    CustomLoading().show();
+                    model.addReportRequest({
+                      'client': clients,
+                      'agent': agentData,
+                      'project': projectData,
+                      'mark': mark,
+                      'isSensitive': isSensitive,
+                    }, (bool success) {
+                      CustomLoading().hide();
+                      if (success) {
+                        CustomAlert(
+                                title: '报备成功',
+                                content: '提前' +
+                                    projectData['reportBeforeTime'].toString() +
+                                    '分钟报备，' +
+                                    (projectData['isSensitive'] == null
+                                        ? ''
+                                        : (projectData['isSensitive'] == 1
+                                            ? '手机号前三后四，'
+                                            : '全号报备，')) +
+                                    '有效保护期' +
+                                    projectData['reportProtect'].toString() +
+                                    '天，以看房确认单为准。' +
+                                    contactsFormat(),
+                                confirmText: '继续报备',
+                                cancelText: '返回首页')
+                            .show(
+                          cancelClick: () {
+                            Navigator.pop(context);
+                          },
+                        );
+                      }
+                    });
+                  });
+                },
+              ),
+              SizedBox(
+                height: 40,
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -710,6 +707,11 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
             },
           ),
         ),
+        JMline(
+          width: SizeConfig.screenWidth - margin * 2,
+          height: 1,
+          margin: margin,
+        ),
         changeWidget(),
       ],
     );
@@ -755,6 +757,13 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
                 },
               )
             : NoneV(),
+        status == ClientSourceStatus.clientSource
+            ? JMline(
+                width: SizeConfig.screenWidth - margin * 2,
+                height: 1,
+                // margin: margin,
+              )
+            : NoneV(),
         searchSuccess || status == ClientSourceStatus.input
             ? CustomInput(
                 labelWidth: labelWidth,
@@ -777,6 +786,13 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
                 },
               )
             : NoneV(),
+        status == ClientSourceStatus.input
+            ? JMline(
+                width: SizeConfig.screenWidth - margin * 2,
+                height: 1,
+                // margin: margin,
+              )
+            : NoneV(),
         searchSuccess || status == ClientSourceStatus.input
             ? SexCell(
                 labelWidth: labelWidth + 10,
@@ -796,6 +812,13 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
                     widget.clientDataUpdate(widget, clientData);
                   }
                 },
+              )
+            : NoneV(),
+        status == ClientSourceStatus.input
+            ? JMline(
+                width: SizeConfig.screenWidth - margin * 2,
+                height: 1,
+                // margin: margin,
               )
             : NoneV(),
         searchSuccess || status == ClientSourceStatus.input
@@ -821,6 +844,13 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
                 },
               )
             : NoneV(),
+        status == ClientSourceStatus.input
+            ? JMline(
+                width: SizeConfig.screenWidth - margin * 2,
+                height: 1,
+                // margin: margin,
+              )
+            : NoneV(),
         searchSuccess || status == ClientSourceStatus.input
             ? CustomInput(
                 labelWidth: labelWidth,
@@ -838,6 +868,13 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
                     widget.clientDataUpdate(widget, clientData);
                   }
                 },
+              )
+            : NoneV(),
+        status == ClientSourceStatus.input
+            ? JMline(
+                width: SizeConfig.screenWidth - margin * 2,
+                height: 1,
+                // margin: margin,
               )
             : NoneV(),
       ],

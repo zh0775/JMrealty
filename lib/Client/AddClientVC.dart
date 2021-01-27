@@ -45,7 +45,8 @@ class _AddClientVCState extends State<AddClientVC> {
   double lineHeight = 50;
   double marginSpace;
   double widthScale;
-  TextStyle labelStyle = jm_text_black_bold_style15;
+  TextStyle labelStyle = jm_text_black_bold_style16;
+  TextStyle titleStyle = jm_text_black_bold_style20;
 
   @override
   void initState() {
@@ -79,7 +80,7 @@ class _AddClientVCState extends State<AddClientVC> {
             // if (model.listData['sex'] != null &&
             //     model.listData['sex'] is List &&
             //     model.listData['sex'].length > 1) {
-            addClientParams['sex'] = '0';
+            addClientParams['sex'] = 0;
             // print('sex === ${addClientParams['sex']}');
             //       ? ((model.listData['sex'])[0])['value']
             //       : ((model.listData['sex'])[1])['value'];
@@ -160,10 +161,7 @@ class _AddClientVCState extends State<AddClientVC> {
                           padding: EdgeInsets.only(left: marginSpace),
                           child: Text(
                             '基本信息',
-                            style: TextStyle(
-                                color: jm_text_black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
+                            style: titleStyle,
                           ),
                         ),
                         Container(
@@ -205,8 +203,9 @@ class _AddClientVCState extends State<AddClientVC> {
                   CustomTextF(
                     text: addClientParams['name'] ?? '',
                     bottomLine: true,
-                    labelText: '客户姓名',
+                    labelText: '姓名',
                     placeholder: '请输入客户姓名',
+                    labelStyle: labelStyle,
                     must: true,
                     valueChange: (value) {
                       addClientParams['name'] = value;
@@ -220,13 +219,12 @@ class _AddClientVCState extends State<AddClientVC> {
                   // 性别按钮
                   SexCell(
                     title: '性别',
-                    labelStyle: jm_text_black_bold_style15,
+                    labelStyle: labelStyle,
                     must: true,
                     labelWidth: widthScale * 26,
-                    sex: addClientParams['sex'] == '0' ? Sex.boy : Sex.girl,
+                    sex: Sex.boy,
                     valueChange: (newSex) {
-                      if (newSex == Sex.girl) {}
-                      addClientParams['sex'] = (newSex == Sex.boy ? '0' : '1');
+                      addClientParams['sex'] = (newSex == Sex.boy ? 0 : 1);
                       // clientSex = newSex;
                     },
                   ),
@@ -295,12 +293,23 @@ class _AddClientVCState extends State<AddClientVC> {
                       ),
                     )
                   ]),
-                  Padding(
-                    padding: EdgeInsets.only(left: marginSpace),
-                    child: Text(
-                      '不可更改，将作为核查带看依据',
-                      style: TextStyle(fontSize: 12, color: jm_text_gray),
-                    ),
+                  // Padding(
+                  //   padding: EdgeInsets.only(left: 0),
+                  //   child: Text(
+                  //     '不可更改，将作为核查带看依据',
+                  //     style: TextStyle(fontSize: 12, color: jm_text_gray),
+                  //   ),
+                  // ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: marginSpace + widthScale * 2,
+                      ),
+                      Text(
+                        '不可更改，将作为核查带看依据',
+                        style: TextStyle(fontSize: 12, color: jm_text_gray),
+                      ),
+                    ],
                   ),
                   // 客户手机号
                   CustomTextF(
@@ -316,7 +325,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   DropdownSelectV(
                     labelText: '客户意愿',
                     must: true,
-
+                    labelStyle: labelStyle,
                     // defalultValue: true,
                     textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['desireId'] ?? '',
@@ -332,6 +341,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   // 客户职业
                   DropdownSelectV(
                     labelText: '客户职业',
+                    labelStyle: labelStyle,
                     // defalultValue: true,
                     textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['occupationId'] ?? '',
@@ -348,6 +358,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   // 用途
                   DropdownSelectV(
                     labelText: '用途',
+                    labelStyle: labelStyle,
                     // defalultValue: true,
                     textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['typeId'] ?? '',
@@ -365,6 +376,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   DropdownSelectV(
                     labelText: '意向面积',
                     // defalultValue: true,
+                    labelStyle: labelStyle,
                     textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['areaId'] ?? '',
                     dataList: model.listData['intentionArea'] ?? [],
@@ -381,6 +393,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   // 几次置业
                   DropdownSelectV(
                     labelText: '几次置业',
+                    labelStyle: labelStyle,
                     defalultValue: true,
                     textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['shopTimes'],
@@ -402,8 +415,9 @@ class _AddClientVCState extends State<AddClientVC> {
                   getLine(false),
                   // 意向楼层
                   CustomTextF(
+                    labelStyle: labelStyle,
                     labelText: '意向楼层',
-                    placeholder: '意向楼层',
+                    placeholder: '请输入意向楼层',
                     text: addClientParams['floor'] ?? '',
                     // keyboardType: TextInputType.number,
                     valueChange: (value) {
@@ -415,6 +429,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   // 决策人
                   DropdownSelectV(
                     labelText: '决策人',
+                    labelStyle: labelStyle,
                     // defalultValue: true,
                     textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['policymakerId'] ?? '',
@@ -432,6 +447,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   CustomInput(
                     lastLabelText: '元',
                     title: '首付预算',
+                    labelStyle: labelStyle,
                     keyboardType: TextInputType.number,
                     hintText: '请输入首付预算',
                     text: addClientParams['paymentsBudget'] ?? '',
@@ -454,6 +470,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   // 看房时间
                   CustomTextF(
                     labelText: '看房时间',
+                    labelStyle: labelStyle,
                     placeholder: '请输入看房时间',
                     text: addClientParams['seeTime'] ?? '',
                     // keyboardType: TextInputType.number,
@@ -467,6 +484,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   DropdownSelectV(
                     labelText: '客户来源',
                     // defalultValue: true,
+                    labelStyle: labelStyle,
                     textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['sourceId'] ?? '',
                     dataList: model.listData['customersOfSource'] ?? [],
@@ -483,8 +501,9 @@ class _AddClientVCState extends State<AddClientVC> {
                   CustomInput(
                     labelWidth: widthScale * 24,
                     title: '意向楼盘',
+                    labelStyle: labelStyle,
                     text: housesName ?? '',
-                    hintText: '请输入搜索内容',
+                    hintText: '请输入楼盘名称',
                     valueChangeAndShowList: (value, state) {
                       housesName = value;
                       if (housesName != null && housesName.length > 0) {
@@ -674,8 +693,7 @@ class _AddClientVCState extends State<AddClientVC> {
     }
   }
 
-  Widget getLine(bool full,
-      {double height = 0.5, Color color = jm_line_color}) {
+  Widget getLine(bool full, {double height = 1, Color color = jm_line_color}) {
     return Align(
       child: Container(
         width: full

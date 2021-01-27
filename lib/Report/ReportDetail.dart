@@ -70,7 +70,6 @@ class _ReportDetailState extends State<ReportDetail> {
       body: ProviderWidget<ReportDetailViewModel>(
         model: reportDetailModel,
         onReady: (model) {
-          CustomLoading().show();
           reportDetailModel.loadReportDetailRequest(widget.data['id']);
         },
         builder: (ctx, value, child) {
@@ -81,9 +80,11 @@ class _ReportDetailState extends State<ReportDetail> {
             CustomLoading().hide();
             return getBody(context, value.reportDetailData);
           } else if (value.state == BaseState.LOADING) {
+            CustomLoading().show();
             return NoneV();
             // return Container(width: 0.0, height: 0.0);
           } else {
+            CustomLoading().hide();
             return EmptyView();
             // return Container(width: 0.0, height: 0.0);
           }
@@ -118,7 +119,7 @@ class _ReportDetailState extends State<ReportDetail> {
         ReportStatusBar(
             statusNo: (mapData['reportInfoVO'])['status'] ?? null,
             statusData: mapData['reportStatuses'] ?? null),
-        JMline(width: SizeConfig.screenWidth, height: 0.5),
+        JMline(width: SizeConfig.screenWidth, height: 1),
         SizedBox(
           height: 20,
         ),
@@ -135,7 +136,7 @@ class _ReportDetailState extends State<ReportDetail> {
         SizedBox(
           height: 15,
         ),
-        JMline(width: SizeConfig.screenWidth, height: 0.5),
+        JMline(width: SizeConfig.screenWidth, height: 1),
         // SizedBox(
         //   height: 15,
         // ),
@@ -447,6 +448,9 @@ class _ReportDetailState extends State<ReportDetail> {
 
   Widget getImageContent(Map data) {
     if (data != null) {
+      if (data['status'] == 0 || data['status'] == 5) {
+        return NoneV();
+      }
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -520,7 +524,7 @@ class _ReportDetailState extends State<ReportDetail> {
                   ),
                 )
               : NoneV(),
-          JMline(width: SizeConfig.screenWidth, height: 0.5),
+          JMline(width: SizeConfig.screenWidth, height: 1),
         ],
       );
     } else {

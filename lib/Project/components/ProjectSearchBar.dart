@@ -39,8 +39,8 @@ class _ProjectSearchBarState extends State<ProjectSearchBar> {
             ),
             Image.asset(
               'assets/images/icon/icon_project_searchbar_left.png',
-              height: widthScale * 6,
-              width: widthScale * 6,
+              height: widthScale * 7.5,
+              width: widthScale * 7.5,
             ),
             widget.toProjectSearch
                 ? GestureDetector(
