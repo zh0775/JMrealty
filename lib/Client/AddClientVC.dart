@@ -1,10 +1,11 @@
-import 'package:JMrealty/Client/model/ClientModel.dart';
+// import 'package:JMrealty/Client/model/ClientModel.dart';
 import 'package:JMrealty/Client/viewModel/ClientListViewModel.dart';
 import 'package:JMrealty/Client/viewModel/ClientViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
+import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/CustomTextF.dart';
@@ -32,27 +33,22 @@ class _AddClientVCState extends State<AddClientVC> {
   EventBus _bus = EventBus();
   final EasyContactPicker _contactPicker = new EasyContactPicker();
   ReportViewModel projectVM = ReportViewModel();
-  bool firstBuild;
-  ClientModel clientModel;
+  bool firstBuild = true;
+  // ClientModel clientModel = ClientModel();
   String housesName;
-  Map<String, dynamic> addClientParams;
-  bool clientIsMan; // 是否男士
-  bool sensitive; //是否脱敏
+  Map<String, dynamic> addClientParams = {};
+  bool clientIsMan = true; // 是否男士
+  Sex clientSex = Sex.boy;
+  bool sensitive = false; //是否脱敏
   double otherWidth;
   double labelWidth;
   double lineHeight = 50;
   double marginSpace;
   double widthScale;
-  TextStyle labelStyle;
+  TextStyle labelStyle = jm_text_black_bold_style15;
 
   @override
   void initState() {
-    firstBuild = true;
-    labelStyle = jm_text_black_style14;
-    clientIsMan = true;
-    sensitive = false;
-    clientModel = ClientModel();
-    addClientParams = {};
     super.initState();
   }
 
@@ -70,24 +66,8 @@ class _AddClientVCState extends State<AddClientVC> {
     labelWidth = widthScale * 22;
     otherWidth = (SizeConfig.screenWidth - marginSpace * 2) - labelWidth;
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: jm_appTheme,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: Icon(
-            Icons.navigate_before,
-            size: 40,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(
-          '录入客源',
-          style: TextStyle(color: Colors.white, fontSize: 18),
-        ),
+      appBar: CustomAppbar(
+        title: '录入客源',
       ),
       body: ProviderWidget<ClientViewModel>(
         model: ClientViewModel(),
@@ -96,13 +76,14 @@ class _AddClientVCState extends State<AddClientVC> {
         },
         builder: (ctx, model, child) {
           if (firstBuild && model.state == BaseState.CONTENT) {
-            if (model.listData['sex'] != null &&
-                model.listData['sex'] is List &&
-                model.listData['sex'].length > 1) {
-              addClientParams['sex'] = clientIsMan
-                  ? ((model.listData['sex'])[0])['value']
-                  : ((model.listData['sex'])[1])['value'];
-            }
+            // if (model.listData['sex'] != null &&
+            //     model.listData['sex'] is List &&
+            //     model.listData['sex'].length > 1) {
+            addClientParams['sex'] = '0';
+            // print('sex === ${addClientParams['sex']}');
+            //       ? ((model.listData['sex'])[0])['value']
+            //       : ((model.listData['sex'])[1])['value'];
+            // }
             if (model.listData['sensitive'] != null &&
                 model.listData['sensitive'] is List &&
                 model.listData['sensitive'].length > 1) {
@@ -237,33 +218,46 @@ class _AddClientVCState extends State<AddClientVC> {
                   // // line
                   // getLine(false),
                   // 性别按钮
-                  lineContent(true, '性别', [
-                    sexButton(context, true, (sex) {
-                      if (model.listData['sex'] != null &&
-                          model.listData['sex'] is List &&
-                          model.listData['sex'].length > 1) {
-                        addClientParams['sex'] =
-                            ((model.listData['sex'])[0])['value'];
-                      }
-                      setState(() {
-                        clientIsMan = sex;
-                      });
-                    }),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    sexButton(context, false, (sex) {
-                      if (model.listData['sex'] != null &&
-                          model.listData['sex'] is List &&
-                          model.listData['sex'].length > 1) {
-                        addClientParams['sex'] =
-                            ((model.listData['sex'])[1])['value'];
-                      }
-                      setState(() {
-                        clientIsMan = sex;
-                      });
-                    })
-                  ]),
+                  SexCell(
+                    title: '性别',
+                    labelStyle: jm_text_black_bold_style15,
+                    must: true,
+                    labelWidth: widthScale * 26,
+                    sex: addClientParams['sex'] == '0' ? Sex.boy : Sex.girl,
+                    valueChange: (newSex) {
+                      if (newSex == Sex.girl) {}
+                      addClientParams['sex'] = (newSex == Sex.boy ? '0' : '1');
+                      // clientSex = newSex;
+                    },
+                  ),
+
+                  // lineContent(true, '性别', [
+                  //   sexButton(context, true, (sex) {
+                  //     if (model.listData['sex'] != null &&
+                  //         model.listData['sex'] is List &&
+                  //         model.listData['sex'].length > 1) {
+                  //       addClientParams['sex'] =
+                  //           ((model.listData['sex'])[0])['value'];
+                  //     }
+                  //     setState(() {
+                  //       clientIsMan = sex;
+                  //     });
+                  //   }),
+                  //   SizedBox(
+                  //     width: 20,
+                  //   ),
+                  //   sexButton(context, false, (sex) {
+                  //     if (model.listData['sex'] != null &&
+                  //         model.listData['sex'] is List &&
+                  //         model.listData['sex'].length > 1) {
+                  //       addClientParams['sex'] =
+                  //           ((model.listData['sex'])[1])['value'];
+                  //     }
+                  //     setState(() {
+                  //       clientIsMan = sex;
+                  //     });
+                  //   })
+                  // ]),
                   // line
                   getLine(false),
                   lineContent(true, '手机号', [
@@ -277,22 +271,26 @@ class _AddClientVCState extends State<AddClientVC> {
                           SizedBox(
                             width: widthScale * 3,
                           ),
-                          CupertinoSwitch(
-                              value: sensitive,
-                              onChanged: (bool value) {
-                                if (model.listData['sensitive'] != null &&
-                                    model.listData['sensitive'] is List &&
-                                    model.listData['sensitive'].length > 1) {
-                                  addClientParams['isSensitive'] = sensitive
-                                      ? ((model
-                                          .listData['sensitive'])[0])['value']
-                                      : ((model
-                                          .listData['sensitive'])[1])['value'];
-                                }
-                                setState(() {
-                                  sensitive = value;
-                                });
-                              })
+                          Transform.scale(
+                            scale: 0.9,
+                            child: CupertinoSwitch(
+                                activeColor: jm_appTheme,
+                                value: sensitive,
+                                onChanged: (bool value) {
+                                  if (model.listData['sensitive'] != null &&
+                                      model.listData['sensitive'] is List &&
+                                      model.listData['sensitive'].length > 1) {
+                                    addClientParams['isSensitive'] = sensitive
+                                        ? ((model
+                                            .listData['sensitive'])[0])['value']
+                                        : ((model.listData['sensitive'])[1])[
+                                            'value'];
+                                  }
+                                  setState(() {
+                                    sensitive = value;
+                                  });
+                                }),
+                          )
                         ],
                       ),
                     )
@@ -318,6 +316,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   DropdownSelectV(
                     labelText: '客户意愿',
                     must: true,
+
                     // defalultValue: true,
                     textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['desireId'] ?? '',
@@ -333,7 +332,6 @@ class _AddClientVCState extends State<AddClientVC> {
                   // 客户职业
                   DropdownSelectV(
                     labelText: '客户职业',
-                    must: true,
                     // defalultValue: true,
                     textPadding: EdgeInsets.only(left: 10),
                     currentValue: addClientParams['occupationId'] ?? '',
@@ -407,7 +405,7 @@ class _AddClientVCState extends State<AddClientVC> {
                     labelText: '意向楼层',
                     placeholder: '意向楼层',
                     text: addClientParams['floor'] ?? '',
-                    keyboardType: TextInputType.number,
+                    // keyboardType: TextInputType.number,
                     valueChange: (value) {
                       addClientParams['floor'] = value;
                     },
@@ -431,15 +429,26 @@ class _AddClientVCState extends State<AddClientVC> {
                   // line
                   getLine(false),
                   // 首付预算
-                  CustomTextF(
-                    labelText: '首付预算',
-                    placeholder: '请输入首付预算',
-                    text: addClientParams['paymentsBudget'] ?? '',
+                  CustomInput(
+                    lastLabelText: '元',
+                    title: '首付预算',
                     keyboardType: TextInputType.number,
+                    hintText: '请输入首付预算',
+                    text: addClientParams['paymentsBudget'] ?? '',
+                    labelWidth: widthScale * 24,
                     valueChange: (value) {
                       addClientParams['paymentsBudget'] = value;
                     },
                   ),
+                  // CustomTextF(
+                  //   labelText: '首付预算',
+                  //   placeholder: '请输入首付预算',
+                  //   text: addClientParams['paymentsBudget'] ?? '',
+                  //   // keyboardType: TextInputType.number,
+                  //   valueChange: (value) {
+                  //     addClientParams['paymentsBudget'] = value;
+                  //   },
+                  // ),
                   // line
                   getLine(false),
                   // 看房时间
@@ -552,25 +561,25 @@ class _AddClientVCState extends State<AddClientVC> {
                     },
                   ),
                   // 客源录入合规告知书
-                  Container(
-                    width: SizeConfig.screenWidth,
-                    height: lineHeight * 0.6,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: RichText(
-                          text: TextSpan(
-                              text: '请保护用户隐私，确保遵守',
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color.fromRGBO(133, 133, 134, 1)),
-                              children: <TextSpan>[
-                            TextSpan(
-                              text: '《客源录入合规告知书》',
-                              style: TextStyle(fontSize: 12, color: Colors.red),
-                            )
-                          ])),
-                    ),
-                  ),
+                  // Container(
+                  //   width: SizeConfig.screenWidth,
+                  //   height: lineHeight * 0.6,
+                  //   child: TextButton(
+                  //     onPressed: () {},
+                  //     child: RichText(
+                  //         text: TextSpan(
+                  //             text: '请保护用户隐私，确保遵守',
+                  //             style: TextStyle(
+                  //                 fontSize: 12,
+                  //                 color: Color.fromRGBO(133, 133, 134, 1)),
+                  //             children: <TextSpan>[
+                  //           TextSpan(
+                  //             text: '《客源录入合规告知书》',
+                  //             style: TextStyle(fontSize: 12, color: Colors.red),
+                  //           )
+                  //         ])),
+                  //   ),
+                  // ),
                   SizedBox(
                     height: 10,
                   ),
@@ -582,14 +591,15 @@ class _AddClientVCState extends State<AddClientVC> {
                         UserDefault.get(USERINFO).then((value) {
                           Map userInfo = convert.jsonDecode(value);
                           addClientParams['employeeId'] = userInfo['userId'];
-
                           model.sendAddClientRequest(addClientParams,
                               (bool success) {
                             if (success) {
                               _bus.emit(NOTIFY_CLIENT_LIST_REFRASH_NORMAL);
                               ShowToast.normal('提交成功');
                               Future.delayed(Duration(seconds: 1), () {
-                                Navigator.pop(context);
+                                if (Navigator.canPop(context)) {
+                                  Navigator.pop(context);
+                                }
                               });
 
                               ClientListViewModel clVM = ClientListViewModel();
@@ -656,6 +666,7 @@ class _AddClientVCState extends State<AddClientVC> {
     if (status.isGranted) {
       Contact contact = await _contactPicker.selectContactWithNative();
       setState(() {
+        print('contact === ${contact.phoneNumber}');
         addClientParams['phone'] =
             contact.phoneNumber != null ? stringTrim(contact.phoneNumber) : '';
         addClientParams['name'] = contact.fullName ?? '';

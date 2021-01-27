@@ -1,51 +1,46 @@
 import 'package:JMrealty/StartAppPage.dart';
+import 'package:JMrealty/const/Config.dart';
 import 'package:JMrealty/const/Routes.dart';
+import 'package:JMrealty/services/http_config.dart';
+import 'package:JMrealty/utils/EventBus.dart';
+import 'package:JMrealty/utils/notify_default.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:JMrealty/const/Default.dart';
-// import 'package:jpush_flutter/jpush_flutter.dart';
+import 'package:jpush_flutter/jpush_flutter.dart';
 
 void main() {
-  // 极光推送
-  // final JPush jPush = JPush();
-  //
-  // Future<void> initPlatformState() async {
-  //   jPush.getRegistrationID().then((rid) {
-  //     print('---->rid:$rid');
-  //   });
-  //
-  //   jPush.setup(
-  //     appKey: Config.JPUSH_APP_KEY,
-  //     channel: "developer-default",
-  //     production: false,
-  //     debug: true,
-  //   );
-  //
-  //   jPush.applyPushAuthority(
-  //       NotificationSettingsIOS(sound: true, alert: true, badge: true));
-  //
-  //   try {
-  //     jPush.addEventHandler(
-  //         onReceiveNotification: (Map<String, dynamic> message) async {
-  //       print('---->接收到推送:$message');
-  //     });
-  //   } on Exception {
-  //     print("---->获取平台版本失败");
-  //   }
-  // }
-  //
-  // initPlatformState();
-
+//   jPush.getRegistrationID().then((rid) {
+//     print('---->rid:${rid}');
+//     // _result = "JPush RegistrationID 唯一标识:\n $rid";
+//   });
+  // WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  String debugLable = 'Unknown';
+  EventBus _bus = EventBus();
+  final JPush jPush = new JPush();
+
+  @override
+  void initState() {
+    super.initState();
+    registJPush();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // UserDefault.saveStr(ACCESS_TOKEN, null);
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       navigatorKey: Global.navigatorKey,
       onGenerateRoute: (setting) {
         return Routes.findRoutes(setting);
@@ -79,6 +74,56 @@ class MyApp extends StatelessWidget {
         GLObserver(),
       ],
     );
+  }
+
+  registJPush() async {
+    String platformVersion;
+    try {
+      jPush.addEventHandler(
+          onReceiveNotification: (Map<String, dynamic> message) async {
+        print("flutter onReceiveNotification: $message");
+        _bus.emit(NOTIFY_NOTIFICATION_MESSAGE_REFRESH);
+
+        // setState(() {
+        //   debugLable = "flutter onReceiveNotification: $message";
+        // });
+      }, onOpenNotification: (Map<String, dynamic> message) async {
+        print("flutter onOpenNotification: $message");
+        // setState(() {
+        //   debugLable = "flutter onOpenNotification: $message";
+        // });
+      }, onReceiveMessage: (Map<String, dynamic> message) async {
+        print("flutter onReceiveMessage: $message");
+        // setState(() {
+        //   debugLable = "flutter onReceiveMessage: $message";
+        // });
+      }, onReceiveNotificationAuthorization:
+              (Map<String, dynamic> message) async {
+        print("flutter onReceiveNotificationAuthorization: $message");
+        // setState(() {
+        //   debugLable = "flutter onReceiveNotificationAuthorization: $message";
+        // });
+      });
+    } on PlatformException {
+      platformVersion = 'Failed to get platform version.';
+    }
+
+    jPush.setup(
+      appKey: Config.JPUSH_APP_KEY,
+      channel: "theChannel",
+      production: JPUSH_ENVIRONMENT == 'dev' ? false : true,
+      debug: JPUSH_ENVIRONMENT == 'dev' ? true : false,
+    );
+    jPush.applyPushAuthority(
+        new NotificationSettingsIOS(sound: true, alert: true, badge: true));
+
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    jPush.getRegistrationID().then((rid) {
+      print("flutter get registration id : $rid");
+      // setState(() {
+      //   debugLable = "flutter getRegistrationID: $rid";
+      // });
+    });
   }
 }
 

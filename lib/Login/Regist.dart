@@ -1,5 +1,6 @@
 import 'package:JMrealty/Login/components/ZZInput.dart';
 import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
+import 'package:JMrealty/Login/viewModel/RegistViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportUploadViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
@@ -28,6 +29,8 @@ class Regist extends StatefulWidget {
 }
 
 class _RegistState extends State<Regist> {
+  TextEditingController phoneTextCtr = TextEditingController();
+  RegistViewModel registVM = RegistViewModel();
   SelectImageView imgSelectV; // 选择图片视图
   ReportUploadViewModel uploadImaVM = ReportUploadViewModel();
   LoginViewModel loginVM = LoginViewModel();
@@ -42,6 +45,7 @@ class _RegistState extends State<Regist> {
   bool agree = false;
   String phoneStr = '';
   String name = '';
+  String avatar = '';
   Map post = {};
   String date = '';
   Sex sex = Sex.boy;
@@ -58,6 +62,7 @@ class _RegistState extends State<Regist> {
         if (images != null && images.length > 0 && mounted) {
           setState(() {
             headImgPath = images[0];
+            avatar = null;
           });
           // ReportUploadViewModel().upLoadReportImages(images,
           //     callBack: (List strImages) {
@@ -80,6 +85,7 @@ class _RegistState extends State<Regist> {
         if (success && mounted) {
           setState(() {
             positionList = postList;
+            post = positionList.length > 0 ? positionList[0] : 0;
           });
         }
       },
@@ -112,25 +118,59 @@ class _RegistState extends State<Regist> {
           SizedBox(
             height: heightScale * 4,
           ),
-          Row(
-            children: [
-              SizedBox(
-                width: widthScale * 3,
-              ),
-              IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    size: widthScale * 8,
+          Container(
+            // color: Colors.red,
+            width: SizeConfig.screenWidth,
+            height: heightScale * 8,
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: widthScale * 2),
+                    child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back_ios,
+                          size: widthScale * 6,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            if (widget.toLogin != null) {
+                              widget.toLogin();
+                            }
+                          });
+                        }),
                   ),
-                  onPressed: () {
-                    setState(() {
-                      if (widget.toLogin != null) {
-                        widget.toLogin();
-                      }
-                    });
-                  })
-            ],
+                ),
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    '注册',
+                    style: jm_text_black_bold_style20,
+                  ),
+                )
+              ],
+            ),
           ),
+          // Row(
+          //   children: [
+          //     SizedBox(
+          //       width: widthScale * 3,
+          //     ),
+          //     IconButton(
+          //         icon: Icon(
+          //           Icons.arrow_back_ios,
+          //           size: widthScale * 6,
+          //         ),
+          //         onPressed: () {
+          //           setState(() {
+          //             if (widget.toLogin != null) {
+          //               widget.toLogin();
+          //             }
+          //           });
+          //         }),
+          //   ],
+          // ),
           SizedBox(
             height: heightScale * 1,
           ),
@@ -164,6 +204,10 @@ class _RegistState extends State<Regist> {
                   context);
             },
           ),
+          JMline(
+            width: selfWidth,
+            height: 1,
+          ),
           DropdownSelectV(
             titleKey: 'title',
             valueKey: 'value',
@@ -176,6 +220,10 @@ class _RegistState extends State<Regist> {
               post = data;
             },
           ),
+          JMline(
+            width: selfWidth,
+            height: 1,
+          ),
           CustomTextF(
             labelText: '入职日期',
             placeholder: '请选择日期',
@@ -186,6 +234,10 @@ class _RegistState extends State<Regist> {
               showDatePick();
             },
           ),
+          JMline(
+            width: selfWidth,
+            height: 1,
+          ),
           CustomTextF(
             labelText: '姓名',
             placeholder: '请输入姓名',
@@ -195,24 +247,56 @@ class _RegistState extends State<Regist> {
               name = value;
             },
           ),
+          JMline(
+            width: selfWidth,
+            height: 1,
+          ),
           SexCell(
-            sex: sex ?? Sex.boy,
-            title: '性别',
-            must: true,
+            // sex: sex ?? Sex.boy,
+            title: ' 性别',
+            // must: true,
+            labelStyle: jm_text_black_bold_style15,
             labelWidth: widthScale * 26,
             valueChange: (newSex) {
               sex = newSex;
             },
           ),
-          CustomTextF(
-            labelText: '手机号',
-            placeholder: '请输入手机号',
-            text: phoneStr ?? '',
-            must: true,
-            keyboardType: TextInputType.phone,
-            valueChange: (value) {
-              phoneStr = value;
-            },
+          JMline(
+            width: selfWidth,
+            height: 1,
+          ),
+          Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: margin),
+                child: CustomTextF(
+                  labelText: '手机号',
+                  placeholder: '请输入手机号',
+                  // text: phoneStr ?? '',
+                  width: widthScale * 80,
+                  controller: phoneTextCtr,
+                  must: true,
+                  keyboardType: TextInputType.phone,
+                  valueChange: (value) {
+                    phoneStr = value;
+                  },
+                ),
+              ),
+              IconButton(
+                  splashColor: Colors.transparent,
+                  icon: Icon(
+                    Icons.cancel,
+                    color: Color(0xff636366),
+                    size: widthScale * 4.5,
+                  ),
+                  onPressed: () {
+                    phoneTextCtr.clear();
+                  })
+            ],
+          ),
+          JMline(
+            width: selfWidth,
+            height: 1,
           ),
           CustomTextF(
             labelText: '密码',
@@ -224,6 +308,10 @@ class _RegistState extends State<Regist> {
               pwd = value;
             },
           ),
+          JMline(
+            width: selfWidth,
+            height: 1,
+          ),
           CustomTextF(
             labelText: '确认密码',
             placeholder: '确认密码',
@@ -233,6 +321,9 @@ class _RegistState extends State<Regist> {
             valueChange: (value) {
               confirmPwd = value;
             },
+          ),
+          SizedBox(
+            height: 5,
           ),
           Row(
             //注册验证码
@@ -275,7 +366,7 @@ class _RegistState extends State<Regist> {
                       context);
                 },
                 child: Text(
-                  '隐私政策',
+                  '隐私协议',
                   style: jm_text_apptheme_style14,
                 ),
               ),
@@ -288,6 +379,86 @@ class _RegistState extends State<Regist> {
             title: '提交注册',
             style: TextStyle(fontSize: 16, color: Colors.white),
             height: 50,
+            buttonClick: () {
+              if (dep == null || dep.id == null) {
+                ShowToast.normal('请选择您的部门');
+                return;
+              }
+              if (post == null || post['value'] == null) {
+                ShowToast.normal('请选择您的职位');
+                return;
+              }
+              if (date == null || date.length == 0) {
+                ShowToast.normal('请选择您的入职日期');
+                return;
+              }
+              if (name == null || name.length == 0) {
+                ShowToast.normal('请输入您的姓名');
+                return;
+              }
+
+              if (phoneStr == null || phoneStr.length == 0) {
+                ShowToast.normal('请输入您的手机号');
+                return;
+              }
+              if (pwd == null || pwd.length == 0) {
+                ShowToast.normal('请输入密码');
+                return;
+              }
+              if (pwd.length < 6) {
+                ShowToast.normal('密码小于6位，请重新输入');
+                return;
+              }
+              if (pwd.length > 18) {
+                ShowToast.normal('密码大于18位，请重新输入');
+                return;
+              }
+              if (confirmPwd == null || confirmPwd.length == 0) {
+                ShowToast.normal('请输入确认密码');
+                return;
+              }
+              if (confirmPwd != pwd) {
+                ShowToast.normal('两次密码输入不一致');
+                return;
+              }
+              if (sendCode == null || sendCode.length == 0) {
+                ShowToast.normal('请输入验证码');
+                return;
+              }
+              if (!agree) {
+                ShowToast.normal('请阅读并同意《隐私政策》');
+                return;
+              }
+              CustomLoading().show();
+              Map params = Map<String, dynamic>.from({
+                'deptId': dep.id,
+                'position': post['value'],
+                'nickName': name,
+                'sex': sex == Sex.boy ? '0' : '1',
+                'phonenumber': phoneStr,
+                'password': pwd,
+                'joinDate': date,
+                'code': sendCode,
+              });
+              if (headImgPath != null &&
+                  (avatar == null || avatar.length == 0)) {
+                uploadImaVM.upLoadReportImages(
+                  [headImgPath],
+                  callBack: (strImg) {
+                    if (strImg != null && strImg.length > 0) {
+                      avatar = strImg[0];
+                      params['avatar'] = avatar;
+                      regist(params);
+                    }
+                  },
+                );
+              } else {
+                if (avatar != null && avatar.length > 0) {
+                  params['avatar'] = avatar;
+                }
+                regist(params);
+              }
+            },
           ),
           SizedBox(
             height: 40,
@@ -295,6 +466,21 @@ class _RegistState extends State<Regist> {
         ],
       ),
     );
+  }
+
+  regist(params) {
+    print('regist--params === $params');
+    registVM.userRegist(params, (success) {
+      CustomLoading().hide();
+      if (success) {
+        ShowToast.normal('注册成功');
+        if (widget.toLogin != null) {
+          Future.delayed(Duration(seconds: 1), () {
+            widget.toLogin();
+          });
+        }
+      }
+    });
   }
 
   getHeadView() {
@@ -351,7 +537,7 @@ class _RegistState extends State<Regist> {
       width: width,
       height: 48,
       keyboardType: TextInputType.number,
-      hintText: '验证码',
+      hintText: '请输入验证码',
       text: sendCode,
       borderRadius: BorderRadius.horizontal(left: Radius.circular(8)),
       valueChange: (String value) {
@@ -371,7 +557,7 @@ class _RegistState extends State<Regist> {
           isCodeSend = false;
         }
         return ZZSendCodeButton(
-          buttonText: '发送验证码',
+          buttonText: '获取验证码',
           sending: isCodeSend,
           codeButtonClick: () {
             String phone = phoneStr;

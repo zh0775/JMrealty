@@ -119,7 +119,7 @@ class _PKmainState extends State<PKmain> {
                       ),
                       Tab(
                         child: Text(
-                          '待跟进',
+                          '已结束',
                           style: TextStyle(fontSize: 14, color: tabColor),
                         ),
                       ),

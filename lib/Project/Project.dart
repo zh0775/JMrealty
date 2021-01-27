@@ -60,15 +60,9 @@ class _ProjectState extends State<Project> {
                 color: Colors.white,
                 size: 30,
               ),
-              onPressed: () {
-                Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                  return ProjectSearch(
-                    projectList: projectListData,
-                  );
-                }));
-              }),
+              onPressed: () => push(ProjectSearch(), context)),
           title: Text(
-            '项目',
+            '主推热盘',
             style: TextStyle(color: Colors.white, fontSize: 22),
           ),
           actions: []),
@@ -106,12 +100,12 @@ class _ProjectState extends State<Project> {
     if (!isLoad) {
       pageNum = 1;
     }
-    Map<String, dynamic> params =
-        Map<String, dynamic>.from({'pageSize': pageSize, 'pageNum': page});
-    projectVM.loadProjectList(params, (projectList, success, total) {
+    Map<String, dynamic> params = Map<String, dynamic>.from(
+        {'pageSize': pageSize, 'pageNum': page, 'appShowFlag': 0});
+    projectVM.loadProjectList(params, (projectList, success, count) {
       // pullCtr.finishRefresh();
       if (success) {
-        total = total;
+        total = count;
         setState(() {
           if (isLoad) {
             projectListData.addAll(projectList);

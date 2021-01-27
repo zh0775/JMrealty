@@ -12,6 +12,9 @@ class Urls {
   static const String appStartImg = '/comps/homepage/default';
   // 用户注册接口
   static const String userRegister = '/system/user/register';
+  // 忘记密码接口
+  static const String userForgetPwd = '/system/user/forget';
+
   // 登录接口
   static const String userLogin = '/auth/app/login';
   // 获取当前用户信息
@@ -22,8 +25,11 @@ class Urls {
   static const String getHomeNotice = '/system/notice/listInfo';
   // app首页【成交喜报】列表
   static const String getGladNotice = '/comps/notice/getNoticeList';
-  // 日期范围查询代办事项
+  // 日期范围查询待办事项
   static const String getHomeWaitToDo = '/comps/todo/findByTime';
+  // 待办事项-根据时间段查询待办事项情况
+  static const String allTodoHandler = '/comps/todo/allTodoHandler';
+
   // 获取首页菜单
   static const String getHomeMenus = '/system/user/findMenuByUserId';
   // 查询部门是省，市，区 所有信息集合
@@ -65,6 +71,10 @@ class Urls {
   // 报备
   // 项目名称模糊查询
   static const String projectFuzzySearch = '/customer/project/fuzzySearch';
+  // 报备列表项目筛选
+
+  static const String reportListProjectFilter =
+      '/customer/project/findListByRole';
   // 根据名字模糊搜索客户经理
   static const String agentFuzzySearch = '/system/user/vagueUserName';
   // 模糊搜索客户
@@ -85,9 +95,15 @@ class Urls {
   static const String reportInvalid = '/customer/status/invalid';
   // 签约
   static const String reportSignUp = '/customer/status/signUp';
+  // 争议
+  static const String reportDispute = '/customer/status/dispute';
   // 结佣
   static const String reportMakingCommission =
       '/customer/status/makingCommission';
+  // 预约和成交确认接口
+  static const String waitForConfirmation =
+      '/customer/status/waitForConfirmation';
+
   // 预约
   static const String reportAppointment = '/customer/status/makeAppointment';
   // 带看
@@ -126,6 +142,8 @@ class Urls {
   static const String pkMedel = '/comps/medal/findByFuzzySearch';
   // pk赛指标
   static const String pkType = '/system/dict/type/typeId';
+  // PK赛 获取奖章信息
+  static const String getMedal = '/comps/race/getMedal';
 
   //项目
   // 项目列表
@@ -164,4 +182,6 @@ class Urls {
   static const String queryEmployeeTarget = '/comps/employee/query';
   // 员工设置目标
   static const String employeeSetTarget = '/comps/employee/setTarget';
+
+  static const String updateSign = '/system/user/updateSign';
 }

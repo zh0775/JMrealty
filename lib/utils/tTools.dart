@@ -215,11 +215,17 @@ String getStatusString(int status) {
     case 0:
       return '报备';
       break;
+    case 5:
+      return '接收';
+      break;
     case 10:
       return '已带看';
       break;
     case 20:
       return '带看资料';
+      break;
+    case 22:
+      return '待确认';
       break;
     case 21:
       return '预约';
@@ -235,6 +241,9 @@ String getStatusString(int status) {
       break;
     case 60:
       return '结佣';
+      break;
+    case 63:
+      return '争议单资料';
       break;
     case 70:
       return '失效';

@@ -14,6 +14,8 @@ class ZZSendCodeButton extends StatefulWidget {
   final CodeButtonClick codeButtonClick;
   final Color backgroundColor;
   final int codeWaitTime;
+  final String sendingText;
+  final String againText;
   final bool sending;
   final CodeButtonTimeOver codeButtonTimeOver;
   ZZSendCodeButton(
@@ -26,6 +28,8 @@ class ZZSendCodeButton extends StatefulWidget {
       this.borderRadius =
           const BorderRadius.horizontal(right: Radius.circular(8)),
       this.buttonText = '获取验证码',
+      this.sendingText = '',
+      this.againText = '重新获取',
       this.backgroundColor = const Color(0xff404351),
       this.codeWaitTime = 60,
       this.codeButtonClick,
@@ -42,6 +46,7 @@ class _ZZSendCodeButtonState extends State<ZZSendCodeButton> {
   Timer codeTimer; // 验证码按钮倒计时定时器
   // Timer sendTimer; // 验证码按钮模拟网络请求定时器
   int codeNextTime; // 登录页验证码倒计日
+  bool reSend = false;
   @override
   void initState() {
     codeButtonState = CodeButtonState.normal;
@@ -70,7 +75,7 @@ class _ZZSendCodeButtonState extends State<ZZSendCodeButton> {
       codeButtonState = CodeButtonState.normal;
     }
     if (codeButtonState == CodeButtonState.normal) {
-      text = widget.buttonText;
+      text = reSend ? widget.againText : widget.buttonText;
       buttonColor = widget.backgroundColor;
       pressed = () {
         if (codeButtonState == CodeButtonState.normal) {
@@ -85,7 +90,7 @@ class _ZZSendCodeButtonState extends State<ZZSendCodeButton> {
       buttonColor = Color.fromRGBO(227, 229, 233, 1);
       pressed = null;
     } else if (codeButtonState == CodeButtonState.wait) {
-      text = '重新获取 ' + codeNextTime.toString();
+      text = codeNextTime.toString() + '秒';
       buttonColor = Color.fromRGBO(227, 229, 233, 1);
       pressed = null;
     }
@@ -109,6 +114,7 @@ class _ZZSendCodeButtonState extends State<ZZSendCodeButton> {
       if (codeNextTime <= 1) {
         timer.cancel();
         setState(() {
+          reSend = true;
           codeButtonState = CodeButtonState.normal;
           codeNextTime = widget.codeWaitTime;
           widget.codeButtonTimeOver();

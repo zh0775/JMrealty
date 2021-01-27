@@ -44,7 +44,7 @@ class _NoticeViewState extends State<NoticeView> {
 
   start() {
     stop();
-    timer = Timer.periodic(Duration(milliseconds: 5000), (timer) {
+    timer = Timer.periodic(Duration(milliseconds: 2000), (timer) {
       if (widget.dataList.length > 0 &&
           pageController != null &&
           pageController.page != null) {
@@ -74,21 +74,29 @@ class _NoticeViewState extends State<NoticeView> {
       child: PageView.builder(
         scrollDirection: Axis.vertical,
         controller: pageController,
+        physics: NeverScrollableScrollPhysics(),
         itemCount: widget.dataList.length > 0 ? MAX_COUNT : 0,
         itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                (widget.dataList[index % widget.dataList.length])['zzTitle'] ??
-                    '',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: jm_text_black_style14,
-              ),
-            ),
-          );
+          return GestureDetector(
+              onTap: () {
+                if (widget.noticeClick != null) {
+                  widget.noticeClick(index % widget.dataList.length);
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    (widget.dataList[index % widget.dataList.length])[
+                            'zzTitle'] ??
+                        '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: jm_text_black_style14,
+                  ),
+                ),
+              ));
         },
       ),
     );

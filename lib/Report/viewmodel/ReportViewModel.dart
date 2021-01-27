@@ -15,7 +15,7 @@ class ReportViewModel extends BaseViewModel {
         if (json['code'] != null && json['code'] == 200) {
           projectData = (json['data'])['rows'];
           if (success != null) {
-            success(projectData, true, json['total']);
+            success(projectData, true, (json['data'])['total']);
           }
         } else {
           if (success != null) {
@@ -117,6 +117,7 @@ class ReportViewModel extends BaseViewModel {
       'projectProtect': DateFormat('yyyy-MM-dd')
           .format(DateTime.now().add(Duration(days: project['reportProtect']))),
       'remarks': data['mark'] ?? '',
+      'isSensitive': data['isSensitive'] ?? '',
     };
     if (clientsParams.length > 0) {
       params['customerReport'] = clientsParams;

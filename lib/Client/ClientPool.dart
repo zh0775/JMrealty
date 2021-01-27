@@ -15,6 +15,7 @@ class ClientPool extends StatefulWidget {
 class _ClientPoolState extends State<ClientPool> {
   EventBus _eventBus = EventBus();
   int currentSelectIndex = 1;
+  double filterBarHeight = 50;
   Map selectData = Map<String, dynamic>.from({});
   Map value1 = {'title': '级别', 'value': '-1'};
   Map value2 = {'title': '类型', 'value': '-1'};
@@ -94,10 +95,10 @@ class _ClientPoolState extends State<ClientPool> {
                   left: 0,
                   right: 0,
                   top: 0,
-                  height: 40,
+                  height: filterBarHeight,
                   child: Container(
                     width: SizeConfig.screenWidth,
-                    height: 40,
+                    height: filterBarHeight,
                     decoration: BoxDecoration(
                         border: Border(
                             bottom:
@@ -141,7 +142,7 @@ class _ClientPoolState extends State<ClientPool> {
                   ])),
               Positioned(
                   left: 0,
-                  top: 40,
+                  top: filterBarHeight,
                   child: GestureDetector(
                     onTap: () {
                       if (selectExpand) {
@@ -156,7 +157,7 @@ class _ClientPoolState extends State<ClientPool> {
                           : Colors.transparent,
                       width: SizeConfig.screenWidth,
                       alignment: Alignment.topLeft,
-                      height: selectExpand ? SizeConfig.screenHeight : 40,
+                      height: selectExpand ? SizeConfig.screenHeight : filterBarHeight,
                       child: Row(
                         children: [
                           topButton(
@@ -246,7 +247,7 @@ class _ClientPoolState extends State<ClientPool> {
             border:
                 Border(bottom: BorderSide(width: 0.5, color: jm_line_color))),
         width: SizeConfig.screenWidth / 3,
-        height: 40,
+        height: filterBarHeight,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -266,7 +267,7 @@ class _ClientPoolState extends State<ClientPool> {
 
   Widget selectList(List data, void Function(Map value) itemClick) {
     List textButtons = [];
-    double buttonHeight = 40;
+    double buttonHeight = filterBarHeight;
     // double cHeight = data.length % 2 == 0
     //     ? (data.length / 2) * buttonHeight
     //     : (data.length ~/ 2 + 1) * buttonHeight;

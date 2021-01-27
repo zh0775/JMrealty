@@ -1,6 +1,5 @@
 import 'package:JMrealty/Login/Login.dart';
 import 'package:JMrealty/Login/components/RegistSelectInput.dart';
-import 'package:JMrealty/Login/components/ZZInput.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +10,7 @@ enum Sex { boy, girl }
 typedef IndexClick = Function();
 
 const Color jm_appTheme = Color.fromRGBO(230, 184, 92, 1);
+const Color jm_appTheme_disable = Color.fromRGBO(230, 184, 92, 0.6);
 const Color jm_appTheme_splash = Color.fromRGBO(230, 184, 92, 0.2);
 const Color jm_line_color = Color(0xFFF0F2F5);
 // const Color jm_line_color = Color.fromRGBO(0, 0, 0, 0.12);
@@ -67,13 +67,22 @@ String jm_getReportStatusStr(int status) {
   String statusStr = '';
   switch (status) {
     case 0:
-      statusStr = '有效';
+      statusStr = '待接收';
+      break;
+    case 5:
+      statusStr = '已接收';
       break;
     case 10:
       statusStr = '已带看';
       break;
     case 20:
       statusStr = '已上传';
+      break;
+    case 22:
+      statusStr = '待确认';
+      break;
+    case 24:
+      statusStr = '待确认';
       break;
     case 21:
       statusStr = '已预约';
@@ -85,10 +94,13 @@ String jm_getReportStatusStr(int status) {
       statusStr = '已签约';
       break;
     case 50:
-      statusStr = '已结款';
+      statusStr = '已回款';
       break;
     case 60:
       statusStr = '已结佣';
+      break;
+    case 63:
+      statusStr = '争议单';
       break;
     case 70:
       statusStr = '失效';
@@ -96,6 +108,8 @@ String jm_getReportStatusStr(int status) {
     case 80:
       statusStr = '退单';
       break;
+    default:
+      statusStr = '-';
   }
   return statusStr;
 }
@@ -136,34 +150,46 @@ Color jm_getReportStatusColor(int status) {
   Color statusColor = jm_text_black;
   switch (status) {
     case 0:
-      statusColor = Colors.green;
+      statusColor = jm_appTheme;
+      break;
+    case 5:
+      statusColor = jm_appTheme;
       break;
     case 10:
-      statusColor = Colors.green;
+      statusColor = jm_appTheme;
       break;
     case 20:
-      statusColor = Colors.green;
+      statusColor = jm_appTheme;
+      break;
+    case 22:
+      statusColor = jm_appTheme;
+      break;
+    case 24:
+      statusColor = jm_appTheme;
       break;
     case 21:
-      statusColor = Colors.green;
+      statusColor = jm_appTheme;
       break;
     case 30:
-      statusColor = Colors.green;
+      statusColor = jm_appTheme;
       break;
     case 40:
-      statusColor = Colors.green;
+      statusColor = jm_appTheme;
       break;
     case 50:
-      statusColor = Colors.green;
+      statusColor = jm_appTheme;
       break;
     case 60:
-      statusColor = Colors.green;
+      statusColor = jm_appTheme;
+      break;
+    case 63:
+      statusColor = jm_appTheme;
       break;
     case 70:
-      statusColor = Colors.red;
+      statusColor = jm_appTheme;
       break;
     case 80:
-      statusColor = Colors.red;
+      statusColor = jm_appTheme;
       break;
   }
   return statusColor;
@@ -350,6 +376,7 @@ class _SelectViewState extends State<SelectView> {
 }
 
 class CustomInput extends StatefulWidget {
+  final Widget contentWidet;
   final double margin;
   final String title;
   final double lineHeight;
@@ -360,10 +387,12 @@ class CustomInput extends StatefulWidget {
   final TextStyle labelStyle;
   final double otherWidth;
   final String text;
+  final TextEditingController controller;
   final bool enable;
   final Color backgroundColor;
   final String lastLabelText;
   final TextStyle textStyle;
+  final TextStyle hintStyle;
   final Function(Map data) showListClick;
   final Function(String value) valueChange;
   final Function(String value, _CustomInputState state) valueChangeAndShowList;
@@ -373,18 +402,22 @@ class CustomInput extends StatefulWidget {
       this.title = '',
       this.otherWidth,
       this.valueChange,
+      this.controller,
       this.lineHeight = 50,
       this.labelWidth,
       this.must = false,
       this.hintText = '',
       this.keyboardType = TextInputType.text,
-      this.labelStyle = jm_text_black_style14,
+      this.labelStyle = jm_text_black_bold_style15,
       this.margin,
       this.text = '',
       this.enable = true,
       this.textStyle = jm_text_black_style14,
       this.valueChangeAndShowList,
+      this.contentWidet,
       this.showListClick,
+      this.hintStyle =
+          const TextStyle(color: jm_placeholder_color, fontSize: 14),
       this.backgroundColor = Colors.transparent})
       : super(key: key);
   @override
@@ -417,6 +450,7 @@ class _CustomInputState extends State<CustomInput>
 
   @override
   void dispose() {
+    // print('_CustomInputState_dispose');
     // if (textCtr != null) {
     //   textCtr.dispose();
     //   textCtr = null;
@@ -472,57 +506,64 @@ class _CustomInputState extends State<CustomInput>
               //   hintText: widget.hintText,
               // )
               Container(
+                // color: Colors.red,
                 width: widget.otherWidth ??
                     SizeConfig.screenWidth -
                         margin * 2 -
                         lableWidth -
                         lastLabelWidth,
-                constraints: BoxConstraints(
-                    minHeight: widget.lineHeight, maxHeight: widget.lineHeight),
-                child: TextField(
-                  key: widget.key,
-                  controller: TextEditingController.fromValue(TextEditingValue(
-                    text: widget.text ?? '',
-                    selection: TextSelection.fromPosition(TextPosition(
-                        affinity: TextAffinity.downstream,
-                        offset: widget.text.length ?? 0)),
-                  )),
-                  enabled: widget.enable,
-                  keyboardType: widget.keyboardType,
-                  maxLines: 1,
-                  style: widget.textStyle,
-                  textInputAction: widget.valueChangeAndShowList != null
-                      ? TextInputAction.search
-                      : TextInputAction.done,
-                  decoration: InputDecoration(
-                    hintText: widget.hintText,
-                    fillColor: widget.backgroundColor,
-                    focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 0, color: Colors.transparent)),
-                    disabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 0, color: Colors.transparent)),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 0, color: Colors.transparent)),
-                    contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    border: OutlineInputBorder(
-                        // borderRadius: widget.borderRadius,
-                        borderSide: BorderSide.none),
-                  ),
-                  onChanged: (value) {
-                    selfValue = value;
-                    if (widget.valueChange != null) {
-                      widget.valueChange(value);
-                    }
-                  },
-                  onEditingComplete: () {
-                    if (widget.valueChangeAndShowList != null) {
-                      widget.valueChangeAndShowList(selfValue, this);
-                    }
-                  },
-                ),
+                // constraints: BoxConstraints(
+                //     minHeight: widget.lineHeight, maxHeight: widget.lineHeight),
+                child: widget.contentWidet != null
+                    ? widget.contentWidet
+                    : TextField(
+                        key: widget.key,
+                        controller: widget.controller ??
+                            TextEditingController.fromValue(TextEditingValue(
+                              text: widget.text ?? '',
+                              selection: TextSelection.fromPosition(
+                                  TextPosition(
+                                      affinity: TextAffinity.downstream,
+                                      offset: widget.text.length ?? 0)),
+                            )),
+                        enabled: widget.enable,
+                        keyboardType: widget.keyboardType,
+                        maxLines: 1,
+                        style: widget.textStyle,
+                        textInputAction: widget.valueChangeAndShowList != null
+                            ? TextInputAction.search
+                            : TextInputAction.done,
+                        decoration: InputDecoration(
+                          hintStyle: widget.hintStyle,
+                          hintText: widget.hintText, isCollapsed: true,
+                          // fillColor: widget.backgroundColor,
+                          // focusedBorder: OutlineInputBorder(
+                          //     borderSide:
+                          //         BorderSide(width: 0, color: Colors.transparent)),
+                          // disabledBorder: OutlineInputBorder(
+                          //     borderSide:
+                          //         BorderSide(width: 0, color: Colors.transparent)),
+                          // enabledBorder: OutlineInputBorder(
+                          //     borderSide:
+                          //         BorderSide(width: 0, color: Colors.transparent)),
+                          contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          border: OutlineInputBorder(
+                              // gapPadding: 0,
+                              borderRadius: BorderRadius.zero,
+                              borderSide: BorderSide.none),
+                        ),
+                        onChanged: (value) {
+                          selfValue = value;
+                          if (widget.valueChange != null) {
+                            widget.valueChange(value);
+                          }
+                        },
+                        onEditingComplete: () {
+                          if (widget.valueChangeAndShowList != null) {
+                            widget.valueChangeAndShowList(selfValue, this);
+                          }
+                        },
+                      ),
               ),
               Container(
                 width: lastLabelWidth,
@@ -642,7 +683,8 @@ class _SexCellState extends State<SexCell> {
   Sex sex;
   @override
   void initState() {
-    sex = widget.sex != null ? widget.sex : Sex.boy;
+    // sex = widget.sex != null ? widget.sex : Sex.boy;
+    sex = widget.sex;
     super.initState();
   }
 

@@ -187,13 +187,14 @@ class _MyTasksCellState extends State<MyTasksCell> {
                           ),
                         ),
                       ),
-                      dateFormat
-                                  .parse(widget.data['expireTime'])
-                                  .isAfter(DateTime.now()) &&
-                              dateFormat
-                                  .parse(widget.data['startTime'])
-                                  .isBefore(DateTime.now()) &&
-                              widget.status == 1
+                      (dateFormat
+                                      .parse(widget.data['expireTime'])
+                                      .isAfter(DateTime.now()) &&
+                                  dateFormat
+                                      .parse(widget.data['startTime'])
+                                      .isBefore(DateTime.now()) &&
+                                  widget.status == 1) ||
+                              widget.status == 4
                           ? RawMaterialButton(
                               materialTapTargetSize:
                                   MaterialTapTargetSize.shrinkWrap,

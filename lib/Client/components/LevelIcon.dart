@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class LevelIcon extends StatelessWidget {
   final int desireId;
   final double lineHeight;
-  const LevelIcon({@required this.desireId, this.lineHeight = 30});
+  const LevelIcon({@required this.desireId, this.lineHeight = 26.5});
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -32,7 +32,7 @@ class LevelIcon extends StatelessWidget {
       }
     }
     return Container(
-      width: SizeConfig.blockSizeHorizontal * 10,
+      width: SizeConfig.blockSizeHorizontal * 8.2,
       height: lineHeight,
       decoration: BoxDecoration(
           // color: levelColor,
@@ -49,7 +49,8 @@ class LevelIcon extends StatelessWidget {
       child: Center(
         child: Text(
           level,
-          style: TextStyle(color: Colors.white, fontSize: 16),
+          style: TextStyle(
+              color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
         ),
       ),
     );

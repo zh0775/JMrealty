@@ -49,30 +49,87 @@ class _DepSelectViewState extends State<DepSelectView> {
     margin = widthScale * 4;
     selfWidth = SizeConfig.screenWidth - margin * 2;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: CustomAppbar(
         flexibleSpace: null,
         title: '选择部门',
         backClick: () {
-          if (widget.nodesSelected != null) {
-            widget.nodesSelected(seletedNodes);
-          }
-          if (widget.nodeSelected != null &&
-              seletedNodes != null &&
-              seletedNodes.length > 0) {
-            widget.nodeSelected(seletedNodes[0]);
-          }
           Navigator.pop(context);
         },
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 10,
+      body: Column(
+        children: [
+          SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: SizeConfig.screenHeight - kToolbarHeight - 10 - 80 - 20,
+            width: SizeConfig.screenWidth,
+            child: Scrollbar(
+              child: SingleChildScrollView(
+                primary: true,
+                child: Column(
+                  children: [...treeNodes()],
+                ),
+              ),
             ),
-            ...treeNodes()
-          ],
-        ),
+          ),
+          Container(
+            color: Colors.white,
+            width: SizeConfig.screenWidth,
+            height: 80,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                RawMaterialButton(
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  constraints:
+                      BoxConstraints(minWidth: widthScale * 40, minHeight: 50),
+                  elevation: 0.5,
+                  highlightElevation: 1.0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(widthScale * 1.5)),
+                  child: Text(
+                    '取消',
+                    style: jm_text_black_style17,
+                  ),
+                  fillColor: jm_bg_gray_color,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                SizedBox(
+                  width: widthScale * 5,
+                ),
+                RawMaterialButton(
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  constraints:
+                      BoxConstraints(minWidth: widthScale * 40, minHeight: 50),
+                  elevation: 0.5,
+                  highlightElevation: 1.0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(widthScale * 1.5)),
+                  child: Text(
+                    '确定',
+                    style: TextStyle(color: Colors.white, fontSize: 17),
+                  ),
+                  fillColor: jm_appTheme,
+                  onPressed: () {
+                    if (widget.nodesSelected != null) {
+                      widget.nodesSelected(seletedNodes);
+                    }
+                    if (widget.nodeSelected != null &&
+                        seletedNodes != null &&
+                        seletedNodes.length > 0) {
+                      widget.nodeSelected(seletedNodes[0]);
+                    }
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }

@@ -11,7 +11,7 @@ class MyTasksViewModel {
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
-            success((json['data'])['rows'], true, json['total']);
+            success((json['data'])['rows'], true, (json['data'])['total']);
           }
         } else {
           if (success != null) {
@@ -110,7 +110,6 @@ class MyTasksViewModel {
             List listData = (json['data']).map((value) {
               return {'title': value['dictLabel'], 'value': value['dictValue']};
             }).toList();
-            listData.insert(0, {'title': '全部', 'value': -1});
             success(listData, true);
           }
         } else {

@@ -1,9 +1,13 @@
+import 'package:JMrealty/Project/components/ProjectSearchBar.dart';
+import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 import './JMHomeBanner.dart';
 
 class HomeNaviBar extends StatefulWidget {
   final List bannerDatas;
-  const HomeNaviBar({this.bannerDatas});
+  final double height;
+  final Function(int position, BannerItem entity) bannerPress;
+  const HomeNaviBar({this.bannerDatas, this.height = 260.0, this.bannerPress});
   @override
   _HomeNaviBarState createState() => _HomeNaviBarState();
 }
@@ -15,9 +19,9 @@ class _HomeNaviBarState extends State<HomeNaviBar> {
     super.initState();
   }
 
-  double widgetHeight = 260.0;
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Stack(children: [
       ClipRRect(
         borderRadius: BorderRadius.vertical(
@@ -25,51 +29,24 @@ class _HomeNaviBarState extends State<HomeNaviBar> {
         child: Container(
           color: Colors.transparent,
           child: BannerWidget(
-            widgetHeight,
+            widget.height,
             initBannerData(widget.bannerDatas),
             bannerPress: (post, item) {
-              print('window.innerHeight == ${MediaQuery.of(context).size}');
-              print('post === $post --- item === $item');
+              if (widget.bannerPress != null) {
+                widget.bannerPress(post, item);
+              }
+              // print('window.innerHeight == ${MediaQuery.of(context).size}');
+              // print('post === $post --- item === $item');
             },
           ),
         ),
       ),
-      // Container(
-      //   decoration: BoxDecoration(
-      //     // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-      //     // color: Color.fromRGBO(0, 0, 0, 0.4),
-      //   ),
-      //   width: MediaQuery.of(context).size.width - 40,
-      //   margin: EdgeInsets.fromLTRB(20, 50, 0, 0),
-      //   height: 50,
-      //   child: Row(
-      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //     children: [
-      //       Padding(
-      //         padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-      //         child: Row(
-      //           children: [
-      //             Image.asset("assets/images/tabbar/food-cake.png"),
-      //             Padding(
-      //               padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-      //               child: Text(
-      //                 '南宁  多云  18-22°C',
-      //                 style: TextStyle(color: Colors.white, fontSize: 14),
-      //               ),
-      //             )
-      //           ],
-      //         ),
-      //       ),
-      //       Padding(
-      //         padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-      //         child: Icon(
-      //           Icons.search,
-      //           color: Colors.white,
-      //         ),
-      //       )
-      //     ],
-      //   ),
-      // ),
+      Positioned(
+          left: SizeConfig.blockSizeHorizontal * 6,
+          top: 44,
+          child: ProjectSearchBar(
+            toProjectSearch: true,
+          ))
     ]);
   }
 

@@ -40,6 +40,7 @@ class _MineState extends State<Mine> {
   var bus = EventBus();
   @override
   void initState() {
+    super.initState();
     bus.on(NOTIFY_HOME_MENUS, (arg) {
       if (mounted) {
         setState(() {
@@ -58,7 +59,6 @@ class _MineState extends State<Mine> {
     bus.on(NOTIFY_LOGIN_SUCCESS, (arg) {
       loadMineRequest();
     });
-    super.initState();
   }
 
   @override
@@ -96,6 +96,14 @@ class _MineState extends State<Mine> {
     });
   }
 
+  changeSign(Map info) {
+    mineVM.changeSign(info, (success) {
+      if (success) {
+        loadMineRequest();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -120,6 +128,7 @@ class _MineState extends State<Mine> {
                   height: topHeight,
                   targetData: targetData,
                   changeInfo: changeInfo,
+                  changeSign: changeSign,
                   toLevelSetting: () {},
                 ),
                 Row(
@@ -169,27 +178,28 @@ class _MineState extends State<Mine> {
                   height: 20,
                 ),
                 JMline(width: SizeConfig.screenWidth, height: 0.5),
-                getCell('等级目标设置', Icons.grading, () {
+                getCell('等级目标设置', 'assets/images/icon/icon_levelsetting.png',
+                    () {
                   Navigator.of(context).push(CupertinoPageRoute(
                     builder: (_) {
                       return LevelTargetSetting(deptId: userInfo['deptId']);
                     },
                   ));
                 }),
-                JMline(width: SizeConfig.screenWidth, height: 0.5),
-                getCell('日报模板管理', Icons.grading, () {}),
+                // JMline(width: SizeConfig.screenWidth, height: 0.5),
+                // getCell('日报模板管理', Icons.grading, () {}),
                 JMline(
                     margin: margin,
                     width: SizeConfig.screenWidth - margin,
                     height: 0.5),
-                getCell('关于', Icons.info, () {
+                getCell('关于', 'assets/images/icon/icon_mine_about.png', () {
                   push(About(), context);
                 }),
                 JMline(
                     margin: margin,
                     width: SizeConfig.screenWidth - margin,
                     height: 0.5),
-                getCell('退出登录', Icons.info, () {
+                getCell('退出登录', 'assets/images/icon/icon_mine_logout.png', () {
                   CustomAlert(content: '确定要退出登录吗？').show(
                     confirmClick: () {
                       UserDefault.saveStr(USERINFO, null);
@@ -213,7 +223,7 @@ class _MineState extends State<Mine> {
     );
   }
 
-  Widget getCell(String title, IconData icons, Function() onPressed) {
+  Widget getCell(String title, String icons, Function() onPressed) {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
@@ -228,10 +238,11 @@ class _MineState extends State<Mine> {
                 SizedBox(
                   width: margin,
                 ),
-                Icon(
+                Image.asset(
                   icons,
-                  size: widthScale * 5,
-                  color: jm_appTheme,
+                  width: title == '等级目标设置' ? widthScale * 5.5 : widthScale * 5,
+                  height: title == '等级目标设置' ? widthScale * 5.5 : widthScale * 5,
+                  fit: BoxFit.fill,
                 ),
                 SizedBox(
                   width: widthScale * 3,

@@ -1,3 +1,6 @@
+// import 'dart:async';
+// import 'dart:ui' as ui;
+// import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -66,17 +69,51 @@ class _CustomImagePageState extends State<CustomImagePage> {
     List<Widget> list = [];
     for (var i = 0; i < widget.imageList.length; i++) {
       dynamic e = widget.imageList[i];
-      list.add(GestureDetector(
-        onTap: () => Navigator.pop(context),
-        child: PhotoView(
-            imageProvider: AssetThumbImageProvider(e,
-                // scale: SizeConfig.screenWidth / e.originalWidth,
-                width: SizeConfig.screenWidth.round(),
-                height: (e.originalHeight /
-                        e.originalWidth *
-                        SizeConfig.screenWidth)
-                    .round())),
-      ));
+      print('e is ${e is String}  e ==== ${e.runtimeType}');
+      if (e is String) {
+        // Image image = Image.network(e);
+        // Completer<ui.Image> completer = Completer<ui.Image>();
+        // image.image.resolve(ImageConfiguration()).addListener(
+        //     ImageStreamListener((ImageInfo image, bool synchronousCall) {
+        //   completer.complete(image.image);
+        // }));
+
+        // snapshot.data.width}x${snapshot.data.height
+        // list.add(
+        //   FutureBuilder<ui.Image>(
+        //     future: completer.future,
+        //     builder: (BuildContext context, AsyncSnapshot<ui.Image> snapshot) {
+        //       if (snapshot.hasData) {
+        //         return GestureDetector(
+        //           onTap: () => Navigator.pop(context),
+        //           child: PhotoView(
+        //             imageProvider: CachedNetworkImageProvider(e),
+        //           ),
+        //         );
+        //       } else {
+        //         return NoneV();
+        //       }
+        //     },
+        //   ),
+        // );
+
+        list.add(GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: PhotoView(imageProvider: NetworkImage(e))));
+        // CachedNetworkImageProvider(url)
+      } else {
+        list.add(GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: PhotoView(
+              imageProvider: AssetThumbImageProvider(e,
+                  // scale: SizeConfig.screenWidth / e.originalWidth,
+                  width: SizeConfig.screenWidth.round(),
+                  height: (e.originalHeight /
+                          e.originalWidth *
+                          SizeConfig.screenWidth)
+                      .round())),
+        ));
+      }
     }
     return list;
   }

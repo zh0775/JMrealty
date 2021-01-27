@@ -25,13 +25,13 @@ class EmptyView extends StatelessWidget {
               height: widthScale * 39,
               child: Image.asset(
                 'assets/images/icon/bg_empty.gif',
-                // fit: BoxFit.fill,
+                fit: BoxFit.fill,
               ),
             ),
-            // Text(
-            //   tips,
-            //   style: jm_text_gray_style15,
-            // ),
+            Text(
+              tips,
+              style: jm_text_gray_style15,
+            ),
           ],
         ),
       ),

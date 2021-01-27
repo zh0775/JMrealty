@@ -1,7 +1,6 @@
 // import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
 class SelectImageView {
@@ -79,7 +78,21 @@ class SelectImageView {
     resultList = await MultiImagePicker.pickImages(
       maxImages: count,
       enableCamera: isCamera,
+      // materialOptions: MaterialOptions(
+      //     actionBarTitle: "选择图像",
+      //     allViewTitle: "所有图像",
+      //     // 显示所有照片，值为 false 时显示相册
+      //     startInAllView: true,
+      //     actionBarColor: '#00b1f5',
+      //     textOnNothingSelected: '没有选择图像',
+      //     useDetailsView: true,
+      //     selectionLimitReachedText: "超过最大选择数目."),
+      // cupertinoOptions: CupertinoOptions(
+      //     backgroundColor: '#E6B85C',
+      //     takePhotoIcon: '选择图像',
+      //     selectionCharacter: '选择图像2')
     );
+
     if (resultList != null && imageSelected != null) {
       imageSelected(resultList);
       // List<Future> list = List.generate(resultList.length, (index) {

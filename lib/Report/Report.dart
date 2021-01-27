@@ -24,28 +24,33 @@ class _ReportState extends State<Report> {
   List projectListData = [];
   @override
   void initState() {
-    projectVM.loadProjectList({}, (projectList, success, total) {
+    getProjectListFilter();
+    // projectIndex = 0;
+    // tabCtr = TabController(length: null, vsync: null)
+    super.initState();
+  }
+
+  void getProjectListFilter() {
+    projectVM.reportListProjectFilter((projectList, success, total) {
       if (success) {
         List listFormat = projectList.map((e) {
           return {'title': e['name'], 'value': e['id']};
         }).toList();
         setState(() {
           projectListData = [
-            {'title': '所有项目', 'value': null},
+            {'title': '全部项目', 'value': null},
             ...listFormat
           ];
         });
       }
     });
-    // projectIndex = 0;
-    // tabCtr = TabController(length: null, vsync: null)
-    super.initState();
   }
 
   @override
   void dispose() {
-    _eventBus.off(NOTIFY_REPORT_SELECT_COPY_REFRASH);
     _eventBus.off(NOTIFY_REPORT_SELECT_REFRASH);
+    _eventBus.off(NOTIFY_REPORT_LIST_REFRASH);
+    _eventBus.off(NOTIFY_REPORT_SELECT_COPY_REFRASH);
     super.dispose();
   }
 
@@ -54,7 +59,7 @@ class _ReportState extends State<Report> {
     SizeConfig().init(context);
     widthScale = SizeConfig.blockSizeHorizontal;
     return DefaultTabController(
-      length: 10,
+      length: 13,
       child: Scaffold(
         appBar: AppBar(
             flexibleSpace: Container(
@@ -103,16 +108,19 @@ class _ReportState extends State<Report> {
               indicatorWeight: 2.0,
               indicatorPadding: EdgeInsets.only(bottom: 5),
               tabs: [
-                getTab('有效'),
-                getTab('已带看'),
-                getTab('已上传'),
-                getTab('已预约'),
-                getTab('已成交'),
-                getTab('已签约'),
-                getTab('已结款'),
-                getTab('已结佣'),
-                getTab('失效'),
-                getTab('退单'),
+                getTab(jm_getReportStatusStr(0)),
+                getTab(jm_getReportStatusStr(5)),
+                getTab(jm_getReportStatusStr(10)),
+                getTab(jm_getReportStatusStr(20)),
+                getTab(jm_getReportStatusStr(22)),
+                getTab(jm_getReportStatusStr(21)),
+                getTab(jm_getReportStatusStr(30)),
+                getTab(jm_getReportStatusStr(40)),
+                getTab(jm_getReportStatusStr(50)),
+                getTab(jm_getReportStatusStr(60)),
+                getTab(jm_getReportStatusStr(63)),
+                getTab(jm_getReportStatusStr(70)),
+                getTab(jm_getReportStatusStr(80)),
               ],
             )),
         backgroundColor: Color(0xfff0f2f5),
@@ -136,48 +144,97 @@ class _ReportState extends State<Report> {
                           border: Border(
                               bottom: BorderSide(
                                   width: 0.5, color: jm_line_color))),
-                      child: Row(
-                        children: [
-                          ButtonTheme(
-                            layoutBehavior: ButtonBarLayoutBehavior.constrained,
-                            minWidth: 0,
-                            child: FlatButton(
-                                onPressed: () {},
-                                child: Text(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          if (projectListData == null ||
+                              projectListData.length == 0) {
+                            getProjectListFilter();
+                          }
+                          setState(() {
+                            showMenu = !showMenu;
+                          });
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: widthScale * 4,
+                                ),
+                                Text(
                                   '项目',
                                   style: jm_text_gray_style14,
-                                )),
-                          ),
-                          ButtonTheme(
-                            minWidth: 0,
-                            layoutBehavior: ButtonBarLayoutBehavior.constrained,
-                            child: FlatButton(
-                                onPressed: () {
-                                  setState(() {
-                                    showMenu = !showMenu;
-                                  });
-                                },
-                                child: Text(
+                                ),
+                                SizedBox(
+                                  width: widthScale * 4,
+                                ),
+                                Text(
                                   currentSelect['title'],
-                                  style: jm_text_black_style15,
-                                )),
-                          ),
-                        ],
+                                  style: showMenu
+                                      ? jm_text_apptheme_style15
+                                      : jm_text_black_style15,
+                                ),
+                                // ButtonTheme(
+                                //   layoutBehavior:
+                                //       ButtonBarLayoutBehavior.constrained,
+                                //   minWidth: 0,
+                                //   child: FlatButton(
+                                //       onPressed: () {},
+                                //       child: Text(
+                                //         '项目',
+                                //         style: jm_text_gray_style14,
+                                //       )),
+                                // ),
+                                // ButtonTheme(
+                                //   minWidth: 0,
+                                //   layoutBehavior:
+                                //       ButtonBarLayoutBehavior.constrained,
+                                //   child: FlatButton(
+                                //       onPressed: () {
+                                //         if (projectListData == null ||
+                                //             projectListData.length == 0) {
+                                //           getProjectListFilter();
+                                //         }
+                                //         setState(() {
+                                //           showMenu = !showMenu;
+                                //         });
+                                //       },
+                                //       child: Text(
+                                //         currentSelect['title'],
+                                //         style: showMenu
+                                //             ? jm_text_apptheme_style15
+                                //             : jm_text_black_style15,
+                                //       )),
+                                // ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(right: widthScale * 3),
+                              child: Icon(
+                                Icons.arrow_drop_down,
+                                size: widthScale * 6.5,
+                                color: jm_text_gray,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                     Expanded(
                       child: TabBarView(children: [
-                        ReportListView(
-                          status: 0,
-                          isCopy: isCopy,
-                        ),
+                        ReportListView(status: 0, isCopy: isCopy),
+                        ReportListView(status: 5, isCopy: isCopy),
                         ReportListView(status: 10, isCopy: isCopy),
                         ReportListView(status: 20, isCopy: isCopy),
+                        ReportListView(status: 22, isCopy: isCopy),
                         ReportListView(status: 21, isCopy: isCopy),
                         ReportListView(status: 30, isCopy: isCopy),
                         ReportListView(status: 40, isCopy: isCopy),
                         ReportListView(status: 50, isCopy: isCopy),
                         ReportListView(status: 60, isCopy: isCopy),
+                        ReportListView(status: 63, isCopy: isCopy),
                         ReportListView(status: 70, isCopy: isCopy),
                         ReportListView(status: 80, isCopy: isCopy),
                       ]),

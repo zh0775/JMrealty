@@ -61,9 +61,12 @@ class _PKmainListState extends State<PKmainList> {
     }
     Map<String, dynamic> params = Map<String, dynamic>.from(
         {'status': widget.status, 'pageSize': pageSize, 'pageNum': page});
-    pkVM.loadPKList(params, success: (dataList, success, total) {
+    if (widget.status == -1) {
+      params.remove('status');
+    }
+    pkVM.loadPKList(params, success: (dataList, success, count) {
       if (success && mounted) {
-        total = total;
+        total = count;
         setState(() {
           if (isLoad) {
             pkListData.addAll(dataList);

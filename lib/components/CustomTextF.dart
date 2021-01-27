@@ -19,8 +19,10 @@ class CustomTextF extends StatefulWidget {
   final TextStyle style;
   final BorderSide border;
   final bool enable;
+  final TextStyle hintStyle;
   final Color backgroundColor;
   final BorderRadius borderRadius;
+  final TextEditingController controller;
   final Function(String value) valueChange;
   final FocusNode focusNode;
   final double leftTextPadding;
@@ -33,6 +35,8 @@ class CustomTextF extends StatefulWidget {
       this.width,
       this.margin,
       this.height = 50,
+      this.hintStyle,
+      this.controller,
       this.bottomLine = false,
       this.labelWidth = 0.0,
       this.labelText,
@@ -40,7 +44,7 @@ class CustomTextF extends StatefulWidget {
       this.text = '',
       this.leftTextPadding = 10,
       this.must = false,
-      this.labelStyle = jm_text_black_style14,
+      this.labelStyle = jm_text_black_bold_style15,
       this.style = jm_text_black_style14,
       this.keyboardType = TextInputType.text,
       this.borderRadius,
@@ -55,6 +59,8 @@ class CustomTextF extends StatefulWidget {
 }
 
 class _CustomTextFState extends State<CustomTextF> {
+  GlobalKey _key = GlobalKey();
+  // final TextEditingController textCrl = TextEditingController();
   double widthScale;
   double otherWidth;
   double labelWidth;
@@ -69,6 +75,7 @@ class _CustomTextFState extends State<CustomTextF> {
 
   @override
   Widget build(BuildContext context) {
+    // textCrl.selection = TextSelection()
     SizeConfig().init(context);
     widthScale = SizeConfig.blockSizeHorizontal;
     if (widget.width == null) {
@@ -122,21 +129,25 @@ class _CustomTextFState extends State<CustomTextF> {
                   }
                 },
                 child: TextField(
+                  key: _key,
                   obscureText: widget.hideText,
                   textAlign: TextAlign.left,
                   textAlignVertical: TextAlignVertical.center,
-                  controller: TextEditingController.fromValue(TextEditingValue(
-                    text: widget.text ?? '',
-                    selection: TextSelection.fromPosition(TextPosition(
-                        affinity: TextAffinity.downstream,
-                        offset: widget.text.length ?? 0)),
-                  )),
+                  controller: widget.controller ??
+                      TextEditingController.fromValue(TextEditingValue(
+                        text: widget.text ?? '',
+                        selection: TextSelection.fromPosition(TextPosition(
+                            affinity: TextAffinity.downstream,
+                            offset: widget.text.length ?? 0)),
+                      )),
                   enabled: widget.enable && !widget.onlyTap ? true : false,
                   keyboardType: widget.keyboardType,
                   style: widget.style,
                   focusNode: widget.focusNode,
                   cursorRadius: Radius.circular(10),
                   decoration: InputDecoration(
+                    hintStyle:
+                        widget.hintStyle ?? InputDecorationTheme().hintStyle,
                     hintText: widget.placeholder,
                     filled: true,
                     fillColor: widget.backgroundColor,

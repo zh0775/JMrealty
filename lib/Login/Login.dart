@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:JMrealty/Login/ForgetPwd.dart';
 import 'package:JMrealty/Login/Regist.dart';
 import 'package:JMrealty/Login/model/login_model.dart';
 import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
@@ -47,8 +48,9 @@ class _LoginState extends State<Login> {
   bool registIsMan; // 注册性别
   String registName; // 注册姓名
   String registPhone; // 注册手机号
-
+  bool loginEnable = false;
   SelectImageView imgSelectV; // 选择图片视图
+  bool isForget = false;
 
   @override
   void dispose() {
@@ -102,16 +104,24 @@ class _LoginState extends State<Login> {
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: SingleChildScrollView(
-        child: isLogin
-            ? loginWidget(context)
-            : Regist(
-                toLogin: () {
-                  setState(() {
-                    isLogin = true;
-                  });
-                },
-              ),
-      ),
+          child: isForget
+              ? ForgetPwd(
+                  toLogin: () {
+                    setState(() {
+                      isLogin = true;
+                      isForget = false;
+                    });
+                  },
+                )
+              : (isLogin
+                  ? loginWidget(context)
+                  : Regist(
+                      toLogin: () {
+                        setState(() {
+                          isLogin = true;
+                        });
+                      },
+                    ))),
     ));
   }
 
@@ -186,6 +196,7 @@ class _LoginState extends State<Login> {
                       // clearButtonMode: OverlayVisibilityMode.always,
                       onChanged: (value) {
                         phoneNumString = value;
+                        checkLogin();
                       },
                     ),
                   ),
@@ -233,6 +244,7 @@ class _LoginState extends State<Login> {
                       // clearButtonMode: OverlayVisibilityMode.always,
                       onChanged: (value) {
                         password = value;
+                        checkLogin();
                       },
                     ),
                   ),
@@ -241,6 +253,7 @@ class _LoginState extends State<Login> {
                   ),
                   CustomSubmitButton(
                     height: 60,
+                    enable: loginEnable,
                     title: '确认登录',
                     buttonClick: () {
                       FocusScope.of(context).requestFocus(FocusNode());
@@ -262,6 +275,7 @@ class _LoginState extends State<Login> {
                         CustomLoading().hide();
                         if (success) {
                           _eventBus.emit(NOTIFY_LOGIN_SUCCESS);
+                          _eventBus.emit(NOTIFY_CHANGE_TABBAR_INDEX, 2);
                           ShowToast.normal('登录成功');
                           Future.delayed(Duration(seconds: 1), () {
                             FocusScope.of(context).requestFocus(FocusNode());
@@ -276,20 +290,38 @@ class _LoginState extends State<Login> {
                     height: 10,
                   ),
                   Container(
-                      width: SizeConfig.screenWidth - 80 - 200,
+                      width: SizeConfig.screenWidth - 80,
                       height: 48,
-                      child: TextButton(
-                        key: ValueKey('toRegistTextButton'),
-                        onPressed: () {
-                          setState(() {
-                            isLogin = false;
-                          });
-                        },
-                        child: Text(
-                          '注册账号',
-                          style:
-                              TextStyle(fontSize: 14, color: Color(0xff4c4f5c)),
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            key: ValueKey('toForgetTextButton'),
+                            onPressed: () {
+                              setState(() {
+                                isForget = true;
+                              });
+                            },
+                            child: Text(
+                              '忘记密码',
+                              style: TextStyle(
+                                  fontSize: 14, color: Color(0xff4c4f5c)),
+                            ),
+                          ),
+                          TextButton(
+                            key: ValueKey('toRegistTextButton'),
+                            onPressed: () {
+                              setState(() {
+                                isLogin = false;
+                              });
+                            },
+                            child: Text(
+                              '注册账号',
+                              style: TextStyle(
+                                  fontSize: 14, color: Color(0xff4c4f5c)),
+                            ),
+                          )
+                        ],
                       )),
                 ],
               ))
@@ -819,5 +851,27 @@ class _LoginState extends State<Login> {
   dynamic getByteImg() async {
     ByteData byteData = await headImg.getByteData();
     List<int> imageData = await byteData.buffer.asUint8List();
+  }
+
+  checkLogin() {
+    if (phoneNumString != null &&
+        phoneNumString.length >= 10 &&
+        password != null &&
+        password.length >= 6 &&
+        !loginEnable) {
+      setState(() {
+        loginEnable = true;
+      });
+    }
+
+    if ((phoneNumString == null ||
+            phoneNumString.length < 10 ||
+            password == null ||
+            password.length < 6) &&
+        loginEnable) {
+      setState(() {
+        loginEnable = false;
+      });
+    }
   }
 }

@@ -2,6 +2,7 @@ import 'package:JMrealty/MyTasks/viewModel/MyTasksViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportViewModel.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
+import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/DropdownSelectV.dart';
@@ -102,6 +103,7 @@ class _AddTaskState extends State<AddTask> {
               CustomInput(
                 labelStyle: jm_text_black_bold_style15,
                 title: '任务名称',
+                must: true,
                 text: params['name'] ?? '',
                 hintText: '请输入任务名称',
                 valueChange: (value) {
@@ -126,12 +128,13 @@ class _AddTaskState extends State<AddTask> {
                     // margin: margin,
                     width: selfWidth - widthScale * 6,
                     dataList: typeList,
+                    must: true,
                     placeholder: '请选择任务类型',
                     labelText: '任务类型',
                     labelStyle: jm_text_black_bold_style15,
                     valueChange: (value, data) {
                       setState(() {
-                        params['type'] = value;
+                        params['type'] = int.parse(value);
                       });
                     },
                   ),
@@ -157,6 +160,7 @@ class _AddTaskState extends State<AddTask> {
                   ),
                   DropdownSelectV(
                     // margin: margin,
+                    must: true,
                     labelStyle: jm_text_black_bold_style15,
                     width: selfWidth - widthScale * 6,
                     dataList: urgencyList ?? [],
@@ -164,7 +168,7 @@ class _AddTaskState extends State<AddTask> {
                     labelText: '紧急程度',
                     valueChange: (value, data) {
                       setState(() {
-                        params['priority'] = value;
+                        params['priority'] = int.parse(value);
                       });
                     },
                   ),
@@ -180,6 +184,7 @@ class _AddTaskState extends State<AddTask> {
               getDateWidget(title: '结束时间', start: false),
               JMline(width: selfWidth, height: 0.5),
               CustomInput(
+                must: true,
                 labelStyle: jm_text_black_bold_style15,
                 title: '任务接收人',
                 hintText: '搜索添加任务接收人',
@@ -247,8 +252,6 @@ class _AddTaskState extends State<AddTask> {
                   height: 60,
                   margin: margin * 5,
                   buttonClick: () {
-                    params['receiveIdList'] =
-                        agentList.map((e) => e['userId']).toList();
                     if (params['name'] == null || params['name'] == '') {
                       ShowToast.normal('请输入任务名称');
                       return;
@@ -282,9 +285,18 @@ class _AddTaskState extends State<AddTask> {
                       ShowToast.normal('请输入任务说明');
                       return;
                     }
+                    if (agentList == null || agentList.length == 0) {
+                      ShowToast.normal('请添加任务接收人');
+                      return;
+                    }
+
+                    params['receiveIdList'] =
+                        agentList.map((e) => e['userId']).toList();
                     CustomAlert(title: '提示', content: '是否确认提交？').show(
                         confirmClick: () {
+                      CustomLoading().show();
                       tasksVM.addTasksRequest(params, (success) {
+                        CustomLoading().hide();
                         if (success) {
                           _bus.emit(NOTIFY_TASKS_LIST_REFRASH);
                           ShowToast.normal('新增成功');
@@ -325,19 +337,23 @@ class _AddTaskState extends State<AddTask> {
           ),
           Container(
             width: labelWidth,
-            child: Text(
-              title,
-              style: jm_text_black_bold_style15,
+            child: Row(
+              children: [
+                Text('*', style: TextStyle(color: Colors.red, fontSize: 13)),
+                Text(
+                  title,
+                  style: jm_text_black_bold_style15,
+                ),
+              ],
             ),
           ),
           Container(
-            width: selfWidth - labelWidth - widthScale * 6,
-            child: Text(
-              // dateFormat.format(start ? startDate : endDate),
-              dateData ?? (start ? '请选择发布时间' : '请选择结束时间'),
-              style: textStyle,
-            ),
-          ),
+              width: selfWidth - labelWidth - widthScale * 6,
+              child: Text(
+                // dateFormat.format(start ? startDate : endDate),
+                dateData ?? (start ? '请选择发布时间' : '请选择结束时间'),
+                style: textStyle,
+              )),
           Icon(
             Icons.keyboard_arrow_right,
             size: widthScale * 6,

@@ -29,6 +29,8 @@ class _ClientState extends State<Client> {
   int waitFollowCount = 8;
   bool selectExpand = false;
   int currentSelectIndex;
+  double widthScale;
+  double filterBarHeight = 50;
   Map value1 = {'title': '级别', 'value': '-1'};
   Map value2 = {'title': '类型', 'value': '-1'};
   Map value3 = {'title': '面积', 'value': '-1'};
@@ -77,7 +79,10 @@ class _ClientState extends State<Client> {
     });
     cellClientOpenClick =
         (ClientStatus status, int index, Map model, BuildContext context) {
-      CustomAlert(content: '是否公开到客户池').show(
+      CustomAlert(
+              title: '是否公开到客户池',
+              content: '规则：首先会公开到服务点内客户池，如15天内无人认领，则公开到市级客户池')
+          .show(
         confirmClick: () {
           topSelectVM.customToPullRequest(model['id'], (success) {
             if (success) {
@@ -111,6 +116,7 @@ class _ClientState extends State<Client> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    widthScale = SizeConfig.blockSizeHorizontal;
     return DefaultTabController(
       length: 5,
       child: Scaffold(
@@ -137,14 +143,12 @@ class _ClientState extends State<Client> {
                     size: 30,
                   ),
                   onPressed: () {
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                      return AddClientVC();
-                    }));
+                    push(AddClientVC(), context);
                   })
             ],
             bottom: TabBar(
               indicatorSize: TabBarIndicatorSize.label,
-              indicatorColor: Colors.white,
+              indicatorColor: Colors.black,
               indicatorWeight: 2.0,
               indicatorPadding: EdgeInsets.only(bottom: 5, left: 13, right: 13),
               tabs: [
@@ -158,7 +162,7 @@ class _ClientState extends State<Client> {
                     children: [
                       Text(
                         '待跟进',
-                        style: TextStyle(fontSize: 14, color: Colors.white),
+                        style: jm_text_black_style14,
                       ),
                       waitFollowCount > 0
                           ? Positioned(
@@ -184,25 +188,25 @@ class _ClientState extends State<Client> {
                 Tab(
                   child: Text(
                     '已带看',
-                    style: TextStyle(fontSize: 14, color: Colors.white),
+                    style: jm_text_black_style14,
                   ),
                 ),
                 Tab(
                   child: Text(
                     '已预约',
-                    style: TextStyle(fontSize: 14, color: Colors.white),
+                    style: jm_text_black_style14,
                   ),
                 ),
                 Tab(
                   child: Text(
                     '已成交',
-                    style: TextStyle(fontSize: 14, color: Colors.white),
+                    style: jm_text_black_style14,
                   ),
                 ),
                 Tab(
                   child: Text(
                     '公开',
-                    style: TextStyle(fontSize: 14, color: Colors.white),
+                    style: jm_text_black_style14,
                   ),
                 )
               ],
@@ -215,7 +219,7 @@ class _ClientState extends State<Client> {
             child: Stack(
               children: [
                 Positioned(
-                  top: 40,
+                  top: filterBarHeight,
                   left: 0,
                   width: SizeConfig.screenWidth,
                   bottom: 0,
@@ -256,6 +260,39 @@ class _ClientState extends State<Client> {
                   ),
                 ),
                 Positioned(
+                    right: 20,
+                    bottom: 20,
+                    child: RawMaterialButton(
+                      elevation: 0.0,
+                      highlightElevation: 0.5,
+                      constraints: BoxConstraints(
+                        minWidth: widthScale * 20,
+                        minHeight: 40,
+                      ),
+                      fillColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(width: 4, color: Color(0x3362677D))),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                              'assets/images/icon/icon_clientlist_addclient.png',
+                              width: widthScale * 4.5,
+                              height: widthScale * 4.5),
+                          SizedBox(
+                            width: widthScale * 1.2,
+                          ),
+                          Text(
+                            '新增',
+                            style: jm_text_black_style14,
+                          )
+                        ],
+                      ),
+                      onPressed: () {
+                        push(AddClientVC(), context);
+                      },
+                    )),
+                Positioned(
                     left: 0,
                     top: 0,
                     child: GestureDetector(
@@ -272,7 +309,9 @@ class _ClientState extends State<Client> {
                             : Colors.transparent,
                         width: SizeConfig.screenWidth,
                         alignment: Alignment.topLeft,
-                        height: selectExpand ? SizeConfig.screenHeight : 40,
+                        height: selectExpand
+                            ? SizeConfig.screenHeight
+                            : filterBarHeight,
                         child: Row(
                           children: [
                             topButton(
@@ -307,7 +346,8 @@ class _ClientState extends State<Client> {
                       ),
                     )),
                 selectExpand
-                    ? Positioned(top: 40, left: 0, child: getSelectView())
+                    ? Positioned(
+                        top: filterBarHeight, left: 0, child: getSelectView())
                     : Container(width: 0.0, height: 0.0)
               ],
             ),
@@ -317,7 +357,7 @@ class _ClientState extends State<Client> {
 
   Widget selectList(List data, void Function(Map value) itemClick) {
     List textButtons = [];
-    double buttonHeight = 40;
+    double buttonHeight = filterBarHeight;
     // double cHeight = data.length % 2 == 0
     //     ? (data.length / 2) * buttonHeight
     //     : (data.length ~/ 2 + 1) * buttonHeight;
@@ -363,7 +403,7 @@ class _ClientState extends State<Client> {
             border:
                 Border(bottom: BorderSide(width: 0.5, color: jm_line_color))),
         width: SizeConfig.screenWidth / 3,
-        height: 40,
+        height: filterBarHeight,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

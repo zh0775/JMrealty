@@ -41,21 +41,27 @@ class _ProjectCellState extends State<ProjectCell> {
       child: Container(
         width: SizeConfig.screenWidth,
         decoration: BoxDecoration(
-            border:
-                Border(bottom: BorderSide(color: jm_line_color, width: 0.5))),
+            border: Border(bottom: BorderSide(color: jm_line_color, width: 1))),
         child: Row(
           children: [
             SizedBox(
               width: insideMargin,
             ),
             Container(
-              height: imageWidth - widthScale * 3,
+              height: imageWidth - widthScale * 10,
               // color: Colors.red,
               width: imageWidth,
-              child: ImageLoader(
-                widget.data['headIcon'],
-                fit: BoxFit.fill,
-              ),
+              child: widget.data['headIcon'] != null
+                  ? ImageLoader(
+                      widget.data['headIcon'],
+
+                      // widget.data['headIcon'],
+                      fit: BoxFit.fill,
+                    )
+                  : Image.asset(
+                      'assets/images/icon/icon_default_head.png',
+                      fit: BoxFit.fill,
+                    ),
             ),
             SizedBox(
               width: insideMargin,
@@ -78,13 +84,13 @@ class _ProjectCellState extends State<ProjectCell> {
                 SizedBox(
                   height: labelSpace,
                 ),
-                SizedBox(
-                  width: otherWidth,
-                  child: Text(
-                    widget.data['address'] ?? '',
-                    style: jm_text_gray_style13,
-                  ),
-                ),
+                // SizedBox(
+                //   width: otherWidth,
+                //   child: Text(
+                //     widget.data['address'] ?? '',
+                //     style: jm_text_gray_style13,
+                //   ),
+                // ),
                 SizedBox(
                   height: labelSpace,
                 ),
@@ -93,7 +99,7 @@ class _ProjectCellState extends State<ProjectCell> {
                   child: RichText(
                       maxLines: 100,
                       text: TextSpan(
-                          text: '均',
+                          text: '',
                           style: TextStyle(fontSize: 13, color: Colors.red),
                           children: [
                             TextSpan(
@@ -114,25 +120,25 @@ class _ProjectCellState extends State<ProjectCell> {
                 SizedBox(
                   width: otherWidth,
                   child: Text(
-                    (widget.data['architecture'] != null
-                            ? (widget.data['architecture'] + ' | ')
-                            : '') +
-                        (widget.data['property'] != null
-                            ? (widget.data['property'] + ' - ')
-                            : '') +
-                        (widget.data['city'] != null
-                            ? (widget.data['city'] + ' - ')
+                    // (widget.data['architecture'] != null
+                    //         ? (widget.data['architecture'] + ' | ')
+                    //         : '') +
+                    // (widget.data['property'] != null
+                    //         ? (widget.data['property'] + ' - ')
+                    //         : '') +
+                    (widget.data['city'] != null
+                            ? (widget.data['city'] + ' ')
                             : '') +
                         (widget.data['region'] != null
-                            ? (widget.data['region'] + ' | ')
+                            ? widget.data['region']
                             : '') +
                         (widget.data['areaMin'] != null
-                            ? (widget.data['areaMin'] + '-')
+                            ? ('/建面 ' + widget.data['areaMin'] + '-')
                             : '') +
                         (widget.data['areaMax'] != null
-                            ? (widget.data['areaMax'] + '平')
+                            ? (widget.data['areaMax'] + '㎡')
                             : ''),
-                    style: jm_text_gray_style13,
+                    style: jm_text_black_style13,
                   ),
                 ),
                 SizedBox(
@@ -189,13 +195,13 @@ class _ProjectCellState extends State<ProjectCell> {
 
   String getStatusTitle(int status) {
     switch (status) {
-      case 1:
+      case 0:
         return '未开盘';
         break;
-      case 2:
+      case 1:
         return '在售';
         break;
-      case 3:
+      case 2:
         return '售罄';
         break;
       default:

@@ -1,3 +1,4 @@
+import 'package:JMrealty/Report/viewmodel/ReporProjecttInfo.dart';
 import 'package:JMrealty/Report/viewmodel/ReportUploadViewModel.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
@@ -5,6 +6,7 @@ import 'package:JMrealty/components/CustomImagePage.dart';
 import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/components/SelectImageView.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
@@ -15,13 +17,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
-// import 'package:flutter/services.dart';
 enum ReportUploadStatus {
   upload,
   appointment,
   invalid,
   sign, // 需要填时间
-  chargeback
+  chargeback,
+  disputed,
+  checkDeal,
+  checkAppointment
 }
 
 class ReportUpload extends StatefulWidget {
@@ -37,6 +41,7 @@ class ReportUpload extends StatefulWidget {
 }
 
 class _ReportUploadState extends State<ReportUpload> {
+  int imageCount = 15;
   ReportUploadViewModel viewModel = ReportUploadViewModel();
   EventBus _eventBus = EventBus();
   SelectImageView imgSelectV; // 选择图片视图
@@ -52,14 +57,14 @@ class _ReportUploadState extends State<ReportUpload> {
   @override
   void initState() {
     imgSelectV = SelectImageView(
-      count: 9,
+      count: imageCount,
       imageSelected: (images) {
         if (images != null && mounted) {
           setState(() {
             imageList.addAll(images);
-            if (imageList.length >= 9) {
-              ShowToast.normal('最多上传9张照片，长按照片可删除');
-              imageList.removeRange(9, imageList.length);
+            if (imageList.length >= imageCount) {
+              ShowToast.normal('最多上传$imageCount张照片，长按照片可删除');
+              imageList.removeRange(imageCount, imageList.length);
             }
           });
         }
@@ -97,6 +102,18 @@ class _ReportUploadState extends State<ReportUpload> {
       case ReportUploadStatus.chargeback:
         title = '退单';
         break;
+      case ReportUploadStatus.disputed:
+        title = '争议单';
+        break;
+      case ReportUploadStatus.checkDeal:
+        title = '审核成交';
+        break;
+      case ReportUploadStatus.checkDeal:
+        title = '审核成交';
+        break;
+      case ReportUploadStatus.checkAppointment:
+        title = '审核预约';
+        break;
       default:
     }
 
@@ -114,37 +131,16 @@ class _ReportUploadState extends State<ReportUpload> {
             SizedBox(
               height: 20,
             ),
-            // 第一行
-            getTitle(),
-            SizedBox(
-              height: 12,
+            ReporProjecttInfo(
+              data: widget.data,
+              width: SizeConfig.screenWidth,
+              margin: outMargin,
+              labelSpace: labelSpace,
             ),
-            getProject(),
-            SizedBox(
-              height: labelSpace,
-            ),
-            getProtect(),
-            SizedBox(
-              height: labelSpace,
-            ),
-            getStatus(),
-            SizedBox(
-              height: labelSpace,
-            ),
-            getCompany(),
-            SizedBox(
-              height: labelSpace,
-            ),
-            getName(),
-            SizedBox(
-              height: labelSpace,
-            ),
-            getNum(),
             SizedBox(
               height: 15,
             ),
             JMline(width: SizeConfig.screenWidth, height: 0.5),
-
             widget.uploadStatus == ReportUploadStatus.sign
                 ? getDateWidget(title: '签约时间')
                 : Container(
@@ -161,6 +157,7 @@ class _ReportUploadState extends State<ReportUpload> {
                   '上传资料',
                   style: jm_text_black_bold_style17,
                 )),
+            getUploadTips(),
             SizedBox(
               height: 13,
             ),
@@ -205,7 +202,11 @@ class _ReportUploadState extends State<ReportUpload> {
                 }
                 mapParams['remark'] = mark ?? '';
                 if (widget.uploadStatus == ReportUploadStatus.sign) {
-                  mapParams['visaTime'] = timeStr ?? '';
+                  if (timeStr == null || timeStr.length == 0) {
+                    ShowToast.normal('请选择签约时间');
+                    return;
+                  }
+                  mapParams['visaTime'] = timeStr;
                 }
 
                 CustomAlert(title: '提示', content: '是否确认提交？').show(
@@ -242,6 +243,34 @@ class _ReportUploadState extends State<ReportUpload> {
     );
   }
 
+  Widget getUploadTips() {
+    String tips = '';
+    if (widget.uploadStatus != ReportUploadStatus.upload &&
+        widget.uploadStatus != ReportUploadStatus.sign) {
+      return NoneV();
+    }
+    switch (widget.uploadStatus) {
+      case ReportUploadStatus.upload:
+        tips = '1、甲方公司的带看/转介确认单，2、客户本人和置业顾问在带看楼盘的现场照片';
+        break;
+      case ReportUploadStatus.sign:
+        tips = '1、商品房买卖合同，需要提供合同封面及有成交房号信息相关内容页面';
+        break;
+      default:
+    }
+
+    return Align(
+      child: Container(
+        margin: EdgeInsets.only(top: 10),
+        width: SizeConfig.screenWidth - outMargin * 2,
+        child: Text(
+          tips,
+          style: jm_text_gray_style13,
+        ),
+      ),
+    );
+  }
+
   successBack() {
     CustomLoading().hide();
     ShowToast.normal('提交成功');
@@ -267,8 +296,8 @@ class _ReportUploadState extends State<ReportUpload> {
   }
 
   addImage() {
-    if (imageList.length >= 9) {
-      ShowToast.normal('最多上传9张照片，长按照片可删除');
+    if (imageList.length >= imageCount) {
+      ShowToast.normal('最多上传$imageCount张照片，长按照片可删除');
       return;
     }
     imgSelectV.showImage(context);

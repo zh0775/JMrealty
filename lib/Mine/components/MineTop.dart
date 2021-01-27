@@ -12,12 +12,14 @@ class MineTop extends StatefulWidget {
   final Map data;
   final Map targetData;
   final Function(Map params) changeInfo;
+  final Function(Map params) changeSign;
   final Function() toLevelSetting;
   const MineTop(
       {this.height,
       this.data,
       this.toLevelSetting,
       this.targetData,
+      this.changeSign,
       this.changeInfo});
 
   @override
@@ -89,9 +91,9 @@ class _MineTopState extends State<MineTop> {
         });
         if (userSign != null &&
             userSign.length > 0 &&
-            widget.changeInfo != null) {
+            widget.changeSign != null) {
           widget
-              .changeInfo({'sign': userSign, 'userId': widget.data['userId']});
+              .changeSign({'sign': userSign, 'userId': widget.data['userId']});
         }
       }
       // print("焦点1是否被选中：" + signFocusNode.hasFocus.toString());
@@ -301,7 +303,7 @@ class _MineTopState extends State<MineTop> {
                 children: [
                   getCommissionButton(
                       '总佣金',
-                      countFormat(widget.targetData['amount']),
+                      countFormat(widget.data['amount']),
                       widthScale,
                       (SizeConfig.screenWidth - margin * 2) / 3,
                       targetHeight,
@@ -309,7 +311,7 @@ class _MineTopState extends State<MineTop> {
                   JMline(width: 1, height: targetHeight),
                   getCommissionButton(
                       '已结佣',
-                      countFormat(widget.targetData['getSalary']),
+                      countFormat(widget.data['getSalary']),
                       widthScale,
                       (SizeConfig.screenWidth - margin * 2) / 3,
                       targetHeight,

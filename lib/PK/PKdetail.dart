@@ -1,4 +1,7 @@
+import 'package:JMrealty/PK/viewModel/PKviewModel.dart';
+import 'package:JMrealty/base/image_loader.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
@@ -11,14 +14,25 @@ class PKdetail extends StatefulWidget {
 }
 
 class _PKdetailState extends State<PKdetail> {
+  PKviewModel pkVM = PKviewModel();
   double widthScale;
   double margin;
   double selfWidth;
   double outMargin;
+  Map medel;
   // PKviewModel pkVM;
 
   @override
   void initState() {
+    pkVM.getMedal(widget.pkData['medalId'] ?? '', (success, medelData) {
+      if (success) {
+        if (mounted) {
+          setState(() {
+            medel = medelData;
+          });
+        }
+      }
+    });
     // pkVM = PKviewModel();
     super.initState();
   }
@@ -137,6 +151,44 @@ class _PKdetailState extends State<PKdetail> {
                 JMline(width: selfWidth, height: 0.5),
                 SizedBox(
                   height: 10,
+                ),
+                medel != null &&
+                        medel['icon'] != null &&
+                        (medel['icon'] as String).length > 0
+                    ? Row(
+                        children: [
+                          SizedBox(
+                            height: 10,
+                          ),
+                          SizedBox(
+                            width: outMargin,
+                          ),
+                          Text(
+                            'PK赛奖章',
+                            style: jm_text_gray_style14,
+                          ),
+                          SizedBox(
+                            width: widthScale * 7,
+                          ),
+                          SizedBox(
+                            width: widthScale * 6,
+                            height: widthScale * 8,
+                            child: ImageLoader(
+                              medel['icon'],
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          // Container(
+                          //     width: widthScale * 49,
+                          //     child: Text(
+                          //       medel['name'] ?? '',
+                          //       style: jm_text_gray_style14,
+                          //     )),
+                        ],
+                      )
+                    : NoneV(),
+                SizedBox(
+                  height: 5,
                 ),
                 Row(
                   children: [

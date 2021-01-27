@@ -48,7 +48,7 @@ class ClientListViewModel extends BaseViewModel {
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
-            success(true, json['total']);
+            success(true, json['data']);
           }
         } else {
           if (success != null) {
@@ -70,7 +70,7 @@ class ClientListViewModel extends BaseViewModel {
       {},
       success: (json) {
         if (json['code'] == 200) {
-          success(true, json['data']);
+          success(true, json['data'] ?? {});
         } else {
           if (success != null) {
             success(false, null);

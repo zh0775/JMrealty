@@ -53,7 +53,7 @@ class MessageViewModel {
             if (json['code'] == 200) {
               if (success != null) {
                 success(json['data'] != null ? (json['data'])['rows'] : [],
-                    true, json['total']);
+                    true, (json['data'])['total']);
               }
             } else {
               if (success != null) {

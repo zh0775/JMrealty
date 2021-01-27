@@ -1,11 +1,15 @@
 import 'package:JMrealty/base/base_viewmodel.dart';
+import 'package:JMrealty/const/Config.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
+import 'package:JMrealty/services/http_config.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert' as convert;
+
+import 'package:jpush_flutter/jpush_flutter.dart';
 
 class HomeViewModel extends BaseViewModel {
   Map<String, dynamic> userInfo;
@@ -17,21 +21,37 @@ class HomeViewModel extends BaseViewModel {
       Urls.getUserInfo,
       {},
       success: (json) {
-        UserDefault.saveStr(USERINFO, convert.jsonEncode(json['data']))
-            .then((value) {
-          if (value) {
-            bus.emit(NOTIFY_USER_INFO, convert.jsonEncode(json['data']));
-            state = BaseState.CONTENT;
-            notifyListeners();
-            if (finish != null) {
-              finish();
+        if (json['code'] == 200) {
+          initPlatformState(json['data']);
+          UserDefault.saveStr(USERINFO, convert.jsonEncode(json['data']))
+              .then((value) {
+            if (value) {
+              bus.emit(NOTIFY_USER_INFO, convert.jsonEncode(json['data']));
+              state = BaseState.CONTENT;
+              notifyListeners();
+              if (finish != null) {
+                finish();
+              }
             }
-          }
-        });
+          });
+        } else {}
       },
       fail: (reason, code) {},
       after: () {},
     );
+  }
+
+  Future<void> initPlatformState(Map user) async {
+    if (user == null) return;
+    final JPush jPush = JPush();
+
+    print('setAlias === ${user['userId']}_$JPUSH_ENVIRONMENT');
+
+    jPush.setAlias('${user['userId']}_$JPUSH_ENVIRONMENT');
+    jPush.setTags([
+      '${user['deptId']}_$JPUSH_ENVIRONMENT',
+      'jinMu_tag_$JPUSH_ENVIRONMENT',
+    ]);
   }
 
   loadHomeBanner(Function(List bannerList, bool success) success) {
@@ -105,12 +125,12 @@ class HomeViewModel extends BaseViewModel {
 
   getHomeWaitToDo(Function(List waitToDoList, bool success) success) {
     DateTime start = DateTime.now();
-    start = start.subtract(Duration(days: start.weekday - 1));
+    start = start.subtract(Duration(days: start.weekday));
     DateTime end = DateTime.now();
-    end = end.add(Duration(days: (7 - end.weekday)));
+    end = start.add(Duration(days: 6));
     DateFormat dateFormat = DateFormat('yyyy-MM-dd');
     Http().get(
-      Urls.getHomeWaitToDo,
+      Urls.allTodoHandler,
       {
         'startTime': dateFormat.format(start),
         'endTime': dateFormat.format(end)
@@ -118,7 +138,7 @@ class HomeViewModel extends BaseViewModel {
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
-            success((json['data'])['rows'], true);
+            success(json['data'], true);
           }
         } else {
           if (success != null) {

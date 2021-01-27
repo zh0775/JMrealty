@@ -42,7 +42,8 @@ class WaitFollowUpCell extends StatefulWidget {
 }
 
 class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
-  double lineHeight;
+  double lineHeight = 33;
+  double lineSpace = 4;
   double cellHeight;
   double cellWidth;
   double widthScale;
@@ -58,7 +59,6 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
   Map model;
   @override
   void initState() {
-    lineHeight = 35;
     // cellHeight = 200;
     if (widget.pool) {
       // cellHeight = 140;
@@ -123,67 +123,97 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
         child: Column(
           children: [
             Container(
-              height: lineHeight,
+              // height: lineHeight,
               width: cellWidth,
               margin: EdgeInsets.only(
                   left: SizeConfig.blockSizeHorizontal * 4, top: 10),
-              child: Row(children: [
-                // 客户级别
-                LevelIcon(desireId: model['desireId'] ?? 0),
-                SizedBox(width: SizeConfig.blockSizeHorizontal * 2),
-                // 客户姓名
-                frameText(name,
-                    width: SizeConfig.blockSizeHorizontal * 23,
-                    height: lineHeight - 10,
-                    fontSize: 16,
-                    textColor: Colors.black),
-                // 客户性别
-                Container(
-                  // width: SizeConfig.blockSizeHorizontal * 12,
-                  height: lineHeight - 10,
-                  decoration: BoxDecoration(
-                      color: Color.fromRGBO(243, 249, 255, 1),
-                      borderRadius:
-                          BorderRadius.circular((lineHeight - 10) / 2)),
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: widthScale * 3),
-                      child: Text(
-                        sex ?? '',
-                        style: jm_text_black_style13,
-                      ),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        // 客户级别
+                        LevelIcon(desireId: model['desireId'] ?? 0),
+                        SizedBox(width: SizeConfig.blockSizeHorizontal * 4),
+                        // 客户姓名
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minWidth: 0,
+                            maxWidth: widthScale * 36,
+                          ),
+                          child: Text(
+                            name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                            style: jm_text_black_bold_style17,
+                          ),
+                        ),
+                        // frameText(name,
+                        //     width: 20,
+                        //     maxWidth: SizeConfig.blockSizeHorizontal * 20,
+                        //     height: lineHeight - 10,
+                        //     fontSize: 16,
+                        //     textColor: Colors.black),
+                        SizedBox(width: SizeConfig.blockSizeHorizontal * 2),
+                        // 客户性别
+                        Container(
+                          // width: SizeConfig.blockSizeHorizontal * 12,
+                          // height: lineHeight - 10,
+                          decoration: BoxDecoration(
+                              color: Color.fromRGBO(243, 249, 255, 1),
+                              borderRadius:
+                                  BorderRadius.circular((lineHeight - 10) / 2)),
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: widthScale * 2, vertical: 3),
+                              child: Text(
+                                sex ?? '',
+                                style: jm_text_black_style12,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                            width: SizeConfig.blockSizeHorizontal * 2), // 房子类型
+                        Container(
+                          // width: SizeConfig.blockSizeHorizontal * 12,
+                          // height: lineHeight - 10,
+                          decoration: BoxDecoration(
+                              color: Color.fromRGBO(243, 249, 255, 1),
+                              borderRadius:
+                                  BorderRadius.circular((lineHeight - 10) / 2)),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: widthScale * 2, vertical: 3),
+                            child: Center(
+                              child: Text(
+                                houseType ?? '',
+                                style: jm_text_black_style12,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-                SizedBox(width: SizeConfig.blockSizeHorizontal * 2),
-                // 房子类型
-                Container(
-                  // width: SizeConfig.blockSizeHorizontal * 12,
-                  height: lineHeight - 10,
-                  decoration: BoxDecoration(
-                      color: Color.fromRGBO(243, 249, 255, 1),
-                      borderRadius:
-                          BorderRadius.circular((lineHeight - 10) / 2)),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: widthScale * 3),
-                    child: Center(
-                      child: Text(
-                        houseType ?? '',
-                        style: jm_text_black_style13,
-                      ),
-                    ),
-                  ),
-                ),
-                ...callPhoneView(),
-              ]),
+                    Row(
+                      children: [
+                        ...callPhoneView(),
+                      ],
+                    )
+                  ]),
+            ),
+            SizedBox(
+              height: lineSpace,
             ),
             Container(
-              height: lineHeight,
+              // height: lineHeight - 5,
               width: cellWidth,
               child: Row(
                 children: [
                   SizedBox(
-                    width: SizeConfig.blockSizeHorizontal * 16.5,
+                    width: SizeConfig.blockSizeHorizontal * 16,
                   ),
                   // 房间数量
                   Container(
@@ -198,9 +228,12 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
                 ],
               ),
             ),
+            SizedBox(
+              height: lineSpace,
+            ),
             ...followInfoWidget(),
             Container(
-              margin: EdgeInsets.only(top: 13),
+              margin: EdgeInsets.only(top: 3),
               // height: lineHeight - 5,
               width: cellWidth,
               child: Row(
@@ -209,7 +242,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
               ),
             ),
             SizedBox(
-              height: 10,
+              height: 3,
             )
           ],
         ),
@@ -220,9 +253,9 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
   List<Widget> callPhoneView() {
     if (!widget.pool) {
       return [
-        SizedBox(
-          width: SizeConfig.blockSizeHorizontal * 10,
-        ),
+        // SizedBox(
+        //   width: SizeConfig.blockSizeHorizontal * 10,
+        // ),
         // 联系电话
         GestureDetector(
           onTap: () {
@@ -230,18 +263,24 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
           },
           child: Row(
             children: [
-              frameText('联系电话',
-                  width: SizeConfig.blockSizeHorizontal * 16,
+              frameText('联系客户',
+                  width: SizeConfig.blockSizeHorizontal * 15,
                   height: lineHeight - 10,
                   fontSize: 15,
                   textColor: Colors.black),
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal * 1,
+              ),
               Image.asset(
                 'assets/images/icon_client_phone.png',
-                height: SizeConfig.blockSizeHorizontal * 6,
-                width: SizeConfig.blockSizeHorizontal * 6,
+                height: SizeConfig.blockSizeHorizontal * 5,
+                width: SizeConfig.blockSizeHorizontal * 5,
               )
             ],
           ),
+        ),
+        SizedBox(
+          width: SizeConfig.blockSizeHorizontal * 2,
         )
       ];
     } else {
@@ -254,7 +293,8 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
       return [
         Container(
             width: SizeConfig.blockSizeHorizontal * 25,
-            height: lineHeight - 5,
+            // height: lineHeight - 5,
+            margin: EdgeInsets.only(bottom: 3),
             child: RawMaterialButton(
               highlightElevation: 0,
               elevation: 0,
@@ -414,24 +454,43 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
 
   List<Widget> followInfoWidget() {
     if (widget.pool) {
-      return [Container(width: 0.0, height: 0.0)];
+      return [NoneV()];
     } else {
       return [
         Container(
-          height: lineHeight - 15,
+          // height: lineHeight - 15,
           width: cellWidth,
-          margin: EdgeInsets.only(bottom: 8),
+          // margin: EdgeInsets.only(bottom: 8),
           child: Row(
             children: [
               SizedBox(
                 width: SizeConfig.blockSizeHorizontal * 16,
               ),
               // 最新跟进进展信息
-              Text(newFollowTime,
-                  style: TextStyle(
-                      color: Color.fromRGBO(172, 176, 187, 1), fontSize: 14))
+              Text(newFollowTime, style: jm_text_gray_style14)
             ],
           ),
+        ),
+        SizedBox(
+          height: lineSpace,
+        ),
+        Row(
+          children: [
+            SizedBox(
+              width: SizeConfig.blockSizeHorizontal * 16,
+            ),
+            SizedBox(
+              width:
+                  SizeConfig.screenWidth - SizeConfig.blockSizeHorizontal * 19,
+              child: Text(
+                clientIntention,
+                style: jm_text_gray_style14,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: lineSpace + 3,
         ),
         Row(
           children: [
@@ -445,13 +504,12 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
               width: SizeConfig.blockSizeHorizontal * 80,
               decoration: BoxDecoration(
                   color: Color.fromRGBO(247, 248, 251, 1),
-                  borderRadius: BorderRadius.circular(8)),
+                  borderRadius: BorderRadius.circular(5)),
               child: Padding(
                 padding:
-                    EdgeInsets.fromLTRB(widthScale * 3, 8, widthScale * 3, 8),
-                child: Text(clientIntention,
-                    style: TextStyle(
-                        color: Color.fromRGBO(55, 58, 73, 1), fontSize: 15)),
+                    EdgeInsets.fromLTRB(widthScale * 1.9, 6, widthScale * 3, 6),
+                child: Text('下次跟进时间  ${widget.model['expect'] ?? ''}',
+                    style: jm_text_black_style13),
               ),
             )
           ],
@@ -463,16 +521,21 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
   Widget frameText(text,
       {@required double height,
       @required double width,
+      double maxWidth,
       @required Color textColor,
       @required double fontSize}) {
-    return Container(
-      width: width,
-      // height: height,
-      alignment: Alignment.centerLeft,
-      child: Text(
-        text,
-        maxLines: 100,
-        style: TextStyle(color: textColor, fontSize: fontSize),
+    double selfMaxWidth = maxWidth ?? width;
+    return UnconstrainedBox(
+      child: Container(
+        // width: width,
+        // height: height,
+        alignment: Alignment.centerLeft,
+        constraints: BoxConstraints(minWidth: width, maxWidth: selfMaxWidth),
+        child: Text(
+          text,
+          maxLines: null,
+          style: TextStyle(color: textColor, fontSize: fontSize),
+        ),
       ),
     );
   }

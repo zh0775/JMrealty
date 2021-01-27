@@ -1,14 +1,17 @@
 import 'package:JMrealty/Client/components/ClientSuccessWidget.dart';
+import 'package:JMrealty/Report/viewmodel/ReporProjecttInfo.dart';
 import 'package:JMrealty/Report/viewmodel/ReportDetailViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/image_loader.dart';
 import 'package:JMrealty/base/provider_widget.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomGridImageV.dart';
+import 'package:JMrealty/components/CustomImagePage.dart';
+import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/EmptyView.dart';
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/components/ReportStatusBar.dart';
 import 'package:JMrealty/components/SelectImageView.dart';
-import 'package:JMrealty/components/ShowLoading.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/tTools.dart';
@@ -46,7 +49,7 @@ class _ReportDetailState extends State<ReportDetail> {
     //     }
     //   },
     // );
-    labelSpace = 3;
+    labelSpace = 5;
     super.initState();
   }
 
@@ -67,6 +70,7 @@ class _ReportDetailState extends State<ReportDetail> {
       body: ProviderWidget<ReportDetailViewModel>(
         model: reportDetailModel,
         onReady: (model) {
+          CustomLoading().show();
           reportDetailModel.loadReportDetailRequest(widget.data['id']);
         },
         builder: (ctx, value, child) {
@@ -74,9 +78,10 @@ class _ReportDetailState extends State<ReportDetail> {
           //   detailData = value.reportDetailData;
           // });
           if (value.state == BaseState.CONTENT) {
+            CustomLoading().hide();
             return getBody(context, value.reportDetailData);
           } else if (value.state == BaseState.LOADING) {
-            return ShowLoading();
+            return NoneV();
             // return Container(width: 0.0, height: 0.0);
           } else {
             return EmptyView();
@@ -87,8 +92,19 @@ class _ReportDetailState extends State<ReportDetail> {
     );
   }
 
-  checkImg(int index) {
-    print(index);
+  checkImg(int index, List imageList) {
+    Navigator.of(context).push(PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return ScaleTransition(
+            scale: animation,
+            alignment: Alignment.center,
+            child: CustomImagePage(
+              imageList: imageList ?? [],
+              index: index,
+              count: imageList?.length,
+            ));
+      },
+    ));
   }
 
   addImage() {
@@ -96,6 +112,7 @@ class _ReportDetailState extends State<ReportDetail> {
   }
 
   Widget getBody(BuildContext context, Map mapData) {
+    Map projectInfo = mapData['reportInfoVO'] ?? {};
     return ListView(
       children: [
         ReportStatusBar(
@@ -105,32 +122,16 @@ class _ReportDetailState extends State<ReportDetail> {
         SizedBox(
           height: 20,
         ),
-        // 第一行
-        getTitle(),
-        SizedBox(
-          height: 12,
+        ReporProjecttInfo(
+          data: widget.data,
+          width: SizeConfig.screenWidth,
+          margin: outMargin,
+          labelSpace: labelSpace,
         ),
-        getProject(),
-        SizedBox(
-          height: labelSpace,
-        ),
-        getProtect(),
         SizedBox(
           height: labelSpace,
         ),
-        getStatus(),
-        SizedBox(
-          height: labelSpace,
-        ),
-        getCompany(),
-        SizedBox(
-          height: labelSpace,
-        ),
-        getName(),
-        SizedBox(
-          height: labelSpace,
-        ),
-        getNum(),
+        ...getRemark(),
         SizedBox(
           height: 15,
         ),
@@ -138,6 +139,7 @@ class _ReportDetailState extends State<ReportDetail> {
         // SizedBox(
         //   height: 15,
         // ),
+
         ...getPhotoInfo(mapData['reportStatuses'] ?? []),
         (mapData['reportShopDetailVO'])['id'] != null
             ? getSuccessWidget(mapData)
@@ -200,7 +202,7 @@ class _ReportDetailState extends State<ReportDetail> {
         } else {
           widgetRow.add(GestureDetector(
               onTap: () {
-                checkImg(i);
+                checkImg(i, imageList);
               },
               child: Container(
                 width: widthScale * 29.3,
@@ -273,6 +275,21 @@ class _ReportDetailState extends State<ReportDetail> {
               width: outMargin,
             )
           ],
+        )
+      ],
+    );
+  }
+
+  Widget getProjectInfoCell(String title, String content) {
+    return Row(
+      children: [
+        SizedBox(
+          width: outMargin,
+        ),
+        getLabel(title),
+        Text(
+          content,
+          style: jm_text_black_style15,
         )
       ],
     );
@@ -376,10 +393,41 @@ class _ReportDetailState extends State<ReportDetail> {
     );
   }
 
+  List<Widget> getRemark() {
+    return [
+      Row(
+        children: [
+          SizedBox(
+            width: outMargin,
+          ),
+          getLabel('备注'),
+        ],
+      ),
+      SizedBox(
+        height: labelSpace,
+      ),
+      Row(
+        children: [
+          SizedBox(
+            width: outMargin,
+          ),
+          Container(
+            width: SizeConfig.screenWidth - outMargin * 2,
+            child: Text(
+              widget.data['remarks'] ?? '-',
+              style: jm_text_black_style15,
+              maxLines: 100,
+            ),
+          )
+        ],
+      )
+    ];
+  }
+
   // label
   Widget getLabel(String title) {
     return Container(
-      width: widthScale * 22,
+      width: widthScale * 26,
       child: Text(
         title,
         style: jm_text_gray_style15,
@@ -452,6 +500,14 @@ class _ReportDetailState extends State<ReportDetail> {
               imageUrls: getImgUrls(data['images'] ?? ''),
               width: SizeConfig.screenWidth - outMargin * 2,
               needButton: false,
+              imageClick: (index) {
+                checkImg(
+                    index,
+                    data['images'] != null &&
+                            (data['images'] as String).length > 0
+                        ? (data['images'] as String).split(',')
+                        : []);
+              },
             ),
           ),
           data['remark'] != null && (data['remark']).length > 0
@@ -463,12 +519,12 @@ class _ReportDetailState extends State<ReportDetail> {
                     style: jm_text_black_style14,
                   ),
                 )
-              : Container(width: 0.0, height: 0.0),
+              : NoneV(),
           JMline(width: SizeConfig.screenWidth, height: 0.5),
         ],
       );
     } else {
-      return Container(width: 0.0, height: 0.0);
+      return NoneV();
     }
   }
 

@@ -24,6 +24,15 @@ class ReportUploadViewModel extends BaseViewModel {
       case ReportUploadStatus.sign:
         url = Urls.reportSignUp;
         break;
+      case ReportUploadStatus.disputed:
+        url = Urls.reportDispute;
+        break;
+      case ReportUploadStatus.checkDeal:
+        url = Urls.waitForConfirmation;
+        break;
+      case ReportUploadStatus.checkAppointment:
+        url = Urls.waitForConfirmation;
+        break;
     }
     Http().post(
       url,

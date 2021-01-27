@@ -22,7 +22,7 @@ class ReportStatusBar extends StatelessWidget {
         child: Container(
           constraints: BoxConstraints(minWidth: SizeConfig.screenWidth),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               ...getRow(),
             ],
@@ -121,11 +121,20 @@ class ReportStatusBar extends StatelessWidget {
       case 0:
         statusStr = '报备';
         break;
+      case 5:
+        statusStr = '接收';
+        break;
       case 10:
         statusStr = '带看';
         break;
       case 20:
         statusStr = '上传';
+        break;
+      case 22:
+        statusStr = '待确认';
+        break;
+      case 24:
+        statusStr = '待确认';
         break;
       case 21:
         statusStr = '预约';
@@ -141,6 +150,9 @@ class ReportStatusBar extends StatelessWidget {
         break;
       case 60:
         statusStr = '结佣';
+        break;
+      case 63:
+        statusStr = '争议单';
         break;
       case 70:
         statusStr = '失效';

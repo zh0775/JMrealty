@@ -87,7 +87,7 @@ class WriteFollow {
             onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
             child: Center(
               child: Container(
-                height: 270,
+                height: 280,
                 width: width,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -118,16 +118,6 @@ class WriteFollow {
                                       color: jm_text_black,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                Text(
-                                  clientData['phone'],
-                                  style: TextStyle(
-                                      fontSize: 17,
-                                      color: jm_text_black,
-                                      fontWeight: FontWeight.bold),
-                                ),
                               ],
                             ),
                             Padding(
@@ -141,32 +131,55 @@ class WriteFollow {
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: 30,
-                        width: width,
+                      GestureDetector(
+                        onTap: () => callPhone(clientData['phone']),
                         child: Row(
                           children: [
                             SizedBox(
                               width: margin,
                             ),
                             Text(
-                              '跟进时间',
-                              style:
-                                  TextStyle(fontSize: 13, color: jm_text_gray),
+                              clientData['phone'],
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: jm_text_black,
+                                  fontWeight: FontWeight.bold),
                             ),
                             SizedBox(
-                              width: 8,
+                              width: SizeConfig.blockSizeHorizontal * 2,
                             ),
-                            Text(
-                              dateFormat.format(nowTime),
-                              style:
-                                  TextStyle(fontSize: 13, color: jm_text_black),
-                            ),
+                            Image.asset(
+                              'assets/images/icon_client_phone.png',
+                              height: SizeConfig.blockSizeHorizontal * 5,
+                              width: SizeConfig.blockSizeHorizontal * 5,
+                            )
                           ],
                         ),
                       ),
                       SizedBox(
-                        height: 5,
+                        height: 8,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: margin,
+                          ),
+                          Text(
+                            '本次跟进时间',
+                            style: TextStyle(fontSize: 13, color: jm_text_gray),
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                            dateFormat.format(nowTime),
+                            style:
+                                TextStyle(fontSize: 13, color: jm_text_black),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
                       ),
                       Container(
                         constraints:
@@ -208,46 +221,24 @@ class WriteFollow {
                           },
                         ),
                       ),
-                      SizedBox(
-                        width: width,
-                        height: 40,
-                        child: Stack(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: margin),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  '下次跟进',
-                                  style: TextStyle(
-                                      fontSize: 14, color: jm_text_gray),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 100),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  expectTimeFormat,
-                                  style: TextStyle(
-                                      fontSize: 14, color: jm_text_black),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(right: margin),
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: Icon(
-                                  Icons.keyboard_arrow_right,
-                                  color: jm_text_gray,
-                                  size: 20,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: margin,
+                          ),
+                          Text(
+                            '下次跟进时间',
+                            style: TextStyle(fontSize: 14, color: jm_text_gray),
+                          ),
+                          SizedBox(
+                            width: SizeConfig.blockSizeHorizontal * 2,
+                          ),
+                          Text(
+                            expectTimeFormat,
+                            style:
+                                TextStyle(fontSize: 14, color: jm_text_black),
+                          ),
+                        ],
                       ),
                       SizedBox(
                         height: 10,

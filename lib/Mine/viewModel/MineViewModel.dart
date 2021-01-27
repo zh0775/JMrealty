@@ -38,4 +38,23 @@ class MineViewModel {
       }
     });
   }
+
+  changeSign(Map params, Function(bool success) success) {
+    Http().post(Urls.updateSign, Map<String, dynamic>.from(params),
+        success: (json) {
+      if (json['code'] == 200) {
+        if (success != null) {
+          success(true);
+        }
+      } else {
+        if (success != null) {
+          success(false);
+        }
+      }
+    }, fail: (String reason, int code) {
+      if (success != null) {
+        success(false);
+      }
+    });
+  }
 }

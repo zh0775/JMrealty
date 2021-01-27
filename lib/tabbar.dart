@@ -25,12 +25,23 @@ class _JMTabBarState extends State<JMTabBar> {
         });
       }
     });
+    _bus.on(NOTIFY_CHANGE_TABBAR_INDEX, (arg) {
+      if (mounted) {
+        if (widget.tabItemClick != null) {
+          widget.tabItemClick(arg);
+        }
+        setState(() {
+          _currentIndex = arg;
+        });
+      }
+    });
     super.initState();
   }
 
   @override
   void dispose() {
     _bus.off(NOTIFY_CLIENTWAIT_COUNT);
+    _bus.off(NOTIFY_CHANGE_TABBAR_INDEX);
     super.dispose();
   }
 
@@ -49,7 +60,9 @@ class _JMTabBarState extends State<JMTabBar> {
         createItem('mine', '我的')
       ],
       onTap: (index) {
-        widget.tabItemClick(index);
+        if (widget.tabItemClick != null) {
+          widget.tabItemClick(index);
+        }
         setState(() {
           _currentIndex = index;
         });

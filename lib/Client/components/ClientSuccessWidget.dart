@@ -193,7 +193,7 @@ class ClientSuccessWidget extends StatelessWidget {
                 ),
                 Text(
                   commissionData['ratio'] != null
-                      ? ((commissionData['ratio']).toString() + '%')
+                      ? ((commissionData['ratio'] * 100).toString() + '%')
                       : '',
                   style: jm_text_black_style15,
                 ),

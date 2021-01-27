@@ -23,10 +23,21 @@ class CustomLoading {
   }
 
   setLoading() {
-    Widget widget = Image.asset(
-      'assets/images/icon/loading.gif',
-      width: SizeConfig.blockSizeHorizontal * 30,
-      height: SizeConfig.blockSizeHorizontal * 30,
+    Widget widget = Column(
+      children: [
+        Image.asset(
+          'assets/images/icon/loading.gif',
+          width: SizeConfig.blockSizeHorizontal * 30,
+          height: SizeConfig.blockSizeHorizontal * 30,
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Text(
+          '加载中',
+          style: jm_text_black_style15,
+        )
+      ],
     );
     EasyLoading.instance
       ..loadingStyle = EasyLoadingStyle.custom

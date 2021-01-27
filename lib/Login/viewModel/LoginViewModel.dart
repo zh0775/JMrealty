@@ -25,8 +25,12 @@ class LoginViewModel extends BaseViewModel {
       {'phonenumber': phonenumber},
       success: (json) {
         if (json['code'] == 200) {
+          ShowToast.normal('验证码已发送');
           state = BaseState.CONTENT;
         } else {
+          if (json['msg'] != null && (json['msg'] as String).length > 0) {
+            ShowToast.normal(json['msg']);
+          }
           state = BaseState.FAIL;
         }
         notifyListeners();
@@ -315,6 +319,36 @@ class LoginViewModel extends BaseViewModel {
         success(false);
       },
       after: () {},
+    );
+  }
+
+  userForgetPwd(Map params, Function(bool success) success) {
+    Http().post(
+      Urls.userForgetPwd,
+      Map<String, dynamic>.from(params),
+      success: (json) {
+        if (json['code'] == 200) {
+          if (success != null) {
+            success(true);
+          }
+        } else {
+          if (success != null) {
+            success(false);
+          }
+        }
+        if (json['msg'] != null && (json['msg'] as String).length > 0) {
+          ShowToast.normal(json['msg']);
+        } else if (json['data'] != null &&
+            json['data'] is String &&
+            (json['data'] as String).length > 0) {
+          ShowToast.normal(json['data']);
+        }
+      },
+      fail: (reason, code) {
+        if (success != null) {
+          success(false);
+        }
+      },
     );
   }
 }

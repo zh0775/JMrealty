@@ -18,7 +18,7 @@ class ReportListViewModel extends BaseViewModel {
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
-            success((json['data'])['rows'], true, json['total'] ?? 0);
+            success((json['data'])['rows'], true, (json['data'])['total'] ?? 0);
           }
         } else {
           // ShowToast.normal(json['msg']);

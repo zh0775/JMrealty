@@ -7,8 +7,9 @@ enum ReadPath { agree, about }
 
 class ReadMe extends StatelessWidget {
   final String title;
+  final String url;
   final ReadPath path;
-  const ReadMe({this.title, this.path});
+  const ReadMe({this.title, this.path, this.url});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class ReadMe extends StatelessWidget {
         title: title,
       ),
       body: WebView(
-        initialUrl: WEB_URL + getPath(path),
+        initialUrl: url != null ? url : (WEB_URL + getPath(path)),
         javascriptMode: JavascriptMode.unrestricted,
       ),
     );

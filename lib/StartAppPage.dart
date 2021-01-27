@@ -16,7 +16,7 @@ class StartAppPage extends StatefulWidget {
 class _StartAppPageState extends State<StartAppPage> {
   Timer passTimer;
   Timer imgWaitTimer;
-  int waitTime = 3;
+  int waitTime = 5;
 
   @override
   void dispose() {

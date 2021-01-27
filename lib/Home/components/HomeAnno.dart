@@ -69,17 +69,17 @@ class _HomeAnnoState extends State<HomeAnno> {
                           )
                         ],
                       ))),
-              Positioned(
-                right: -5,
-                height: announcementHeght,
-                child: TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    '查看',
-                    style: TextStyle(color: Color(0XFF9fa1a8), fontSize: 13),
-                  ),
-                ),
-              )
+              // Positioned(
+              //   right: -5,
+              //   height: announcementHeght,
+              //   child: TextButton(
+              //     onPressed: () {},
+              //     child: Text(
+              //       '查看',
+              //       style: TextStyle(color: Color(0XFF9fa1a8), fontSize: 13),
+              //     ),
+              //   ),
+              // )
             ],
           )),
     );

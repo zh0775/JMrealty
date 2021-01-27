@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
 class CustomGridImageV extends StatelessWidget {
+  final int imageCount;
   final List<String> imageUrls;
   final List imageAssets;
   final bool needButton;
@@ -24,6 +25,7 @@ class CustomGridImageV extends StatelessWidget {
       this.needButton = false,
       this.imageClick,
       this.count = 3,
+      this.imageCount = 15,
       this.width,
       this.addImages,
       this.deleteImage});
@@ -77,8 +79,8 @@ class CustomGridImageV extends StatelessWidget {
             height: imgHeight,
             child: GestureDetector(
                 onTap: () {
-                  if (imageAssets.length >= 9) {
-                    ShowToast.normal('最多上传9张照片，长按照片可删除');
+                  if (imageAssets.length >= imageCount) {
+                    ShowToast.normal('最多上传$imageCount张照片，长按照片可删除');
                     return;
                   }
                   SelectImageView(
@@ -86,8 +88,9 @@ class CustomGridImageV extends StatelessWidget {
                     imageSelected: (images) {
                       if (images != null) {
                         if (addImages != null) {
-                          if ((imageAssets.length + images.length) >= 9) {
-                            ShowToast.normal('最多上传9张照片，长按照片可删除');
+                          if ((imageAssets.length + images.length) >=
+                              imageCount) {
+                            ShowToast.normal('最多上传$imageCount张照片，长按照片可删除');
                           }
                           addImages(images);
                         }

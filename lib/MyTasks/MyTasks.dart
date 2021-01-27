@@ -34,10 +34,13 @@ class _MyTasksState extends State<MyTasks> {
 
   @override
   void initState() {
-    myTaskVM.loadTasksUrgency((data, success) {
+    myTaskVM.loadTasksType((data, success) {
       if (success && mounted) {
         setState(() {
-          taskTypeList = data;
+          taskTypeList = [
+            {'title': '全部', 'value': -1}
+          ];
+          taskTypeList.addAll(data);
         });
       }
     });
@@ -252,7 +255,7 @@ class _MyTasksState extends State<MyTasks> {
           width: SizeConfig.screenWidth,
           height: buttonHeight,
           alignment: Alignment.centerLeft,
-          padding: EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 12),
+          padding: EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 6.7),
           child: Text(e['title'],
               style: TextStyle(fontSize: 14, color: jm_text_black)),
         ),

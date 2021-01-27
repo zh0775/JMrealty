@@ -1,5 +1,6 @@
 import 'package:JMrealty/Message/MessageCell.dart';
 import 'package:JMrealty/Message/viewModel/MessageViewModel.dart';
+import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/const/Default.dart';
@@ -7,6 +8,7 @@ import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:jpush_flutter/jpush_flutter.dart';
 
 class Message extends StatefulWidget {
   final IndexClick indexClick;
@@ -22,9 +24,14 @@ class _MessageState extends State<Message> {
   GlobalKey _pullHeaderKey = GlobalKey();
   EventBus _eventBus = EventBus();
   List messageList = [];
+
   @override
   void initState() {
+    getNotice();
     _eventBus.on(NOTIFY_USER_INFO, (arg) {
+      loadList();
+    });
+    _eventBus.on(NOTIFY_NOTIFICATION_MESSAGE_REFRESH, (arg) {
       loadList();
     });
     loadList();
@@ -33,6 +40,8 @@ class _MessageState extends State<Message> {
 
   @override
   void dispose() {
+    _eventBus.off(NOTIFY_USER_INFO);
+    _eventBus.off(NOTIFY_NOTIFICATION_MESSAGE_REFRESH);
     pullCtr.dispose();
     super.dispose();
   }
@@ -74,6 +83,22 @@ class _MessageState extends State<Message> {
         ),
       ),
     );
+  }
+
+  void getNotice() async {
+    final JPush jpush = JPush();
+    Map<dynamic, dynamic> message = await jpush.getLaunchAppNotification();
+
+    String reslut = message.toString();
+    if (reslut != null && reslut != '{}') {
+      loadList();
+    }
+//     reslut = _getTypeValue(reslut);
+// //    Toast.show(reslut);
+//     if (reslut.length == 1) {
+//       int type = int.parse(reslut);
+//       receiveRemoteMsg(type);
+//     }
   }
 
   loadList() {

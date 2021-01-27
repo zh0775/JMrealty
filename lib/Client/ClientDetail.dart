@@ -4,6 +4,7 @@ import 'package:JMrealty/Client/components/LevelIcon.dart';
 import 'package:JMrealty/Client/viewModel/ClientDetailViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
+import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/components/ShowLoading.dart';
 import 'package:JMrealty/const/Default.dart';
@@ -46,24 +47,8 @@ class _ClientDetailState extends State<ClientDetail> {
     contentWidth = SizeConfig.screenWidth - margin * 2;
     return Scaffold(
         backgroundColor: jm_line_color,
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: jm_appTheme,
-          automaticallyImplyLeading: false,
-          leading: IconButton(
-            icon: Icon(
-              Icons.navigate_before,
-              size: 40,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: Text(
-            '客户详情',
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
+        appBar: CustomAppbar(
+          title: '客户详情',
         ),
         body: ProviderWidget<ClientDetailViewModel>(
           model: ClientDetailViewModel(),
@@ -308,7 +293,7 @@ class _ClientDetailState extends State<ClientDetail> {
           Padding(
             padding: EdgeInsets.only(left: margin),
             child: Text(
-              '客户要求',
+              '客户需求',
               textAlign: TextAlign.start,
               style: TextStyle(fontSize: 13, color: jm_text_gray),
             ),
@@ -319,7 +304,7 @@ class _ClientDetailState extends State<ClientDetail> {
           Padding(
             padding: EdgeInsets.only(left: margin),
             child: Text(
-              '${yyFormat(customerVO['area'])} | ${yyFormat(customerVO['paymentsBudget'])} | ${yyFormat(customerVO['source'])} | ${yyFormat(clientData['project'])} | ${yyFormat(customerVO['type'])}',
+              '${yyFormat(customerVO['area'])} | ${yyFormat(customerVO['source'])} | ${yyFormat(clientData['project'])} | ${yyFormat(customerVO['type'])}',
               textAlign: TextAlign.start,
               maxLines: 2,
               style: TextStyle(fontSize: 13, color: jm_text_black),
@@ -331,6 +316,12 @@ class _ClientDetailState extends State<ClientDetail> {
           getClientInfoLine('客户职业', customerVO['occupation'] ?? '-'),
           getClientInfoLine('几次置业', customerVO['shopTimes'] ?? '-'),
           getClientInfoLine('意向楼层', customerVO['floor'] ?? '-'),
+          getClientInfoLine(
+              '首付预算',
+              (customerVO['paymentsBudget'] != null
+                      ? customerVO['paymentsBudget']
+                      : '-') +
+                  '万'),
           getClientInfoLine('决策人', customerVO['policymaker'] ?? '-'),
           getClientInfoLine('看房时间', customerVO['seeTime'] ?? '-'),
           getClientInfoLine('特殊要求', customerVO['remarks'] ?? '-',

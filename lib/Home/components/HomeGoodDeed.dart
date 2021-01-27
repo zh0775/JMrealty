@@ -1,5 +1,6 @@
 import 'package:JMrealty/Home/components/NoticeView.dart';
 import 'package:JMrealty/Message/MessageTypeList.dart';
+import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

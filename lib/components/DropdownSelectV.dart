@@ -40,7 +40,7 @@ class DropdownSelectV extends StatefulWidget {
       this.labelText,
       this.placeholder = '',
       this.must = false,
-      this.labelStyle = jm_text_black_style14,
+      this.labelStyle = jm_text_black_bold_style15,
       this.style = jm_text_black_style14,
       this.backgroundColor = Colors.transparent,
       this.placeholderStyle =

@@ -20,3 +20,7 @@ const String NOTIFY_PK_LIST_REFRASH = 'notify_pk_list_refrash';
 const String NOTIFY_CLIENTWAIT_COUNT = 'notify_clientwait_count';
 
 const String NOTIFY_HOME_MENUS = 'notify_home_menus';
+
+const String NOTIFY_CHANGE_TABBAR_INDEX = 'notify_change_tabbar_index';
+const String NOTIFY_NOTIFICATION_MESSAGE_REFRESH =
+    'notify_notification_message_refresh';

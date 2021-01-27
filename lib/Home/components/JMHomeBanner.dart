@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:JMrealty/base/image_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -31,7 +32,7 @@ class BannerWidget extends StatefulWidget {
 
   BannerWidget(this.height, this.datas,
       {Key key,
-      this.duration = 5000,
+      this.duration = 2000,
       this.pointRadius = 3.0,
       this.selectedColor = Colors.red,
       this.unSelectedColor = Colors.white,
@@ -134,11 +135,8 @@ class BannerState extends State<BannerWidget> {
                 widget.bannerPress(selectedIndex, widget.datas[selectedIndex]);
             },
             child: widget.build == null
-                ? FadeInImage.memoryNetwork(
-                    placeholder: kTransparentImage,
-                    image:
-                        widget.datas[index % widget.datas.length].itemImagePath,
-                    fit: BoxFit.fill)
+                ? ImageLoader(
+                    widget.datas[index % widget.datas.length].itemImagePath)
                 : widget.build(
                     index, widget.datas[index % widget.datas.length]));
       },

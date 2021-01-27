@@ -1,3 +1,4 @@
+import 'package:JMrealty/Report/viewmodel/ReporProjecttInfo.dart';
 import 'package:JMrealty/Report/viewmodel/ReportDetailViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportSuccessViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportUploadViewModel.dart';
@@ -26,6 +27,7 @@ class ReportSuccess extends StatefulWidget {
 }
 
 class _ReportSuccessState extends State<ReportSuccess> {
+  int imageCount = 15;
   EventBus _eventBus = EventBus();
   ReportViewModel searchAgentVM = ReportViewModel();
   ReportDetailViewModel reportDetailModel = ReportDetailViewModel();
@@ -119,40 +121,45 @@ class _ReportSuccessState extends State<ReportSuccess> {
         SizedBox(
           height: 20,
         ),
+        ReporProjecttInfo(
+          data: widget.data ?? {},
+          width: SizeConfig.screenWidth,
+          margin: outMargin,
+        ),
         // 第一行
-        getTitle(),
-        SizedBox(
-          height: 12,
-        ),
-        getProject(),
-        SizedBox(
-          height: labelSpace,
-        ),
-        getProtect(),
-        SizedBox(
-          height: labelSpace,
-        ),
-        getStatus(),
-        SizedBox(
-          height: labelSpace,
-        ),
-        getCompany(),
-        SizedBox(
-          height: labelSpace,
-        ),
-        getName(),
-        SizedBox(
-          height: labelSpace,
-        ),
-        getNum(),
-        SizedBox(
-          height: 15,
-        ),
-        JMline(width: SizeConfig.screenWidth, height: 0.5),
+        // getTitle(),
+        // SizedBox(
+        //   height: 12,
+        // ),
+        // getProject(),
+        // SizedBox(
+        //   height: labelSpace,
+        // ),
+        // getProtect(),
+        // SizedBox(
+        //   height: labelSpace,
+        // ),
+        // getStatus(),
+        // SizedBox(
+        //   height: labelSpace,
+        // ),
+        // getCompany(),
+        // SizedBox(
+        //   height: labelSpace,
+        // ),
+        // getName(),
+        // SizedBox(
+        //   height: labelSpace,
+        // ),
+        // getNum(),
         SizedBox(
           height: 15,
         ),
-        getTitleRow('成交信息表'),
+        JMline(width: SizeConfig.screenWidth, height: 1),
+        SizedBox(
+          height: 15,
+        ),
+        getTitleRow('成交信息'),
         CustomInput(
           key: ValueKey('CustomInput_report_success_1'),
           labelStyle: jm_text_black_bold_style14,
@@ -168,7 +175,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
         JMline(
             margin: outMargin,
             width: SizeConfig.screenWidth - outMargin,
-            height: 0.5),
+            height: 1),
         CustomInput(
           key: ValueKey('CustomInput_report_success_2'),
           labelStyle: jm_text_black_bold_style14,
@@ -184,7 +191,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
         JMline(
             margin: outMargin,
             width: SizeConfig.screenWidth - outMargin,
-            height: 0.5),
+            height: 1),
 
         CustomInput(
           key: ValueKey('CustomInput_report_success_3'),
@@ -202,7 +209,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
         JMline(
             margin: outMargin,
             width: SizeConfig.screenWidth - outMargin,
-            height: 0.5),
+            height: 1),
         CustomInput(
           key: ValueKey('CustomInput_report_success_4'),
           labelStyle: jm_text_black_bold_style14,
@@ -219,7 +226,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
         JMline(
             margin: outMargin,
             width: SizeConfig.screenWidth - outMargin,
-            height: 0.5),
+            height: 1),
         CustomInput(
           key: ValueKey('CustomInput_report_success_5'),
           labelStyle: jm_text_black_bold_style14,
@@ -237,7 +244,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
         JMline(
             margin: outMargin,
             width: SizeConfig.screenWidth - outMargin,
-            height: 0.5),
+            height: 1),
         CustomInput(
           key: ValueKey('CustomInput_report_success_6'),
           labelStyle: jm_text_black_bold_style14,
@@ -252,11 +259,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
             successParams['dealTotal'] = value;
           },
         ),
-        // JMline(
-        //     margin: outMargin,
-        //     width: SizeConfig.screenWidth - outMargin,
-        //     height: 0.5),
-        JMline(width: SizeConfig.screenWidth, height: 0.5),
+        JMline(width: SizeConfig.screenWidth, height: 1),
         SizedBox(
           height: 15,
         ),
@@ -270,11 +273,19 @@ class _ReportSuccessState extends State<ReportSuccess> {
         SizedBox(
           height: 15,
         ),
-        JMline(width: SizeConfig.screenWidth, height: 0.5),
+        JMline(width: SizeConfig.screenWidth, height: 1),
         SizedBox(
           height: 15,
         ),
         getTitleRow('佣金'),
+        Container(
+          margin: EdgeInsets.only(left: outMargin, top: 10),
+          width: SizeConfig.screenWidth - outMargin * 2,
+          child: Text(
+            '佣金计算只做参考，具体以实际为准',
+            style: jm_text_gray_style13,
+          ),
+        ),
         CustomInput(
           title: '搜索分佣人',
           hintText: '搜索添加分佣人',
@@ -313,7 +324,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
         SizedBox(
           height: 15,
         ),
-        JMline(width: SizeConfig.screenWidth, height: 0.5),
+        JMline(width: SizeConfig.screenWidth, height: 1),
         SizedBox(
           height: 15,
         ),
@@ -564,22 +575,31 @@ class _ReportSuccessState extends State<ReportSuccess> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        getTitleRow('上传资料'),
+        getTitleRow('成交资料'),
         SizedBox(
           height: 15,
+        ),
+        Container(
+          margin: EdgeInsets.only(left: outMargin, bottom: 10),
+          width: SizeConfig.screenWidth - outMargin * 2,
+          child: Text(
+            '1、甲方公司的带看/转介确认单 2、商品房认购协议书 3、客户的交款凭据',
+            style: jm_text_gray_style13,
+          ),
         ),
         Padding(
           padding: EdgeInsets.only(left: outMargin),
           child: CustomGridImageV(
             // imageUrls: imgAssets,
+            imageCount: imageCount,
             imageAssets: imgAssets,
             width: SizeConfig.screenWidth - outMargin * 2,
             needButton: true,
             addImages: (images) {
               setState(() {
                 imgAssets.addAll(images);
-                if (imgAssets.length >= 9) {
-                  imgAssets.removeRange(9, imgAssets.length);
+                if (imgAssets.length >= imageCount) {
+                  imgAssets.removeRange(imageCount, imgAssets.length);
                 }
               });
             },
@@ -616,19 +636,19 @@ class _ReportSuccessState extends State<ReportSuccess> {
         SizedBox(
           width: outMargin,
         ),
-        Container(
-          width: widthScale * 2.5,
-          height: widthScale * 2.5,
-          decoration: BoxDecoration(
-              color: Color(0xff6ad09c),
-              borderRadius: BorderRadius.circular(widthScale * 1.25)),
-        ),
-        SizedBox(
-          width: widthScale * 1.5,
-        ),
+        // Container(
+        //   width: widthScale * 2.5,
+        //   height: widthScale * 2.5,
+        //   decoration: BoxDecoration(
+        //       color: Color(0xff6ad09c),
+        //       borderRadius: BorderRadius.circular(widthScale * 1.25)),
+        // ),
+        // SizedBox(
+        //   width: widthScale * 1.5,
+        // ),
         Text(
           title,
-          style: jm_text_black_bold_style15,
+          style: jm_text_black_bold_style17,
         ),
       ],
     );

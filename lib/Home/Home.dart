@@ -8,6 +8,7 @@ import 'package:JMrealty/Home/components/HomeGoodDeed.dart';
 import 'package:JMrealty/Home/components/HomeNaviBar.dart';
 import 'package:JMrealty/Home/components/HomeScheduleToDo.dart';
 import 'package:JMrealty/Home/viewModel/HomeViewModel.dart';
+import 'package:JMrealty/Message/MessageTypeList.dart';
 import 'package:JMrealty/MyTasks/MyTasks.dart';
 import 'package:JMrealty/PK/PKmain.dart';
 import 'package:JMrealty/Report/AddReport.dart';
@@ -15,6 +16,7 @@ import 'package:JMrealty/Report/Report.dart';
 import 'package:JMrealty/Report/SmartReport.dart';
 import 'package:JMrealty/base/image_loader.dart';
 import 'package:JMrealty/components/CustomWebV.dart';
+import 'package:JMrealty/components/ReadMe.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
@@ -217,6 +219,16 @@ class _HomeState extends State<Home> {
             }
           });
         });
+        // 待办
+        homeVM.getHomeWaitToDo((waitToDoList, success) {
+          if (success && mounted) {
+            setState(() {
+              homeScheduleToDoData = waitToDoList;
+            });
+          }
+        });
+        // banner
+        getBanner();
       }
     }
   }
@@ -229,18 +241,44 @@ class _HomeState extends State<Home> {
       removeTop: true,
       context: context,
       child: SingleChildScrollView(
+        physics: ClampingScrollPhysics(),
         child: Column(
           children: [
             HomeNaviBar(
               bannerDatas: bannerList,
+              bannerPress: (position, entity) {
+                if ((bannerList[position])['jumpConnection'] != null) {
+                  push(
+                      ReadMe(
+                        url: (bannerList[position])['jumpConnection'],
+                        title: '公告',
+                      ),
+                      context);
+                }
+              },
             ),
             HomeAnno(
               dataList: notices ?? [],
-              noticeClick: (index) {},
+              noticeClick: (index) {
+                String url = (notices[index])['noticeUrl'];
+                if (url != null && url.length > 0) {
+                  push(
+                      ReadMe(
+                          url: url,
+                          title: (notices[index])['noticeTitle'] ?? ''),
+                      context);
+                }
+              },
             ),
             HomeGoodDeed(
               dataList: gladNotices ?? [],
-              noticeClick: (index) {},
+              noticeClick: (index) {
+                push(
+                    MessageTypeList(
+                      noticeType: 10,
+                    ),
+                    context);
+              },
             ),
             HomeScheduleToDo(
               data: homeScheduleToDoData,
@@ -269,29 +307,6 @@ class _HomeState extends State<Home> {
                   } else if (buttonData['path'] ==
                       'app:Follow up on progress:list') {
                     // 跟进记录
-
-                    // UserDefault.get(ACCESS_TOKEN).then((token) {
-                    //   if (token != null) {
-                    //     UserDefault.get(USERINFO).then((userInfo) {
-                    //       if (userInfo != null) {
-                    //         Map<String, dynamic> userInfoMap =
-                    //             Map<String, dynamic>.from(
-                    //                 convert.jsonDecode(userInfo));
-                    //         Navigator.of(context)
-                    //             .push(CupertinoPageRoute(builder: (_) {
-                    //           return Follow(
-                    //             token: token,
-                    //             deptId: userInfoMap['deptId'],
-                    //           );
-                    //         }));
-                    //       } else {
-                    //         homeVM.loadUserInfo();
-                    //       }
-                    //     });
-                    //   } else {
-                    //     Global.toLogin(isLogin: true);
-                    //   }
-                    // });
                     push(CustomWebV(path: WebPath.followProgress), context);
                   } else if (buttonData['path'] == 'app:customer pool:list') {
                     // 客户池
@@ -311,10 +326,11 @@ class _HomeState extends State<Home> {
                     }));
                   } else if (buttonData['path'] == 'app:summary:list') {
                     // 每日总结
+                    // push(CustomWebPlugin(path: WebPaths.summary), context);
                     push(CustomWebV(path: WebPath.summary), context);
-                    // push(CustomWebV(path: WebPath.statisticsMain), context);
                   } else if (buttonData['path'] == 'app:Top of the list:list') {
                     // 榜单
+                    // push(CustomWebPlugin(path: WebPaths.rankingList), context);
                     push(CustomWebV(path: WebPath.rankingList), context);
                   } else if (buttonIndex == 100) {
                     // 跟进记录
@@ -383,6 +399,10 @@ class _HomeState extends State<Home> {
                 SizedBox(
                   width: buttonWidth * 0.45,
                   height: buttonHeight * 0.45,
+                  // child: Image.network(
+                  //   e['icon'] ?? '',
+                  //   fit: BoxFit.fill,
+                  // )
                   child: ImageLoader(e['icon'] ?? ''),
                 ),
                 SizedBox(

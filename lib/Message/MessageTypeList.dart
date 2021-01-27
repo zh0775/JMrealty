@@ -80,11 +80,11 @@ class _MessageTypeListState extends State<MessageTypeList> {
           'noticeType': widget.noticeType,
           'pageSize': pageSize,
           'pageNum': page
-        }), (message, success, total) {
+        }), (message, success, count) {
       pullCtr.finishRefresh();
       if (success) {
         setState(() {
-          total = total;
+          total = count;
           if (isLoad) {
             messageList.addAll(message);
           } else {
