@@ -96,7 +96,7 @@ class _ForgetPwdState extends State<ForgetPwd> {
           ),
           CustomLoginInput(
             placeholder: '请输入手机号',
-            keyboardType: TextInputType.phone,
+            keyboardType: TextInputType.number,
             needClean: true,
             valueChange: (value) {
               forgetParams['phonenumber'] = value;

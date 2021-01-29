@@ -2,6 +2,7 @@ import 'package:JMrealty/PK/components/PKmainListCell.dart';
 import 'package:JMrealty/PK/viewModel/PKviewModel.dart';
 import 'package:JMrealty/components/CustomPullFooter.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
+import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:flutter/cupertino.dart';
@@ -83,6 +84,8 @@ class _PKmainListState extends State<PKmainList> {
     return EasyRefresh(
       key: pullKey,
       controller: pullCtr,
+      emptyWidget:
+          pkListData == null || pkListData.length == 0 ? EmptyView() : null,
       header: CustomPullHeader(key: pullHeaderKey),
       footer: CustomPullFooter(),
       onRefresh: () async {

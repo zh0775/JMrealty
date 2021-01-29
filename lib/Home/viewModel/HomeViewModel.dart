@@ -45,11 +45,11 @@ class HomeViewModel extends BaseViewModel {
     if (user == null) return;
     final JPush jPush = JPush();
 
-    print('setAlias === ${user['userId']}_$JPUSH_ENVIRONMENT');
+    // print('setAlias === ${user['userId']}_$JPUSH_ENVIRONMENT');
 
-    jPush.setAlias('${user['userId']}_$JPUSH_ENVIRONMENT');
+    jPush.setAlias('${user['userId']}_alias_$JPUSH_ENVIRONMENT');
     jPush.setTags([
-      '${user['deptId']}_$JPUSH_ENVIRONMENT',
+      '${user['deptId']}_tag_$JPUSH_ENVIRONMENT',
       'jinMu_tag_$JPUSH_ENVIRONMENT',
     ]);
   }

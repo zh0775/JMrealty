@@ -186,10 +186,18 @@ class _HomeState extends State<Home> {
       });
       // app菜单权限
       homeVM.getHomeMenus((menuList, success) {
-        if (success && mounted) {
-          setState(() {
-            menus = (menuList[3])['menu'];
-          });
+        if (success && menuList != null && menuList is List) {
+          for (var i = 0; i < menuList.length; i++) {
+            var item = menuList[i];
+            if (item['path'] != null && item['path'] == 'app,main') {
+              if (mounted) {
+                setState(() {
+                  menus = item['menu'] ?? [];
+                });
+              }
+              break;
+            }
+          }
         }
       });
 
@@ -198,7 +206,7 @@ class _HomeState extends State<Home> {
         if (success && mounted) {}
       });
       if (reqestTimer == null) {
-        reqestTimer = Timer.periodic(Duration(seconds: 60), (Timer timer) {
+        reqestTimer = Timer.periodic(Duration(minutes: 3), (Timer timer) {
           // 定时获取当日待跟进客户数量
           clientVM.loadCountProgress((success, count) {
             if (success) {
@@ -211,10 +219,18 @@ class _HomeState extends State<Home> {
           });
           // 定时获取app菜单权限
           homeVM.getHomeMenus((menuList, success) {
-            if (success && mounted) {
-              setState(() {
-                menus = (menuList[3])['menu'];
-              });
+            if (success && menuList != null && menuList is List) {
+              for (var i = 0; i < menuList.length; i++) {
+                var item = menuList[i];
+                if (item['path'] != null && item['path'] == 'app,main') {
+                  if (mounted) {
+                    setState(() {
+                      menus = item['menu'] ?? [];
+                    });
+                  }
+                  break;
+                }
+              }
             }
           });
           homeVM.getHomeWaitToDo((waitToDoList, success) {

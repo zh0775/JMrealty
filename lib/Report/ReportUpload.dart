@@ -237,6 +237,9 @@ class _ReportUploadState extends State<ReportUpload> {
                 });
               },
             ),
+            SizedBox(
+              height: 40,
+            )
           ],
         ),
       ),

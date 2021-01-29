@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/EmptyView.dart';
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/services/http_config.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/user_default.dart';
@@ -19,12 +21,19 @@ enum WebPath {
   rankingList, // 榜单
   backlog, //待办事项
   agree,
+  searchUser,
 }
 
 class CustomWebV extends StatefulWidget {
   final WebPath path;
   final Map otherParams;
-  const CustomWebV({@required this.path, this.otherParams});
+  final bool isMultiple;
+  final Function(List searchDataList) returnSearchList;
+  const CustomWebV(
+      {@required this.path,
+      this.otherParams,
+      this.returnSearchList,
+      this.isMultiple = true});
   @override
   _CustomWebVState createState() => _CustomWebVState();
 }
@@ -42,28 +51,34 @@ class _CustomWebVState extends State<CustomWebV> {
   @override
   Widget build(BuildContext ctx) {
     print('url == ${WEB_URL + getPath(widget.path)}');
-    return Scaffold(body: Builder(
-      builder: (context) {
-        return FutureBuilder(
-          future: getView(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasData) {
-                return snapshot.data;
-              } else {
-                return EmptyView(
-                  tips: '出现错误',
-                );
-              }
-            } else {
-              return EmptyView(
-                tips: '请稍等',
-              );
-            }
+    return Scaffold(
+        appBar: widget.path == WebPath.searchUser
+            ? CustomAppbar(
+                title: '搜索用户',
+              )
+            : PreferredSize(child: NoneV(), preferredSize: Size.zero),
+        body: Builder(
+          builder: (context) {
+            return FutureBuilder(
+              future: getView(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasData) {
+                    return snapshot.data;
+                  } else {
+                    return EmptyView(
+                      tips: '出现错误',
+                    );
+                  }
+                } else {
+                  return EmptyView(
+                    tips: '请稍等',
+                  );
+                }
+              },
+            );
           },
-        );
-      },
-    ));
+        ));
   }
 
   Future<Widget> getView() async {
@@ -86,6 +101,9 @@ class _CustomWebVState extends State<CustomWebV> {
 
           if (widget.otherParams != null && widget.otherParams.isNotEmpty) {
             params = {...params, ...widget.otherParams};
+          }
+          if (widget.path == WebPath.searchUser) {
+            params['multiple'] = widget.isMultiple;
           }
           String json = convert.jsonEncode(params);
           // String js_String = "let json = " +
@@ -118,7 +136,8 @@ class _CustomWebVState extends State<CustomWebV> {
         },
         javascriptChannels: <JavascriptChannel>[
           _getJavascriptChannel(context),
-          _backJavascriptChannel(context)
+          _backJavascriptChannel(context),
+          _searchListJavascriptChannel(context),
         ].toSet(),
       );
     } else {
@@ -135,6 +154,19 @@ class _CustomWebVState extends State<CustomWebV> {
           print('back === ${message.message}');
           // backStatus = message.message;
           back();
+        });
+  }
+
+  JavascriptChannel _searchListJavascriptChannel(BuildContext context) {
+    return JavascriptChannel(
+        name: "returnList",
+        onMessageReceived: (JavascriptMessage message) {
+          print('returnList === ${message.message}');
+          if (widget.returnSearchList != null) {
+            widget.returnSearchList(convert.jsonDecode(message.message));
+          }
+          // backStatus = message.message;
+          // back();
         });
   }
 
@@ -187,6 +219,8 @@ class _CustomWebVState extends State<CustomWebV> {
       case WebPath.agree:
         return 'agree';
         break;
+      case WebPath.searchUser:
+        return 'searchUser';
       default:
         return '';
     }

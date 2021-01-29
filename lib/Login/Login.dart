@@ -177,7 +177,7 @@ class _LoginState extends State<Login> {
                       // controller: Tex,
                       clearButtonMode: OverlayVisibilityMode.always,
 
-                      keyboardType: TextInputType.phone,
+                      keyboardType: TextInputType.number,
                       placeholderStyle:
                           TextStyle(color: jm_placeholder_color, fontSize: 15),
                       controller:
@@ -391,7 +391,7 @@ class _LoginState extends State<Login> {
       hintText: '请输入手机号',
       needCleanButton: true,
       text: phoneNumString ?? '',
-      keyboardType: TextInputType.phone,
+      keyboardType: TextInputType.number,
       valueChange: (String value) {
         // setState(() {
         phoneNumString = value;
@@ -628,7 +628,7 @@ class _LoginState extends State<Login> {
                           backgroundColor: Colors.transparent,
                           needCleanButton: true,
                           text: registPhone,
-                          keyboardType: TextInputType.phone,
+                          keyboardType: TextInputType.number,
                           valueChange: (value) {
                             registPhone = value;
                           },

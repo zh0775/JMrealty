@@ -27,6 +27,10 @@ class ReportSuccessViewModel {
       success: (json) {
         if (json['code'] == 200) {
           success(true);
+        } else {
+          if (json['msg'] != null && json['msg'].length > 0) {
+            ShowToast.normal(json['msg']);
+          }
         }
       },
       fail: (reason, code) {},

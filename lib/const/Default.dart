@@ -1,5 +1,6 @@
 import 'package:JMrealty/Login/Login.dart';
 import 'package:JMrealty/Login/components/RegistSelectInput.dart';
+import 'package:JMrealty/components/CustomSearchView.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -380,6 +381,7 @@ class CustomInput extends StatefulWidget {
   final Widget contentWidet;
   final double margin;
   final String title;
+  final bool paging;
   final double lineHeight;
   final double labelWidth;
   final bool must;
@@ -394,11 +396,18 @@ class CustomInput extends StatefulWidget {
   final String lastLabelText;
   final TextStyle textStyle;
   final TextStyle hintStyle;
+  final String searchUrl;
+  final String requestKey;
+  final String nameKey;
   final Function(Map data) showListClick;
   final Function(String value) valueChange;
   final Function(String value, _CustomInputState state) valueChangeAndShowList;
   CustomInput(
       {Key key,
+      this.paging = true,
+      this.nameKey = 'name',
+      this.requestKey = 'name',
+      this.searchUrl,
       this.lastLabelText,
       this.title = '',
       this.otherWidth,
@@ -427,6 +436,7 @@ class CustomInput extends StatefulWidget {
 
 class _CustomInputState extends State<CustomInput>
     with AutomaticKeepAliveClientMixin {
+  final FocusNode focusNode = FocusNode();
   String selfValue = '';
   double margin;
   double lableWidth;
@@ -451,6 +461,8 @@ class _CustomInputState extends State<CustomInput>
 
   @override
   void dispose() {
+    focusNode.unfocus();
+    focusNode.dispose();
     // print('_CustomInputState_dispose');
     // if (textCtr != null) {
     //   textCtr.dispose();
@@ -506,66 +518,122 @@ class _CustomInputState extends State<CustomInput>
               //   },
               //   hintText: widget.hintText,
               // )
-              Container(
-                // color: Colors.red,
-                width: widget.otherWidth ??
-                    SizeConfig.screenWidth -
-                        margin * 2 -
-                        lableWidth -
-                        lastLabelWidth,
-                // constraints: BoxConstraints(
-                //     minHeight: widget.lineHeight, maxHeight: widget.lineHeight),
-                child: widget.contentWidet != null
-                    ? widget.contentWidet
-                    : TextField(
-                        key: widget.key,
-                        controller: widget.controller ??
-                            TextEditingController.fromValue(TextEditingValue(
-                              text: widget.text ?? '',
-                              selection: TextSelection.fromPosition(
-                                  TextPosition(
-                                      affinity: TextAffinity.downstream,
-                                      offset: widget.text.length ?? 0)),
-                            )),
-                        enabled: widget.enable,
-                        keyboardType: widget.keyboardType,
-                        maxLines: 1,
-                        style: widget.textStyle,
-                        textInputAction: widget.valueChangeAndShowList != null
-                            ? TextInputAction.search
-                            : TextInputAction.done,
-                        decoration: InputDecoration(
-                          hintStyle: widget.hintStyle,
-                          hintText: widget.hintText, isCollapsed: true,
-                          // fillColor: widget.backgroundColor,
-                          // focusedBorder: OutlineInputBorder(
-                          //     borderSide:
-                          //         BorderSide(width: 0, color: Colors.transparent)),
-                          // disabledBorder: OutlineInputBorder(
-                          //     borderSide:
-                          //         BorderSide(width: 0, color: Colors.transparent)),
-                          // enabledBorder: OutlineInputBorder(
-                          //     borderSide:
-                          //         BorderSide(width: 0, color: Colors.transparent)),
-                          contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                          border: OutlineInputBorder(
-                              // gapPadding: 0,
-                              borderRadius: BorderRadius.zero,
-                              borderSide: BorderSide.none),
+              widget.searchUrl != null
+                  ? GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        pushSearchView(context,
+                            searchUrl: widget.searchUrl,
+                            requestKey: widget.requestKey,
+                            nameKey: widget.nameKey,
+                            // dataList: data,
+                            hintText: widget.hintText,
+                            text: '', cellClick: (searchData) {
+                          if (widget.showListClick != null) {
+                            widget.showListClick(searchData);
+                          }
+                        }, paging: widget.paging);
+                      },
+                      child: Container(
+                        width: widget.otherWidth ??
+                            SizeConfig.screenWidth -
+                                margin * 2 -
+                                lableWidth -
+                                lastLabelWidth,
+                        height: widget.lineHeight,
+                        padding: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          widget.text == null || widget.text.length == 0
+                              ? widget.hintText
+                              : widget.text,
+                          style: widget.text == null || widget.text.length == 0
+                              ? widget.hintStyle
+                              : widget.textStyle,
                         ),
-                        onChanged: (value) {
-                          selfValue = value;
-                          if (widget.valueChange != null) {
-                            widget.valueChange(value);
-                          }
-                        },
-                        onEditingComplete: () {
-                          if (widget.valueChangeAndShowList != null) {
-                            widget.valueChangeAndShowList(selfValue, this);
-                          }
-                        },
                       ),
-              ),
+                    )
+                  : Container(
+                      // color: Colors.red,
+                      width: widget.otherWidth ??
+                          SizeConfig.screenWidth -
+                              margin * 2 -
+                              lableWidth -
+                              lastLabelWidth,
+                      // constraints: BoxConstraints(
+                      //     minHeight: widget.lineHeight, maxHeight: widget.lineHeight),
+                      child: widget.contentWidet != null
+                          ? widget.contentWidet
+                          : TextField(
+                              focusNode: focusNode,
+                              key: widget.key,
+                              controller: widget.controller ??
+                                  TextEditingController.fromValue(
+                                      TextEditingValue(
+                                    text: widget.text ?? '',
+                                    selection: TextSelection.fromPosition(
+                                        TextPosition(
+                                            affinity: TextAffinity.downstream,
+                                            offset: widget.text.length ?? 0)),
+                                  )),
+                              enabled: widget.enable,
+                              keyboardType: widget.keyboardType,
+                              maxLines: 1,
+                              style: widget.textStyle,
+                              textInputAction:
+                                  widget.valueChangeAndShowList != null
+                                      ? TextInputAction.search
+                                      : TextInputAction.done,
+                              decoration: InputDecoration(
+                                hintStyle: widget.hintStyle,
+                                hintText: widget.hintText, isCollapsed: true,
+                                // fillColor: widget.backgroundColor,
+                                // focusedBorder: OutlineInputBorder(
+                                //     borderSide:
+                                //         BorderSide(width: 0, color: Colors.transparent)),
+                                // disabledBorder: OutlineInputBorder(
+                                //     borderSide:
+                                //         BorderSide(width: 0, color: Colors.transparent)),
+                                // enabledBorder: OutlineInputBorder(
+                                //     borderSide:
+                                //         BorderSide(width: 0, color: Colors.transparent)),
+                                contentPadding:
+                                    EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                border: OutlineInputBorder(
+                                    // gapPadding: 0,
+                                    borderRadius: BorderRadius.zero,
+                                    borderSide: BorderSide.none),
+                              ),
+                              onChanged: (value) {
+                                selfValue = value;
+                                if (widget.valueChange != null) {
+                                  widget.valueChange(value);
+                                }
+                              },
+                              onEditingComplete: () {
+                                if (widget.searchUrl != null) {
+                                  focusNode.unfocus();
+                                  pushSearchView(
+                                    context,
+                                    searchUrl: widget.searchUrl,
+                                    requestKey: widget.requestKey,
+                                    nameKey: widget.nameKey,
+                                    // dataList: data,
+                                    hintText: widget.hintText,
+                                    text: selfValue,
+                                    cellClick: (searchData) {
+                                      if (widget.showListClick != null) {
+                                        widget.showListClick(searchData);
+                                      }
+                                    },
+                                  );
+                                }
+                                // if (widget.valueChangeAndShowList != null) {
+                                //   widget.valueChangeAndShowList(selfValue, this);
+                                // }
+                              },
+                            ),
+                    ),
               Container(
                 width: lastLabelWidth,
                 child: Padding(
@@ -585,19 +653,29 @@ class _CustomInputState extends State<CustomInput>
   }
 
   void showList(List data) {
-    if (!isShow) {
-      FocusScope.of(context).requestFocus(FocusNode());
-      this._overlayEntry = this.createOverlayEntry(data);
-      Overlay.of(context).insert(this._overlayEntry);
-      isShow = true;
-    }
+    // focusNode.unfocus();
+    // pushSearchView(
+    //   context,
+    //   dataList: data,
+    //   hintText: widget.hintText,
+    //   text: selfValue,
+    // );
+    // if (!isShow) {
+    //   FocusScope.of(context).requestFocus(FocusNode());
+    //   this._overlayEntry = this.createOverlayEntry(data);
+    //   Overlay.of(context).insert(this._overlayEntry);
+    //   isShow = true;
+    // }
   }
 
   void removeList() {
     // Overlay.of(context).
+    // if (isShow) {
+    //   _overlayEntry.remove();
+    //   isShow = false;
+    // }
     if (isShow) {
-      _overlayEntry.remove();
-      isShow = false;
+      Navigator.pop(context);
     }
   }
 

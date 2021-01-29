@@ -276,7 +276,7 @@ class _RegistState extends State<Regist> {
                   width: widthScale * 80,
                   controller: phoneTextCtr,
                   must: true,
-                  keyboardType: TextInputType.phone,
+                  keyboardType: TextInputType.number,
                   valueChange: (value) {
                     phoneStr = value;
                   },

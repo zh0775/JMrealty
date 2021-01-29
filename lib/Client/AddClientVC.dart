@@ -11,6 +11,7 @@ import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/CustomTextF.dart';
 import 'package:JMrealty/components/DropdownSelectV.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -315,7 +316,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   CustomTextF(
                     text: addClientParams['phone'] ?? '',
                     placeholder: '请输入手机号',
-                    keyboardType: TextInputType.phone,
+                    keyboardType: TextInputType.number,
                     valueChange: (value) {
                       addClientParams['phone'] = value;
                     },
@@ -445,7 +446,7 @@ class _AddClientVCState extends State<AddClientVC> {
                   getLine(false),
                   // 首付预算
                   CustomInput(
-                    lastLabelText: '元',
+                    lastLabelText: '万',
                     title: '首付预算',
                     labelStyle: labelStyle,
                     keyboardType: TextInputType.number,
@@ -504,21 +505,22 @@ class _AddClientVCState extends State<AddClientVC> {
                     labelStyle: labelStyle,
                     text: housesName ?? '',
                     hintText: '请输入楼盘名称',
-                    valueChangeAndShowList: (value, state) {
-                      housesName = value;
-                      if (housesName != null && housesName.length > 0) {
-                        projectVM.loadProjectList(
-                          housesName,
-                          success: (data, success, total) {
-                            if (success) {
-                              if (data != null && data.length > 0) {
-                                state.showList(data);
-                              }
-                            }
-                          },
-                        );
-                      }
-                    },
+                    searchUrl: Urls.projectFuzzySearch,
+                    // valueChangeAndShowList: (value, state) {
+                    //   housesName = value;
+                    //   if (housesName != null && housesName.length > 0) {
+                    //     projectVM.loadProjectList(
+                    //       housesName,
+                    //       success: (data, success, total) {
+                    //         if (success) {
+                    //           if (data != null && data.length > 0) {
+                    //             state.showList(data);
+                    //           }
+                    //         }
+                    //       },
+                    //     );
+                    //   }
+                    // },
                     showListClick: (data) {
                       if (addClientParams['customerProject'] == null) {
                         addClientParams['customerProject'] = [];

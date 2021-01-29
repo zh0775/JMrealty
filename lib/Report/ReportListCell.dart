@@ -352,8 +352,8 @@ class _ReportListCellState extends State<ReportListCell> {
         break;
       case 20:
         buttonsType = [
-          ReportCellButtonStatus.buy,
           ReportCellButtonStatus.appointment,
+          ReportCellButtonStatus.buy,
           ReportCellButtonStatus.disputed,
         ];
         break;

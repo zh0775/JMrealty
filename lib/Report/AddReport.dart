@@ -3,9 +3,12 @@ import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
+import 'package:JMrealty/components/CustomTextF.dart';
+import 'package:JMrealty/components/CustomWebV.dart';
 import 'package:JMrealty/components/DropdownSelectV.dart';
 import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/toast.dart';
@@ -142,22 +145,23 @@ class _AddReportState extends State<AddReport> {
                 labelWidth: labelWidth,
                 title: '项目搜索',
                 hintText: '请输入项目名称',
-                valueChangeAndShowList: (value, state) {
-                  if (value != '') {
-                    model.loadProjectList(
-                      value,
-                      success: (data, success, total) {
-                        if (success) {
-                          if (data != null && data.length > 0) {
-                            state.showList(data);
-                          }
-                        }
-                      },
-                    );
-                  } else {
-                    state.removeList();
-                  }
-                },
+                searchUrl: Urls.projectFuzzySearch,
+                // valueChangeAndShowList: (value, state) {
+                //   // if (value != '') {
+                //   model.loadProjectList(
+                //     value,
+                //     success: (data, success, total) {
+                //       if (success) {
+                //         if (data != null && data.length > 0) {
+                //           state.showList(data);
+                //         }
+                //       }
+                //     },
+                //   );
+                //   // } else {
+                //   //   state.removeList();
+                //   // }
+                // },
                 showListClick: (data) {
                   projectInputCtr.text = data['name'] ?? '';
                   projectTimeInputCtr.text = data['approachDate'] ?? '';
@@ -165,7 +169,6 @@ class _AddReportState extends State<AddReport> {
                   setState(() {
                     projectData = data;
                   });
-
                   CustomLoading().show();
                   model.projectContact(
                     data['id'],
@@ -202,8 +205,8 @@ class _AddReportState extends State<AddReport> {
                   ? Align(
                       alignment: Alignment.centerLeft,
                       child: Container(
-                        margin:
-                            EdgeInsets.only(left: widthScale * 30, bottom: 10),
+                        margin: EdgeInsets.only(
+                            left: widthScale * 34.5, bottom: 10),
                         width: SizeConfig.screenWidth -
                             margin * 2 -
                             widthScale * 24,
@@ -316,38 +319,71 @@ class _AddReportState extends State<AddReport> {
                 width: SizeConfig.screenWidth,
                 height: 6,
               ),
-              CustomInput(
+              CustomTextF(
+                labelText: '搜索',
                 labelWidth: labelWidth,
-                key: ValueKey('CustomInput_agent_1'),
                 labelStyle: jm_text_black_bold_style16,
-                textStyle: jm_text_black_style15,
+                style: jm_text_black_style15,
                 text: agentData != null && agentData['showName'] != null
                     ? agentData['showName']
                     : '',
-                title: '搜索',
-                hintText: '请输入用户名称',
-                valueChange: (value) {},
-                valueChangeAndShowList: (value, state) {
-                  if (value != '') {
-                    model.loadAgentSearchData(
-                      value,
-                      success: (data) {
-                        if (data != null && data.length > 0) {
-                          state.showList(data);
-                        }
-                      },
-                    );
-                  } else {
-                    state.removeList();
-                  }
+                onlyTap: true,
+                labelClick: () {
+                  push(
+                      CustomWebV(
+                        path: WebPath.searchUser,
+                        isMultiple: true,
+                        returnSearchList: (searchDataList) {
+                          if (searchDataList != null &&
+                              searchDataList.length > 0) {
+                            Map agent = searchDataList[0];
+                            setState(() {
+                              agentData = agent;
+                              agentData['phonenumber'] = agent['phoneNumber'];
+                              agentData['showName'] = agent['userName'];
+                            });
+                          }
+                        },
+                      ),
+                      context);
                 },
-                showListClick: (data) {
-                  setState(() {
-                    agentData = data;
-                    agentData['showName'] = data['userName'];
-                  });
-                },
+                placeholder: '请输入用户名称',
               ),
+              // CustomInput(
+              //   labelWidth: labelWidth,
+              //   key: ValueKey('CustomInput_agent_1'),
+              //   labelStyle: jm_text_black_bold_style16,
+              //   textStyle: jm_text_black_style15,
+              //   text: agentData != null && agentData['showName'] != null
+              //       ? agentData['showName']
+              //       : '',
+              //   title: '搜索',
+              //   hintText: '请输入用户名称',
+              //   requestKey: 'userName',
+              //   nameKey: 'userName',
+              //   searchUrl: Urls.agentFuzzySearch,
+              //   // valueChange: (value) {},
+              //   // valueChangeAndShowList: (value, state) {
+              //   //   if (value != '') {
+              //   //     model.loadAgentSearchData(
+              //   //       value,
+              //   //       success: (data) {
+              //   //         if (data != null && data.length > 0) {
+              //   //           state.showList(data);
+              //   //         }
+              //   //       },
+              //   //     );
+              //   //   } else {
+              //   //     state.removeList();
+              //   //   }
+              //   // },
+              //   showListClick: (data) {
+              //     setState(() {
+              //       agentData = data;
+              //       agentData['showName'] = data['userName'];
+              //     });
+              //   },
+              // ),
               JMline(
                 width: SizeConfig.screenWidth - margin * 2,
                 height: 1,
@@ -479,7 +515,7 @@ class _AddReportState extends State<AddReport> {
                                             ? '手机号前三后四，'
                                             : '全号报备，')) +
                                     '有效保护期' +
-                                    projectData['reportProtect'].toString() +
+                                    projectData['reportProtect']?.toString() +
                                     '天，以看房确认单为准。' +
                                     contactsFormat(),
                                 confirmText: '继续报备',
@@ -727,20 +763,22 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
                 textStyle: jm_text_black_style15,
                 title: '搜索内容',
                 hintText: '请输入搜索用户信息',
-                valueChangeAndShowList: (value, state) {
-                  if (value != '') {
-                    model.loadClientSearchData(
-                      value,
-                      success: (data) {
-                        if (data != null && data.length > 0) {
-                          state.showList(data);
-                        }
-                      },
-                    );
-                  } else {
-                    state.removeList();
-                  }
-                },
+                paging: false,
+                searchUrl: Urls.clientFuzzySearch,
+                // valueChangeAndShowList: (value, state) {
+                //   if (value != '') {
+                //     model.loadClientSearchData(
+                //       value,
+                //       success: (data) {
+                //         if (data != null && data.length > 0) {
+                //           state.showList(data);
+                //         }
+                //       },
+                //     );
+                //   } else {
+                //     state.removeList();
+                //   }
+                // },
                 showListClick: (data) {
                   if (widget.clientDataUpdate != null) {
                     widget.clientDataUpdate(widget, data);
@@ -829,7 +867,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
                 textStyle: jm_text_black_style15,
                 title: '手机号',
                 hintText: '请输入客户手机号码',
-                keyboardType: TextInputType.phone,
+                keyboardType: TextInputType.number,
                 text: clientData != null && clientData['phone'] != null
                     ? clientData['phone']
                     : '',

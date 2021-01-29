@@ -55,9 +55,9 @@ class _MyTasksCellState extends State<MyTasksCell> {
                         child: widget.data['avatar'] != null &&
                                 widget.data['avatar'] != ''
                             ? ImageLoader(widget.data['avatar'])
-                            : Container(
-                                width: 0.0,
-                                height: 0.0,
+                            : Image.asset(
+                                'assets/images/icon/icon_default_head_min.png',
+                                fit: BoxFit.fill,
                               )),
                   ),
                 ),
@@ -89,17 +89,18 @@ class _MyTasksCellState extends State<MyTasksCell> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(
+                      Container(
                           width: SizeConfig.screenWidth -
                               widthScale * 13 -
                               insideMargin * 2 -
-                              widthScale * 20,
+                              widthScale * 45,
                           child: Text(
                             widget.data['name'] ?? '',
                             style: jm_text_black_bold_style15,
                             maxLines: 100,
                           )),
                       RawMaterialButton(
+                        splashColor: Colors.transparent,
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         constraints: BoxConstraints(minWidth: 0),
                         onPressed: () {
@@ -107,7 +108,11 @@ class _MyTasksCellState extends State<MyTasksCell> {
                         },
                         child: Row(
                           children: [
-                            Text(widget.data['userName'] ?? ''),
+                            Container(
+                              alignment: Alignment.centerRight,
+                              width: widthScale * 36,
+                              child: Text(widget.data['userName'] ?? ''),
+                            ),
                             SizedBox(
                               width: widthScale * 1.5,
                             ),

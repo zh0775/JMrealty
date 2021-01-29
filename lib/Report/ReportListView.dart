@@ -109,7 +109,7 @@ class _ReportListViewState extends State<ReportListView>
             data: dataList[index],
             index: index,
             needRefrash: () {
-              loadList();
+              bus.emit(NOTIFY_REPORT_LIST_REFRASH);
             },
             copyItem: (data, add) {
               if (add) {

@@ -10,6 +10,9 @@ import 'package:JMrealty/components/CustomImagePage.dart';
 import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
+import 'package:JMrealty/components/CustomTextF.dart';
+import 'package:JMrealty/components/CustomWebV.dart';
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
@@ -199,7 +202,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
           textStyle: jm_text_black_style15,
           title: '认购电话',
           hintText: '请输入认购电话',
-          keyboardType: TextInputType.phone,
+          keyboardType: TextInputType.number,
           text: successParams['payPhone'] ?? '',
           valueChange: (value) {
             // buildNo = value;
@@ -286,37 +289,79 @@ class _ReportSuccessState extends State<ReportSuccess> {
             style: jm_text_gray_style13,
           ),
         ),
-        CustomInput(
-          title: '搜索分佣人',
-          hintText: '搜索添加分佣人',
-          valueChangeAndShowList: (value, state) {
-            searchAgentVM.loadAgentSearchData(value, success: (data) {
-              if (data != null && data.length > 0) {
-                state.showList(data);
-              }
-            });
+        CustomTextF(
+          labelText: '搜索分佣人',
+          // labelStyle: jm_text_black_bold_style16,
+          // style: jm_text_black_style15,
+          leftTextPadding: 0,
+          onlyTap: true,
+          labelClick: () {
+            push(
+                CustomWebV(
+                  path: WebPath.searchUser,
+                  isMultiple: false,
+                  returnSearchList: (searchDataList) {
+                    if (searchDataList != null && searchDataList.length > 0) {
+                      for (var i = 0; i < searchDataList.length; i++) {
+                        Map item = searchDataList[i];
+
+                        bool isHave = false;
+                        reportShopPartnerBOList.forEach((element) {
+                          if (element['userId'] == item['userId']) {
+                            isHave = true;
+                          }
+                        });
+                        // if (isHave || userInfo['userId'] == item['userId']) {
+                        //   return;
+                        // }
+                        if (!isHave) {
+                          reportShopPartnerBOList.add({
+                            'userId': item['userId'],
+                            'userName': item['userName'],
+                            'userPhone': item['phoneNumber'],
+                            'ratio': 0
+                          });
+                        }
+                      }
+                      setState(() {});
+                    }
+                  },
+                ),
+                context);
           },
-          showListClick: (clickData) {
-            bool isHave = false;
-            reportShopPartnerBOList.forEach((element) {
-              if (element['userId'] == clickData['userId']) {
-                isHave = true;
-                return;
-              }
-            });
-            if (isHave || userInfo['userId'] == clickData['userId']) {
-              return;
-            }
-            setState(() {
-              reportShopPartnerBOList.add({
-                'userId': clickData['userId'],
-                'userName': clickData['userName'],
-                'userPhone': clickData['phonenumber'],
-                'ratio': 0
-              });
-            });
-          },
+          placeholder: '搜索添加分佣人',
         ),
+        // CustomInput(
+        //   title: '搜索分佣人',
+        //   hintText: '搜索添加分佣人',
+        //   valueChangeAndShowList: (value, state) {
+        //     searchAgentVM.loadAgentSearchData(value, success: (data) {
+        //       if (data != null && data.length > 0) {
+        //         state.showList(data);
+        //       }
+        //     });
+        //   },
+        //   showListClick: (clickData) {
+        //     bool isHave = false;
+        //     reportShopPartnerBOList.forEach((element) {
+        //       if (element['userId'] == clickData['userId']) {
+        //         isHave = true;
+        //         return;
+        //       }
+        //     });
+        //     if (isHave || userInfo['userId'] == clickData['userId']) {
+        //       return;
+        //     }
+        //     setState(() {
+        //       reportShopPartnerBOList.add({
+        //         'userId': clickData['userId'],
+        //         'userName': clickData['userName'],
+        //         'userPhone': clickData['phonenumber'],
+        //         'ratio': 0
+        //       });
+        //     });
+        //   },
+        // ),
         ...getCommissionList(),
         SizedBox(
           height: 15,
@@ -389,6 +434,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
                       successParams['images'] = imageStr;
                       ReportSuccessViewModel()
                           .reportSuccessRequest(successParams, (success) {
+                        CustomLoading().hide();
                         if (success) {
                           successBack();
                         }
@@ -398,6 +444,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
                 } else {
                   ReportSuccessViewModel().reportSuccessRequest(successParams,
                       (success) {
+                    CustomLoading().hide();
                     if (success) {
                       successBack();
                     }
@@ -686,22 +733,21 @@ class _ReportSuccessState extends State<ReportSuccess> {
         Container(
             constraints: BoxConstraints(
               maxHeight: inputHeight,
-              maxWidth: widthScale * 30,
+              maxWidth: widthScale * 15,
               minHeight: inputHeight * 0.75,
-              minWidth: widthScale * 30,
+              minWidth: widthScale * 15,
             ),
             child: CupertinoTextField(
+              textAlign: TextAlign.center,
               keyboardType: TextInputType.number,
               style: jm_text_black_style14,
-              padding: EdgeInsets.only(left: widthScale * 4),
+              // padding: EdgeInsets.only(left: widthScale * 6),
               controller: TextEditingController.fromValue(TextEditingValue(
                   text: ratioStr ?? '',
                   selection: TextSelection.fromPosition(TextPosition(
                       affinity: TextAffinity.downstream,
                       offset: ratioStr.length ?? 0)))),
-              decoration: BoxDecoration(
-                color: index == 0 ? jm_line_color : Colors.transparent,
-              ),
+              decoration: BoxDecoration(color: jm_line_color),
               enabled: index == 0 ? false : true,
               // textAlign: TextAlign.start,
               textAlignVertical: TextAlignVertical.center,
@@ -747,7 +793,25 @@ class _ReportSuccessState extends State<ReportSuccess> {
         Text(
           '%',
           style: jm_text_black_style15,
-        )
+        ),
+        index != 0
+            ? IconButton(
+                splashColor: Colors.transparent,
+                icon: Icon(
+                  Icons.cancel,
+                  size: 18,
+                  color: jm_text_gray,
+                ),
+                onPressed: () {
+                  setState(() {
+                    if ((reportShopPartnerBOList[index])['ratio'] > 0) {
+                      (reportShopPartnerBOList[0])['ratio'] +=
+                          (reportShopPartnerBOList[index])['ratio'];
+                    }
+                    reportShopPartnerBOList.removeAt(index);
+                  });
+                })
+            : NoneV()
       ],
     );
   }

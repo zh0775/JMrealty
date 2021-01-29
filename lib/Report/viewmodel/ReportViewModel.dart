@@ -106,16 +106,18 @@ class ReportViewModel extends BaseViewModel {
       });
     }
     params = {
-      'company': project['companyName'],
-      'companyId': project['companyId'],
-      'employeeId': agent['userId'],
-      'employeeName': agent['userName'],
-      'employeePhone': agent['phonenumber'],
-      'projectId': project['id'],
-      'projectName': project['name'],
-      'projectBeforeTime': project['approachDate'],
-      'projectProtect': DateFormat('yyyy-MM-dd')
-          .format(DateTime.now().add(Duration(days: project['reportProtect']))),
+      'company': project['companyName'] ?? '',
+      'companyId': project['companyId'] ?? '',
+      'employeeId': agent['userId'] ?? '',
+      'employeeName': agent['userName'] ?? '',
+      'employeePhone': agent['phonenumber'] ?? '',
+      'projectId': project['id'] ?? '',
+      'projectName': project['name'] ?? '',
+      'projectBeforeTime': project['approachDate'] ?? '',
+      'projectProtect': project['reportProtect'] != null
+          ? DateFormat('yyyy-MM-dd').format(
+              DateTime.now().add(Duration(days: project['reportProtect'])))
+          : '',
       'remarks': data['mark'] ?? '',
       'isSensitive': data['isSensitive'] ?? '',
     };

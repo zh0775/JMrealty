@@ -48,6 +48,7 @@ class _ProjectCellState extends State<ProjectCell> {
               width: insideMargin,
             ),
             Container(
+              color: jm_bg_gray_color,
               height: imageWidth - widthScale * 10,
               // color: Colors.red,
               width: imageWidth,
@@ -59,8 +60,8 @@ class _ProjectCellState extends State<ProjectCell> {
                       fit: BoxFit.fill,
                     )
                   : Image.asset(
-                      'assets/images/icon/icon_default_head.png',
-                      fit: BoxFit.fill,
+                      'assets/images/icon/icon_default_min.png',
+                      // fit: BoxFit.fill,
                     ),
             ),
             SizedBox(

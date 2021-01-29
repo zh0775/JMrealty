@@ -5,8 +5,11 @@ import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
+import 'package:JMrealty/components/CustomTextF.dart';
+import 'package:JMrealty/components/CustomWebV.dart';
 import 'package:JMrealty/components/DropdownSelectV.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -183,42 +186,86 @@ class _AddTaskState extends State<AddTask> {
               JMline(width: selfWidth, height: 0.5),
               getDateWidget(title: '结束时间', start: false),
               JMline(width: selfWidth, height: 0.5),
-              CustomInput(
-                must: true,
-                labelStyle: jm_text_black_bold_style15,
-                title: '任务接收人',
-                hintText: '搜索添加任务接收人',
-                text: taskRecipient ?? '',
-                valueChange: (value) {
-                  taskRecipient = value;
-                },
-                valueChangeAndShowList: (value, state) {
-                  if (value != '') {
-                    searchAgentVM.loadAgentSearchData(
-                      value,
-                      success: (data) {
-                        if (data != null && data.length > 0) {
-                          state.showList(data);
-                        }
-                      },
-                    );
-                  }
-                },
-                showListClick: (data) {
-                  bool isHave = false;
-                  agentList.forEach((element) {
-                    if (element['userId'] == data['userId']) {
-                      isHave = true;
-                      return;
-                    }
-                  });
-                  if (!isHave) {
-                    setState(() {
-                      agentList.add(data);
-                    });
-                  }
-                },
+              Padding(
+                padding: EdgeInsets.only(left: margin),
+                child: CustomTextF(
+                  leftTextPadding: 0,
+                  must: true,
+                  labelText: '任务接收人',
+                  // labelWidth: labelWidth,
+                  style: jm_text_black_style15,
+                  labelStyle: jm_text_black_bold_style15,
+                  // text: agentData != null && agentData['showName'] != null
+                  //     ? agentData['showName']
+                  //     : '',
+                  onlyTap: true,
+                  labelClick: () {
+                    push(
+                        CustomWebV(
+                          path: WebPath.searchUser,
+                          isMultiple: false,
+                          returnSearchList: (searchDataList) {
+                            if (searchDataList != null &&
+                                searchDataList.length > 0) {
+                              // Map agent = searchDataList[0];
+                              for (var i = 0; i < searchDataList.length; i++) {
+                                Map item = searchDataList[i];
+                                bool isHave = false;
+                                agentList.forEach((element) {
+                                  if (element['userId'] == item['userId']) {
+                                    isHave = true;
+                                  }
+                                });
+                                if (!isHave) {
+                                  agentList.add(item);
+                                }
+                              }
+                              setState(() {});
+                            }
+                          },
+                        ),
+                        context);
+                  },
+                  placeholder: '添加任务接收人',
+                ),
               ),
+              // CustomInput(
+              //   must: true,
+              //   labelStyle: jm_text_black_bold_style15,
+              //   title: '任务接收人',
+              //   hintText: '搜索添加任务接收人',
+              //   text: taskRecipient ?? '',
+              //   searchUrl: Urls.agentFuzzySearch,
+              //   // valueChange: (value) {
+              //   //   taskRecipient = value;
+              //   // },
+              //   // valueChangeAndShowList: (value, state) {
+              //   //   if (value != '') {
+              //   //     searchAgentVM.loadAgentSearchData(
+              //   //       value,
+              //   //       success: (data) {
+              //   //         if (data != null && data.length > 0) {
+              //   //           state.showList(data);
+              //   //         }
+              //   //       },
+              //   //     );
+              //   //   }
+              //   // },
+              //   showListClick: (data) {
+              //     bool isHave = false;
+              //     agentList.forEach((element) {
+              //       if (element['userId'] == data['userId']) {
+              //         isHave = true;
+              //         return;
+              //       }
+              //     });
+              //     if (!isHave) {
+              //       setState(() {
+              //         agentList.add(data);
+              //       });
+              //     }
+              //   },
+              // ),
               ...pushPeoples(),
               SizedBox(
                 height: agentList.length > 0 ? 10 : 0,

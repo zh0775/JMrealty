@@ -2,6 +2,7 @@ import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
 import 'package:JMrealty/PK/viewModel/PKaddViewModel.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
+import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/CustomTextF.dart';
@@ -9,6 +10,7 @@ import 'package:JMrealty/components/DepSelectView.dart';
 import 'package:JMrealty/components/DropdownSelectV.dart';
 import 'package:JMrealty/components/TreeNode.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -346,21 +348,24 @@ class _PKaddState extends State<PKadd> {
                 labelStyle: jm_text_black_bold_style14,
                 textStyle: jm_text_black_style15,
                 title: '奖章',
+                paging: false,
                 hintText: '请输入奖章名称',
-                valueChangeAndShowList: (value, state) {
-                  if (value != '') {
-                    pkaddModel.loadMedal(
-                      value,
-                      success: (data) {
-                        if (data != null && data.length > 0) {
-                          state.showList(data);
-                        }
-                      },
-                    );
-                  } else {
-                    state.removeList();
-                  }
-                },
+                searchUrl: Urls.pkMedel,
+
+                // valueChangeAndShowList: (value, state) {
+                //   if (value != '') {
+                //     pkaddModel.loadMedal(
+                //       value,
+                //       success: (data) {
+                //         if (data != null && data.length > 0) {
+                //           state.showList(data);
+                //         }
+                //       },
+                //     );
+                //   } else {
+                //     state.removeList();
+                //   }
+                // },
                 showListClick: (data) {
                   setState(() {
                     medalData = data;
@@ -459,19 +464,26 @@ class _PKaddState extends State<PKadd> {
                 params['startTime'] = dateFormat.format(startTime);
                 params['endTime'] = dateFormat.format(endTime);
                 params['status'] = 0;
-                pkaddModel.adPkRequest(Map<String, dynamic>.from(params),
-                    success: (success) {
-                  if (success) {
-                    ShowToast.normal('新增PK赛成功');
-                    if (widget.addSuccessRefresh != null) {
-                      widget.addSuccessRefresh();
+
+                CustomAlert(title: '提示', content: '是否确认提交？').show(
+                    confirmClick: () {
+                  CustomLoading().show();
+                  pkaddModel.adPkRequest(Map<String, dynamic>.from(params),
+                      success: (success) {
+                    CustomLoading().hide();
+                    if (success) {
+                      ShowToast.normal('新增PK赛成功');
+                      if (widget.addSuccessRefresh != null) {
+                        widget.addSuccessRefresh();
+                      }
+                      _bus.emit(NOTIFY_PK_LIST_REFRASH);
+                      Future.delayed(Duration(seconds: 1), () {
+                        Navigator.pop(context);
+                      });
                     }
-                    _bus.emit(NOTIFY_PK_LIST_REFRASH);
-                    Future.delayed(Duration(seconds: 1), () {
-                      Navigator.pop(context);
-                    });
-                  }
+                  });
                 });
+
                 // List unitList; // pk指标
                 // List pkTargetList; // 参与单位
                 // String pkName; // pk赛名称
