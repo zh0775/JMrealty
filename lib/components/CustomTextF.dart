@@ -139,7 +139,7 @@ class _CustomTextFState extends State<CustomTextF> {
                         text: widget.text ?? '',
                         selection: TextSelection.fromPosition(TextPosition(
                             affinity: TextAffinity.downstream,
-                            offset: widget.text.length ?? 0)),
+                            offset: widget.text?.length ?? 0)),
                       )),
                   enabled: widget.enable && !widget.onlyTap ? true : false,
                   keyboardType: widget.keyboardType,

@@ -10,6 +10,7 @@ import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/CustomTextF.dart';
 import 'package:JMrealty/components/DropdownSelectV.dart';
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/utils/EventBus.dart';
@@ -26,11 +27,21 @@ import 'dart:convert' as convert;
 import 'package:permission_handler/permission_handler.dart';
 
 class AddClientVC extends StatefulWidget {
+  final Map clientData;
+  final bool edit;
+  const AddClientVC({this.clientData, this.edit = false});
   @override
   _AddClientVCState createState() => _AddClientVCState();
 }
 
-class _AddClientVCState extends State<AddClientVC> {
+class _AddClientVCState extends State<AddClientVC>
+    with TickerProviderStateMixin {
+  Duration animationDuration = Duration(milliseconds: 200);
+  AnimationController animationAreaCrl;
+  AnimationController animationTypeCrl;
+  AnimationController animationDecisionMakerCrl;
+  AnimationController animationCustomersOfSourceCrl;
+  AnimationController animationCustomersOccupationCrl;
   EventBus _bus = EventBus();
   final EasyContactPicker _contactPicker = new EasyContactPicker();
   ReportViewModel projectVM = ReportViewModel();
@@ -51,11 +62,81 @@ class _AddClientVCState extends State<AddClientVC> {
 
   @override
   void initState() {
+    animationAreaCrl =
+        AnimationController(duration: animationDuration, vsync: this);
+    animationTypeCrl =
+        AnimationController(duration: animationDuration, vsync: this);
+    animationDecisionMakerCrl =
+        AnimationController(duration: animationDuration, vsync: this);
+    animationCustomersOfSourceCrl =
+        AnimationController(duration: animationDuration, vsync: this);
+    animationCustomersOccupationCrl =
+        AnimationController(duration: animationDuration, vsync: this);
+
+    if (widget.edit && widget.clientData != null) {
+      Map clientInfo = widget.clientData['customerVO'];
+      addClientParams['id'] = clientInfo['id'];
+      addClientParams['name'] = clientInfo['name'] ?? '';
+      addClientParams['sex'] = clientInfo['sex'] ?? 0;
+      (clientInfo['sex'] ?? 0) == 0
+          ? clientSex = Sex.boy
+          : clientSex = Sex.girl;
+      (clientInfo['isSensitive'] ?? 1) == 1
+          ? sensitive = true
+          : sensitive = false;
+      addClientParams['isSensitive'] = clientInfo['isSensitive'] ?? 2;
+      addClientParams['phone'] = clientInfo['phone'] ?? '';
+      addClientParams['desireId'] = clientInfo['desireId']?.toString() ?? '1';
+
+      addClientParams['occupationId'] =
+          clientInfo['occupationId']?.toString() ?? '1';
+      addClientParams['occupation'] = clientInfo['occupation'] ?? '';
+
+      addClientParams['typeId'] = clientInfo['typeId']?.toString() ?? '1';
+      addClientParams['type'] = clientInfo['type'] ?? '';
+
+      addClientParams['areaId'] = clientInfo['areaId']?.toString() ?? '1';
+      addClientParams['area'] = clientInfo['area'] ?? '';
+      addClientParams['shopTimes'] = clientInfo['shopTimes'] ?? '';
+
+      addClientParams['floor'] = clientInfo['floor'] ?? '';
+
+      addClientParams['policymakerId'] =
+          clientInfo['policymakerId']?.toString() ?? '1';
+      addClientParams['policymaker'] = clientInfo['policymaker'] ?? '';
+
+      addClientParams['paymentsBudget'] = clientInfo['paymentsBudget'] ?? '';
+      addClientParams['seeTime'] = clientInfo['seeTime'] ?? '';
+
+      addClientParams['sourceId'] = clientInfo['sourceId']?.toString() ?? '1';
+      addClientParams['source'] = clientInfo['source'] ?? '';
+
+      addClientParams['customerProject'] = clientInfo['customerProjects'] ?? [];
+      addClientParams['remarks'] = clientInfo['remarks'] ?? '';
+      // {
+      //                       'id': data['id'],
+      //                       'projectId': data['id'],
+      //                       'projectName': data['name'],
+      //                     });
+
+      // addClientParams['name'] = clientInfo['name'];
+      // addClientParams['name'] = clientInfo['name'];
+      // addClientParams['name'] = clientInfo['name'];
+      // addClientParams['name'] = clientInfo['name'];
+      // addClientParams['name'] = clientInfo['name'];
+      // addClientParams['name'] = clientInfo['name'];
+    }
     super.initState();
   }
 
   @override
   void dispose() {
+    animationAreaCrl.dispose();
+    animationTypeCrl.dispose();
+    animationDecisionMakerCrl.dispose();
+    animationCustomersOfSourceCrl.dispose();
+    animationCustomersOccupationCrl.dispose();
+
     projectVM.dispose();
     super.dispose();
   }
@@ -77,7 +158,7 @@ class _AddClientVCState extends State<AddClientVC> {
           model.loadAddSelect();
         },
         builder: (ctx, model, child) {
-          if (firstBuild && model.state == BaseState.CONTENT) {
+          if (firstBuild && model.state == BaseState.CONTENT && !widget.edit) {
             // if (model.listData['sex'] != null &&
             //     model.listData['sex'] is List &&
             //     model.listData['sex'].length > 1) {
@@ -89,9 +170,9 @@ class _AddClientVCState extends State<AddClientVC> {
             if (model.listData['sensitive'] != null &&
                 model.listData['sensitive'] is List &&
                 model.listData['sensitive'].length > 1) {
-              addClientParams['isSensitive'] = sensitive
+              addClientParams['isSensitive'] = (sensitive
                   ? ((model.listData['sensitive'])[0])['value']
-                  : ((model.listData['sensitive'])[1])['value'];
+                  : ((model.listData['sensitive'])[1])['value']);
             }
             if (model.listData['desireGrade'] != null &&
                 model.listData['desireGrade'] is List &&
@@ -142,8 +223,30 @@ class _AddClientVCState extends State<AddClientVC> {
               addClientParams['source'] =
                   ((model.listData['customersOfSource'])[0])['title'];
             }
-
             addClientParams['shopTimes'] = 1;
+            firstBuild = false;
+          }
+          if (firstBuild && model.state == BaseState.CONTENT && widget.edit) {
+            if (model.listData['customersOccupationIndex'] ==
+                addClientParams['occupationId']) {
+              animationCustomersOccupationCrl.forward();
+            }
+            if (model.listData['intentionProductTypeIndex'] ==
+                addClientParams['typeId']) {
+              animationTypeCrl.forward();
+            }
+            if (model.listData['intentionAreaIndex'] ==
+                addClientParams['areaId']) {
+              animationAreaCrl.forward();
+            }
+            if (model.listData['decisionMakerIndex'] ==
+                addClientParams['policymakerId']) {
+              animationDecisionMakerCrl.forward();
+            }
+            if (model.listData['customersOfSourceIndex'] ==
+                addClientParams['sourceId']) {
+              animationCustomersOfSourceCrl.forward();
+            }
             firstBuild = false;
           }
           return GestureDetector(
@@ -165,36 +268,38 @@ class _AddClientVCState extends State<AddClientVC> {
                             style: titleStyle,
                           ),
                         ),
-                        Container(
-                            width: widthScale * 30,
-                            height: lineHeight,
-                            margin: EdgeInsets.only(right: marginSpace),
-                            child: RawMaterialButton(
-                              highlightElevation: 0,
-                              elevation: 0,
-                              onPressed: () {
-                                // 通讯录导入
-                                _requestPermission();
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Icon(
-                                    Icons.class_,
-                                    size: 15,
-                                    color: jm_appTheme,
+                        widget.edit
+                            ? NoneV()
+                            : Container(
+                                width: widthScale * 30,
+                                height: lineHeight,
+                                margin: EdgeInsets.only(right: marginSpace),
+                                child: RawMaterialButton(
+                                  highlightElevation: 0,
+                                  elevation: 0,
+                                  onPressed: () {
+                                    // 通讯录导入
+                                    _requestPermission();
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Icon(
+                                        Icons.class_,
+                                        size: 15,
+                                        color: jm_appTheme,
+                                      ),
+                                      SizedBox(
+                                        width: 6,
+                                      ),
+                                      Text(
+                                        '通讯录导入',
+                                        style: TextStyle(
+                                            fontSize: 14, color: jm_text_black),
+                                      )
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: 6,
-                                  ),
-                                  Text(
-                                    '通讯录导入',
-                                    style: TextStyle(
-                                        fontSize: 14, color: jm_text_black),
-                                  )
-                                ],
-                              ),
-                            )),
+                                )),
                       ],
                     ),
                   ),
@@ -223,8 +328,9 @@ class _AddClientVCState extends State<AddClientVC> {
                     labelStyle: labelStyle,
                     must: true,
                     labelWidth: widthScale * 26,
-                    sex: Sex.boy,
+                    sex: clientSex,
                     valueChange: (newSex) {
+                      clientSex = newSex;
                       addClientParams['sex'] = (newSex == Sex.boy ? 0 : 1);
                       // clientSex = newSex;
                     },
@@ -276,18 +382,19 @@ class _AddClientVCState extends State<AddClientVC> {
                                 activeColor: jm_appTheme,
                                 value: sensitive,
                                 onChanged: (bool value) {
-                                  if (model.listData['sensitive'] != null &&
-                                      model.listData['sensitive'] is List &&
-                                      model.listData['sensitive'].length > 1) {
-                                    addClientParams['isSensitive'] = sensitive
-                                        ? ((model
-                                            .listData['sensitive'])[0])['value']
-                                        : ((model.listData['sensitive'])[1])[
-                                            'value'];
-                                  }
                                   setState(() {
                                     sensitive = value;
                                   });
+                                  if (model.listData['sensitive'] != null &&
+                                      model.listData['sensitive'] is List &&
+                                      model.listData['sensitive'].length > 1) {
+                                    addClientParams['isSensitive'] = (sensitive
+                                        ? ((model
+                                            .listData['sensitive'])[0])['value']
+                                        : ((model.listData['sensitive'])[1])[
+                                            'value']);
+                                    print(addClientParams['isSensitive']);
+                                  }
                                 }),
                           )
                         ],
@@ -348,12 +455,32 @@ class _AddClientVCState extends State<AddClientVC> {
                     currentValue: addClientParams['occupationId'] ?? '',
                     dataList: model.listData['customersOccupation'] ?? [],
                     valueChange: (value, data) {
+                      if (model.listData['customersOccupationIndex'] !=
+                              addClientParams['occupationId'] &&
+                          model.listData['customersOccupationIndex'] == value) {
+                        animationCustomersOccupationCrl.forward();
+                      }
+                      if (model.listData['customersOccupationIndex'] ==
+                              addClientParams['occupationId'] &&
+                          model.listData['customersOccupationIndex'] != value) {
+                        animationCustomersOccupationCrl.reverse();
+                      }
                       setState(() {
                         addClientParams['occupationId'] = value ?? 0;
                         addClientParams['occupation'] = data['title'] ?? '';
+                        if (model.listData['customersOccupationIndex'] ==
+                            addClientParams['occupationId']) {
+                          addClientParams['occupation'] = '';
+                        } else {
+                          addClientParams['occupation'] = data['title'] ?? '';
+                        }
                       });
                     },
                   ),
+                  otherInput('请输入客户职业', addClientParams['occupation'],
+                      animationCustomersOccupationCrl, (value) {
+                    addClientParams['occupation'] = value;
+                  }),
                   // line
                   getLine(false),
                   // 用途
@@ -365,12 +492,33 @@ class _AddClientVCState extends State<AddClientVC> {
                     currentValue: addClientParams['typeId'] ?? '',
                     dataList: model.listData['intentionProductType'] ?? [],
                     valueChange: (value, data) {
+                      if (model.listData['intentionProductTypeIndex'] !=
+                              addClientParams['typeId'] &&
+                          model.listData['intentionProductTypeIndex'] ==
+                              value) {
+                        animationTypeCrl.forward();
+                      }
+                      if (model.listData['intentionProductTypeIndex'] ==
+                              addClientParams['typeId'] &&
+                          model.listData['intentionProductTypeIndex'] !=
+                              value) {
+                        animationTypeCrl.reverse();
+                      }
                       setState(() {
                         addClientParams['typeId'] = value ?? 0;
-                        addClientParams['type'] = data['title'] ?? '';
+                        if (model.listData['intentionProductTypeIndex'] ==
+                            addClientParams['typeId']) {
+                          addClientParams['type'] = '';
+                        } else {
+                          addClientParams['type'] = data['title'] ?? '';
+                        }
                       });
                     },
                   ),
+                  otherInput('请输入用途', addClientParams['type'], animationTypeCrl,
+                      (value) {
+                    addClientParams['type'] = value;
+                  }),
                   // line
                   getLine(false),
                   // 意向面积
@@ -382,13 +530,33 @@ class _AddClientVCState extends State<AddClientVC> {
                     currentValue: addClientParams['areaId'] ?? '',
                     dataList: model.listData['intentionArea'] ?? [],
                     valueChange: (value, data) {
+                      if (model.listData['intentionAreaIndex'] !=
+                              addClientParams['areaId'] &&
+                          model.listData['intentionAreaIndex'] == value) {
+                        animationAreaCrl.forward();
+                      }
+                      if (model.listData['intentionAreaIndex'] ==
+                              addClientParams['areaId'] &&
+                          model.listData['intentionAreaIndex'] != value) {
+                        animationAreaCrl.reverse();
+                      }
+
                       setState(() {
                         addClientParams['areaId'] = value ?? 0;
-                        addClientParams['area'] = data['title'] ?? '';
+                        if (model.listData['intentionAreaIndex'] ==
+                            addClientParams['areaId']) {
+                          addClientParams['area'] = '';
+                        } else {
+                          addClientParams['area'] = data['title'] ?? '';
+                        }
                       });
                     },
                   ),
-
+                  otherInput(
+                      '请输入意向面积', addClientParams['area'], animationAreaCrl,
+                      (value) {
+                    addClientParams['area'] = value;
+                  }),
                   // line
                   getLine(false),
                   // 几次置业
@@ -436,12 +604,31 @@ class _AddClientVCState extends State<AddClientVC> {
                     currentValue: addClientParams['policymakerId'] ?? '',
                     dataList: model.listData['decisionMaker'] ?? [],
                     valueChange: (value, data) {
+                      if (model.listData['decisionMakerIndex'] !=
+                              addClientParams['policymakerId'] &&
+                          model.listData['decisionMakerIndex'] == value) {
+                        animationDecisionMakerCrl.forward();
+                      }
+                      if (model.listData['decisionMakerIndex'] ==
+                              addClientParams['policymakerId'] &&
+                          model.listData['decisionMakerIndex'] != value) {
+                        animationDecisionMakerCrl.reverse();
+                      }
                       setState(() {
                         addClientParams['policymakerId'] = value ?? 0;
-                        addClientParams['policymaker'] = data['title'] ?? '';
+                        if (model.listData['decisionMakerIndex'] ==
+                            addClientParams['policymakerId']) {
+                          addClientParams['policymaker'] = '';
+                        } else {
+                          addClientParams['policymaker'] = data['title'] ?? '';
+                        }
                       });
                     },
                   ),
+                  otherInput('请输入决策人', addClientParams['policymaker'],
+                      animationDecisionMakerCrl, (value) {
+                    addClientParams['policymaker'] = value;
+                  }),
                   // line
                   getLine(false),
                   // 首付预算
@@ -490,12 +677,31 @@ class _AddClientVCState extends State<AddClientVC> {
                     currentValue: addClientParams['sourceId'] ?? '',
                     dataList: model.listData['customersOfSource'] ?? [],
                     valueChange: (value, data) {
+                      if (model.listData['customersOfSourceIndex'] !=
+                              addClientParams['sourceId'] &&
+                          model.listData['customersOfSourceIndex'] == value) {
+                        animationCustomersOfSourceCrl.forward();
+                      }
+                      if (model.listData['customersOfSourceIndex'] ==
+                              addClientParams['sourceId'] &&
+                          model.listData['customersOfSourceIndex'] != value) {
+                        animationCustomersOfSourceCrl.reverse();
+                      }
                       setState(() {
                         addClientParams['sourceId'] = value ?? 0;
-                        addClientParams['source'] = data['title'] ?? '';
+                        if (model.listData['customersOfSourceIndex'] ==
+                            addClientParams['sourceId']) {
+                          addClientParams['source'] = '';
+                        } else {
+                          addClientParams['source'] = data['title'] ?? '';
+                        }
                       });
                     },
                   ),
+                  otherInput('请输入客户来源', addClientParams['source'],
+                      animationCustomersOfSourceCrl, (value) {
+                    addClientParams['source'] = value;
+                  }),
                   // line
                   getLine(false),
                   // 意向楼盘
@@ -612,26 +818,22 @@ class _AddClientVCState extends State<AddClientVC> {
                         UserDefault.get(USERINFO).then((value) {
                           Map userInfo = convert.jsonDecode(value);
                           addClientParams['employeeId'] = userInfo['userId'];
+
                           model.sendAddClientRequest(addClientParams,
                               (bool success) {
                             if (success) {
                               _bus.emit(NOTIFY_CLIENT_LIST_REFRASH_NORMAL);
+                              if (widget.edit) {
+                                _bus.emit(NOTIFY_CLIENT_DETAIL_REFRESH);
+                              }
                               ShowToast.normal('提交成功');
                               Future.delayed(Duration(seconds: 1), () {
                                 if (Navigator.canPop(context)) {
                                   Navigator.pop(context);
                                 }
                               });
-
-                              ClientListViewModel clVM = ClientListViewModel();
-                              clVM.loadClientList(
-                                {'status': 0},
-                                success: (data, total) {
-                                  _bus.emit(NOTIFY_CLIENTWAIT_COUNT, total);
-                                },
-                              );
                             }
-                          });
+                          }, isEdit: widget.edit);
                         });
                       });
                       // sendRegist();
@@ -664,6 +866,26 @@ class _AddClientVCState extends State<AddClientVC> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget otherInput(
+    String placeholder,
+    String text,
+    Animation animation,
+    Function(String value) valueChange,
+  ) {
+    return SizeTransition(
+      sizeFactor: Tween<double>(begin: 0.0, end: 1.0).animate(animation),
+      child: Padding(
+        padding: EdgeInsets.only(left: marginSpace),
+        child: CustomTextF(
+          labelText: '',
+          text: text,
+          placeholder: placeholder,
+          valueChange: valueChange,
+        ),
       ),
     );
   }

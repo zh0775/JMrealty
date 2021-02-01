@@ -35,7 +35,7 @@ class ImageLoader extends StatelessWidget {
         cacheManager: CustomCacheManagerWithHandler(),
         errorWidget: (context, url, error) {
           return Image.asset(
-            'assets/images/icon/icon_default_head.png',
+            'assets/images/icon/icon_default_min.png',
             // width: context.size.width,
             // height: context.size.height,
           );
@@ -45,7 +45,7 @@ class ImageLoader extends StatelessWidget {
       );
     } catch (e) {
       return Image.asset(
-        'assets/images/icon/icon_default_head.png',
+        'assets/images/icon/icon_default_min.png',
         // width: context.size.width,
         // height: context.size.height,
       );

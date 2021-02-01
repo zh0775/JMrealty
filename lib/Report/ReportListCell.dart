@@ -109,6 +109,7 @@ class _ReportListCellState extends State<ReportListCell> {
                 copyView(),
                 ReporProjecttInfo(
                     data: widget.data,
+                    isDetail: false,
                     isCopy: widget.data['isCopy'] != null &&
                             widget.data['isCopy'] == 1
                         ? true

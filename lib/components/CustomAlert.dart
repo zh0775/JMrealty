@@ -8,13 +8,19 @@ class CustomAlert {
   final String confirmText;
   final String cancelText;
   final String title;
+  final TextStyle confirmStyle;
+  final TextStyle cancelStyle;
   final String content;
+  final Widget body;
   BuildContext _context = Global.navigatorKey.currentContext;
 
   CustomAlert(
       {this.confirmText = '确认',
       this.cancelText = '取消',
       this.title = '提示',
+      this.body,
+      this.confirmStyle = jm_text_apptheme_style14,
+      this.cancelStyle = jm_text_black_style14,
       this.content = ''});
   show({
     Function() confirmClick,
@@ -32,10 +38,12 @@ class CustomAlert {
                   style: jm_text_black_style18,
                 )
               : NoneV(),
-          content: Text(
-            content,
-            style: jm_text_black_style14,
-          ),
+          content: body != null
+              ? body
+              : Text(
+                  content,
+                  style: jm_text_black_style14,
+                ),
           actions: [
             RawMaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -50,7 +58,7 @@ class CustomAlert {
                 padding: EdgeInsets.only(right: widthScale * 4, bottom: 10),
                 child: Text(
                   cancelText,
-                  style: jm_text_apptheme_style14,
+                  style: cancelStyle,
                 ),
               ),
             ),
@@ -67,7 +75,7 @@ class CustomAlert {
                 padding: EdgeInsets.only(right: widthScale * 4, bottom: 10),
                 child: Text(
                   confirmText,
-                  style: jm_text_apptheme_style14,
+                  style: confirmStyle,
                 ),
               ),
             ),

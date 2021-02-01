@@ -4,6 +4,7 @@ import 'package:JMrealty/base/appstart_viewmodel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/image_loader.dart';
 import 'package:JMrealty/base/provider_widget.dart';
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Routes.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class StartAppPage extends StatefulWidget {
 class _StartAppPageState extends State<StartAppPage> {
   Timer passTimer;
   Timer imgWaitTimer;
-  int waitTime = 5;
+  int waitTime = 4;
 
   @override
   void dispose() {
@@ -77,40 +78,42 @@ class _StartAppPageState extends State<StartAppPage> {
                       height: SizeConfig.screenHeight,
                       fit: BoxFit.fill,
                     )),
-                Positioned(
-                    right: 15,
-                    top: 30,
-                    child: TextButton(
-                      onPressed: () {
-                        if (passTimer != null) {
-                          passTimer.cancel();
-                          passTimer = null;
-                        }
-                        if (imgWaitTimer != null) {
-                          imgWaitTimer.cancel();
-                          imgWaitTimer = null;
-                        }
-                        toMain(context);
-                      },
-                      child: Container(
-                        height: 30,
-                        width: 80,
-                        decoration: BoxDecoration(
-                            color: Color.fromRGBO(0, 0, 0, 0.5),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(15))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              '跳过' + '   ' + waitTime.toString(),
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 13),
+                waitTime <= 3
+                    ? Positioned(
+                        right: 15,
+                        bottom: 30,
+                        child: TextButton(
+                          onPressed: () {
+                            if (passTimer != null) {
+                              passTimer.cancel();
+                              passTimer = null;
+                            }
+                            if (imgWaitTimer != null) {
+                              imgWaitTimer.cancel();
+                              imgWaitTimer = null;
+                            }
+                            toMain(context);
+                          },
+                          child: Container(
+                            height: 30,
+                            width: 80,
+                            decoration: BoxDecoration(
+                                color: Color.fromRGBO(0, 0, 0, 0.5),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15))),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '跳过' + '   ' + waitTime.toString(),
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 13),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    ))
+                          ),
+                        ))
+                    : NoneV()
               ],
             );
           }

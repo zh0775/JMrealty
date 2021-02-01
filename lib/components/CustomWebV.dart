@@ -4,6 +4,7 @@ import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/services/http_config.dart';
+import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/material.dart';
@@ -28,10 +29,12 @@ class CustomWebV extends StatefulWidget {
   final WebPath path;
   final Map otherParams;
   final bool isMultiple;
+  final String date;
   final Function(List searchDataList) returnSearchList;
   const CustomWebV(
       {@required this.path,
       this.otherParams,
+      this.date,
       this.returnSearchList,
       this.isMultiple = true});
   @override
@@ -39,17 +42,31 @@ class CustomWebV extends StatefulWidget {
 }
 
 class _CustomWebVState extends State<CustomWebV> {
+  EventBus _bus = EventBus();
   // WebViewController _controller;
   final Completer<WebViewController> _controller =
       Completer<WebViewController>();
-
   @override
   void initState() {
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   // setState(() {
+    //   // 键盘高度：大于零，键盘弹出，否则，键盘隐藏
+    //   print(MediaQuery.of(context).viewInsets.bottom);
+    //   // });
+    // });
+    // WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
   @override
+  void dispose() {
+    // WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext ctx) {
+    // print('bottom ==== ${MediaQuery.of(ctx).viewInsets.bottom}');
     print('url == ${WEB_URL + getPath(widget.path)}');
     return Scaffold(
         appBar: widget.path == WebPath.searchUser
@@ -57,26 +74,22 @@ class _CustomWebVState extends State<CustomWebV> {
                 title: '搜索用户',
               )
             : PreferredSize(child: NoneV(), preferredSize: Size.zero),
-        body: Builder(
-          builder: (context) {
-            return FutureBuilder(
-              future: getView(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasData) {
-                    return snapshot.data;
-                  } else {
-                    return EmptyView(
-                      tips: '出现错误',
-                    );
-                  }
-                } else {
-                  return EmptyView(
-                    tips: '请稍等',
-                  );
-                }
-              },
-            );
+        body: FutureBuilder<Widget>(
+          future: getView(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasData) {
+                return snapshot.data;
+              } else {
+                return EmptyView(
+                  tips: '出现错误',
+                );
+              }
+            } else {
+              return EmptyView(
+                tips: '请稍等',
+              );
+            }
           },
         ));
   }
@@ -91,10 +104,12 @@ class _CustomWebVState extends State<CustomWebV> {
         initialUrl: WEB_URL + getPath(widget.path),
         // initialUrl: 'https://www.bilibili.com/',
         javascriptMode: JavascriptMode.unrestricted,
+
         onWebViewCreated: (controller) {
           _controller.complete(controller);
           // _controller = controller;
         },
+        // ClampingScrollPhysics(),
         onPageFinished: (url) {
           Map params = Map<String, dynamic>.from(
               {'token': token, 'deptId': info['deptId']});
@@ -104,6 +119,9 @@ class _CustomWebVState extends State<CustomWebV> {
           }
           if (widget.path == WebPath.searchUser) {
             params['multiple'] = widget.isMultiple;
+          }
+          if (widget.path == WebPath.backlog && widget.date != null) {
+            params['date'] = widget.date;
           }
           String json = convert.jsonEncode(params);
           // String js_String = "let json = " +
@@ -131,6 +149,7 @@ class _CustomWebVState extends State<CustomWebV> {
           print('allowing navigation to $request');
           return NavigationDecision.navigate;
         },
+
         onWebResourceError: (error) {
           print('web_view_error == $error');
         },
@@ -153,6 +172,9 @@ class _CustomWebVState extends State<CustomWebV> {
         onMessageReceived: (JavascriptMessage message) {
           print('back === ${message.message}');
           // backStatus = message.message;
+          if (widget.path == WebPath.backlog) {
+            _bus.emit(NOTIFY_LOGIN_SUCCESS);
+          }
           back();
         });
   }

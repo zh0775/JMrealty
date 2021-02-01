@@ -6,6 +6,7 @@ import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/CustomTextF.dart';
+import 'package:JMrealty/components/CustomWebV.dart';
 import 'package:JMrealty/components/DepSelectView.dart';
 import 'package:JMrealty/components/DropdownSelectV.dart';
 import 'package:JMrealty/components/TreeNode.dart';
@@ -155,11 +156,12 @@ class _PKaddState extends State<PKadd> {
                 dataList: pkType ?? [],
                 // margin: margin,
                 currentValue: pkTypeValue ?? '',
-                placeholder: '请选择pk赛类型',
+                placeholder: '请选择PK赛类型',
                 textPadding: EdgeInsets.only(left: 10),
                 valueChange: (value, data) {
                   setState(() {
-                    pkTypeValue = value ?? 0;
+                    pkTypeValue = value ?? "0";
+                    unitList = [];
                   });
                 },
               ),
@@ -174,7 +176,7 @@ class _PKaddState extends State<PKadd> {
                         height: lineHeight,
                       ),
                       Text(
-                        '参与单位',
+                        pkTypeValue == "1" ? '参与人员' : '参与单位',
                         style: jm_text_black_style15,
                       ),
                     ],
@@ -222,21 +224,67 @@ class _PKaddState extends State<PKadd> {
                                 //         unitList.add(node);
                                 //       });
                                 //     }).show();
-                                push(
-                                    DepSelectView(
-                                      treeData: treeData,
-                                      singleSelect: false,
-                                      nodesSelected: (nodes) {
-                                        if (mounted) {
-                                          setState(() {
-                                            unitList.addAll(nodes);
-                                            unitDistinct();
-                                          });
-                                        }
-                                      },
-                                    ),
-                                    context);
-                              }),
+                                if (pkTypeValue == null) {
+                                  ShowToast.normal('请选择PK赛类型');
+                                  return;
+                                }
+                                if (pkTypeValue == '0') {
+                                  push(
+                                      DepSelectView(
+                                        treeData: treeData,
+                                        singleSelect: false,
+                                        nodesSelected: (nodes) {
+                                          if (mounted) {
+                                            setState(() {
+                                              unitList.addAll(nodes);
+                                              unitDistinct();
+                                            });
+                                          }
+                                        },
+                                      ),
+                                      context);
+                                } else {
+                                  push(
+                                      CustomWebV(
+                                        path: WebPath.searchUser,
+                                        isMultiple: false,
+                                        returnSearchList: (searchDataList) {
+                                          if (searchDataList != null &&
+                                              searchDataList.length > 0) {
+                                            for (var i = 0;
+                                                i < searchDataList.length;
+                                                i++) {
+                                              Map item = searchDataList[i];
+                                              print('item === $item');
+                                              bool isHave = false;
+                                              unitList.forEach((element) {
+                                                if (element['userId'] ==
+                                                    item['userId']) {
+                                                  isHave = true;
+                                                }
+                                              });
+                                              if (!isHave) {
+                                                unitList.add(item);
+                                              }
+                                              // // if (isHave || userInfo['userId'] == item['userId']) {
+                                              // //   return;
+                                              // // }
+                                              // if (!isHave) {
+                                              //   reportShopPartnerBOList.add({
+                                              //     'userId': item['userId'],
+                                              //     'userName': item['userName'],
+                                              //     'userPhone': item['phoneNumber'],
+                                              //     'ratio': 0
+                                              //   });
+                                              // }
+                                            }
+                                            setState(() {});
+                                          }
+                                        },
+                                      ),
+                                      context);
+                                }
+                              })
                         ],
                       ),
                       SizedBox(
@@ -338,6 +386,7 @@ class _PKaddState extends State<PKadd> {
               ),
               CustomMarkInput(
                 text: award,
+                maxLength: 200,
                 valueChange: (value) {
                   award = value;
                 },
@@ -454,12 +503,23 @@ class _PKaddState extends State<PKadd> {
                 }
                 params['quotaType'] = pkTarget['dictValue'];
                 params['raceType'] = pkTypeValue;
-                params['raceRankBOList'] = unitList.map((e) {
-                  return Map<String, dynamic>.from({
-                    'bussinesId': (e as TreeNode).id,
-                    'bussinesName': (e as TreeNode).label
-                  });
-                }).toList();
+                if (pkTypeValue == '0') {
+                  params['raceRankBOList'] = unitList.map((e) {
+                    return Map<String, dynamic>.from({
+                      'bussinesId': (e as TreeNode).id,
+                      'bussinesName': (e as TreeNode).label,
+                      'raceRankType': int.parse(pkTypeValue)
+                    });
+                  }).toList();
+                } else if (pkTypeValue == '1') {
+                  params['raceRankBOList'] = unitList.map((e) {
+                    return Map<String, dynamic>.from({
+                      'bussinesId': e['userId'],
+                      'bussinesName': e['userName'],
+                      'raceRankType': int.parse(pkTypeValue)
+                    });
+                  }).toList();
+                }
 
                 params['startTime'] = dateFormat.format(startTime);
                 params['endTime'] = dateFormat.format(endTime);
@@ -571,13 +631,23 @@ class _PKaddState extends State<PKadd> {
   List<Widget> getUnitList() {
     double buttonHeight = lineHeight * 0.5;
     List<Widget> units = [];
-    for (TreeNode node in unitList) {
+    for (dynamic node in unitList) {
+      String title = '';
+      if (pkTypeValue == '0') {
+        title = node.label ?? '';
+      } else if (pkTypeValue == '1') {
+        title = node['userName'] ?? '';
+      }
       units.add(SizedBox(
         height: 6,
       ));
       units.add(RawMaterialButton(
         onPressed: () {
-          deleteUnit(node);
+          if (pkTypeValue == '0') {
+            deleteUnit(node);
+          } else if (pkTypeValue == '1') {
+            deletePkPersion(node);
+          }
         },
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         constraints:
@@ -595,7 +665,7 @@ class _PKaddState extends State<PKadd> {
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
-                  node.label ?? '',
+                  title,
                   style: jm_text_black_style13,
                 ),
               ),
@@ -659,6 +729,14 @@ class _PKaddState extends State<PKadd> {
   void showDepSelect() {}
 
   void deleteUnit(TreeNode node) {
+    if (node != null) {
+      setState(() {
+        unitList.remove(node);
+      });
+    }
+  }
+
+  void deletePkPersion(Map node) {
     if (node != null) {
       setState(() {
         unitList.remove(node);

@@ -1,5 +1,7 @@
 import 'package:JMrealty/Report/viewmodel/SmartReportViewModel.dart';
+import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
+import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -25,7 +27,7 @@ class _SmartReportState extends State<SmartReport> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: Scaffold(
-        backgroundColor: jm_appTheme,
+        backgroundColor: Colors.white,
         appBar: CustomAppbar(
           title: '智能报备',
         ),
@@ -45,15 +47,20 @@ class _SmartReportState extends State<SmartReport> {
                   Align(
                     child: Container(
                       constraints: BoxConstraints(
-                          minWidth: SizeConfig.screenWidth - margin * 4,
-                          maxWidth: SizeConfig.screenWidth - margin * 4,
-                          minHeight: SizeConfig.blockSizeVertical * 50),
-                      margin: EdgeInsets.only(top: margin),
+                          minWidth: SizeConfig.screenWidth - margin * 2,
+                          maxWidth: SizeConfig.screenWidth - margin * 2,
+                          minHeight: SizeConfig.blockSizeVertical * 85 - 90),
+                      // margin: EdgeInsets.only(top: margin),
                       child: CupertinoTextField(
                         maxLines: 16,
+                        decoration: BoxDecoration(
+                            color: jm_bg_gray_color,
+                            borderRadius:
+                                BorderRadius.circular(widthScale * 1.5)),
                         placeholder: '智能识别，请粘贴文本',
                         textAlignVertical: TextAlignVertical.top,
                         keyboardType: TextInputType.multiline,
+                        padding: EdgeInsets.all(10),
                         controller:
                             TextEditingController.fromValue(TextEditingValue(
                           text: str ?? '',
@@ -68,24 +75,33 @@ class _SmartReportState extends State<SmartReport> {
                     ),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: 30,
                   ),
                   CustomSubmitButton(
-                    margin: margin * 2,
-                    height: 50,
+                    // margin: margin * 2,
+                    height: 40,
                     title: '识别',
                     buttonClick: () {
+                      if (str == null || str.length == 0) {
+                        ShowToast.normal('请输入报备内容');
+                        return;
+                      }
+
                       FocusScope.of(context).requestFocus(FocusNode());
-                      if (str != null && str.length > 0) {
+                      CustomAlert(title: '提示', content: '是否确认提交？').show(
+                          confirmClick: () {
+                        CustomLoading().show();
+
                         smartVM.smartReportRequest(str, (success) {
+                          CustomLoading().hide();
                           if (success) {
-                            ShowToast.normal('报备成功');
+                            ShowToast.normal('提交成功');
                             Future.delayed(Duration(seconds: 1), () {
                               Navigator.pop(context);
                             });
                           }
                         });
-                      }
+                      });
                     },
                   ),
                   SizedBox(

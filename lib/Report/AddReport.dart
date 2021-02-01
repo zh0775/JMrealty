@@ -2,12 +2,14 @@ import 'package:JMrealty/Report/viewmodel/ReportViewModel.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomLoading.dart';
+import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/CustomTextF.dart';
 import 'package:JMrealty/components/CustomWebV.dart';
 import 'package:JMrealty/components/DropdownSelectV.dart';
 import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/const/Routes.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -36,6 +38,7 @@ class _AddReportState extends State<AddReport> {
     print('clientsData ==== ${clientsData}');
   }
 
+  ScrollController scrollCtr = ScrollController();
   TextEditingController projectInputCtr = TextEditingController();
   TextEditingController projectTimeInputCtr = TextEditingController();
   TextEditingController projectCompanyInputCtr = TextEditingController();
@@ -84,6 +87,7 @@ class _AddReportState extends State<AddReport> {
     projectInputCtr.dispose();
     projectTimeInputCtr.dispose();
     projectCompanyInputCtr.dispose();
+    scrollCtr.dispose();
     if (model != null) {
       model.dispose();
     }
@@ -105,18 +109,19 @@ class _AddReportState extends State<AddReport> {
           title: '报备',
           backClick: () {
             CustomAlert(
-                    cancelText: '返回首页',
-                    confirmText: '继续报备',
+                    cancelText: '继续添加',
+                    confirmText: '退出',
                     title: '退出',
                     content: '退出后信息将不再保存，是否确定退出')
                 .show(
-              cancelClick: () {
+              confirmClick: () {
                 Navigator.pop(context);
               },
             );
           },
         ),
         body: SingleChildScrollView(
+          controller: scrollCtr,
           child: Column(
             children: [
               Container(
@@ -132,7 +137,7 @@ class _AddReportState extends State<AddReport> {
               ),
               JMline(
                 width: SizeConfig.screenWidth,
-                height: 1,
+                height: 1.5,
               ),
               CustomInput(
                 key: ValueKey('CustomInput_project_1'),
@@ -143,7 +148,7 @@ class _AddReportState extends State<AddReport> {
                 textStyle: jm_text_black_style15,
                 controller: projectInputCtr,
                 labelWidth: labelWidth,
-                title: '项目搜索',
+                title: '项目名称',
                 hintText: '请输入项目名称',
                 searchUrl: Urls.projectFuzzySearch,
                 // valueChangeAndShowList: (value, state) {
@@ -186,7 +191,7 @@ class _AddReportState extends State<AddReport> {
               ),
               JMline(
                 width: SizeConfig.screenWidth - margin * 2,
-                height: 1,
+                height: 1.5,
               ),
               CustomInput(
                 labelWidth: labelWidth,
@@ -228,7 +233,7 @@ class _AddReportState extends State<AddReport> {
                   : NoneV(),
               JMline(
                 width: SizeConfig.screenWidth - margin * 2,
-                height: 1,
+                height: 1.5,
               ),
               CustomInput(
                 labelWidth: labelWidth,
@@ -245,7 +250,7 @@ class _AddReportState extends State<AddReport> {
               ),
               JMline(
                 width: SizeConfig.screenWidth - margin * 2,
-                height: 1,
+                height: 1.5,
               ),
               CustomInput(
                 labelWidth: labelWidth,
@@ -279,7 +284,7 @@ class _AddReportState extends State<AddReport> {
                 ),
               ),
               SizedBox(
-                height: 12,
+                height: 1.52,
               ),
               JMline(
                 width: SizeConfig.screenWidth,
@@ -386,7 +391,7 @@ class _AddReportState extends State<AddReport> {
               // ),
               JMline(
                 width: SizeConfig.screenWidth - margin * 2,
-                height: 1,
+                height: 1.5,
               ),
               CustomInput(
                 labelWidth: labelWidth,
@@ -401,7 +406,7 @@ class _AddReportState extends State<AddReport> {
               ),
               JMline(
                 width: SizeConfig.screenWidth - margin * 2,
-                height: 1,
+                height: 1.5,
               ),
               CustomInput(
                 labelWidth: labelWidth,
@@ -424,50 +429,59 @@ class _AddReportState extends State<AddReport> {
                 alignment: Alignment.centerLeft,
                 child: Text('备注（选填）', style: jm_text_black_bold_style20),
               ),
-              Container(
-                constraints: BoxConstraints(maxHeight: 100, minHeight: 90),
-                width: SizeConfig.screenWidth - margin * 2,
-                padding: EdgeInsets.fromLTRB(margin, 10, margin, 10),
-                child: TextField(
-                  maxLength: 200,
-                  buildCounter: (BuildContext context,
-                      {int currentLength, bool isFocused, int maxLength}) {
-                    return Text(
-                      "$currentLength/$maxLength",
-                      style: jm_text_black_style13,
-                    ); //字符统计
-                  },
-                  maxLines: 10,
-                  minLines: 3,
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      // border: OutlineInputBorder(
-                      //     borderRadius: BorderRadius.circular(10),
-                      //     borderSide:
-                      //         BorderSide(width: 0.1, color: Colors.red)),
-                      // fillColor: Color(0xfff7f8fb),
-                      // contentPadding: EdgeInsets.all(20.0),
-                      hintText: '请输入备注内容',
-                      filled: true,
-                      enabledBorder: OutlineInputBorder(
-                        //未选中时候的颜色
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                          color: jm_line_color,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        //选中时外边框颜色
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                          color: jm_line_color,
-                        ),
-                      )),
-                  onChanged: (value) {
-                    mark = value;
-                  },
-                ),
+
+              CustomMarkInput(
+                hintText: '请输入备注内容',
+                text: mark,
+                valueChange: (value) {
+                  mark = value;
+                },
+                maxLength: 200,
               ),
+              // Container(
+              //   constraints: BoxConstraints(maxheight: 1.500, minHeight: 90),
+              //   width: SizeConfig.screenWidth - margin * 2,
+              //   padding: EdgeInsets.fromLTRB(margin, 10, margin, 10),
+              //   child: TextField(
+              //     maxLength: 200,
+              // buildCounter: (BuildContext context,
+              //     {int currentLength, bool isFocused, int maxLength}) {
+              //   return Text(
+              //     "$currentLength/$maxLength",
+              //     style: jm_text_black_style13,
+              //   ); //字符统计
+              // },
+              //     maxLines: 10,
+              //     minLines: 3,
+              //     decoration: InputDecoration(
+              //         contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              //         // border: OutlineInputBorder(
+              //         //     borderRadius: BorderRadius.circular(10),
+              //         //     borderSide:
+              //         //         BorderSide(width: 0.1, color: Colors.red)),
+              //         // fillColor: Color(0xfff7f8fb),
+              //         // contentPadding: EdgeInsets.all(20.0),
+              //         hintText: '请输入备注内容',
+              //         filled: true,
+              //         enabledBorder: OutlineInputBorder(
+              //           //未选中时候的颜色
+              //           borderRadius: BorderRadius.circular(10.0),
+              //           borderSide: BorderSide(
+              //             color: jm_line_color,
+              //           ),
+              //         ),
+              //         focusedBorder: OutlineInputBorder(
+              //           //选中时外边框颜色
+              //           borderRadius: BorderRadius.circular(10.0),
+              //           borderSide: BorderSide(
+              //             color: jm_line_color,
+              //           ),
+              //         )),
+              //     onChanged: (value) {
+              //       mark = value;
+              //     },
+              //   ),
+              // ),
               SizedBox(
                 height: 8,
               ),
@@ -506,23 +520,26 @@ class _AddReportState extends State<AddReport> {
                       if (success) {
                         CustomAlert(
                                 title: '报备成功',
-                                content: '提前' +
-                                    projectData['reportBeforeTime'].toString() +
-                                    '分钟报备，' +
-                                    (projectData['isSensitive'] == null
-                                        ? ''
-                                        : (projectData['isSensitive'] == 1
-                                            ? '手机号前三后四，'
-                                            : '全号报备，')) +
-                                    '有效保护期' +
-                                    projectData['reportProtect']?.toString() +
-                                    '天，以看房确认单为准。' +
-                                    contactsFormat(),
-                                confirmText: '继续报备',
-                                cancelText: '返回首页')
+                                body: reportContacts(),
+                                cancelText: '继续报备',
+                                confirmText: '返回报备列表')
                             .show(
                           cancelClick: () {
-                            Navigator.pop(context);
+                            projectInputCtr.text = '';
+                            projectTimeInputCtr.text = '';
+                            projectCompanyInputCtr.text = '';
+                            setState(() {
+                              projectData = null;
+                            });
+                            scrollCtr.animateTo(0,
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.easeInOut);
+                          },
+                          confirmClick: () {
+                            Future.delayed(
+                                Duration.zero,
+                                () => Navigator.of(context)
+                                    .popAndPushNamed(Routes.report_list));
                           },
                         );
                       }
@@ -537,6 +554,28 @@ class _AddReportState extends State<AddReport> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget reportContacts() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '提前' +
+              projectData['reportBeforeTime'].toString() +
+              '分钟报备，' +
+              (projectData['isSensitive'] == null
+                  ? ''
+                  : (projectData['isSensitive'] == 1 ? '手机号前三后四，' : '全号报备，')) +
+              '有效保护期' +
+              projectData['reportProtect']?.toString() +
+              '天，以看房确认单为准。',
+          style: jm_text_black_style14,
+        ),
+        ...contactsFormat(),
+      ],
     );
   }
 
@@ -571,50 +610,111 @@ class _AddReportState extends State<AddReport> {
     ));
   }
 
-  String contactsFormat() {
-    String str1 = '';
-    String str2 = '';
-    String str3 = '';
-    String str4 = '';
+  Widget contactsButton(title, phoneNum,
+      {TextStyle style = jm_text_black_style15}) {
+    return RawMaterialButton(
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        constraints: BoxConstraints(minWidth: 0, minHeight: 25),
+        splashColor: Colors.transparent,
+        child: Row(
+          children: [
+            Text(
+              title + '：',
+              style: style,
+            ),
+            Text(
+              phoneNum,
+              style: style,
+            ),
+            SizedBox(
+              width: SizeConfig.blockSizeHorizontal * 2,
+            ),
+            Image.asset(
+              'assets/images/icon_client_phone.png',
+              height: SizeConfig.blockSizeHorizontal * 5,
+              width: SizeConfig.blockSizeHorizontal * 5,
+            )
+          ],
+        ),
+        onPressed: () {
+          callPhone(phoneNum);
+        });
+  }
+
+  List<Widget> contactsFormat() {
+    TextStyle style = jm_text_black_style14;
+    List<Widget> list = [];
+    List<Widget> str1 = [];
+    List<Widget> str2 = [];
+    List<Widget> str3 = [];
+    List<Widget> str4 = [];
 
     if (projectContact == null || projectContact.length > 0) {
       projectContact.forEach((e) {
         switch (e['contactType'] ?? -1) {
           case 0:
             {
-              if (str1 == null || str1.length == 0) {
-                str1 += '项目驻场\n';
+              if (str1.length == 0) {
+                str1.add(Text(
+                  '项目驻场',
+                  style: style,
+                ));
               }
-              str1 += '${e['contactName'] ?? ""}：${e['contactPhone'] ?? ""}\n';
+              str1.add(contactsButton(
+                  e['contactName'] ?? "", e['contactPhone'] ?? ""));
             }
             break;
           case 1:
             {
-              if (str2 == null || str2.length == 0) {
-                str2 += '项目负责人\n';
+              if (str2.length == 0) {
+                str2.add(Text(
+                  '项目负责人',
+                  style: style,
+                ));
               }
-              str2 += '${e['contactName'] ?? ""}：${e['contactPhone'] ?? ""}\n';
+              str2.add(contactsButton(
+                  e['contactName'] ?? "", e['contactPhone'] ?? ""));
             }
             break;
           case 2:
             {
-              if (str3 == null || str3.length == 0) {
-                str3 += '项目经理\n';
+              if (str3.length == 0) {
+                str3.add(Text(
+                  '项目经理',
+                  style: style,
+                ));
               }
-              str3 += '${e['contactName'] ?? ""}：${e['contactPhone'] ?? ""}\n';
+              str3.add(contactsButton(
+                  e['contactName'] ?? "", e['contactPhone'] ?? ""));
             }
             break;
           case 3:
             {
-              if (str4 == null || str4.length == 0) {
-                str4 += '项目总监\n';
+              if (str4.length == 0) {
+                str4.add(Text(
+                  '项目总监',
+                  style: style,
+                ));
               }
-              str4 += '${e['contactName'] ?? ""}：${e['contactPhone'] ?? ""}\n';
+              str4.add(contactsButton(
+                  e['contactName'] ?? "", e['contactPhone'] ?? ""));
             }
             break;
           default:
         }
       });
+      if (str1.length > 0) {
+        list.addAll(str1);
+      }
+      if (str2.length > 0) {
+        list.addAll(str2);
+      }
+      if (str3.length > 0) {
+        list.addAll(str3);
+      }
+      if (str4.length > 0) {
+        list.addAll(str4);
+      }
       // switch () {
       //   case :
 
@@ -622,7 +722,7 @@ class _AddReportState extends State<AddReport> {
       //   default:
       // }
     }
-    return '\n' + str1 + str2 + str3 + str4;
+    return list;
   }
 }
 
@@ -692,7 +792,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        JMline(width: SizeConfig.screenWidth, height: 1),
+        JMline(width: SizeConfig.screenWidth, height: 1.5),
         Container(
           height: widget.lineHeight,
           width: SizeConfig.screenWidth - widthScale * 7,
@@ -715,7 +815,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
             ],
           ),
         ),
-        JMline(width: SizeConfig.screenWidth, height: 1),
+        JMline(width: SizeConfig.screenWidth, height: 1.5),
         Padding(
           padding: EdgeInsets.only(left: margin),
           child: DropdownSelectV(
@@ -745,7 +845,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
         ),
         JMline(
           width: SizeConfig.screenWidth - margin * 2,
-          height: 1,
+          height: 1.5,
           margin: margin,
         ),
         changeWidget(),
@@ -798,7 +898,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
         status == ClientSourceStatus.clientSource
             ? JMline(
                 width: SizeConfig.screenWidth - margin * 2,
-                height: 1,
+                height: 1.5,
                 // margin: margin,
               )
             : NoneV(),
@@ -827,7 +927,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
         status == ClientSourceStatus.input
             ? JMline(
                 width: SizeConfig.screenWidth - margin * 2,
-                height: 1,
+                height: 1.5,
                 // margin: margin,
               )
             : NoneV(),
@@ -855,7 +955,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
         status == ClientSourceStatus.input
             ? JMline(
                 width: SizeConfig.screenWidth - margin * 2,
-                height: 1,
+                height: 1.5,
                 // margin: margin,
               )
             : NoneV(),
@@ -885,7 +985,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
         status == ClientSourceStatus.input
             ? JMline(
                 width: SizeConfig.screenWidth - margin * 2,
-                height: 1,
+                height: 1.5,
                 // margin: margin,
               )
             : NoneV(),
@@ -911,7 +1011,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
         status == ClientSourceStatus.input
             ? JMline(
                 width: SizeConfig.screenWidth - margin * 2,
-                height: 1,
+                height: 1.5,
                 // margin: margin,
               )
             : NoneV(),

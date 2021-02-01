@@ -34,6 +34,7 @@ class _ClientState extends State<Client> {
   Map value1 = {'title': '级别', 'value': '-1'};
   Map value2 = {'title': '类型', 'value': '-1'};
   Map value3 = {'title': '面积', 'value': '-1'};
+  Map value4 = {'title': '更新时间', 'value': '0'};
   Map selectData;
   EventBus eventBus = EventBus();
   ClientListSelect1ViewModel topSelectVM = ClientListSelect1ViewModel();
@@ -108,8 +109,8 @@ class _ClientState extends State<Client> {
 
   @override
   void dispose() {
-    eventBus.off(NOTIFY_LOGIN_SUCCESS);
-    eventBus.off(NOTIFY_CLIENTWAIT_COUNT);
+    // eventBus.off(NOTIFY_LOGIN_SUCCESS);
+    // eventBus.off(NOTIFY_CLIENTWAIT_COUNT);
     super.dispose();
   }
 
@@ -135,17 +136,17 @@ class _ClientState extends State<Client> {
               '客户',
               style: TextStyle(color: Colors.white, fontSize: 22),
             ),
-            actions: [
-              IconButton(
-                  icon: Icon(
-                    Icons.add_circle_outline,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                  onPressed: () {
-                    push(AddClientVC(), context);
-                  })
-            ],
+            // actions: [
+            //   IconButton(
+            //       icon: Icon(
+            //         Icons.add_circle_outline,
+            //         color: Colors.white,
+            //         size: 30,
+            //       ),
+            //       onPressed: () {
+            //         push(AddClientVC(), context);
+            //       })
+            // ],
             bottom: PreferredSize(
               preferredSize: Size(SizeConfig.screenWidth, 55),
               child: Container(
@@ -327,36 +328,55 @@ class _ClientState extends State<Client> {
                         height: selectExpand
                             ? SizeConfig.screenHeight
                             : filterBarHeight,
-                        child: Row(
-                          children: [
-                            topButton(
-                                value1['title'] == '全部'
-                                    ? '级别'
-                                    : value1['title'], () {
-                              setState(() {
-                                currentSelectIndex = 1;
-                                selectExpand = !selectExpand;
-                              });
-                            }),
-                            topButton(
-                                value2['title'] == '全部'
-                                    ? '类型'
-                                    : value2['title'], () {
-                              setState(() {
-                                currentSelectIndex = 2;
-                                selectExpand = !selectExpand;
-                              });
-                            }),
-                            topButton(
-                                value3['title'] == '全部'
-                                    ? '面积'
-                                    : value3['title'], () {
-                              setState(() {
-                                currentSelectIndex = 3;
-                                selectExpand = !selectExpand;
-                              });
-                            })
-                          ],
+                        child: Container(
+                          width: SizeConfig.screenWidth,
+                          height: filterBarHeight,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border(
+                                bottom:
+                                    BorderSide(width: 1, color: jm_line_color)),
+                          ),
+                          child: Row(
+                            children: [
+                              topButton(value4['title'], 4, () {
+                                setState(() {
+                                  currentSelectIndex = 4;
+                                  selectExpand = !selectExpand;
+                                });
+                              }),
+                              topButton(
+                                  value1['title'] == '全部'
+                                      ? '级别'
+                                      : value1['title'],
+                                  1, () {
+                                setState(() {
+                                  currentSelectIndex = 1;
+                                  selectExpand = !selectExpand;
+                                });
+                              }),
+                              topButton(
+                                  value2['title'] == '全部'
+                                      ? '类型'
+                                      : value2['title'],
+                                  2, () {
+                                setState(() {
+                                  currentSelectIndex = 2;
+                                  selectExpand = !selectExpand;
+                                });
+                              }),
+                              topButton(
+                                  value3['title'] == '全部'
+                                      ? '面积'
+                                      : value3['title'],
+                                  3, () {
+                                setState(() {
+                                  currentSelectIndex = 3;
+                                  selectExpand = !selectExpand;
+                                });
+                              })
+                            ],
+                          ),
                         ),
                       ),
                     )),
@@ -371,6 +391,23 @@ class _ClientState extends State<Client> {
   }
 
   Widget selectList(List data, void Function(Map value) itemClick) {
+    Map currentValue;
+    switch (currentSelectIndex) {
+      case 1:
+        currentValue = value1;
+        break;
+      case 2:
+        currentValue = value2;
+        break;
+      case 3:
+        currentValue = value3;
+        break;
+      case 4:
+        currentValue = value4;
+        break;
+      default:
+    }
+
     List textButtons = [];
     double buttonHeight = filterBarHeight;
     // double cHeight = data.length % 2 == 0
@@ -391,7 +428,11 @@ class _ClientState extends State<Client> {
           alignment: Alignment.centerLeft,
           child: Text(e['title'],
               textAlign: TextAlign.left,
-              style: TextStyle(fontSize: 14, color: jm_text_black)),
+              style: TextStyle(
+                  fontSize: 14,
+                  color: currentValue['value'] == e['value']
+                      ? jm_appTheme
+                      : jm_text_black)),
         ),
       );
       textButtons.add(button);
@@ -409,27 +450,33 @@ class _ClientState extends State<Client> {
     );
   }
 
-  Widget topButton(String title, void Function() click) {
+  Widget topButton(String title, int index, void Function() click) {
     return GestureDetector(
       onTap: click,
       child: Container(
         decoration: BoxDecoration(
-            color: Colors.white,
-            border:
-                Border(bottom: BorderSide(width: 0.5, color: jm_line_color))),
-        width: SizeConfig.screenWidth / 3,
+          color: Colors.white,
+          // border:
+          //     Border(bottom: BorderSide(width: 0.5, color: jm_line_color))
+        ),
+        width: SizeConfig.screenWidth / 4,
         height: filterBarHeight,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               title,
-              style: TextStyle(color: jm_text_black, fontSize: 14),
+              style: TextStyle(
+                  color: currentSelectIndex == index && selectExpand
+                      ? jm_appTheme
+                      : jm_text_black,
+                  fontSize: 14),
             ),
-            SizedBox(
-              width: SizeConfig.blockSizeHorizontal * 1.5,
-            ),
-            Icon(Icons.arrow_drop_down_outlined)
+            Icon(
+              Icons.arrow_drop_down_outlined,
+              size: SizeConfig.blockSizeHorizontal * 5,
+              color: jm_text_gray,
+            )
           ],
         ),
       ),
@@ -448,8 +495,11 @@ class _ClientState extends State<Client> {
       case 3:
         key = 'mj';
         break;
+      case 4:
+        key = 'time';
+        break;
     }
-    return selectList(selectData != null ? selectData[key] ?? [] : [],
+    return selectList(selectData != null ? (selectData[key] ?? []) : [],
         (Map item) {
       switch (currentSelectIndex) {
         case 1:
@@ -460,6 +510,9 @@ class _ClientState extends State<Client> {
           break;
         case 3:
           value3 = item;
+          break;
+        case 4:
+          value4 = item;
           break;
       }
       setState(() {
@@ -483,6 +536,8 @@ class _ClientState extends State<Client> {
       params['areaId'] =
           value3['value'] is int ? value3['value'] : int.parse(value3['value']);
     }
+    params['orderByColumn'] =
+        value4['value'] == '0' ? 'update_time' : 'visitDate';
     print('params ==== $params');
     eventBus.emit(NOTIFY_CLIENT_LIST_REFRASH, params);
   }
@@ -538,8 +593,11 @@ class _ClientListState extends State<ClientList>
         break;
       default:
     }
-    statusParams =
-        Map<String, dynamic>.from({'status': status, 'pageSize': pageSize});
+    statusParams = Map<String, dynamic>.from({
+      'status': status,
+      'pageSize': pageSize,
+      'orderByColumn': 'update_time'
+    });
     loadList();
     eventBus.on(NOTIFY_CLIENT_LIST_REFRASH, (arg) {
       if (arg['desireId'] != null) {
@@ -556,6 +614,10 @@ class _ClientListState extends State<ClientList>
         statusParams['typeId'] = arg['typeId'];
       } else {
         statusParams.remove('typeId');
+      }
+
+      if (arg['orderByColumn'] != null) {
+        statusParams['orderByColumn'] = arg['orderByColumn'];
       }
 
       loadList();

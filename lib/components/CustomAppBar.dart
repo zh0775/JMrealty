@@ -6,12 +6,14 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   final void Function() backClick;
   final PreferredSizeWidget bottom;
   final Widget flexibleSpace;
+  final List<Widget> actions;
   @override
   // final Size preferredSize;
   const CustomAppbar(
       {this.title = '',
       this.backClick,
       this.flexibleSpace,
+      this.actions = const [],
       // this.preferredSize = const Size.fromHeight(kToolbarHeight+ bottom.preferredSize),
       this.bottom});
   @override
@@ -30,6 +32,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
         backgroundColor: jm_appTheme,
         automaticallyImplyLeading: false,
         bottom: bottom,
+        actions: actions,
         title: Text(
           title,
           style: TextStyle(color: Colors.white, fontSize: 18),

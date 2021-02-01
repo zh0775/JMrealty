@@ -355,7 +355,7 @@ class _ReportDetailState extends State<ReportDetail> {
         ),
         getLabel('报备公司'),
         Text(
-          widget.data['company'] ?? '无',
+          widget.data['employeeCompany'] ?? '无',
           style: jm_text_black_style15,
         )
       ],
@@ -519,8 +519,8 @@ class _ReportDetailState extends State<ReportDetail> {
                   margin: EdgeInsets.only(left: outMargin, bottom: 15),
                   width: SizeConfig.screenWidth - outMargin * 2,
                   child: Text(
-                    data['remark'] ?? '',
-                    style: jm_text_black_style14,
+                    '备注：' + (data['remark'] ?? ''),
+                    style: jm_text_black_bold_style16,
                   ),
                 )
               : NoneV(),

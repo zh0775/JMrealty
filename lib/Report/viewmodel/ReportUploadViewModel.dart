@@ -43,11 +43,11 @@ class ReportUploadViewModel extends BaseViewModel {
             success(true);
           }
         } else {
+          if (json['msg'] != null && json['msg'].length > 0) {
+            ShowToast.normal(json['msg']);
+          }
           success(false);
         }
-        // if (json['msg'] != null) {
-        //   ShowToast.normal(json['msg']);
-        // }
       },
       fail: (reason, code) {
         success(false);
@@ -81,5 +81,28 @@ class ReportUploadViewModel extends BaseViewModel {
         ShowToast.normal('上传失败');
       }
     });
+  }
+
+  loadInvalidTmp(Function(List dataList, bool success) success) {
+    Http().get(
+      Urls.searchDic,
+      {'dictId': 129},
+      success: (json) {
+        if (json['code'] == 200) {
+          if (success != null) {
+            success(json['data'], true);
+          }
+        } else {
+          if (success != null) {
+            success(null, false);
+          }
+        }
+      },
+      fail: (reason, code) {
+        if (success != null) {
+          success(null, false);
+        }
+      },
+    );
   }
 }

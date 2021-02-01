@@ -768,6 +768,12 @@ class _SexCellState extends State<SexCell> {
   }
 
   @override
+  void didUpdateWidget(covariant SexCell oldWidget) {
+    sex = widget.sex;
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     margin = widget.margin != null
@@ -797,10 +803,10 @@ class _SexCellState extends State<SexCell> {
           ),
           sexButton(context, Sex.boy, (Sex value) {
             setState(() {
+              sex = value;
               if (widget.valueChange != null) {
                 widget.valueChange(value);
               }
-              sex = value;
             });
           }),
           SizedBox(

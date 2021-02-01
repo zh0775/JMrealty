@@ -1,3 +1,4 @@
+import 'package:JMrealty/Client/AddClientVC.dart';
 import 'package:JMrealty/Client/FollowTrack.dart';
 import 'package:JMrealty/Client/components/ClientSuccessWidget.dart';
 import 'package:JMrealty/Client/components/LevelIcon.dart';
@@ -8,6 +9,8 @@ import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/components/ShowLoading.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/utils/EventBus.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,22 +24,34 @@ class ClientDetail extends StatefulWidget {
 }
 
 class _ClientDetailState extends State<ClientDetail> {
-  ClientDetailViewModel clientDetailViewModel;
+  EventBus _bus = EventBus();
+  ClientDetailViewModel clientDetailViewModel = ClientDetailViewModel();
   double margin;
   double widthScale;
   double contentWidth;
   double lineHeight1;
-  String sex;
+  String sex = '先生';
+
+  Map clientInfo;
 
   @override
   void initState() {
     // clientDetailViewModel = ClientDetailViewModel();
     // clientDetailViewModel.loadClientDetail(widget.clientData['id']);
     lineHeight1 = 25;
-    if (widget.clientData['sex'] != null) {
-      sex = widget.clientData['sex'] == 0 ? '先生' : '女士';
-    }
+    // if (widget.clientData['sex'] != null) {
+    //   sex = widget.clientData['sex'] == 0 ? '先生' : '女士';
+    // }
+    _bus.on(NOTIFY_CLIENT_DETAIL_REFRESH, (arg) {
+      clientDetailViewModel.loadClientDetail(widget.clientData['id']);
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _bus.off(NOTIFY_CLIENT_DETAIL_REFRESH);
+    super.dispose();
   }
 
   @override
@@ -49,17 +64,32 @@ class _ClientDetailState extends State<ClientDetail> {
         backgroundColor: jm_line_color,
         appBar: CustomAppbar(
           title: '客户详情',
+          actions: [
+            RawMaterialButton(
+                child: Text(
+                  '编辑',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+                onPressed: () {
+                  push(
+                      AddClientVC(
+                        edit: true,
+                        clientData: clientInfo ?? {},
+                      ),
+                      context);
+                })
+          ],
         ),
         body: ProviderWidget<ClientDetailViewModel>(
-          model: ClientDetailViewModel(),
+          model: clientDetailViewModel,
           onReady: (model) {
-            clientDetailViewModel = model;
-            model.loadClientDetail(widget.clientData['id']);
+            clientDetailViewModel.loadClientDetail(widget.clientData['id']);
           },
           builder: (context, value, child) {
             if (value.state == BaseState.LOADING) {
               return ShowLoading();
             } else if (value.state == BaseState.CONTENT) {
+              clientInfo = value.clientData;
               return getBody(value.clientData);
             } else {
               return Center(
@@ -182,7 +212,7 @@ class _ClientDetailState extends State<ClientDetail> {
                 ),
                 Row(
                   children: [
-                    LevelIcon(desireId: widget.clientData['desireId'] ?? 0),
+                    LevelIcon(desireId: customerVO['desireId'] ?? 0),
                     SizedBox(width: SizeConfig.blockSizeHorizontal * 2),
                     // 性别
                     Container(
@@ -196,7 +226,7 @@ class _ClientDetailState extends State<ClientDetail> {
                             padding: EdgeInsets.symmetric(
                                 horizontal: widthScale * 3),
                             child: Text(
-                              sex,
+                              customerVO['sex'] == 0 ? '先生' : '女士',
                               style: jm_text_black_style13,
                             ),
                           ),

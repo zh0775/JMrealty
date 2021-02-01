@@ -137,24 +137,40 @@ class ClientSuccessWidget extends StatelessWidget {
     List<Widget> widgetList = [];
     if (successData['reportShopPartnerVO'] != null &&
         successData['reportShopPartnerVO'] is List) {
-      widgetList.add(
-        Row(
-          children: [
-            SizedBox(
-              width: margin,
-            ),
-            Text(
-              '佣金规则',
-              style: jm_text_gray_style15,
-            )
-          ],
-        ),
-      );
+      // widgetList.add(
+
+      // );
       List commissionList = successData['reportShopPartnerVO'];
       for (var i = 0; i < commissionList.length; i++) {
+        Map relicyRuleInfo = successData['relicyRuleInfo'] != null &&
+                successData['relicyRuleInfo'].length > i
+            ? (successData['relicyRuleInfo'])[i]
+            : {};
         Map commissionData = commissionList[i];
         widgetList.add(Column(
           children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: margin,
+                ),
+                Text(
+                  '佣金规则',
+                  style: jm_text_gray_style15,
+                ),
+                SizedBox(
+                  width: widthScale * 11.5,
+                ),
+                Container(
+                  width: widthScale * 60,
+                  child: Text(
+                    relicyRuleInfo['remark'] ?? '',
+                    style: jm_text_black_style15,
+                  ),
+                )
+              ],
+            ),
             SizedBox(
               height: i == 0 ? 15 : 10,
             ),

@@ -4,6 +4,7 @@ import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
+import 'package:JMrealty/utils/tTools.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:JMrealty/Report/ReportListCell.dart';
@@ -186,17 +187,20 @@ class _ReportListViewState extends State<ReportListView>
     // 报备日期：${reportData['createTime'] ?? ''}
     // 身份证后六位（选填）：$id
     // ''';
+
     String copyStr = '''''';
 
     copyStr += '''报备楼盘：${reportData['projectName'] ?? ''}\n''';
-    copyStr += '''产品类型：${reportData['purpose'] ?? ''}\n''';
-    copyStr += '''报备公司：${reportData['company'] ?? ''}\n''';
-    copyStr += '''报备服务点：${reportData['deptName'] ?? ''}\n''';
+    // copyStr += '''产品类型：${reportData['purpose'] ?? ''}\n''';
+    copyStr += '''报备公司：${reportData['employeeCompany'] ?? ''}\n''';
+
     copyStr += '''报备员工：${reportData['employeeName'] ?? ''}\n''';
     copyStr += '''员工电话：${reportData['employeePhone'] ?? ''}\n''';
     copyStr += '''报备客户：${reportData['customerName'] ?? ''}\n''';
-    copyStr += '''客户电话：${reportData['customerPhone'] ?? ''}\n''';
+    copyStr +=
+        '''客户电话：${reportData['isSensitive'] == 1 ? hiddenPhone(reportData['customerPhone']) : reportData['customerPhone'] ?? ''}\n''';
     copyStr += '''报备日期：${reportData['createTime'] ?? ''}\n''';
+    copyStr += '''报备服务点：${reportData['deptName'] ?? ''}\n''';
     // copyStr += '''身份证后六位（选填）：$id\n''';
 
     // copyStr += '产品类型：' + (reportData['purpose'] ?? '' + '\n');

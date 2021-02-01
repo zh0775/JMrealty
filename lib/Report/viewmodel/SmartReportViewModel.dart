@@ -13,12 +13,12 @@ class SmartReportViewModel {
             success(true);
           }
         } else {
+          if (json['msg'] != null && (json['msg'] as String).length > 0) {
+            ShowToast.normal(json['msg']);
+          }
           if (success != null) {
             success(false);
           }
-        }
-        if (json['msg'] != null && (json['msg'] as String).length > 0) {
-          ShowToast.normal(json['msg']);
         }
       },
       fail: (reason, code) {

@@ -63,6 +63,13 @@ class _CustomMarkInputState extends State<CustomMarkInput> {
                 color: jm_line_color,
               ),
             )),
+        buildCounter: (BuildContext context,
+            {int currentLength, bool isFocused, int maxLength}) {
+          return Text(
+            "$currentLength/$maxLength",
+            style: jm_text_black_style13,
+          ); //字符统计
+        },
         onChanged: (value) {
           if (widget.valueChange != null) {
             widget.valueChange(value);

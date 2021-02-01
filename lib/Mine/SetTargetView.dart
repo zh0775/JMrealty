@@ -3,6 +3,8 @@ import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/utils/EventBus.dart';
+import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,11 +19,15 @@ class SetTargetView extends StatefulWidget {
 }
 
 class _SetTargetViewState extends State<SetTargetView> {
+  EventBus _bus = EventBus();
   SetTargetViewModel setTargetVM = SetTargetViewModel();
   double margin;
   double widthScale;
   String monthTarget = '';
   String monthCount = '';
+
+  String setTarget = '';
+  String setCount = '';
   Map targetData = {};
 
   @override
@@ -70,7 +76,7 @@ class _SetTargetViewState extends State<SetTargetView> {
                   child: Text(
                     // currentMonth.toString() + '月目标业绩',
                     '当月目标业绩',
-                    style: jm_text_black_bold_style16,
+                    style: jm_text_black_bold_style19,
                   ),
                 ),
               ),
@@ -89,19 +95,20 @@ class _SetTargetViewState extends State<SetTargetView> {
                               widthScale * 7,
                           minHeight: 40),
                       child: CupertinoTextField(
+                        decoration: BoxDecoration(color: jm_bg_gray_color),
                         textAlignVertical: TextAlignVertical.center,
                         padding: EdgeInsets.only(left: widthScale * 3),
                         keyboardType: TextInputType.number,
                         placeholder: '请输入目标业绩',
                         controller:
                             TextEditingController.fromValue(TextEditingValue(
-                          text: monthTarget ?? '',
+                          text: setTarget ?? '',
                           selection: TextSelection.fromPosition(TextPosition(
                               affinity: TextAffinity.downstream,
-                              offset: monthTarget.length ?? 0)),
+                              offset: setTarget.length ?? 0)),
                         )),
                         onChanged: (value) {
-                          monthTarget = value;
+                          setTarget = value;
                         },
                       )),
                   SizedBox(
@@ -124,7 +131,7 @@ class _SetTargetViewState extends State<SetTargetView> {
                   child: Text(
                     // currentMonth.toString() + '月目标业绩',
                     '当月成交套数',
-                    style: jm_text_black_bold_style16,
+                    style: jm_text_black_bold_style19,
                   ),
                 ),
               ),
@@ -145,18 +152,19 @@ class _SetTargetViewState extends State<SetTargetView> {
                           minHeight: 40),
                       child: CupertinoTextField(
                         textAlignVertical: TextAlignVertical.center,
+                        decoration: BoxDecoration(color: jm_bg_gray_color),
                         padding: EdgeInsets.only(left: widthScale * 3),
                         keyboardType: TextInputType.number,
                         placeholder: '请输入成交套数',
                         controller:
                             TextEditingController.fromValue(TextEditingValue(
-                          text: monthCount ?? '',
+                          text: setCount ?? '',
                           selection: TextSelection.fromPosition(TextPosition(
                               affinity: TextAffinity.downstream,
-                              offset: monthCount.length ?? 0)),
+                              offset: setCount.length ?? 0)),
                         )),
                         onChanged: (value) {
-                          monthCount = value;
+                          setCount = value;
                         },
                       )),
                   SizedBox(
@@ -180,14 +188,22 @@ class _SetTargetViewState extends State<SetTargetView> {
                     title: '保存',
                     height: SizeConfig.blockSizeVertical * 6.5,
                     buttonClick: () {
+                      if (setTarget == null || setTarget.length == 0) {
+                        ShowToast.normal('请输入目标业绩');
+                        return;
+                      }
+                      if (setCount == null || setCount.length == 0) {
+                        ShowToast.normal('请输入成交套数');
+                        return;
+                      }
                       Map params = Map<String, dynamic>.from({
                         'employeeId': widget.userInfo['userId'],
-                        'employeeName': 'userName',
-                        'number': int.parse(monthTarget),
+                        'employeeName': widget.userInfo['userName'],
+                        'number': int.parse(setTarget),
                         'organizationId': (widget.userInfo['dept'])['deptId'],
                         'organizationName':
                             (widget.userInfo['dept'])['deptName'],
-                        'turnover': int.parse(monthCount),
+                        'turnover': int.parse(setCount),
                       });
                       // print(params);
                       // print(widget.userInfo);
@@ -195,6 +211,7 @@ class _SetTargetViewState extends State<SetTargetView> {
                       setTargetVM.setTargetRequest(params, (success) {
                         if (success) {
                           ShowToast.normal('设置成功');
+                          _bus.emit(NOTIFY_LOGIN_SUCCESS);
                           Future.delayed(Duration(seconds: 1), () {
                             if (Navigator.canPop(context)) {
                               Navigator.pop(context);
@@ -239,22 +256,23 @@ class _SetTargetViewState extends State<SetTargetView> {
     return Container(
       margin: EdgeInsets.only(left: margin, top: 10),
       width: SizeConfig.screenWidth - margin * 2 - widthScale * 7,
-      decoration: BoxDecoration(
-        color: jm_line_color,
-        borderRadius: BorderRadius.circular(widthScale * 2),
-      ),
+      // decoration: BoxDecoration(
+      //   color: jm_line_color,
+      //   borderRadius: BorderRadius.circular(widthScale * 2),
+      // ),
       child: Row(
         children: [
-          SizedBox(
-            width: widthScale * 1.5,
-          ),
+          // SizedBox(
+          //   width: widthScale * 1.5,
+          // ),
           // Icon(
           //   Icons.error,
           //   color: jm_appTheme,
           //   size: 20,
           // ),
           Padding(
-            padding: EdgeInsets.fromLTRB(widthScale * 3, 5, 0, 5),
+            padding: EdgeInsets.zero,
+            // padding: EdgeInsets.fromLTRB(widthScale * 3, 5, 0, 5),
             child: Text(
               str,
               style: jm_text_black_style14,

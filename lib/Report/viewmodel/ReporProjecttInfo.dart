@@ -1,6 +1,7 @@
 import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/tTools.dart';
 import 'package:flutter/material.dart';
 
 class ReporProjecttInfo extends StatefulWidget {
@@ -9,7 +10,9 @@ class ReporProjecttInfo extends StatefulWidget {
   final double width;
   final double margin;
   final double labelSpace;
+  final bool isDetail;
   const ReporProjecttInfo({
+    this.isDetail = true,
     this.data,
     this.isCopy = false,
     this.width,
@@ -70,7 +73,7 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
           SizedBox(
             height: widget.labelSpace,
           ),
-          getProjectInfoCell('报备公司', widget.data['company'] ?? ''),
+          getProjectInfoCell('报备公司', widget.data['employeeCompany'] ?? ''),
           SizedBox(
             height: widget.labelSpace,
           ),
@@ -82,7 +85,12 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
           SizedBox(
             height: widget.labelSpace,
           ),
-          getProjectInfoCell('员工号码', widget.data['employeePhone'] ?? '')
+          getProjectInfoCell('员工号码', widget.data['employeePhone'] ?? '',
+              heightAdjust: true),
+          SizedBox(
+            height: widget.labelSpace,
+          ),
+          getProjectInfoCell('对接公司', widget.data['company'] ?? '')
         ],
       ),
     );
@@ -168,17 +176,51 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
             SizedBox(
               width: outMargin,
             ),
-            Text(
-              widget.data['customerName'] ?? '无',
-              style: jm_text_black_bold_style16,
-            ),
+            widget.isDetail
+                ? SelectableText(
+                    widget.data['customerName'] ?? '无',
+                    style: TextStyle(
+                        color: jm_text_black, fontSize: 17, height: 1.2),
+                  )
+                : Text(
+                    widget.data['customerName'] ?? '无',
+                    style: jm_text_black_bold_style16,
+                  ),
             SizedBox(
               width: widthScale * 2,
             ),
-            Text(
-              widget.data['customerPhone'] ?? '',
-              style: jm_text_black_bold_style16,
-            )
+            widget.isDetail
+                ? SelectableText(
+                    (widget.data['isSensitive'] ?? 0) == 1
+                        ? hiddenPhone(widget.data['customerPhone'])
+                        : widget.data['customerPhone'] ?? '',
+                    style: jm_text_black_style17,
+                  )
+                : Text(
+                    (widget.data['isSensitive'] ?? 0) == 1
+                        ? hiddenPhone(widget.data['customerPhone'])
+                        : widget.data['customerPhone'] ?? '',
+                    style: jm_text_black_bold_style16,
+                  )
+            // SelectableText(
+            //   (widget.data['isSensitive'] ?? 0) == 1
+            //       ? hiddenPhone(widget.data['customerPhone'])
+            //       : widget.data['customerPhone'] ?? '',
+            //   style: jm_text_black_bold_style16,
+            // ),
+            // widget.isDetail
+            //     ? SelectableText(
+            //         (widget.data['isSensitive'] ?? 0) == 1
+            //             ? hiddenPhone(widget.data['customerPhone'])
+            //             : widget.data['customerPhone'] ?? '',
+            //         style: jm_text_black_bold_style16,
+            //       )
+            //     : Text(
+            //         (widget.data['isSensitive'] ?? 0) == 1
+            //             ? hiddenPhone(widget.data['customerPhone'])
+            //             : widget.data['customerPhone'] ?? '',
+            //         style: jm_text_black_bold_style16,
+            //       )
           ],
         ),
         Row(
@@ -197,17 +239,24 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
   }
 
   Widget getProjectInfoCell(String title, String content,
-      {Color textColor = jm_text_black}) {
+      {Color textColor = jm_text_black, bool heightAdjust = false}) {
     return Row(
       children: [
         SizedBox(
           width: outMargin,
         ),
         getLabel(title),
-        Text(
-          content,
-          style: TextStyle(fontSize: 15, color: textColor),
-        )
+        widget.isDetail
+            ? SelectableText(
+                content,
+                style: heightAdjust && widget.isDetail
+                    ? TextStyle(fontSize: 15, color: textColor, height: 1.3)
+                    : TextStyle(fontSize: 15, color: textColor),
+              )
+            : Text(
+                content,
+                style: TextStyle(fontSize: 15, color: textColor),
+              )
       ],
     );
   }

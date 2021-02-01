@@ -194,12 +194,11 @@ class _MyTasksCellState extends State<MyTasksCell> {
                       ),
                       (dateFormat
                                       .parse(widget.data['expireTime'])
-                                      .isAfter(DateTime.now()) &&
+                                      .isAfter(DateTime.now()) ||
                                   dateFormat
                                       .parse(widget.data['startTime'])
-                                      .isBefore(DateTime.now()) &&
-                                  widget.status == 1) ||
-                              widget.status == 4
+                                      .isBefore(DateTime.now())) &&
+                              widget.status != 3
                           ? RawMaterialButton(
                               materialTapTargetSize:
                                   MaterialTapTargetSize.shrinkWrap,

@@ -408,55 +408,74 @@ class _MineTopState extends State<MineTop> {
             ),
             Container(
               width: SizeConfig.screenWidth - margin * 2,
+              // height: 86,
+              // constraints:
+              //     BoxConstraints(minHeight: targetHeight, maxHeight: 86),
               decoration: BoxDecoration(
                 border: Border.all(width: 1, color: jm_line_color),
                 borderRadius: BorderRadius.circular(widthScale * 3),
               ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  getCommissionButton(
+              child: ConstrainedBox(
+                constraints:
+                    BoxConstraints(minHeight: targetHeight, maxHeight: 86),
+                child: Row(
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    getCommissionButton(
                       '总佣金',
-                      numberFormat(widget.data['amount']) + '元',
+                      numberFormat(widget.data['amount']),
                       // countFormat(widget.data['amount']),
                       widthScale,
                       (SizeConfig.screenWidth - margin * 2) / 3,
                       targetHeight,
                       () {},
-                      textStyle: jm_text_black_style16),
-                  JMline(width: 1, height: targetHeight),
-                  getCommissionButton(
+                      textStyle: jm_text_black_style15,
+                    ),
+                    Container(
+                      height: double.infinity,
+                      width: 1,
+                      color: jm_line_color,
+                    ),
+                    // JMline(width: 1, height: targetHeight),
+                    getCommissionButton(
                       '已结佣',
-                      numberFormat(widget.data['getSalary']) + '元',
+                      numberFormat(widget.data['getSalary']),
                       // (widget.data['getSalary'].toString() ?? '') + '元',
                       // countFormat(widget.data['getSalary']),
                       widthScale,
                       (SizeConfig.screenWidth - margin * 2) / 3,
                       targetHeight,
                       () {},
-                      textStyle: jm_text_black_style16),
-                  JMline(width: 1, height: targetHeight),
-                  getCommissionButton(
-                      '待结佣',
-                      numberFormat((widget.data['amount'] ?? 0) -
-                              (widget.data['getSalary'] ?? 0)) +
-                          '元',
-                      // widget.data['amount'] != null &&
-                      //         widget.data['getSalary'] != null
-                      //     ? (widget.data['amount'] - widget.data['getSalary'])
-                      //             .toString() +
-                      //         '元'
-                      //     : '',
-                      // countCalculateFormat(
-                      //     widget.data['amount'], widget.data['getSalary']),
-                      widthScale,
-                      (SizeConfig.screenWidth - margin * 2) / 3,
-                      targetHeight,
-                      () {},
-                      goldTextStyle: jm_text_apptheme_style16,
-                      isGold: true),
-                ],
+                      textStyle: jm_text_black_style15,
+                    ),
+
+                    Container(
+                      height: double.infinity,
+                      width: 1,
+                      color: jm_line_color,
+                    ),
+                    // JMline(width: 1, height: double.infinity),
+                    getCommissionButton(
+                        '待结佣',
+                        numberFormat((widget.data['amount'] ?? 0) -
+                            (widget.data['getSalary'] ?? 0)),
+                        // widget.data['amount'] != null &&
+                        //         widget.data['getSalary'] != null
+                        //     ? (widget.data['amount'] - widget.data['getSalary'])
+                        //             .toString() +
+                        //         '元'
+                        //     : '',
+                        // countCalculateFormat(
+                        //     widget.data['amount'], widget.data['getSalary']),
+                        widthScale,
+                        (SizeConfig.screenWidth - margin * 2) / 3,
+                        targetHeight,
+                        () {},
+                        goldTextStyle: jm_text_apptheme_style15,
+                        isGold: true),
+                  ],
+                ),
               ),
             ),
             SizedBox(
@@ -490,7 +509,8 @@ class _MineTopState extends State<MineTop> {
                 children: [
                   getCommissionButton(
                       '目标业绩',
-                      countFormat(widget.targetData['number']),
+                      numberFormat(widget.targetData['number']) + '元',
+                      // countFormat(widget.targetData['number']),
                       widthScale,
                       (SizeConfig.screenWidth - margin * 2) / 2,
                       targetHeight,
@@ -500,7 +520,8 @@ class _MineTopState extends State<MineTop> {
                   // JMline(width: 1, height: targetHeight),
                   getCommissionButton(
                       '完成业绩',
-                      countFormat(widget.targetData['actualCommission']),
+                      numberFormat(widget.targetData['actualCommission']) + '元',
+                      // countFormat(widget.targetData['actualCommission']),
                       widthScale,
                       (SizeConfig.screenWidth - margin * 2) / 2,
                       targetHeight,
@@ -545,33 +566,40 @@ class _MineTopState extends State<MineTop> {
       double width, double height, Function() onPressed,
       {bool isGold = false,
       TextStyle textStyle = jm_text_black_style18,
-      TextStyle goldTextStyle = jm_text_apptheme_style18}) {
+      TextStyle goldTextStyle = jm_text_apptheme_style18,
+      Border border = const Border.fromBorderSide(BorderSide.none)}) {
     return Container(
       width: width - 3,
-      constraints: BoxConstraints(minHeight: height),
-      // height: height,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 13,
+      decoration: BoxDecoration(border: border),
+      child: Align(
+        child: Container(
+          width: width - widthScale * 6,
+          constraints: BoxConstraints(minHeight: height),
+          // height: height,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            // crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 13,
+              ),
+              Text(
+                title,
+                style: jm_text_black_bold_style12,
+              ),
+              SizedBox(
+                height: 3,
+              ),
+              Text(
+                subTitle,
+                style: isGold ? goldTextStyle : textStyle,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+            ],
           ),
-          Text(
-            title,
-            style: jm_text_black_bold_style12,
-          ),
-          SizedBox(
-            height: 3,
-          ),
-          Text(
-            subTitle,
-            style: isGold ? goldTextStyle : textStyle,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-        ],
+        ),
       ),
     );
   }

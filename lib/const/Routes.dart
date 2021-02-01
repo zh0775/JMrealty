@@ -1,8 +1,10 @@
+import 'package:JMrealty/Report/Report.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:JMrealty/Home/Home.dart';
 
 class Routes {
   static const String main_page = '/main/mainPage';
+  static const String report_list = '/report/reportList';
   static Route findRoutes(RouteSettings settings) {
     String name = settings.name;
     Object argument = settings.arguments;
@@ -16,6 +18,9 @@ class Routes {
     switch (name) {
       case main_page:
         page = MainPageWidget();
+        break;
+      case report_list:
+        page = Report();
         break;
       default:
     }

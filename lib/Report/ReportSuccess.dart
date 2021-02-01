@@ -50,8 +50,18 @@ class _ReportSuccessState extends State<ReportSuccess> {
   String buildNo;
   Map userInfo;
   List reportShopPartnerBOList = [];
+  Map projectDetaiData = {};
   @override
   void initState() {
+    // reportDetailModel.loadReportDetailRequest(
+    //   widget.data['id'],
+    //   success: (detailData, success) {
+    //     if (success) {
+    //       projectDetaiData = detailData;
+    //       if (mounted) setState(() {});
+    //     }
+    //   },
+    // );
     userInfo = Map<String, dynamic>.from(widget.userInfo);
     reportShopPartnerBOList.add({
       'userId': userInfo['userId'],
@@ -91,6 +101,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
 
   @override
   void dispose() {
+    reportDetailModel.dispose();
     super.dispose();
   }
 
@@ -268,6 +279,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
         ),
         getTitleRow('备注'),
         CustomMarkInput(
+          maxLength: 200,
           text: successParams['remark'] ?? '',
           valueChange: (value) {
             successParams['remark'] = value;

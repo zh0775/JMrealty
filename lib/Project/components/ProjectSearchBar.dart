@@ -53,7 +53,7 @@ class _ProjectSearchBarState extends State<ProjectSearchBar> {
                         child: Padding(
                           padding: EdgeInsets.only(left: widthScale * 2),
                           child: Text(
-                            '请输入项目名称',
+                            widget.text ?? '',
                             style: TextStyle(fontSize: 15, color: Colors.white),
                           ),
                         )),

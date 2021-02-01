@@ -13,6 +13,7 @@ class HomeScheduleToDo extends StatefulWidget {
 }
 
 class _HomeScheduleToDoState extends State<HomeScheduleToDo> {
+  DateFormat dateFormat = DateFormat('yyyy-MM-dd');
   double widthScale;
   double heightScale;
   double margin;
@@ -49,7 +50,7 @@ class _HomeScheduleToDoState extends State<HomeScheduleToDo> {
         for (var j = 0; j < widget.data.length; j++) {
           var sche = widget.data[j];
           // print((iTime.toString().split(' '))[0]);
-          if (DateFormat('yyyy-MM-dd').format(iTime) == sche['today']) {
+          if (dateFormat.format(iTime) == sche['today']) {
             scheData[i] = sche;
             break;
           }
@@ -63,7 +64,13 @@ class _HomeScheduleToDoState extends State<HomeScheduleToDo> {
         enable: !iTime.isBefore(date),
         markData: scheData[i],
         dateButtonClick: (index) {
-          push(CustomWebV(path: WebPath.backlog), context);
+          DateButton dateButton = dateButtonList[index];
+          push(
+              CustomWebV(
+                path: WebPath.backlog,
+                date: dateFormat.format(dateButton.date),
+              ),
+              context);
           // setState(() {
           //   dateButtonIndex = index;
           // });

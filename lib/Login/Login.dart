@@ -54,7 +54,6 @@ class _LoginState extends State<Login> {
 
   @override
   void dispose() {
-    _eventBus.off(NOTIFY_LOGIN_SUCCESS);
     super.dispose();
   }
 

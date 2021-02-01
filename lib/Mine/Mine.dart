@@ -65,9 +65,9 @@ class _MineState extends State<Mine> {
 
   @override
   void dispose() {
-    bus.off(NOTIFY_LOGIN_SUCCESS);
-    bus.off(NOTIFY_HOME_MENUS);
-    bus.off(NOTIFY_USER_INFO);
+    // bus.off(NOTIFY_LOGIN_SUCCESS);
+    // bus.off(NOTIFY_HOME_MENUS);
+    // bus.off(NOTIFY_USER_INFO);
     super.dispose();
   }
 

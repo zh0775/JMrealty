@@ -15,7 +15,8 @@ class ClientListSelect1ViewModel extends BaseViewModel {
     Future.wait([
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '102'}),
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
-      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'})
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'}),
+      Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '130'}),
     ]).then((List e) {
       // print('e111 ==== $e');//[true,true,false]
       for (var i = 0; i < e.length; i++) {
@@ -30,6 +31,9 @@ class ClientListSelect1ViewModel extends BaseViewModel {
           case 2:
             key = 'lx';
             break;
+          case 3:
+            key = 'time';
+            break;
         }
         Map res = new Map<String, dynamic>.from((e[i]).data);
         // print('res === $res');
@@ -38,9 +42,13 @@ class ClientListSelect1ViewModel extends BaseViewModel {
             return value;
           }).toList();
           // print('reList === $reList');
-          selectData[key] = <Map<String, dynamic>>[
-            {'title': '全部', 'value': '-1'}
-          ];
+          if (key != 'time') {
+            selectData[key] = <Map<String, dynamic>>[
+              {'title': '全部', 'value': '-1'}
+            ];
+          } else {
+            selectData[key] = <Map<String, dynamic>>[];
+          }
           reList.forEach((element) {
             Map<String, dynamic> e = Map<String, dynamic>.from(element);
             (selectData[key]).add({

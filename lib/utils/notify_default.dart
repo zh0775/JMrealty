@@ -24,3 +24,5 @@ const String NOTIFY_HOME_MENUS = 'notify_home_menus';
 const String NOTIFY_CHANGE_TABBAR_INDEX = 'notify_change_tabbar_index';
 const String NOTIFY_NOTIFICATION_MESSAGE_REFRESH =
     'notify_notification_message_refresh';
+
+const String NOTIFY_CLIENT_DETAIL_REFRESH = 'notify_client_detail_refresh';

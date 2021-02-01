@@ -162,11 +162,11 @@ class _MessageCellState extends State<MessageCell> {
               ],
             ),
             Positioned(
-                bottom: -15,
+                bottom: -14,
                 right: 0,
                 child: JMline(
                     width: SizeConfig.screenWidth - margin * 2 - headIconWidth,
-                    height: 0.5))
+                    height: 1))
           ],
         ),
       ),

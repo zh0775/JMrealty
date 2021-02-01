@@ -285,6 +285,7 @@ class _AddTaskState extends State<AddTask> {
                 height: 10,
               ),
               CustomMarkInput(
+                maxLength: 200,
                 text: params['taskExplain'] ?? '',
                 valueChange: (value) {
                   params['taskExplain'] = value;

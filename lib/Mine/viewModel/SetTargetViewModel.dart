@@ -1,5 +1,6 @@
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
+import 'package:JMrealty/utils/toast.dart';
 
 class SetTargetViewModel {
   loadTargetSetting(int id, Function(bool success, Map data) success) {
@@ -12,6 +13,9 @@ class SetTargetViewModel {
             success(true, json['data']);
           }
         } else {
+          if (json['msg'] != null && json['msg'].length > 0) {
+            ShowToast.normal(json['msg']);
+          }
           if (success != null) {
             success(false, null);
           }
@@ -35,6 +39,9 @@ class SetTargetViewModel {
             success(true);
           }
         } else {
+          if (json['msg'] != null && json['msg'].length > 0) {
+            ShowToast.normal(json['msg']);
+          }
           if (success != null) {
             success(false);
           }

@@ -43,6 +43,8 @@ class Urls {
   static const String fuzzySearch = '/customer/project/fuzzySearch';
   // 客户新增接口
   static const String addClient = '/customer/customer/insert';
+  // 修改客户信息
+  static const String editClient = '/customer/customer/edit';
   // 获取客户列表
   static const String clientList = '/customer/customer/keys';
   // 查询字典数据
@@ -148,6 +150,16 @@ class Urls {
   //项目
   // 项目列表
   static const String projectList = '/customer/project/findListByArea';
+  // 获取本部门所属的省市区
+  static const String findDeptDetailIsListByDeptIp =
+      '/system/deptDetail/findDeptDetailIsListByDeptIp';
+  // 获取本部门所属的省市区
+  static const String deptDetailIsCtiyList =
+      '/system/deptDetail/deptDetailIsCtiyList';
+  // app 获取市级下的所有区域
+  static const String areaByToken = '/system/area/AreaByToken';
+  // 查询省市级地区列表
+  static const String getAreaList = '/system/area/list';
 
   //我的任务
   // 我发布的任务列表

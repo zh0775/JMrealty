@@ -6,6 +6,7 @@ import 'package:JMrealty/components/CustomImagePage.dart';
 import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/CustomMarkInput.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
+import 'package:JMrealty/components/DropdownSelectV.dart';
 import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/components/SelectImageView.dart';
 import 'package:JMrealty/const/Default.dart';
@@ -53,9 +54,22 @@ class _ReportUploadState extends State<ReportUpload> {
   double labelSpace = 3;
   String mark;
   List imageList = [];
+  List invalidTmpList = [];
+  // String currentInvalidTmpList = '';
   dynamic img;
   @override
   void initState() {
+    if (widget.uploadStatus == ReportUploadStatus.invalid) {
+      viewModel.loadInvalidTmp((dataList, success) {
+        if (success) {
+          invalidTmpList = dataList;
+          mark = (dataList[0])['remark'];
+          if (mounted) {
+            setState(() {});
+          }
+        }
+      });
+    }
     imgSelectV = SelectImageView(
       count: imageCount,
       imageSelected: (images) {
@@ -180,6 +194,20 @@ class _ReportUploadState extends State<ReportUpload> {
                   '备注',
                   style: jm_text_black_bold_style17,
                 )),
+            widget.uploadStatus == ReportUploadStatus.invalid
+                ? DropdownSelectV(
+                    labelText: '失效模板',
+                    titleKey: 'remark',
+                    valueKey: 'dictValue',
+                    defalultValue: true,
+                    dataList: invalidTmpList,
+                    valueChange: (value, data) {
+                      setState(() {
+                        mark = data['remark'];
+                      });
+                    },
+                  )
+                : NoneV(),
             CustomMarkInput(
               maxLength: 200,
               text: mark ?? '',

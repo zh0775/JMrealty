@@ -15,6 +15,7 @@ class _AboutState extends State<About> {
   double margin;
   double selfWidth;
   String version;
+  String buildVersion;
   @override
   void initState() {
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
@@ -22,6 +23,7 @@ class _AboutState extends State<About> {
         if (mounted) {
           setState(() {
             version = packageInfo.version;
+            buildVersion = packageInfo.buildNumber;
           });
         }
       }
@@ -59,7 +61,11 @@ class _AboutState extends State<About> {
                     Padding(
                       padding: EdgeInsets.only(top: 10),
                       child: Text(
-                        'Version  ' + version ?? '',
+                        'Version  ' +
+                            (version ?? '') +
+                            (buildVersion != null && buildVersion.length > 0
+                                ? ('(' + buildVersion + ')')
+                                : ''),
                         style: jm_text_black_bold_style17,
                       ),
                     ),

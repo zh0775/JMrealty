@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:JMrealty/base/image_loader.dart';
 import 'package:flutter/material.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 const MAX_COUNT = 0x7fffffff;
 

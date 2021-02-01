@@ -45,6 +45,7 @@ class _HomeNaviBarState extends State<HomeNaviBar> {
           left: SizeConfig.blockSizeHorizontal * 6,
           top: 64,
           child: ProjectSearchBar(
+            text: '搜索项目',
             toProjectSearch: true,
           ))
     ]);

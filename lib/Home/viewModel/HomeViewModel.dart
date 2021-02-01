@@ -125,7 +125,8 @@ class HomeViewModel extends BaseViewModel {
 
   getHomeWaitToDo(Function(List waitToDoList, bool success) success) {
     DateTime start = DateTime.now();
-    start = start.subtract(Duration(days: start.weekday));
+    int weekDay = start.weekday == 7 ? 0 : start.weekday;
+    start = start.subtract(Duration(days: weekDay));
     DateTime end = DateTime.now();
     end = start.add(Duration(days: 6));
     DateFormat dateFormat = DateFormat('yyyy-MM-dd');

@@ -106,6 +106,8 @@ class _ClientPoolState extends State<ClientPool> {
                     child: TabBar(
                       indicatorSize: TabBarIndicatorSize.tab,
                       indicatorColor: jm_appTheme,
+                      labelStyle: jm_text_black_bold_style15,
+                      unselectedLabelStyle: jm_text_black_style14,
                       indicatorWeight: 3.0,
                       indicatorPadding: EdgeInsets.symmetric(
                           horizontal: SizeConfig.blockSizeHorizontal * 23),
@@ -113,13 +115,11 @@ class _ClientPoolState extends State<ClientPool> {
                         Tab(
                           child: Text(
                             '服 务 点',
-                            style: jm_text_black_style15,
                           ),
                         ),
                         Tab(
                           child: Text(
                             '市级客户池',
-                            style: jm_text_black_style15,
                           ),
                         ),
                       ],

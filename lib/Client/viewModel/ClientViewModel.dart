@@ -21,13 +21,19 @@ class ClientViewModel extends BaseViewModel {
           data.forEach((key, value) {
             List<Map<String, dynamic>> keyList = [];
             if (value != null && value is List) {
+              dynamic otherIndex;
               value.forEach((element) {
                 keyList.add({
                   'value': element['dictValue'],
                   'title': element['dictLabel']
                 });
+                if (element['dictLabel'] == '其他') {
+                  otherIndex = element['dictValue'];
+                }
               });
+
               listData[key] = keyList;
+              listData[key + 'Index'] = otherIndex ?? -1;
             }
           });
           print('listData === $listData');
@@ -47,23 +53,11 @@ class ClientViewModel extends BaseViewModel {
   }
 
   sendAddClientRequest(
-      Map<String, dynamic> params, void Function(bool success) reqSuccess) {
-    print('params === $params');
-    if (params['name'] == null || params['name'].length == 0) {
-      ShowToast.normal('请输入客户姓名');
-      return;
-    }
-    if (params['phone'] == null || params['phone'].length == 0) {
-      ShowToast.normal('请输入客户手机号码');
-      return;
-    }
-    if (!isMobilePhoneNumber(params['phone'])) {
-      ShowToast.normal('请输入正确的手机号码');
-      return;
-    }
+      Map<String, dynamic> params, void Function(bool success) reqSuccess,
+      {bool isEdit = false}) {
     // state = BaseState.LOADING;
     Http().post(
-      Urls.addClient,
+      isEdit ? Urls.editClient : Urls.addClient,
       params,
       success: (json) {
         // Map<String, dynamic> data = json['data'];
