@@ -489,31 +489,35 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
             ),
           ],
         ),
-        SizedBox(
-          height: lineSpace + 3,
-        ),
-        Row(
-          children: [
-            // 客户意向
-            Container(
-              margin:
-                  EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 16),
-              // padding:
-              //     EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 3),
-              // height: lineHeight,
-              width: SizeConfig.blockSizeHorizontal * 80,
-              decoration: BoxDecoration(
-                  color: Color.fromRGBO(247, 248, 251, 1),
-                  borderRadius: BorderRadius.circular(5)),
-              child: Padding(
-                padding:
-                    EdgeInsets.fromLTRB(widthScale * 1.9, 6, widthScale * 3, 6),
-                child: Text('下次跟进时间  ${widget.model['expect'] ?? ''}',
-                    style: jm_text_black_style13),
-              ),
-            )
-          ],
-        ),
+        widget.model['expect'] != null && widget.model['expect'].length > 0
+            ? SizedBox(
+                height: lineSpace + 3,
+              )
+            : NoneV(),
+        widget.model['expect'] != null && widget.model['expect'].length > 0
+            ? Row(
+                children: [
+                  // 客户意向
+                  Container(
+                    margin: EdgeInsets.only(
+                        left: SizeConfig.blockSizeHorizontal * 16),
+                    // padding:
+                    //     EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 3),
+                    // height: lineHeight,
+                    width: SizeConfig.blockSizeHorizontal * 80,
+                    decoration: BoxDecoration(
+                        color: Color.fromRGBO(247, 248, 251, 1),
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          widthScale * 1.9, 6, widthScale * 3, 6),
+                      child: Text('下次跟进时间  ${widget.model['expect'] ?? ''}',
+                          style: jm_text_black_style13),
+                    ),
+                  )
+                ],
+              )
+            : NoneV(),
       ];
     }
   }

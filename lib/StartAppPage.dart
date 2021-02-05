@@ -73,11 +73,22 @@ class _StartAppPageState extends State<StartAppPage> {
                     right: 0,
                     top: 0,
                     bottom: 0,
-                    child: ImageLoader(
+                    child: Image.network(
                       model.startImgUrl,
-                      height: SizeConfig.screenHeight,
                       fit: BoxFit.fill,
-                    )),
+                      loadingBuilder: (context, child, loadingProgress) {
+                        return Image.asset(
+                          'assets/images/icon/screen-1242x2688.jpg',
+                          fit: BoxFit.fill,
+                        );
+                      },
+                    )
+                    // ImageLoader(
+                    //   model.startImgUrl,
+                    //   height: SizeConfig.screenHeight,
+                    //   fit: BoxFit.fill,
+                    // )
+                    ),
                 waitTime <= 3
                     ? Positioned(
                         right: 15,

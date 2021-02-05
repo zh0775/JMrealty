@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:JMrealty/components/CustomWebV.dart';
 import 'package:JMrealty/services/http_config.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/user_default.dart';
@@ -56,6 +57,7 @@ class _CustomWebPluginState extends State<CustomWebPlugin> {
       removeTop: true,
       context: context,
       child: WebviewScaffold(
+        resizeToAvoidBottomInset: true,
         url: WEB_URL + getPath(widget.path),
         mediaPlaybackRequiresUserGesture: false,
         javascriptChannels: [
@@ -82,6 +84,7 @@ class _CustomWebPluginState extends State<CustomWebPlugin> {
         name: "get",
         onMessageReceived: (JavascriptMessage message) {
           print('get === ${message.message}');
+
           // backStatus = message.message;
           // back();
         });

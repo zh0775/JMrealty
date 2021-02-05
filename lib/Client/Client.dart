@@ -536,8 +536,9 @@ class _ClientState extends State<Client> {
       params['areaId'] =
           value3['value'] is int ? value3['value'] : int.parse(value3['value']);
     }
-    params['orderByColumn'] =
-        value4['value'] == '0' ? 'update_time' : 'visitDate';
+    params['orderByTimeType'] =
+        // value4['value'] == '0' ? 'update_time' : 'visitDate';
+        int.parse(value4['value']);
     print('params ==== $params');
     eventBus.emit(NOTIFY_CLIENT_LIST_REFRASH, params);
   }
@@ -593,11 +594,8 @@ class _ClientListState extends State<ClientList>
         break;
       default:
     }
-    statusParams = Map<String, dynamic>.from({
-      'status': status,
-      'pageSize': pageSize,
-      'orderByColumn': 'update_time'
-    });
+    statusParams = Map<String, dynamic>.from(
+        {'status': status, 'pageSize': pageSize, 'orderByTimeType': 0});
     loadList();
     eventBus.on(NOTIFY_CLIENT_LIST_REFRASH, (arg) {
       if (arg['desireId'] != null) {
@@ -616,8 +614,8 @@ class _ClientListState extends State<ClientList>
         statusParams.remove('typeId');
       }
 
-      if (arg['orderByColumn'] != null) {
-        statusParams['orderByColumn'] = arg['orderByColumn'];
+      if (arg['orderByTimeType'] != null) {
+        statusParams['orderByTimeType'] = arg['orderByTimeType'];
       }
 
       loadList();

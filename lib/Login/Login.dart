@@ -23,6 +23,7 @@ import 'package:JMrealty/Login/components/RegistSelectInput.dart';
 import 'package:JMrealty/Login/components/ZZInput.dart';
 import 'package:JMrealty/Login/components/ZZSendCodeButton.dart';
 import 'package:flutter/services.dart';
+import 'package:jpush_flutter/jpush_flutter.dart';
 
 class Login extends StatefulWidget {
   final bool isLogin;
@@ -275,6 +276,7 @@ class _LoginState extends State<Login> {
                         if (success) {
                           _eventBus.emit(NOTIFY_LOGIN_SUCCESS);
                           _eventBus.emit(NOTIFY_CHANGE_TABBAR_INDEX, 2);
+                          JPush().resumePush();
                           ShowToast.normal('登录成功');
                           Future.delayed(Duration(seconds: 1), () {
                             FocusScope.of(context).requestFocus(FocusNode());

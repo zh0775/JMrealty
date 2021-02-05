@@ -18,7 +18,8 @@ class ClientListViewModel extends BaseViewModel {
     notifyListeners();
     Http().get(
       Urls.clientList,
-      {'isAsc': 'desc', ...params},
+      // 'isAsc': 'desc',
+      {...params},
       success: (json) {
         Map<String, dynamic> data = json['data'];
         if (json['code'] == 200) {

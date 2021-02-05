@@ -257,35 +257,33 @@ class _AddReportState extends State<AddReport> {
                 key: ValueKey('CustomInput_Sensitive_project_4'),
                 title: '前三后四录入',
                 labelStyle: jm_text_black_bold_style16,
-                contentWidet: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Transform.scale(
-                        scale: 0.9,
-                        child: CupertinoSwitch(
-                          value: isSensitive == 0 || isSensitive == null
-                              ? false
-                              : true,
-                          activeColor: jm_appTheme,
-                          onChanged: (value) {
-                            setState(() {
-                              isSensitive = value ? 1 : 0;
-                            });
-                          },
-                        ))
-                  ],
-                ),
+                contentWidet:
+                    Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                  Transform.scale(
+                      scale: 0.9,
+                      child: CupertinoSwitch(
+                        value: isSensitive == 0 || isSensitive == null
+                            ? false
+                            : true,
+                        activeColor: jm_appTheme,
+                        onChanged: (value) {
+                          setState(() {
+                            isSensitive = value ? 1 : 0;
+                          });
+                        },
+                      ))
+                ]),
               ),
-              Padding(
-                padding: EdgeInsets.only(left: margin),
-                child: Text(
-                  '选择前三后四仍需输入全号，不过再系统中会显示前三后四',
-                  style: jm_text_gray_style12,
-                ),
-              ),
-              SizedBox(
-                height: 1.52,
-              ),
+              // Padding(
+              //   padding: EdgeInsets.only(left: margin),
+              //   child: Text(
+              //     '选择前三后四仍需输入全号，不过再系统中会显示前三后四',
+              //     style: jm_text_gray_style12,
+              //   ),
+              // ),
+              // SizedBox(
+              //   height: 1.52,
+              // ),
               JMline(
                 width: SizeConfig.screenWidth,
                 height: 6,
@@ -325,12 +323,12 @@ class _AddReportState extends State<AddReport> {
                 height: 6,
               ),
               CustomTextF(
-                labelText: '搜索',
+                labelText: '报备人',
                 labelWidth: labelWidth,
                 labelStyle: jm_text_black_bold_style16,
                 style: jm_text_black_style15,
-                text: agentData != null && agentData['showName'] != null
-                    ? agentData['showName']
+                text: agentData != null && agentData['userName'] != null
+                    ? agentData['userName']
                     : '',
                 onlyTap: true,
                 labelClick: () {
@@ -389,21 +387,21 @@ class _AddReportState extends State<AddReport> {
               //     });
               //   },
               // ),
-              JMline(
-                width: SizeConfig.screenWidth - margin * 2,
-                height: 1.5,
-              ),
-              CustomInput(
-                labelWidth: labelWidth,
-                key: ValueKey('CustomInput_agent_2'),
-                labelStyle: jm_text_black_bold_style16,
-                textStyle: jm_text_black_style15,
-                title: '客户经理',
-                text: agentData != null && agentData['userName'] != null
-                    ? agentData['userName']
-                    : '',
-                enable: false,
-              ),
+              // JMline(
+              //   width: SizeConfig.screenWidth - margin * 2,
+              //   height: 1.5,
+              // ),
+              // CustomInput(
+              //   labelWidth: labelWidth,
+              //   key: ValueKey('CustomInput_agent_2'),
+              //   labelStyle: jm_text_black_bold_style16,
+              //   textStyle: jm_text_black_style15,
+              //   title: '客户经理',
+              //   text: agentData != null && agentData['userName'] != null
+              //       ? agentData['userName']
+              //       : '',
+              //   enable: false,
+              // ),
               JMline(
                 width: SizeConfig.screenWidth - margin * 2,
                 height: 1.5,
@@ -500,12 +498,23 @@ class _AddReportState extends State<AddReport> {
                     return;
                   }
 
+                  bool infoDeficiency = false;
                   clientsData.forEach((e) {
+                    if (e['name'] == null ||
+                        e['name']?.length == 0 ||
+                        e['phone'] == null ||
+                        e['phone']?.length == 0) {
+                      infoDeficiency = true;
+                    }
                     // print(e);
                     // if (e['name'] != null && e['csutomerPhone'] != null) {
                     clients.add(e);
                     // }
                   });
+                  if (infoDeficiency) {
+                    ShowToast.normal('客户信息不全');
+                    return;
+                  }
                   CustomAlert(title: '提示', content: '是否确认提交？').show(
                       confirmClick: () {
                     CustomLoading().show();
@@ -863,6 +872,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
                 textStyle: jm_text_black_style15,
                 title: '搜索内容',
                 hintText: '请输入搜索用户信息',
+                requestKey: 'keys',
                 paging: false,
                 searchUrl: Urls.clientFuzzySearch,
                 // valueChangeAndShowList: (value, state) {
@@ -993,7 +1003,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
             ? CustomInput(
                 labelWidth: labelWidth,
                 key: ValueKey('CustomInput_client_5'),
-                labelStyle: jm_text_black_bold_style16,
+                labelStyle: jm_text_gray_style15,
                 textStyle: jm_text_black_style15,
                 title: '身份证-选填',
                 hintText: '请输入身份证',

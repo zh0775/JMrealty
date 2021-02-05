@@ -250,12 +250,12 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
             ? SelectableText(
                 content,
                 style: heightAdjust && widget.isDetail
-                    ? TextStyle(fontSize: 15, color: textColor, height: 1.3)
-                    : TextStyle(fontSize: 15, color: textColor),
+                    ? TextStyle(fontSize: 16, color: textColor, height: 1.3)
+                    : TextStyle(fontSize: 16, color: textColor),
               )
             : Text(
                 content,
-                style: TextStyle(fontSize: 15, color: textColor),
+                style: TextStyle(fontSize: 16, color: textColor),
               )
       ],
     );
@@ -263,10 +263,10 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
 
   Widget getLabel(String title) {
     return Container(
-      width: widthScale * 25,
+      width: widthScale * 28,
       child: Text(
         title,
-        style: jm_text_gray_style15,
+        style: jm_text_gray_style16,
       ),
     );
   }

@@ -1,4 +1,6 @@
+import 'package:JMrealty/Client/components/ClientSuccessWidget.dart';
 import 'package:JMrealty/Report/viewmodel/ReporProjecttInfo.dart';
+import 'package:JMrealty/Report/viewmodel/ReportDetailViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportUploadViewModel.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomAppBar.dart';
@@ -42,6 +44,7 @@ class ReportUpload extends StatefulWidget {
 }
 
 class _ReportUploadState extends State<ReportUpload> {
+  ReportDetailViewModel reportDetailModel = ReportDetailViewModel();
   int imageCount = 15;
   ReportUploadViewModel viewModel = ReportUploadViewModel();
   EventBus _eventBus = EventBus();
@@ -55,6 +58,7 @@ class _ReportUploadState extends State<ReportUpload> {
   String mark;
   List imageList = [];
   List invalidTmpList = [];
+  Map reportDetailData;
   // String currentInvalidTmpList = '';
   dynamic img;
   @override
@@ -69,6 +73,7 @@ class _ReportUploadState extends State<ReportUpload> {
           }
         }
       });
+      // if ()
     }
     imgSelectV = SelectImageView(
       count: imageCount,
@@ -84,6 +89,17 @@ class _ReportUploadState extends State<ReportUpload> {
         }
       },
     );
+
+    if (widget.uploadStatus == ReportUploadStatus.checkDeal) {
+      reportDetailModel.loadReportDetailRequest(
+        widget.data['id'],
+        success: (detailData, success) {
+          setState(() {
+            reportDetailData = detailData;
+          });
+        },
+      );
+    }
     super.initState();
   }
 
@@ -152,16 +168,31 @@ class _ReportUploadState extends State<ReportUpload> {
               labelSpace: labelSpace,
             ),
             SizedBox(
+              height: labelSpace,
+            ),
+            ...getRemark(),
+            SizedBox(
               height: 15,
             ),
-            JMline(width: SizeConfig.screenWidth, height: 0.5),
             widget.uploadStatus == ReportUploadStatus.sign
                 ? getDateWidget(title: '签约时间')
                 : Container(
                     width: 0.0,
                     height: 0.0,
                   ),
-            JMline(width: SizeConfig.screenWidth, height: 0.5),
+            JMline(width: SizeConfig.screenWidth, height: 1.5),
+            widget.uploadStatus == ReportUploadStatus.checkDeal &&
+                    reportDetailData != null &&
+                    reportDetailData['reportShopDetailVO'] != null
+                ? Padding(
+                    padding: EdgeInsets.only(top: 15),
+                    child: ClientSuccessWidget(
+                      margin: outMargin,
+                      successData: reportDetailData['reportShopDetailVO'],
+                    ),
+                  )
+                : NoneV(),
+            JMline(width: SizeConfig.screenWidth, height: 1.5),
             SizedBox(
               height: 15,
             ),
@@ -272,6 +303,37 @@ class _ReportUploadState extends State<ReportUpload> {
         ),
       ),
     );
+  }
+
+  List<Widget> getRemark() {
+    return [
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: outMargin,
+          ),
+          Container(
+            width: widthScale * 25,
+            child: Text(
+              '备注',
+              style: jm_text_gray_style15,
+            ),
+          ),
+          Container(
+            width: SizeConfig.screenWidth - outMargin * 2 - widthScale * 25,
+            child: Text(
+              widget.data['remarks'] == null ||
+                      widget.data['remarks'].length == 0
+                  ? '-'
+                  : widget.data['remarks'],
+              style: jm_text_black_style15,
+              maxLines: 100,
+            ),
+          )
+        ],
+      )
+    ];
   }
 
   Widget getUploadTips() {

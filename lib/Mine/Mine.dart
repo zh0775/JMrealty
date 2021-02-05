@@ -15,6 +15,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:jpush_flutter/jpush_flutter.dart';
 
 class Mine extends StatefulWidget {
   final IndexClick indexClick;
@@ -212,6 +213,7 @@ class _MineState extends State<Mine> {
                 getCell('退出登录', 'assets/images/icon/icon_mine_logout.png', () {
                   CustomAlert(content: '确定要退出登录吗？').show(
                     confirmClick: () {
+                      JPush().stopPush();
                       UserDefault.saveStr(USERINFO, null);
                       UserDefault.saveStr(ACCESS_TOKEN, null).then((value) {
                         if (value) {

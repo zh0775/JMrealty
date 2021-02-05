@@ -21,6 +21,15 @@ class _HomeScheduleToDoState extends State<HomeScheduleToDo> {
   List<DateButton> dateButtonList = [];
   int dateButtonIndex = -1;
   List scheData = [{}, {}, {}, {}, {}, {}, {}];
+
+  @override
+  void didUpdateWidget(covariant HomeScheduleToDo oldWidget) {
+    if (widget.data != null) {
+      scheData = [{}, {}, {}, {}, {}, {}, {}];
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);

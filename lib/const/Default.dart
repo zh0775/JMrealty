@@ -15,7 +15,7 @@ const Color jm_appTheme_disable = Color.fromRGBO(230, 184, 92, 0.6);
 const Color jm_appTheme_splash = Color.fromRGBO(230, 184, 92, 0.2);
 const Color jm_line_color = Color(0xFFF0F2F5);
 // const Color jm_line_color = Color.fromRGBO(0, 0, 0, 0.12);
-const Color jm_text_black = Color(0xff404351);
+const Color jm_text_black = Color(0xff404352);
 const Color jm_text_gray = Color(0xffaaacb2);
 const Color jm_placeholder_color = Color(0xffaab2bd);
 const Color jm_bg_gray_color = Color(0xFFF0F2F5);
@@ -151,10 +151,10 @@ Color jm_getReportStatusColor(int status) {
   Color statusColor = jm_text_black;
   switch (status) {
     case 0:
-      statusColor = jm_appTheme;
+      statusColor = jm_text_black;
       break;
     case 5:
-      statusColor = jm_appTheme;
+      statusColor = jm_text_black;
       break;
     case 10:
       statusColor = jm_appTheme;
@@ -187,10 +187,10 @@ Color jm_getReportStatusColor(int status) {
       statusColor = jm_appTheme;
       break;
     case 70:
-      statusColor = jm_appTheme;
+      statusColor = jm_text_black;
       break;
     case 80:
-      statusColor = jm_appTheme;
+      statusColor = jm_text_black;
       break;
   }
   return statusColor;
@@ -394,6 +394,7 @@ class CustomInput extends StatefulWidget {
   final bool enable;
   final Color backgroundColor;
   final String lastLabelText;
+  final double lastLabelWidth;
   final TextStyle textStyle;
   final TextStyle hintStyle;
   final String searchUrl;
@@ -409,6 +410,7 @@ class CustomInput extends StatefulWidget {
       this.requestKey = 'name',
       this.searchUrl,
       this.lastLabelText,
+      this.lastLabelWidth,
       this.title = '',
       this.otherWidth,
       this.valueChange,
@@ -475,8 +477,11 @@ class _CustomInputState extends State<CustomInput>
   Widget build(BuildContext context) {
     super.build(context);
     SizeConfig().init(context);
-    lastLabelWidth =
-        widget.lastLabelText != null ? SizeConfig.blockSizeHorizontal * 22 : 0;
+    lastLabelWidth = widget.lastLabelWidth ??
+        (widget.lastLabelText != null
+            ? SizeConfig.blockSizeHorizontal * 8.2
+            : 0);
+
     margin = widget.margin != null
         ? widget.margin
         : SizeConfig.blockSizeHorizontal * 6;

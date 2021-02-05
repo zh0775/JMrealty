@@ -18,6 +18,7 @@ import 'package:JMrealty/base/image_loader.dart';
 import 'package:JMrealty/components/CustomWebV.dart';
 import 'package:JMrealty/components/ReadMe.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/services/http_config.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -25,6 +26,7 @@ import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import '../tabbar.dart';
 import '../Project/Project.dart';
 import '../Client/Client.dart';
@@ -92,7 +94,7 @@ class _HomeState extends State<Home> {
   // GlobalKey pullKey = GlobalKey();
   // GlobalKey pullHeaderKey = GlobalKey();
   List homeScheduleToDoData = [];
-  var bannerList = [];
+  List bannerList = [];
   List menus = [];
   List notices = [];
   List gladNotices = [];
@@ -342,11 +344,13 @@ class _HomeState extends State<Home> {
                       return SmartReport();
                     }));
                   } else if (buttonData['path'] == 'app:summary:list') {
+                    _goToNativePage();
                     // 每日总结
                     // push(CustomWebPlugin(path: WebPaths.summary), context);
-                    push(CustomWebV(path: WebPath.summary), context);
+                    // push(CustomWebV(path: WebPath.summary), context);
                   } else if (buttonData['path'] == 'app:Top of the list:list') {
                     // 榜单
+
                     // push(CustomWebPlugin(path: WebPaths.rankingList), context);
                     push(CustomWebV(path: WebPath.rankingList), context);
                   } else if (buttonIndex == 100) {
@@ -400,6 +404,30 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Future<void> _goToNativePage() async {
+    const platform = const MethodChannel('com.jm/jmGoToNativePage');
+    try {
+      String token = await UserDefault.get(ACCESS_TOKEN);
+      String userInfo = await UserDefault.get(USERINFO);
+      Map info = convert.jsonDecode(userInfo);
+      Map params =
+          Map<String, dynamic>.from({'token': token, 'deptId': info['deptId']});
+      String json = convert.jsonEncode(params);
+      // String js_String = "let json = " +
+      //     "'" +
+      //     json +
+      //     "'" +
+      //     '; ' +
+      //     'getDataFromNative(json);';
+      String jsString = "getDataFromNative('$json');";
+      final int result = await platform.invokeMethod(
+          'goToNativePage', {'url': WEB_URL + 'summary', 'json': jsString});
+      print('result === $result');
+    } on PlatformException catch (e) {
+      print(e);
+    }
+  }
+
   List<Widget> buttons(buttonClick) {
     double buttonWidth = SizeConfig.screenWidth / 5;
     double buttonHeight = SizeConfig.screenWidth / 5;
@@ -443,8 +471,8 @@ class _HomeState extends State<Home> {
   void getBanner() {
     homeVM.loadHomeBanner((banner, success) {
       if (success) {
-        this.setState(() {
-          this.bannerList = banner;
+        setState(() {
+          bannerList = banner;
         });
       }
     });

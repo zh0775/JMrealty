@@ -58,7 +58,8 @@ class ReportUploadViewModel extends BaseViewModel {
     );
   }
 
-  upLoadReportImages(List images, {Function(List strImg) callBack}) {
+  upLoadReportImages(List images,
+      {Function(List strImg) callBack, bool userBg = false}) {
     int total = images.length;
     int successCount = 0;
     Http().uploadImages(images, resList: (List resImages) {
@@ -80,7 +81,7 @@ class ReportUploadViewModel extends BaseViewModel {
       if (successCount == 0) {
         ShowToast.normal('上传失败');
       }
-    });
+    }, userBg: userBg);
   }
 
   loadInvalidTmp(Function(List dataList, bool success) success) {

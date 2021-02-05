@@ -6,6 +6,7 @@ import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/services/http_config.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
+import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -41,21 +42,22 @@ class CustomWebV extends StatefulWidget {
   _CustomWebVState createState() => _CustomWebVState();
 }
 
-class _CustomWebVState extends State<CustomWebV> {
+class _CustomWebVState extends State<CustomWebV> with WidgetsBindingObserver {
   EventBus _bus = EventBus();
-  // WebViewController _controller;
-  final Completer<WebViewController> _controller =
-      Completer<WebViewController>();
+  WebViewController _controller;
+  // final Completer<WebViewController> _controller =
+  //     Completer<WebViewController>();
   @override
   void initState() {
-    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-    //   // setState(() {
-    //   // 键盘高度：大于零，键盘弹出，否则，键盘隐藏
-    //   print(MediaQuery.of(context).viewInsets.bottom);
-    //   // });
-    // });
-    // WidgetsBinding.instance.addObserver(this);
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      // setState(() {
+      // 键盘高度：大于零，键盘弹出，否则，键盘隐藏
+      // print(MediaQuery.of(context).viewInsets.bottom);
+      print(SizeConfig.screenHeight);
+      // });
+    });
+    // WidgetsBinding.instance.addObserver(this);
   }
 
   @override
@@ -106,8 +108,8 @@ class _CustomWebVState extends State<CustomWebV> {
         javascriptMode: JavascriptMode.unrestricted,
 
         onWebViewCreated: (controller) {
-          _controller.complete(controller);
-          // _controller = controller;
+          // _controller.complete(controller);
+          _controller = controller;
         },
         // ClampingScrollPhysics(),
         onPageFinished: (url) {
@@ -133,13 +135,13 @@ class _CustomWebVState extends State<CustomWebV> {
           String jsString = "getDataFromNative('$json');";
           print('js_String === $jsString');
           // Future.delayed(Duration(seconds: 1), () {
-          _controller.future.then((value) {
-            value?.evaluateJavascript(jsString)?.then((result) {
-              print('result ==== $result');
-            });
-          });
+          // _controller.future.then((value) {
+          //   value?.evaluateJavascript(jsString)?.then((result) {
+          //     print('result ==== $result');
+          //   });
           // });
-          // _controller?.evaluateJavascript(jsString);
+          // });
+          _controller?.evaluateJavascript(jsString);
         },
         navigationDelegate: (NavigationRequest request) {
           // if (request.url.startsWith('https://www.youtube.com/')) {
@@ -197,7 +199,16 @@ class _CustomWebVState extends State<CustomWebV> {
         name: "get",
         onMessageReceived: (JavascriptMessage message) {
           print('get === ${message.message}');
-          // backStatus = message.message;
+          // if (widget.path == WebPath.summary) {
+          //   if (int.parse(message.message) < 0) {
+          //     // print(double.parse(message.message));
+          //     _controller.future.then((ctr) {
+          //       ctr.getScrollX().then((x) {
+          //         ctr.scrollTo(x, int.parse(message.message));
+          //       });
+          //     });
+          //   }
+          // }
           // back();
         });
   }

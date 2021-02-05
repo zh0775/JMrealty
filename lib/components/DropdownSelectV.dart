@@ -174,16 +174,24 @@ class _DropdownSelectVState extends State<DropdownSelectV> {
               },
               child: Container(
                   // key: _globalKey,
-                  width: otherWidth,
+                  width: otherWidth - widthScale * 8,
                   alignment: Alignment.centerLeft,
                   color: widget.backgroundColor ?? Colors.white,
                   padding: widget.textPadding,
                   constraints: BoxConstraints(
-                      minWidth: otherWidth, minHeight: widget.height - 2),
+                      minWidth: otherWidth - widthScale * 8,
+                      minHeight: widget.height - 2),
                   child: Text(
                     selfValue,
                     style: selfStyle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   )),
+            ),
+            Image.asset(
+              'assets/images/icon/icon_arrow_right.png',
+              height: widthScale * 8,
+              width: widthScale * 8,
             )
           ],
         ),

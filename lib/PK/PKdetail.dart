@@ -49,6 +49,7 @@ class _PKdetailState extends State<PKdetail> {
       //   title: 'PK赛详情',
       // ),
       body: SingleChildScrollView(
+        physics: ClampingScrollPhysics(),
         child: Column(
           children: [
             Container(
@@ -321,8 +322,19 @@ class _PKdetailState extends State<PKdetail> {
                   'assets/images/icon/icon_pk_rank${(i + 1).toString()}.png',
                   width: widthScale * 5.5,
                 )
-              : SizedBox(
-                  width: widthScale * 5.5,
+              : Container(
+                  alignment: Alignment.center,
+                  width: widthScale * 6,
+                  height: widthScale * 6,
+                  decoration: BoxDecoration(
+                    color: jm_bg_gray_color,
+                    borderRadius: BorderRadius.circular(widthScale * 6 / 2),
+                  ),
+                  child: Text(
+                    (i + 1).toString(),
+                    style: TextStyle(
+                        color: jm_text_black, fontSize: 13, height: 1.3),
+                  ),
                 ),
           SizedBox(width: widthScale * 4),
           Column(

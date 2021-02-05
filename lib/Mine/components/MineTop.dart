@@ -61,7 +61,7 @@ class _MineTopState extends State<MineTop> {
                     {'avatar': avatarPath, 'userId': widget.data['userId']}));
               }
             }
-          });
+          }, userBg: true);
         }
       },
     );
@@ -82,7 +82,7 @@ class _MineTopState extends State<MineTop> {
                 }));
               }
             }
-          });
+          }, userBg: true);
         }
       },
     );
@@ -93,11 +93,9 @@ class _MineTopState extends State<MineTop> {
         setState(() {
           signIsEdit = false;
         });
-        if (userSign != null &&
-            userSign.length > 0 &&
-            widget.changeSign != null) {
-          widget
-              .changeSign({'sign': userSign, 'userId': widget.data['userId']});
+        if (widget.changeSign != null) {
+          widget.changeSign(
+              {'sign': userSign ?? '', 'userId': widget.data['userId']});
         }
       }
       // print("焦点1是否被选中：" + signFocusNode.hasFocus.toString());
@@ -338,7 +336,10 @@ class _MineTopState extends State<MineTop> {
                           width: SizeConfig.screenWidth -
                               (widthScale * 18 + margin * 3),
                           child: Text(
-                            widget.data['sign'] ?? '点击设置个人签名',
+                            widget.data['sign'] == null ||
+                                    widget.data['sign'].length == 0
+                                ? '请输入签名'
+                                : widget.data['sign'],
                             maxLines: 10,
                             style: widget.data['sign'] == null ||
                                     widget.data['sign'] == ''
@@ -508,7 +509,7 @@ class _MineTopState extends State<MineTop> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   getCommissionButton(
-                      '目标业绩',
+                      '业绩目标',
                       numberFormat(widget.targetData['number']) + '元',
                       // countFormat(widget.targetData['number']),
                       widthScale,

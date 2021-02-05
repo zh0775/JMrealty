@@ -397,38 +397,50 @@ class _ReportDetailState extends State<ReportDetail> {
   List<Widget> getRemark() {
     return [
       Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
             width: outMargin,
           ),
           getLabel('备注'),
-        ],
-      ),
-      SizedBox(
-        height: labelSpace,
-      ),
-      Row(
-        children: [
-          SizedBox(
-            width: outMargin,
-          ),
           Container(
-            width: SizeConfig.screenWidth - outMargin * 2,
+            width: SizeConfig.screenWidth - outMargin * 2 - widthScale * 25,
             child: Text(
-              widget.data['remarks'] ?? '-',
+              widget.data['remarks'] == null ||
+                      widget.data['remarks'].length == 0
+                  ? '-'
+                  : widget.data['remarks'],
               style: jm_text_black_style15,
               maxLines: 100,
             ),
           )
         ],
-      )
+      ),
+      // SizedBox(
+      //   height: labelSpace,
+      // ),
+      // Row(
+      //   children: [
+      //     SizedBox(
+      //       width: outMargin,
+      //     ),
+      //     Container(
+      //       width: SizeConfig.screenWidth - outMargin * 2,
+      //       child: Text(
+      //         widget.data['remarks'] ?? '-',
+      //         style: jm_text_black_style15,
+      //         maxLines: 100,
+      //       ),
+      //     )
+      //   ],
+      // )
     ];
   }
 
   // label
   Widget getLabel(String title) {
     return Container(
-      width: widthScale * 26,
+      width: widthScale * 25,
       child: Text(
         title,
         style: jm_text_gray_style15,

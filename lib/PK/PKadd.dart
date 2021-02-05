@@ -601,9 +601,10 @@ class _PKaddState extends State<PKadd> {
               style: valueStyle,
             ),
           ),
-          Icon(
-            Icons.keyboard_arrow_right,
-            size: widthScale * 8,
+          Image.asset(
+            'assets/images/icon/icon_arrow_right.png',
+            height: widthScale * 8,
+            width: widthScale * 8,
           )
         ],
       ),

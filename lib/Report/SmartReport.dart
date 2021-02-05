@@ -78,8 +78,8 @@ class _SmartReportState extends State<SmartReport> {
                     height: 30,
                   ),
                   CustomSubmitButton(
-                    // margin: margin * 2,
-                    height: 40,
+                    margin: margin,
+                    height: 45,
                     title: '识别',
                     buttonClick: () {
                       if (str == null || str.length == 0) {

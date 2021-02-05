@@ -31,7 +31,7 @@ class ReportStatusBar extends StatelessWidget {
   }
 
   List<Widget> getRow() {
-    double leftRightLineWidth = widthScale * 3;
+    double leftRightLineWidth = widthScale * 2.6;
     double titleHeight = 40;
     List<Widget> rows = [];
 
@@ -52,7 +52,7 @@ class ReportStatusBar extends StatelessWidget {
                     i != 0
                         ? Container(
                             width: leftRightLineWidth,
-                            height: 2,
+                            height: 1,
                             color: jm_appTheme,
                           )
                         : SizedBox(
@@ -64,7 +64,7 @@ class ReportStatusBar extends StatelessWidget {
                       decoration: BoxDecoration(
                           color: Color.fromRGBO(252, 247, 238, 1),
                           borderRadius: BorderRadius.circular(titleHeight / 2),
-                          border: Border.all(color: jm_appTheme, width: 2)),
+                          border: Border.all(color: jm_appTheme, width: 1)),
                       child: Center(
                         child: Text(
                           getTitle(rowData['status']),
@@ -75,7 +75,7 @@ class ReportStatusBar extends StatelessWidget {
                     i != statusData.length - 1
                         ? Container(
                             width: leftRightLineWidth,
-                            height: 2.0,
+                            height: 1.0,
                             color: jm_appTheme,
                           )
                         : SizedBox(

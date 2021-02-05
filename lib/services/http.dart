@@ -220,14 +220,25 @@ class Http {
     }
   }
 
-  Future<void> uploadImages(List images, {Function(List jsons) resList}) async {
+  Future<void> uploadImages(List images,
+      {Function(List jsons) resList, bool userBg = false}) async {
     List<Future> imagesFuture = [];
     if (images.length == 1) {
       Asset asset = images[0];
-      ByteData byteData = await asset.getByteData();
+      ByteData byteData;
+      if (userBg) {
+        byteData = await asset.getThumbByteData(
+            (asset.originalWidth * 0.3).round(),
+            (asset.originalHeight * 0.3).round(),
+            quality: 30);
+      } else {
+        byteData = await asset.getByteData();
+      }
+      // ByteData byteData = await asset.getByteData();
       // ByteData byteData = await asset.getThumbByteData(
       //     (asset.originalWidth * 0.3).round(),
-      //     (asset.originalHeight * 0.3).round());
+      //     (asset.originalHeight * 0.3).round(),
+      //     quality: 30);
       List<int> imageData = byteData.buffer.asUint8List();
       MultipartFile multipartFile = MultipartFile.fromBytes(
         imageData,

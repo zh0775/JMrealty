@@ -247,6 +247,7 @@ class _ReportSuccessState extends State<ReportSuccess> {
           textStyle: jm_text_black_style15,
           title: '成交面积',
           lastLabelText: '平方米',
+          lastLabelWidth: widthScale * 15,
           hintText: '请输入成交面积',
           keyboardType: TextInputType.number,
           text: successParams['houseArea'] ?? '',
