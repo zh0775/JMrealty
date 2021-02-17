@@ -96,33 +96,33 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return Scaffold(
-        // 修复弹出键盘后高度不够报错的bug 套一层SingleChildScrollView
-        body: GestureDetector(
-      onTap: () {
-        // 收起键盘
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      child: SingleChildScrollView(
-          child: isForget
-              ? ForgetPwd(
-                  toLogin: () {
-                    setState(() {
-                      isLogin = true;
-                      isForget = false;
-                    });
-                  },
-                )
-              : (isLogin
-                  ? loginWidget(context)
-                  : Regist(
-                      toLogin: () {
-                        setState(() {
-                          isLogin = true;
-                        });
-                      },
-                    ))),
-    ));
+    return !isLogin
+        ? Regist(
+            toLogin: () {
+              setState(() {
+                isLogin = true;
+              });
+            },
+          )
+        : Scaffold(
+            // 修复弹出键盘后高度不够报错的bug 套一层SingleChildScrollView
+            body: GestureDetector(
+            onTap: () {
+              // 收起键盘
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: SingleChildScrollView(
+                child: isForget
+                    ? ForgetPwd(
+                        toLogin: () {
+                          setState(() {
+                            isLogin = true;
+                            isForget = false;
+                          });
+                        },
+                      )
+                    : loginWidget(context)),
+          ));
   }
 
   // 登录页 主页面
@@ -276,7 +276,8 @@ class _LoginState extends State<Login> {
                         if (success) {
                           _eventBus.emit(NOTIFY_LOGIN_SUCCESS);
                           _eventBus.emit(NOTIFY_CHANGE_TABBAR_INDEX, 2);
-                          JPush().resumePush();
+                          // final jpush = JPush();
+                          // jpush.resumePush();
                           ShowToast.normal('登录成功');
                           Future.delayed(Duration(seconds: 1), () {
                             FocusScope.of(context).requestFocus(FocusNode());
@@ -724,7 +725,7 @@ class _LoginState extends State<Login> {
           }
         },
         child: Text(
-          sex ? '男' : '女',
+          sex ? '男士' : '女士',
           style: TextStyle(
               textBaseline: TextBaseline.alphabetic,
               fontSize: 16,

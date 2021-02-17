@@ -9,7 +9,13 @@ class ImageLoader extends StatelessWidget {
   final String imgUrl;
   final double height;
   final BoxFit fit;
-  ImageLoader(this.imgUrl, {this.height, this.fit = BoxFit.cover});
+  final LoadingErrorWidgetBuilder errorWidget;
+  final PlaceholderWidgetBuilder placeholder;
+  ImageLoader(this.imgUrl,
+      {this.height,
+      this.fit = BoxFit.cover,
+      this.placeholder,
+      this.errorWidget});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +30,8 @@ class ImageLoader extends StatelessWidget {
         placeholderFadeInDuration: Duration(milliseconds: 1),
         fadeOutDuration: Duration(milliseconds: 1),
         imageUrl: imgUrl,
-        height: this.height,
+        // height: this.height,
+        placeholder: placeholder,
 
         // placeholder: (context, url) {
         //   return Image.asset(
@@ -33,13 +40,15 @@ class ImageLoader extends StatelessWidget {
         //   );
         // },
         cacheManager: CustomCacheManagerWithHandler(),
-        errorWidget: (context, url, error) {
-          return Image.asset(
-            'assets/images/icon/icon_default_min.png',
-            // width: context.size.width,
-            // height: context.size.height,
-          );
-        },
+        errorWidget: errorWidget != null
+            ? errorWidget
+            : (context, url, error) {
+                return Image.asset(
+                  'assets/images/icon/icon_default_min.png',
+                  // width: context.size.width,
+                  // height: context.size.height,
+                );
+              },
         // height: height,
         fit: fit,
       );

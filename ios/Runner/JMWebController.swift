@@ -36,7 +36,6 @@ class JMWebController: UIViewController,WKUIDelegate,WKNavigationDelegate,WKScri
     }
 
 
-
     func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
         // JS端调用prompt函数时，会触发此方法
         // 要求输入一段文本
@@ -93,7 +92,8 @@ class JMWebController: UIViewController,WKUIDelegate,WKNavigationDelegate,WKScri
         //h5给端传值的内容，可在这里实现h5与原生的交互时间
         let messageDic = message.body
         let messageName = message.name
-        if (message.name == "back") {
+        
+        if (message.name == "back" && self.url?.range(of:"summary") != nil) {
             self.navigationController?.popViewController(animated: true);
         }
 //
@@ -101,6 +101,7 @@ class JMWebController: UIViewController,WKUIDelegate,WKNavigationDelegate,WKScri
         print(messageName)
         
     }
+    
 
     //MARK:-lazy
     

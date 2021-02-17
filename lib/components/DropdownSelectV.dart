@@ -179,7 +179,7 @@ class _DropdownSelectVState extends State<DropdownSelectV> {
                   color: widget.backgroundColor ?? Colors.white,
                   padding: widget.textPadding,
                   constraints: BoxConstraints(
-                      minWidth: otherWidth - widthScale * 8,
+                      minWidth: otherWidth - widthScale * 7,
                       minHeight: widget.height - 2),
                   child: Text(
                     selfValue,
@@ -190,8 +190,9 @@ class _DropdownSelectVState extends State<DropdownSelectV> {
             ),
             Image.asset(
               'assets/images/icon/icon_arrow_right.png',
-              height: widthScale * 8,
-              width: widthScale * 8,
+              height: widthScale * 4,
+              width: widthScale * 4,
+              fit: BoxFit.fill,
             )
           ],
         ),

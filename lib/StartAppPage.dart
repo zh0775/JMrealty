@@ -10,6 +10,8 @@ import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 
 class StartAppPage extends StatefulWidget {
+  final Function() timeOut;
+  const StartAppPage({this.timeOut});
   @override
   _StartAppPageState createState() => _StartAppPageState();
 }
@@ -73,22 +75,42 @@ class _StartAppPageState extends State<StartAppPage> {
                     right: 0,
                     top: 0,
                     bottom: 0,
-                    child: Image.network(
+                    child:
+                        // Image.network(
+                        //   model.startImgUrl,
+                        //   fit:
+                        //   BoxFit.fill,
+                        //   loadingBuilder: (context, child, loadingProgress) {
+                        //     return Image.asset(
+                        //       'assets/images/icon/screen-1242x2688.jpg',
+                        //       fit: BoxFit.fill,
+                        //     );
+                        //   },
+                        //   frameBuilder:
+                        //       (context, child, frame, wasSynchronouslyLoaded) {
+                        //     return Image.asset(
+                        //       'assets/images/icon/screen-1242x2688.jpg',
+                        //       fit: BoxFit.fill,
+                        //     );
+                        //   },
+                        // )
+                        ImageLoader(
                       model.startImgUrl,
+                      height: SizeConfig.screenHeight,
                       fit: BoxFit.fill,
-                      loadingBuilder: (context, child, loadingProgress) {
+                      placeholder: (context, url) {
                         return Image.asset(
                           'assets/images/icon/screen-1242x2688.jpg',
                           fit: BoxFit.fill,
                         );
                       },
-                    )
-                    // ImageLoader(
-                    //   model.startImgUrl,
-                    //   height: SizeConfig.screenHeight,
-                    //   fit: BoxFit.fill,
-                    // )
-                    ),
+                      errorWidget: (context, url, error) {
+                        return Image.asset(
+                          'assets/images/icon/screen-1242x2688.jpg',
+                          fit: BoxFit.fill,
+                        );
+                      },
+                    )),
                 waitTime <= 3
                     ? Positioned(
                         right: 15,
@@ -135,9 +157,14 @@ class _StartAppPageState extends State<StartAppPage> {
   }
 
   toMain(BuildContext context) {
-    Future.delayed(Duration(seconds: 0), () {
-      Navigator.of(context).popAndPushNamed(Routes.main_page);
-      // Navigator.of(context).replace(oldRoute: null, newRoute: null)
-    });
+    if (widget.timeOut != null) {
+      widget.timeOut();
+    }
+    // Future.delayed(Duration(seconds: 0), () {
+    //   // Navigator.of(context).push(route)
+    //   // Navigator.of(context).popAndPushNamed(PageRouteBuilder(pageBuilder: ))
+    //   Navigator.of(context).popAndPushNamed(Routes.main_page);
+    //   // Navigator.of(context).replace(oldRoute: null, newRoute: null)
+    // });
   }
 }

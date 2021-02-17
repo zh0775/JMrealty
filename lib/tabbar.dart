@@ -96,7 +96,7 @@ BottomNavigationBarItem createItem(String iconName, String title,
                           color: Colors.red,
                           borderRadius: BorderRadius.circular(9)),
                       child: Text(
-                        count.toString(),
+                        count > 99 ? '99' : count.toString(),
                         style: TextStyle(color: Colors.white, fontSize: 10),
                       ),
                     ))

@@ -1,11 +1,19 @@
+import 'package:JMrealty/const/Default.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'dart:ui' as ui;
 
 /// 手机号正则表达式->true匹配
 bool isMobilePhoneNumber(String value) {
   RegExp mobile = new RegExp(r"(0|86|17951)?(1[0-9][0-9])[0-9]{8}");
 
   return mobile.hasMatch(value);
+}
+
+// 是否为数字
+bool isNumber(String value) {
+  RegExp number = new RegExp(r"^[0-9]*[1-9][0-9]*$");
+  return number.hasMatch(value);
 }
 
 ///验证网页URl
@@ -321,4 +329,67 @@ String formatNum(double num, int postion) {
         .substring(0, num.toString().lastIndexOf(".") + postion + 1)
         .toString());
   }
+}
+
+double calculateTextHeight(
+    String value, TextStyle textStyle, double maxWidth, int maxLines) {
+  // value = ui.filterText(value);
+  TextPainter painter = TextPainter(
+
+      ///AUTO：华为手机如果不指定locale的时候，该方法算出来的文字高度是比系统计算偏小的。
+      locale: Localizations.localeOf(Global.navigatorKey.currentContext,
+          nullOk: true),
+      maxLines: maxLines,
+      textDirection: ui.TextDirection.ltr,
+      text: TextSpan(text: value, style: textStyle));
+  painter.layout(maxWidth: maxWidth);
+
+  ///文字的宽度:painter.width
+  return painter.height;
+}
+
+String copyString(Map reportData) {
+  String id = reportData['customerNumber'] != null
+      ? ((reportData['customerNumber']).length > 6
+          ? (reportData['customerNumber'] as String)
+              .substring((reportData['customerNumber']).length - 6)
+          : reportData['customerNumber'])
+      : '';
+  // String copyStr = '''
+  // 报备楼盘：${reportData['projectName'] ?? ''}
+  // 产品类型：${reportData['purpose'] ?? ''}
+  // 报备公司：${reportData['company'] ?? ''}
+  // 报备员工：${reportData['employeeName'] ?? ''}
+  // 员工电话：${reportData['employeePhone'] ?? ''}
+  // 报备客户：${reportData['customerName'] ?? ''}
+  // 客户电话：${reportData['customerPhone'] ?? ''}
+  // 报备日期：${reportData['createTime'] ?? ''}
+  // 身份证后六位（选填）：$id
+  // ''';
+
+  String copyStr = '''''';
+
+  copyStr += '''报备楼盘：${reportData['projectName'] ?? ''}\n''';
+  // copyStr += '''产品类型：${reportData['purpose'] ?? ''}\n''';
+  copyStr += '''报备公司：${reportData['employeeCompany'] ?? ''}\n''';
+
+  copyStr += '''报备员工：${reportData['employeeName'] ?? ''}\n''';
+  copyStr += '''员工电话：${reportData['employeePhone'] ?? ''}\n''';
+  copyStr += '''报备客户：${reportData['customerName'] ?? ''}\n''';
+  copyStr +=
+      '''客户电话：${reportData['isSensitive'] == 1 ? hiddenPhone(reportData['customerPhone']) : reportData['customerPhone'] ?? ''}\n''';
+  copyStr += '''报备日期：${reportData['createTime'] ?? ''}\n''';
+  copyStr += '''报备服务点：${reportData['deptName'] ?? ''}\n''';
+  // copyStr += '''身份证后六位（选填）：$id\n''';
+
+  // copyStr += '产品类型：' + (reportData['purpose'] ?? '' + '\n');
+  // copyStr += '报备公司：' + (reportData['company'] ?? '' + '\n');
+  // copyStr += '报备员工：' + (reportData['employeeName'] ?? '' + '\n');
+  // copyStr += '员工电话：' + (reportData['employeePhone'] ?? '' + '\n');
+  // copyStr += '报备客户：' + (reportData['customerName'] ?? '' + '\n');
+  // copyStr += '客户电话：' + (reportData['customerPhone'] ?? '' + '\n');
+  // copyStr += '报备日期：' + (reportData['createTime'] ?? '' + '\n');
+  // copyStr += '身份证后六位（选填）：' + id + '\n';
+  print('copyStr === $copyStr');
+  return copyStr;
 }

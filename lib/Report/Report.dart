@@ -1,5 +1,6 @@
 import 'package:JMrealty/Project/ProjectViewModel.dart';
 import 'package:JMrealty/Report/ReportListView.dart';
+import 'package:JMrealty/Report/ReportSearch.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
@@ -87,6 +88,18 @@ class _ReportState extends State<Report> {
               },
             ),
             actions: [
+              RawMaterialButton(
+                highlightColor: Colors.transparent,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                constraints:
+                    BoxConstraints(minHeight: 0, minWidth: widthScale * 8),
+                onPressed: () => push(ReportSearch(), context),
+                child: Icon(
+                  Icons.search,
+                  color: Colors.white,
+                  size: 25,
+                ),
+              ),
               TextButton(
                   onPressed: () {
                     setState(() {
@@ -257,6 +270,7 @@ class _ReportState extends State<Report> {
                         child: Container(
                           color: Colors.black26,
                           child: SingleChildScrollView(
+                            physics: ClampingScrollPhysics(),
                             child: Column(
                               children: [...selectList()],
                             ),

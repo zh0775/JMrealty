@@ -9,7 +9,6 @@ import Flutter
 
 class JMViewController: FlutterViewController {
     var first = true
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated);
         self.edgesForExtendedLayout = UIRectEdge.init(rawValue: 0)
@@ -67,11 +66,9 @@ class JMViewController: FlutterViewController {
     }
     
     private func goToNativePage(result: NSDictionary) {
-        print("跳转")
         let url: String = result["url"] as! String
         let json: String = result["json"] as! String
         let vc:UIViewController! = JMWebController(String(url), String(json))
-        print(self.navigationController);
         self.navigationController?.pushViewController(vc, animated: true)
   }
 }

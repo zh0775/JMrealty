@@ -1,3 +1,4 @@
+import 'package:JMrealty/Home/Home.dart';
 import 'package:JMrealty/StartAppPage.dart';
 import 'package:JMrealty/const/Config.dart';
 import 'package:JMrealty/const/Routes.dart';
@@ -46,7 +47,8 @@ class _MyAppState extends State<MyApp> {
         return Routes.findRoutes(setting);
       },
       builder: EasyLoading.init(),
-      home: StartAppPage(),
+      // home: StartAppPage(),
+      home: MainPageWidget(),
       theme: ThemeData(
           primaryColor: jm_appTheme,
           splashColor: jm_appTheme,

@@ -1,7 +1,14 @@
+import 'package:JMrealty/Third/material_floating_search_bar.dart';
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
+import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/material.dart';
-import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:intl/intl.dart';
+
+// import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 typedef void NeedQuery(String queryText);
 void pushSearchView(BuildContext context,
@@ -51,6 +58,10 @@ class CustomSearchView extends StatefulWidget {
 }
 
 class _CustomSearchViewState extends State<CustomSearchView> {
+  double widthScale;
+  double margin;
+  double selfWidth;
+  double cellheight = 45;
   FuzzySearchViewModel searchVM = FuzzySearchViewModel();
   final controller = FloatingSearchBarController();
   BuildContext searchBarCtx;
@@ -75,6 +86,10 @@ class _CustomSearchViewState extends State<CustomSearchView> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    widthScale = SizeConfig.blockSizeHorizontal;
+    margin = widthScale * 6;
+    selfWidth = SizeConfig.screenWidth - margin * 2;
     return Scaffold(
       backgroundColor: Colors.transparent,
       // backgroundColor: Colors.black.withOpacity(0.3),
@@ -96,10 +111,10 @@ class _CustomSearchViewState extends State<CustomSearchView> {
     return FloatingSearchBar(
       hint: widget.hintText,
       // title: Text(widget.text),
-      // closeOnBackdropTap: true,
-
+      // closeOnBackdropTap: false,
       controller: controller,
       // autocorrect: true,
+      // backdropColor: Colors.transparent,
       scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
       transitionDuration: const Duration(milliseconds: 300),
       transitionCurve: Curves.easeInOut,
@@ -112,15 +127,20 @@ class _CustomSearchViewState extends State<CustomSearchView> {
       onQueryChanged: (query) {
         getSearchList(query);
       },
-      body: GestureDetector(
-          onTap: () {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-          },
-          child: Container(
-            color: Colors.black.withOpacity(0.2),
-          )),
+      // body: GestureDetector(
+      //     onTap: () {
+      //       if (Navigator.canPop(context)) {
+      //         Navigator.pop(context);
+      //       }
+      //     },
+      //     child: Container(
+      //       color: Colors.black.withOpacity(0.2),
+      //     )),
+      clickDropBg: () {
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+      },
       leadingActions: [
         RawMaterialButton(
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -182,31 +202,232 @@ class _CustomSearchViewState extends State<CustomSearchView> {
     if (searchDataList == null || searchDataList.length == 0) {
       return list;
     }
+
     searchDataList.forEach((element) {
-      list.add(GestureDetector(
-        onTap: () {
+      if (widget.searchUrl == Urls.projectFuzzySearch) {
+        list.add(projectCell(element));
+      } else if (widget.searchUrl == Urls.clientFuzzySearch) {
+        list.add(clientCell(element));
+      } else {
+        list.add(GestureDetector(
+          onTap: () {
+            if (widget.cellClick != null) {
+              widget.cellClick(element);
+            }
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
+          child: Container(
+            height: cellheight,
+            color: Colors.white,
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 18.0),
+              child: Text(
+                element[widget.namekey] ?? '',
+                style: jm_text_black_style15,
+              ),
+            ),
+          ),
+        ));
+      }
+    });
+
+    return list;
+  }
+
+  Widget clientCell(Map data) {
+    return GestureDetector(
+      onTap: () {
+        if (widget.cellClick != null) {
+          widget.cellClick(data);
+        }
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+      },
+      child: Container(
+        width: SizeConfig.screenWidth,
+        height: cellheight,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border:
+                Border(bottom: BorderSide(width: 1, color: jm_bg_gray_color))),
+        child: Row(
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              width: margin,
+            ),
+            SizedBox(
+              width: widthScale * 26,
+              child: Text(
+                data['name'] ?? '',
+                style: jm_text_black_bold_style15,
+              ),
+            ),
+            data['sex'] != null
+                ? Container(
+                    decoration: BoxDecoration(
+                      color: jm_appTheme,
+                      borderRadius: BorderRadius.circular(widthScale * 1.5),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      child: Text(
+                        data['sex'] == 0 ? '男士' : '女士',
+                        style: TextStyle(fontSize: 14, color: Colors.white),
+                      ),
+                    ),
+                  )
+                : NoneV(),
+            SizedBox(
+              width: widthScale * 2,
+            ),
+            Text(
+              data['phone'] ?? '',
+              style: jm_text_black_bold_style15,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget projectCell(Map data) {
+    return GestureDetector(
+      onTap: () {
+        if (data['status'] == null) {
+          return;
+        }
+        if (data['status'] == 3) {
+          ShowToast.normal('该项目已暂停，请选择其他项目');
+          return;
+        } else {
           if (widget.cellClick != null) {
-            widget.cellClick(element);
+            widget.cellClick(data);
           }
           if (Navigator.canPop(context)) {
             Navigator.pop(context);
           }
-        },
-        child: Container(
-          height: 45,
-          color: Colors.white,
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 18.0),
-            child: Text(
-              element[widget.namekey] ?? '',
-              style: jm_text_black_style15,
+        }
+      },
+      child: Container(
+        width: SizeConfig.screenWidth,
+        height: cellheight + 10,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border:
+                Border(bottom: BorderSide(width: 1, color: jm_bg_gray_color))),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                SizedBox(
+                  width: margin,
+                ),
+                Text(
+                  data['name'] ?? '',
+                  style: jm_text_black_style15,
+                ),
+                SizedBox(
+                  width: widthScale * 2,
+                ),
+                data['purpose'] != null && data['purpose'].length > 0
+                    ? Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(widthScale * 2),
+                            color: jm_appTheme),
+                        child: Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          child: Text(
+                            data['purpose'] ?? '',
+                            style: TextStyle(fontSize: 14, color: Colors.white),
+                          ),
+                        ),
+                      )
+                    : NoneV()
+              ],
             ),
-          ),
+            Row(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(widthScale * 2),
+                          color: jm_appTheme),
+                      child: Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        child: Text(
+                          data['statusName'] ?? '',
+                          style: TextStyle(fontSize: 14, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: data['status'] != null &&
+                              data['status'] == 3 &&
+                              data['pauseTime'] != null &&
+                              data['pauseTime'].length > 0
+                          ? 5
+                          : 0,
+                    ),
+                    data['status'] != null &&
+                            data['status'] == 3 &&
+                            data['pauseTime'] != null &&
+                            data['pauseTime'].length > 0
+                        ? Text(
+                              pauseTimeFormat(data['pauseTime']),
+                              style: jm_text_gray_style13,
+                            ) ??
+                            ''
+                        : NoneV()
+                  ],
+                ),
+                SizedBox(
+                  width: margin,
+                )
+              ],
+            )
+          ],
         ),
-      ));
-    });
-    return list;
+      ),
+    );
+  }
+
+  String pauseTimeFormat(String pauseTime) {
+    if (pauseTime == null || pauseTime.length == 0) {
+      return '';
+    } else {
+      DateTime date = DateFormat('yyyy-MM-dd HH:mm:ss').parse(pauseTime);
+      return DateFormat('yyyy-MM-dd').format(date);
+    }
+  }
+
+  String getStatusTitle(int status) {
+    switch (status) {
+      case 0:
+        return '未开盘';
+        break;
+      case 1:
+        return '在售';
+        break;
+      case 2:
+        return '售罄';
+        break;
+      case 3:
+        return '暂停';
+        break;
+      default:
+        return '';
+    }
   }
 
   getSearchList(String text) {

@@ -46,12 +46,16 @@ class HomeViewModel extends BaseViewModel {
     final JPush jPush = JPush();
 
     // print('setAlias === ${user['userId']}_$JPUSH_ENVIRONMENT');
-
-    jPush.setAlias('${user['userId']}_alias_$JPUSH_ENVIRONMENT');
+    String alias = '${user['userId']}_alias_$JPUSH_ENVIRONMENT';
+    jPush.setAlias(alias).then((value) {
+      print('setAlias: $value');
+    });
     jPush.setTags([
       '${user['deptId']}_tag_$JPUSH_ENVIRONMENT',
       'jinMu_tag_$JPUSH_ENVIRONMENT',
-    ]);
+    ]).then((value) {
+      print('setTags: $value');
+    });
   }
 
   loadHomeBanner(Function(List bannerList, bool success) success) {
@@ -169,6 +173,29 @@ class HomeViewModel extends BaseViewModel {
                 success(json['data'], true);
               }
             });
+          }
+        } else {
+          if (success != null) {
+            success(null, false);
+          }
+        }
+      },
+      fail: (reason, code) {
+        if (success != null) {
+          success(null, false);
+        }
+      },
+    );
+  }
+
+  getReportCount(Function(int reportCount, bool success) success) {
+    Http().get(
+      Urls.selectReportCountByStatus,
+      {'status': 0},
+      success: (json) {
+        if (json['code'] == 200) {
+          if (success != null) {
+            success(json['data'], true);
           }
         } else {
           if (success != null) {

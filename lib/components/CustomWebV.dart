@@ -214,7 +214,9 @@ class _CustomWebVState extends State<CustomWebV> with WidgetsBindingObserver {
   }
 
   back() {
-    Navigator.pop(context);
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   String getPath(WebPath webPath) {

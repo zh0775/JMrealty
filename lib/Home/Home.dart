@@ -15,7 +15,9 @@ import 'package:JMrealty/Report/AddReport.dart';
 import 'package:JMrealty/Report/Report.dart';
 import 'package:JMrealty/Report/SmartReport.dart';
 import 'package:JMrealty/base/image_loader.dart';
+import 'package:JMrealty/components/AppWait.dart';
 import 'package:JMrealty/components/CustomWebV.dart';
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/components/ReadMe.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/services/http_config.dart';
@@ -42,6 +44,10 @@ class _MainPageWidgetState extends State<MainPageWidget> {
   IndexClick indexClick = () => {};
   @override
   void initState() {
+    Future.delayed(Duration.zero, () {
+      AppWait appWait = AppWait(context: context);
+      appWait.show();
+    });
     super.initState();
   }
 
@@ -98,6 +104,7 @@ class _HomeState extends State<Home> {
   List menus = [];
   List notices = [];
   List gladNotices = [];
+  int reportReceiveCount = 0;
   EventBus _eventBus = EventBus();
 
   @override
@@ -112,7 +119,7 @@ class _HomeState extends State<Home> {
   void initState() {
     UserDefault.get(ACCESS_TOKEN).then((token) {
       if (token == null || token.length == 0) {
-        Global.toLogin();
+        Global.toLogin(animation: false);
       }
     });
     loadReqest();
@@ -208,12 +215,29 @@ class _HomeState extends State<Home> {
       clientVM.findOvertime((success, data) {
         if (success && mounted) {}
       });
+      // 待跟进数量
+      homeVM.getReportCount((reportCount, success) {
+        if (success && mounted) {
+          setState(() {
+            reportReceiveCount = reportCount;
+          });
+        }
+      });
       if (reqestTimer == null) {
         reqestTimer = Timer.periodic(Duration(minutes: 3), (Timer timer) {
           // 定时获取当日待跟进客户数量
           clientVM.loadCountProgress((success, count) {
             if (success) {
               _eventBus.emit(NOTIFY_CLIENTWAIT_COUNT, count);
+            }
+          });
+
+          // 待跟进数量
+          homeVM.getReportCount((reportCount, success) {
+            if (success && mounted) {
+              setState(() {
+                reportReceiveCount = reportCount;
+              });
             }
           });
           // 定时获取强制客户跟进提醒
@@ -257,149 +281,149 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery.removePadding(
-      removeTop: true,
-      context: context,
-      child: SingleChildScrollView(
-        physics: ClampingScrollPhysics(),
-        child: Column(
-          children: [
-            HomeNaviBar(
-              bannerDatas: bannerList,
-              bannerPress: (position, entity) {
-                if ((bannerList[position])['jumpConnection'] != null) {
-                  push(
-                      ReadMe(
-                        url: (bannerList[position])['jumpConnection'],
-                        title: '公告',
-                      ),
-                      context);
-                }
-              },
-            ),
-            HomeAnno(
-              dataList: notices ?? [],
-              noticeClick: (index) {
-                String url = (notices[index])['noticeUrl'];
-                if (url != null && url.length > 0) {
-                  push(
-                      ReadMe(
-                          url: url,
-                          title: (notices[index])['noticeTitle'] ?? ''),
-                      context);
-                }
-              },
-            ),
-            HomeGoodDeed(
-              dataList: gladNotices ?? [],
-              noticeClick: (index) {
+        removeTop: true, context: context, child: homeBody());
+  }
+
+  Widget homeBody() {
+    return SingleChildScrollView(
+      physics: ClampingScrollPhysics(),
+      child: Column(
+        children: [
+          HomeNaviBar(
+            bannerDatas: bannerList,
+            bannerPress: (position, entity) {
+              if ((bannerList[position])['jumpConnection'] != null) {
                 push(
-                    MessageTypeList(
-                      noticeType: 10,
+                    ReadMe(
+                      url: (bannerList[position])['jumpConnection'],
+                      title: '公告',
                     ),
                     context);
-              },
-            ),
-            HomeScheduleToDo(
-              data: homeScheduleToDoData,
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Wrap(
-              children: [
-                ...buttons((int buttonIndex, Map buttonData) {
-                  if (buttonData['path'] == 'app:main:report:list') {
-                    // 新增报备
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                      return AddReport();
-                    }));
-                  } else if (buttonData['path'] == 'app:report:list') {
-                    // 报备记录
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                      return Report();
-                    }));
-                  } else if (buttonData['path'] == 'app:pk competition:list') {
-                    // PK赛
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                      return PKmain();
-                    }));
-                  } else if (buttonData['path'] ==
-                      'app:Follow up on progress:list') {
-                    // 跟进记录
-                    push(CustomWebV(path: WebPath.followProgress), context);
-                  } else if (buttonData['path'] == 'app:customer pool:list') {
-                    // 客户池
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                      return ClientPool();
-                    }));
-                  } else if (buttonData['path'] == 'app:task:list') {
-                    // 我的任务
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                      return MyTasks();
-                    }));
-                  } else if (buttonData['path'] ==
-                      'app:lntelligent report:list') {
-                    // 智能报备
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                      return SmartReport();
-                    }));
-                  } else if (buttonData['path'] == 'app:summary:list') {
-                    _goToNativePage();
-                    // 每日总结
-                    // push(CustomWebPlugin(path: WebPaths.summary), context);
-                    // push(CustomWebV(path: WebPath.summary), context);
-                  } else if (buttonData['path'] == 'app:Top of the list:list') {
-                    // 榜单
+              }
+            },
+          ),
+          HomeAnno(
+            dataList: notices ?? [],
+            noticeClick: (index) {
+              String url = (notices[index])['noticeUrl'];
+              if (url != null && url.length > 0) {
+                push(
+                    ReadMe(
+                        url: url, title: (notices[index])['noticeTitle'] ?? ''),
+                    context);
+              }
+            },
+          ),
+          HomeGoodDeed(
+            dataList: gladNotices ?? [],
+            noticeClick: (index) {
+              push(
+                  MessageTypeList(
+                    noticeType: 10,
+                  ),
+                  context);
+            },
+          ),
+          HomeScheduleToDo(
+            data: homeScheduleToDoData,
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Wrap(
+            children: [
+              ...buttons((int buttonIndex, Map buttonData) {
+                if (buttonData['path'] == 'app:main:report:list') {
+                  // 新增报备
+                  Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                    return AddReport();
+                  }));
+                } else if (buttonData['path'] == 'app:report:list') {
+                  // 报备记录
+                  Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                    return Report();
+                  }));
+                } else if (buttonData['path'] == 'app:pk competition:list') {
+                  // PK赛
+                  Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                    return PKmain();
+                  }));
+                } else if (buttonData['path'] ==
+                    'app:Follow up on progress:list') {
+                  // 跟进记录
+                  push(CustomWebV(path: WebPath.followProgress), context);
+                } else if (buttonData['path'] == 'app:customer pool:list') {
+                  // 客户池
+                  Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                    return ClientPool();
+                  }));
+                } else if (buttonData['path'] == 'app:task:list') {
+                  // 我的任务
+                  Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                    return MyTasks();
+                  }));
+                } else if (buttonData['path'] ==
+                    'app:lntelligent report:list') {
+                  // 智能报备
+                  Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
+                    return SmartReport();
+                  }));
+                } else if (buttonData['path'] == 'app:summary:list') {
+                  _goToNativePage();
+                  // 每日总结
+                  // push(CustomWebPlugin(path: WebPaths.summary), context);
+                  // push(CustomWebV(path: WebPath.summary), context);
+                } else if (buttonData['path'] == 'app:Top of the list:list') {
+                  // 榜单
 
-                    // push(CustomWebPlugin(path: WebPaths.rankingList), context);
-                    push(CustomWebV(path: WebPath.rankingList), context);
-                  } else if (buttonIndex == 100) {
-                    // 跟进记录
-                    UserDefault.get(ACCESS_TOKEN).then((token) {
-                      if (token != null) {
-                        UserDefault.get(USERINFO).then((userInfo) {
-                          if (userInfo != null) {
-                            Map<String, dynamic> userInfoMap =
-                                Map<String, dynamic>.from(
-                                    convert.jsonDecode(userInfo));
-                            Navigator.of(context)
-                                .push(CupertinoPageRoute(builder: (_) {
-                              return Follow(
-                                token: token,
-                                deptId: userInfoMap['deptId'],
-                              );
-                            }));
-                          } else {
-                            homeVM.loadUserInfo();
-                          }
-                        });
-                      } else {
-                        Global.toLogin(isLogin: true);
-                      }
-                    });
-                  } else if (buttonData['path'] ==
-                      'app:unidentified personnel:list') {
-                    // 未开单人员
-                    push(CustomWebV(path: WebPath.follow), context);
-                  } else if (buttonData['path'] ==
-                      'app:shell breaking rate:list') {
-                    // 破壳率
-                    push(CustomWebV(path: WebPath.breakingRate), context);
-                  } else if (buttonData['path'] == 'app:statistics:list') {
-                    // 统计
-                    push(CustomWebV(path: WebPath.statisticsMain), context);
-                  } else if (buttonData['path'] == 'app:main:lower') {
-                    // 低绩效
-                    push(CustomWebV(path: WebPath.lowPer), context);
-                  }
-                }),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            )
-          ],
-        ),
+                  // push(CustomWebPlugin(path: WebPaths.rankingList), context);
+                  push(CustomWebV(path: WebPath.rankingList), context);
+                } else if (buttonIndex == 100) {
+                  // 跟进记录
+                  UserDefault.get(ACCESS_TOKEN).then((token) {
+                    if (token != null) {
+                      UserDefault.get(USERINFO).then((userInfo) {
+                        if (userInfo != null) {
+                          Map<String, dynamic> userInfoMap =
+                              Map<String, dynamic>.from(
+                                  convert.jsonDecode(userInfo));
+                          Navigator.of(context)
+                              .push(CupertinoPageRoute(builder: (_) {
+                            return Follow(
+                              token: token,
+                              deptId: userInfoMap['deptId'],
+                            );
+                          }));
+                        } else {
+                          homeVM.loadUserInfo();
+                        }
+                      });
+                    } else {
+                      Global.toLogin(isLogin: true);
+                    }
+                  });
+                } else if (buttonData['path'] ==
+                    'app:unidentified personnel:list') {
+                  // 未开单人员
+                  push(CustomWebV(path: WebPath.follow), context);
+                } else if (buttonData['path'] ==
+                    'app:shell breaking rate:list') {
+                  // 破壳率
+                  push(CustomWebV(path: WebPath.breakingRate), context);
+                } else if (buttonData['path'] == 'app:statistics:list') {
+                  // 统计
+                  push(CustomWebV(path: WebPath.statisticsMain), context);
+                } else if (buttonData['path'] == 'app:main:lower') {
+                  // 低绩效
+                  push(CustomWebV(path: WebPath.lowPer), context);
+                }
+              }),
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          )
+        ],
       ),
     );
   }
@@ -435,33 +459,89 @@ class _HomeState extends State<Home> {
     if (menus != null && menus is List && menus.length > 0) {
       int i = 0;
       menus.forEach((e) {
-        allRow.add(RawMaterialButton(
-            constraints:
-                BoxConstraints(minHeight: buttonHeight, minWidth: buttonWidth),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: buttonWidth * 0.45,
-                  height: buttonHeight * 0.45,
-                  // child: Image.network(
-                  //   e['icon'] ?? '',
-                  //   fit: BoxFit.fill,
-                  // )
-                  child: ImageLoader(e['icon'] ?? ''),
-                ),
-                SizedBox(
-                  height: 6,
-                ),
-                Text(
-                  e['menuName'] ?? '',
-                  style: jm_text_black_style14,
-                )
-              ],
-            ),
-            onPressed: () {
-              buttonClick(i, e);
-            }));
+        if (e['path'] == 'app:report:list') {
+          allRow.add(RawMaterialButton(
+              constraints: BoxConstraints(
+                  minHeight: buttonHeight, minWidth: buttonWidth),
+              child: Stack(
+                overflow: Overflow.visible,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: buttonWidth * 0.45,
+                        height: buttonHeight * 0.45,
+                        // child: Image.network(
+                        //   e['icon'] ?? '',
+                        //   fit: BoxFit.fill,
+                        // )
+                        child: ImageLoader(e['icon'] ?? ''),
+                      ),
+                      SizedBox(
+                        height: 6,
+                      ),
+                      Text(
+                        e['menuName'] ?? '',
+                        style: jm_text_black_style14,
+                      )
+                    ],
+                  ),
+                  reportReceiveCount != null && reportReceiveCount > 0
+                      ? Positioned(
+                          right: 4,
+                          top: -4,
+                          child: Container(
+                            width: 18,
+                            height: 18,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(9)),
+                            child: Text(
+                              reportReceiveCount > 99
+                                  ? '99'
+                                  : reportReceiveCount.toString(),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 10),
+                            ),
+                          ))
+                      : NoneV(),
+                ],
+              ),
+              onPressed: () {
+                buttonClick(i, e);
+              }));
+        } else {
+          allRow.add(RawMaterialButton(
+              constraints: BoxConstraints(
+                  minHeight: buttonHeight, minWidth: buttonWidth),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: buttonWidth * 0.45,
+                    height: buttonHeight * 0.45,
+                    // child: Image.network(
+                    //   e['icon'] ?? '',
+                    //   fit: BoxFit.fill,
+                    // )
+                    child: ImageLoader(e['icon'] ?? ''),
+                  ),
+                  SizedBox(
+                    height: 6,
+                  ),
+                  Text(
+                    e['menuName'] ?? '',
+                    style: jm_text_black_style14,
+                  )
+                ],
+              ),
+              onPressed: () {
+                buttonClick(i, e);
+              }));
+        }
+
         i++;
       });
     }

@@ -114,6 +114,7 @@ class ReportViewModel extends BaseViewModel {
       'projectId': project['id'] ?? '',
       'projectName': project['name'] ?? '',
       'projectBeforeTime': project['approachDate'] ?? '',
+      'reportRemark': project['reportRemark'] ?? '',
       'projectProtect': project['reportProtect'] != null
           ? DateFormat('yyyy-MM-dd').format(
               DateTime.now().add(Duration(days: project['reportProtect'])))
@@ -139,11 +140,11 @@ class ReportViewModel extends BaseViewModel {
             success(true);
           }
         } else {
+          if (json['msg'] != null) {
+            ShowToast.normal(json['msg']);
+          }
           success(false);
         }
-        // if (json['msg'] != null) {
-        //   ShowToast.normal(json['msg']);
-        // }
       },
       fail: (reason, code) {
         success(false);

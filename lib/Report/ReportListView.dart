@@ -90,7 +90,6 @@ class _ReportListViewState extends State<ReportListView>
       header: CustomPullHeader(key: pullHeaderKey),
       footer: CustomPullFooter(),
       key: _easyRefreshKey,
-
       emptyWidget: dataList.length == 0 ? EmptyView() : null,
       firstRefresh: true,
       onRefresh: () async {
@@ -167,52 +166,6 @@ class _ReportListViewState extends State<ReportListView>
         });
       }
     });
-  }
-
-  String copyString(Map reportData) {
-    String id = reportData['customerNumber'] != null
-        ? ((reportData['customerNumber']).length > 6
-            ? (reportData['customerNumber'] as String)
-                .substring((reportData['customerNumber']).length - 6)
-            : reportData['customerNumber'])
-        : '';
-    // String copyStr = '''
-    // 报备楼盘：${reportData['projectName'] ?? ''}
-    // 产品类型：${reportData['purpose'] ?? ''}
-    // 报备公司：${reportData['company'] ?? ''}
-    // 报备员工：${reportData['employeeName'] ?? ''}
-    // 员工电话：${reportData['employeePhone'] ?? ''}
-    // 报备客户：${reportData['customerName'] ?? ''}
-    // 客户电话：${reportData['customerPhone'] ?? ''}
-    // 报备日期：${reportData['createTime'] ?? ''}
-    // 身份证后六位（选填）：$id
-    // ''';
-
-    String copyStr = '''''';
-
-    copyStr += '''报备楼盘：${reportData['projectName'] ?? ''}\n''';
-    // copyStr += '''产品类型：${reportData['purpose'] ?? ''}\n''';
-    copyStr += '''报备公司：${reportData['employeeCompany'] ?? ''}\n''';
-
-    copyStr += '''报备员工：${reportData['employeeName'] ?? ''}\n''';
-    copyStr += '''员工电话：${reportData['employeePhone'] ?? ''}\n''';
-    copyStr += '''报备客户：${reportData['customerName'] ?? ''}\n''';
-    copyStr +=
-        '''客户电话：${reportData['isSensitive'] == 1 ? hiddenPhone(reportData['customerPhone']) : reportData['customerPhone'] ?? ''}\n''';
-    copyStr += '''报备日期：${reportData['createTime'] ?? ''}\n''';
-    copyStr += '''报备服务点：${reportData['deptName'] ?? ''}\n''';
-    // copyStr += '''身份证后六位（选填）：$id\n''';
-
-    // copyStr += '产品类型：' + (reportData['purpose'] ?? '' + '\n');
-    // copyStr += '报备公司：' + (reportData['company'] ?? '' + '\n');
-    // copyStr += '报备员工：' + (reportData['employeeName'] ?? '' + '\n');
-    // copyStr += '员工电话：' + (reportData['employeePhone'] ?? '' + '\n');
-    // copyStr += '报备客户：' + (reportData['customerName'] ?? '' + '\n');
-    // copyStr += '客户电话：' + (reportData['customerPhone'] ?? '' + '\n');
-    // copyStr += '报备日期：' + (reportData['createTime'] ?? '' + '\n');
-    // copyStr += '身份证后六位（选填）：' + id + '\n';
-    print('copyStr === $copyStr');
-    return copyStr;
   }
 
   @override

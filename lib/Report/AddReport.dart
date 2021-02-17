@@ -169,7 +169,7 @@ class _AddReportState extends State<AddReport> {
                 // },
                 showListClick: (data) {
                   projectInputCtr.text = data['name'] ?? '';
-                  projectTimeInputCtr.text = data['approachDate'] ?? '';
+                  projectTimeInputCtr.text = data['reportRemark'] ?? '';
                   projectCompanyInputCtr.text = data['companyName'] ?? '';
                   setState(() {
                     projectData = data;
@@ -193,44 +193,79 @@ class _AddReportState extends State<AddReport> {
                 width: SizeConfig.screenWidth - margin * 2,
                 height: 1.5,
               ),
-              CustomInput(
-                labelWidth: labelWidth,
-                key: ValueKey('CustomInput_project_2'),
-                labelStyle: jm_text_black_bold_style16,
-                textStyle: jm_text_black_style15,
-                controller: projectTimeInputCtr,
-                title: '最早到场时间',
-                hintText: '选择项目后自动生成',
-                text: projectData != null && projectData['approachDate'] != null
-                    ? projectData['approachDate']
-                    : '',
-                enable: false,
-              ),
-              projectData != null
-                  ? Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        margin: EdgeInsets.only(
-                            left: widthScale * 34.5, bottom: 10),
-                        width: SizeConfig.screenWidth -
-                            margin * 2 -
-                            widthScale * 24,
-                        // color: Colors.red,
-                        child: Text(
-                          '该项目要求提前报备' +
-                              projectData['reportBeforeTime'].toString() +
-                              '分钟。' +
-                              (projectData['isSensitive'] == null
-                                  ? ''
-                                  : (projectData['isSensitive'] == 1
-                                      ? '要求手机号前三后四'
-                                      : '要求全号报备')),
-                          style: jm_text_gray_style12,
-                          maxLines: null,
-                        ),
+              Padding(
+                padding: EdgeInsets.only(top: 12, bottom: 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: margin,
+                      height: 25,
+                    ),
+                    SizedBox(
+                      width: widthScale * 26 + 10,
+                      child: Text(
+                        '报备规则',
+                        style: jm_text_black_bold_style16,
+                      ),
+                    ),
+                    SizedBox(
+                      width: SizeConfig.screenWidth -
+                          margin * 2 -
+                          (widthScale * 26 + 10),
+                      child: Text(
+                        projectTimeInputCtr.text == null ||
+                                projectTimeInputCtr.text.length == 0
+                            ? '选择项目后自动生成'
+                            : projectTimeInputCtr.text,
+                        style: projectTimeInputCtr.text == null ||
+                                projectTimeInputCtr.text.length == 0
+                            ? TextStyle(
+                                fontSize: 15, color: jm_placeholder_color)
+                            : jm_text_black_style15,
                       ),
                     )
-                  : NoneV(),
+                  ],
+                ),
+              ),
+              // CustomInput(
+              //   labelWidth: labelWidth,
+              //   key: ValueKey('CustomInput_project_2'),
+              //   labelStyle: jm_text_black_bold_style16,
+              //   textStyle: jm_text_black_style15,
+              //   controller: projectTimeInputCtr,
+              //   title: '报备规则',
+              //   hintText: '选择项目后自动生成',
+              //   // text: projectData != null && projectData['reportRemark'] != null
+              //   //     ? projectData['reportRemark']
+              //   //     : '',
+              //   enable: false,
+              // ),
+              // projectData != null
+              //     ? Align(
+              //         alignment: Alignment.centerLeft,
+              //         child: Container(
+              //           margin: EdgeInsets.only(
+              //               left: widthScale * 34.5, bottom: 10),
+              //           width: SizeConfig.screenWidth -
+              //               margin * 2 -
+              //               widthScale * 24,
+              //           // color: Colors.red,
+              //           child: Text(
+              //             '该项目要求提前报备' +
+              //                 projectData['reportBeforeTime'].toString() +
+              //                 '分钟。' +
+              //                 (projectData['isSensitive'] == null
+              //                     ? ''
+              //                     : (projectData['isSensitive'] == 1
+              //                         ? '要求手机号前三后四'
+              //                         : '要求全号报备')),
+              //             style: jm_text_gray_style12,
+              //             maxLines: null,
+              //           ),
+              //         ),
+              //       )
+              //     : NoneV(),
               JMline(
                 width: SizeConfig.screenWidth - margin * 2,
                 height: 1.5,
@@ -573,14 +608,15 @@ class _AddReportState extends State<AddReport> {
       children: [
         Text(
           '提前' +
-              projectData['reportBeforeTime'].toString() +
+              projectData['reportBeforeTime']?.toString() +
               '分钟报备，' +
               (projectData['isSensitive'] == null
                   ? ''
                   : (projectData['isSensitive'] == 1 ? '手机号前三后四，' : '全号报备，')) +
-              '有效保护期' +
-              projectData['reportProtect']?.toString() +
-              '天，以看房确认单为准。',
+              (projectData['reportProtect'] != null
+                  ? '有效保护期' + projectData['reportProtect'].toString() + '天，'
+                  : '') +
+              '以看房确认单为准。',
           style: jm_text_black_style14,
         ),
         ...contactsFormat(),

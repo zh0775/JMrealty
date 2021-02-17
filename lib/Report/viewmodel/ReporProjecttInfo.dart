@@ -51,17 +51,23 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
           SizedBox(
             height: 12,
           ),
-          getProjectInfoCell('报备项目', widget.data['projectName'] ?? ''),
+          getProjectInfoCell('报备项目', widget.data['projectName'] ?? '-',
+              use: widget.data['purpose'] ?? ''),
           SizedBox(
             height: widget.labelSpace,
           ),
-          getProjectInfoCell('发起报备时间', widget.data['createTime'] ?? ''),
+          getProjectInfoCell('发起报备时间', widget.data['createTime'] ?? '-'),
           SizedBox(
             height: widget.labelSpace,
           ),
-          getProjectInfoCell('最早到场时间', widget.data['projectBeforeTime'] ?? ''),
+          widget.data['projectBeforeTime'] != null
+              ? getProjectInfoCell(
+                  '最早到场时间', widget.data['projectBeforeTime'] ?? '')
+              : NoneV(),
           SizedBox(
-            height: widget.labelSpace,
+            height: widget.data['projectBeforeTime'] != null
+                ? widget.labelSpace
+                : 0,
           ),
           updateCell(),
           getProjectInfoCell('报备保护期', widget.data['projectProtect'] ?? '-'),
@@ -73,24 +79,24 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
           SizedBox(
             height: widget.labelSpace,
           ),
-          getProjectInfoCell('报备公司', widget.data['employeeCompany'] ?? ''),
+          getProjectInfoCell('报备公司', widget.data['employeeCompany'] ?? '-'),
           SizedBox(
             height: widget.labelSpace,
           ),
-          getProjectInfoCell('报备服务点', widget.data['deptName'] ?? ''),
+          getProjectInfoCell('报备服务点', widget.data['deptName'] ?? '-'),
           SizedBox(
             height: widget.labelSpace,
           ),
-          getProjectInfoCell('员工名称', widget.data['employeeName'] ?? ''),
+          getProjectInfoCell('员工名称', widget.data['employeeName'] ?? '-'),
           SizedBox(
             height: widget.labelSpace,
           ),
-          getProjectInfoCell('员工号码', widget.data['employeePhone'] ?? '',
+          getProjectInfoCell('员工号码', widget.data['employeePhone'] ?? '-',
               heightAdjust: true),
           SizedBox(
             height: widget.labelSpace,
           ),
-          getProjectInfoCell('对接公司', widget.data['company'] ?? '')
+          getProjectInfoCell('对接公司', widget.data['company'] ?? '-')
         ],
       ),
     );
@@ -239,7 +245,10 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
   }
 
   Widget getProjectInfoCell(String title, String content,
-      {Color textColor = jm_text_black, bool heightAdjust = false}) {
+      {Color textColor = jm_text_black,
+      bool heightAdjust = false,
+      String use = ''}) {
+    String contentText = content.length == 0 ? '-' : content;
     return Row(
       children: [
         SizedBox(
@@ -248,15 +257,35 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
         getLabel(title),
         widget.isDetail
             ? SelectableText(
-                content,
+                contentText,
                 style: heightAdjust && widget.isDetail
                     ? TextStyle(fontSize: 16, color: textColor, height: 1.3)
                     : TextStyle(fontSize: 16, color: textColor),
               )
             : Text(
-                content,
+                contentText,
                 style: TextStyle(fontSize: 16, color: textColor),
+              ),
+        use != null && use.length > 0
+            ? SizedBox(
+                width: widthScale * 2,
               )
+            : NoneV(),
+        use != null && use.length > 0
+            ? Container(
+                decoration: BoxDecoration(
+                  color: jm_appTheme,
+                  borderRadius: BorderRadius.circular(widthScale * 1.5),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  child: Text(
+                    use,
+                    style: TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                ),
+              )
+            : NoneV()
       ],
     );
   }

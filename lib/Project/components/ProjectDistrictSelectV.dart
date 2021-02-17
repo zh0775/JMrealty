@@ -22,6 +22,7 @@ class _ProjectDistrictSelectVState extends State<ProjectDistrictSelectV> {
   double widthScale;
   double cellHeight = 40;
   int cellCount = 9;
+  int cityId;
   double colunmMargin = 5;
   double margin;
   List level1Data = [];
@@ -315,10 +316,11 @@ class _ProjectDistrictSelectVState extends State<ProjectDistrictSelectV> {
           bool city = false;
           dataList.forEach((element) {
             if (element['isCity'] == 1) {
-              city = true;
-              if (level1Data.length == 0) {
-                level1Data.add(element);
-              }
+              // city = true;
+              // if (level1Data.length == 0) {
+              //   level1Data.add(element);
+              // }
+              cityId = element['areaId'];
             }
           });
           isCity = city;
@@ -350,6 +352,18 @@ class _ProjectDistrictSelectVState extends State<ProjectDistrictSelectV> {
               {'areaId': -1, 'areaName': '不限'}
             ];
             level2Data.addAll(dataList);
+            if (cityId != null) {
+              loadLevel2Data(cityId, 3);
+              for (var i = 0; i < level2Data.length; i++) {
+                Map item = level2Data[i];
+                if (item['areaId'] == cityId) {
+                  level2Index = i;
+                  cityId = null;
+                  break;
+                }
+              }
+              projectFilterCallBack();
+            }
           } else if (index == 3) {
             level3Data = [
               {'areaId': -1, 'areaName': '不限'}

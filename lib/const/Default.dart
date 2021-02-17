@@ -301,17 +301,24 @@ const TextStyle jm_text_black_bold_style22 =
 class Global {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   static bool showLogin = false;
-  static void toLogin({bool isLogin = true}) {
+  static void toLogin({bool isLogin = true, bool animation = true}) {
     if (!showLogin) {
       showLogin = true;
-      Navigator.of(Global.navigatorKey.currentState.context)
-          .push(MaterialPageRoute(
+      Navigator.of(Global.navigatorKey.currentState.context).push(animation
+          ? MaterialPageRoute(
               builder: (_) {
                 return Login(
                   isLogin: isLogin,
                 );
               },
-              fullscreenDialog: true));
+              fullscreenDialog: true)
+          : PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return Login(
+                  isLogin: isLogin,
+                );
+              },
+            ));
     }
   }
 }
@@ -320,7 +327,10 @@ class JMline extends StatelessWidget {
   final double width;
   final double height;
   final double margin;
-  const JMline({@required this.width, @required this.height, this.margin = 0});
+
+  const JMline(
+      {@required this.width, @required this.height, this.margin = 0, Key key})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -852,11 +862,11 @@ class _SexCellState extends State<SexCell> {
             }
           },
           child: Text(
-            buttonSex == Sex.boy ? '男' : '女',
+            buttonSex == Sex.boy ? '男士' : '女士',
             style: TextStyle(
                 height: 1.28,
                 // textBaseline: TextBaseline.alphabetic,
-                fontSize: 15,
+                fontSize: 14,
                 color: buttonSex != sex
                     ? Color.fromRGBO(64, 67, 82, 1)
                     : Colors.white),

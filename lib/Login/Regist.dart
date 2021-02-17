@@ -112,358 +112,366 @@ class _RegistState extends State<Regist> {
     heightScale = SizeConfig.blockSizeVertical;
     margin = widthScale * 6;
     selfWidth = SizeConfig.screenWidth - margin * 2;
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(
-            height: heightScale * 4,
-          ),
-          Container(
-            // color: Colors.red,
-            width: SizeConfig.screenWidth,
-            height: heightScale * 8,
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: widthScale * 2),
-                    child: IconButton(
-                        icon: Icon(
-                          Icons.arrow_back_ios,
-                          size: widthScale * 6,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            if (widget.toLogin != null) {
-                              widget.toLogin();
-                            }
-                          });
-                        }),
-                  ),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size(SizeConfig.screenWidth, heightScale * 12),
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: widthScale * 2, top: heightScale * 4),
+                  child: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios,
+                        size: widthScale * 6,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          if (widget.toLogin != null) {
+                            widget.toLogin();
+                          }
+                        });
+                      }),
                 ),
-                Align(
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: heightScale * 4),
+                child: Align(
                   alignment: Alignment.center,
                   child: Text(
                     '注册',
                     style: jm_text_black_bold_style20,
                   ),
-                )
-              ],
-            ),
-          ),
-          // Row(
-          //   children: [
-          //     SizedBox(
-          //       width: widthScale * 3,
-          //     ),
-          //     IconButton(
-          //         icon: Icon(
-          //           Icons.arrow_back_ios,
-          //           size: widthScale * 6,
-          //         ),
-          //         onPressed: () {
-          //           setState(() {
-          //             if (widget.toLogin != null) {
-          //               widget.toLogin();
-          //             }
-          //           });
-          //         }),
-          //   ],
-          // ),
-          SizedBox(
-            height: heightScale * 1,
-          ),
-          getHeadView(),
-          SizedBox(
-            height: heightScale * 3,
-          ),
-          JMline(
-            width: SizeConfig.screenWidth,
-            height: 1,
-          ),
-          CustomTextF(
-            labelText: '选择部门',
-            placeholder: '请选择部门',
-            must: true,
-            onlyTap: true,
-            text: dep != null ? dep.label : '',
-            labelClick: () {
-              push(
-                  DepSelectView(
-                    treeData: depList ?? [],
-                    singleSelect: true,
-                    nodeSelected: (node) {
-                      if (mounted) {
-                        setState(() {
-                          dep = node;
-                        });
-                      }
-                    },
-                  ),
-                  context);
-            },
-          ),
-          JMline(
-            width: selfWidth,
-            height: 1,
-          ),
-          DropdownSelectV(
-            titleKey: 'title',
-            valueKey: 'value',
-            dataList: positionList ?? [],
-            defalultValue: true,
-            labelText: '选择职位',
-            must: true,
-            textPadding: EdgeInsets.only(left: 10),
-            valueChange: (value, data) {
-              post = data;
-            },
-          ),
-          JMline(
-            width: selfWidth,
-            height: 1,
-          ),
-          CustomTextF(
-            labelText: '入职日期',
-            placeholder: '请选择日期',
-            onlyTap: true,
-            must: true,
-            text: date ?? '',
-            labelClick: () {
-              showDatePick();
-            },
-          ),
-          JMline(
-            width: selfWidth,
-            height: 1,
-          ),
-          CustomTextF(
-            labelText: '姓名',
-            placeholder: '请输入姓名',
-            must: true,
-            text: name ?? '',
-            valueChange: (value) {
-              name = value;
-            },
-          ),
-          JMline(
-            width: selfWidth,
-            height: 1,
-          ),
-          SexCell(
-            // sex: sex ?? Sex.boy,
-            title: ' 性别',
-            // must: true,
-            labelStyle: jm_text_black_bold_style15,
-            labelWidth: widthScale * 26,
-            valueChange: (newSex) {
-              sex = newSex;
-            },
-          ),
-          JMline(
-            width: selfWidth,
-            height: 1,
-          ),
-          Row(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(left: margin),
-                child: CustomTextF(
-                  labelText: '手机号',
-                  placeholder: '请输入手机号',
-                  // text: phoneStr ?? '',
-                  width: widthScale * 80,
-                  controller: phoneTextCtr,
-                  must: true,
-                  keyboardType: TextInputType.number,
-                  valueChange: (value) {
-                    phoneStr = value;
-                  },
                 ),
-              ),
-              IconButton(
-                  splashColor: Colors.transparent,
-                  icon: Icon(
-                    Icons.cancel,
-                    color: Color(0xff636366),
-                    size: widthScale * 4.5,
-                  ),
-                  onPressed: () {
-                    phoneTextCtr.clear();
-                  })
+              )
             ],
           ),
-          JMline(
-            width: selfWidth,
-            height: 1,
-          ),
-          CustomTextF(
-            labelText: '密码',
-            placeholder: '请输入6~18位密码',
-            hideText: true,
-            text: pwd ?? '',
-            must: true,
-            valueChange: (value) {
-              pwd = value;
-            },
-          ),
-          JMline(
-            width: selfWidth,
-            height: 1,
-          ),
-          CustomTextF(
-            labelText: '确认密码',
-            placeholder: '确认密码',
-            must: true,
-            hideText: true,
-            text: confirmPwd ?? '',
-            valueChange: (value) {
-              confirmPwd = value;
-            },
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Row(
-            //注册验证码
+        ),
+        body: SingleChildScrollView(
+          // controller:,
+          child: Column(
             children: [
+              // SizedBox(
+              //   height: heightScale * 4,
+              // ),
+              // Container(
+              //   // color: Colors.red,
+              //   width: SizeConfig.screenWidth,
+              //   height: heightScale * 8,
+              //   child:
+              // ),
               SizedBox(
-                width: 20,
+                height: heightScale * 1,
               ),
-              authCodeInput(context, SizeConfig.screenWidth - 100 - 40),
-              getCodeButton(context)
-            ],
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Checkbox(
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  activeColor: jm_appTheme,
-                  value: agree,
-                  onChanged: (value) {
-                    if (mounted) {
-                      setState(() {
-                        agree = value;
-                      });
-                    }
-                  }),
-              Text(
-                '已阅读并同意',
-                style: jm_text_black_style14,
-              ),
-              GestureDetector(
-                onTap: () {
-                  push(
-                      ReadMe(
-                        path: ReadPath.agree,
-                        title: '隐私协议',
+              SizedBox(
+                width: SizeConfig.screenWidth,
+                height: SizeConfig.screenHeight - heightScale * 13,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      getHeadView(),
+                      SizedBox(
+                        height: heightScale * 3,
                       ),
-                      context);
-                },
-                child: Text(
-                  '隐私协议',
-                  style: jm_text_apptheme_style14,
+                      JMline(
+                        width: SizeConfig.screenWidth,
+                        height: 1,
+                      ),
+                      CustomTextF(
+                        labelText: '选择部门',
+                        placeholder: '请选择部门',
+                        must: true,
+                        onlyTap: true,
+                        text: dep != null ? dep.label : '',
+                        labelClick: () {
+                          push(
+                              DepSelectView(
+                                treeData: depList ?? [],
+                                singleSelect: true,
+                                nodeSelected: (node) {
+                                  if (mounted) {
+                                    setState(() {
+                                      dep = node;
+                                    });
+                                  }
+                                },
+                              ),
+                              context);
+                        },
+                      ),
+                      JMline(
+                        width: selfWidth,
+                        height: 1,
+                      ),
+                      DropdownSelectV(
+                        titleKey: 'title',
+                        valueKey: 'value',
+                        dataList: positionList ?? [],
+                        defalultValue: true,
+                        labelText: '选择职位',
+                        must: true,
+                        textPadding: EdgeInsets.only(left: 10),
+                        valueChange: (value, data) {
+                          post = data;
+                        },
+                      ),
+                      JMline(
+                        width: selfWidth,
+                        height: 1,
+                      ),
+                      CustomTextF(
+                        labelText: '入职日期',
+                        placeholder: '请选择日期',
+                        onlyTap: true,
+                        must: true,
+                        text: date ?? '',
+                        labelClick: () {
+                          showDatePick();
+                        },
+                      ),
+                      JMline(
+                        width: selfWidth,
+                        height: 1,
+                      ),
+                      CustomTextF(
+                        labelText: '姓名',
+                        placeholder: '请输入姓名',
+                        must: true,
+                        text: name ?? '',
+                        valueChange: (value) {
+                          name = value;
+                        },
+                      ),
+                      JMline(
+                        width: selfWidth,
+                        height: 1,
+                      ),
+                      SexCell(
+                        // sex: sex ?? Sex.boy,
+                        title: ' 性别',
+                        // must: true,
+                        labelStyle: jm_text_black_bold_style15,
+                        labelWidth: widthScale * 26,
+                        valueChange: (newSex) {
+                          sex = newSex;
+                        },
+                      ),
+                      JMline(
+                        width: selfWidth,
+                        height: 1,
+                      ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: margin),
+                            child: CustomTextF(
+                              labelText: '手机号',
+                              placeholder: '请输入手机号',
+                              // text: phoneStr ?? '',
+                              width: widthScale * 80,
+                              controller: phoneTextCtr,
+                              must: true,
+                              keyboardType: TextInputType.number,
+                              valueChange: (value) {
+                                phoneStr = value;
+                              },
+                            ),
+                          ),
+                          IconButton(
+                              splashColor: Colors.transparent,
+                              icon: Icon(
+                                Icons.cancel,
+                                color: Color(0xff636366),
+                                size: widthScale * 4.5,
+                              ),
+                              onPressed: () {
+                                phoneTextCtr.clear();
+                              })
+                        ],
+                      ),
+                      JMline(
+                        width: selfWidth,
+                        height: 1,
+                      ),
+                      CustomTextF(
+                        labelText: '密码',
+                        placeholder: '请输入6~18位密码',
+                        hideText: true,
+                        text: pwd ?? '',
+                        must: true,
+                        valueChange: (value) {
+                          pwd = value;
+                        },
+                      ),
+                      JMline(
+                        width: selfWidth,
+                        height: 1,
+                      ),
+                      CustomTextF(
+                        labelText: '确认密码',
+                        placeholder: '确认密码',
+                        must: true,
+                        hideText: true,
+                        text: confirmPwd ?? '',
+                        valueChange: (value) {
+                          confirmPwd = value;
+                        },
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        //注册验证码
+                        children: [
+                          SizedBox(
+                            width: 20,
+                          ),
+                          authCodeInput(
+                              context, SizeConfig.screenWidth - 100 - 40),
+                          getCodeButton(context)
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Checkbox(
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                              activeColor: jm_appTheme,
+                              value: agree,
+                              onChanged: (value) {
+                                if (mounted) {
+                                  setState(() {
+                                    agree = value;
+                                  });
+                                }
+                              }),
+                          Text(
+                            '已阅读并同意',
+                            style: jm_text_black_style14,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              push(
+                                  ReadMe(
+                                    path: ReadPath.agree,
+                                    title: '隐私协议',
+                                  ),
+                                  context);
+                            },
+                            child: Text(
+                              '隐私协议',
+                              style: jm_text_apptheme_style14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      CustomSubmitButton(
+                        title: '提交注册',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                        height: 50,
+                        buttonClick: () {
+                          if (dep == null || dep.id == null) {
+                            ShowToast.normal('请选择您的部门');
+                            return;
+                          }
+                          if (post == null || post['value'] == null) {
+                            ShowToast.normal('请选择您的职位');
+                            return;
+                          }
+                          if (date == null || date.length == 0) {
+                            ShowToast.normal('请选择您的入职日期');
+                            return;
+                          }
+                          if (name == null || name.length == 0) {
+                            ShowToast.normal('请输入您的姓名');
+                            return;
+                          }
+
+                          if (phoneStr == null || phoneStr.length == 0) {
+                            ShowToast.normal('请输入您的手机号');
+                            return;
+                          }
+                          if (pwd == null || pwd.length == 0) {
+                            ShowToast.normal('请输入密码');
+                            return;
+                          }
+                          if (pwd.length < 6) {
+                            ShowToast.normal('密码小于6位，请重新输入');
+                            return;
+                          }
+                          if (pwd.length > 18) {
+                            ShowToast.normal('密码大于18位，请重新输入');
+                            return;
+                          }
+                          if (confirmPwd == null || confirmPwd.length == 0) {
+                            ShowToast.normal('请输入确认密码');
+                            return;
+                          }
+                          if (confirmPwd != pwd) {
+                            ShowToast.normal('两次密码输入不一致');
+                            return;
+                          }
+                          if (sendCode == null || sendCode.length == 0) {
+                            ShowToast.normal('请输入验证码');
+                            return;
+                          }
+                          if (!agree) {
+                            ShowToast.normal('请阅读并同意《隐私政策》');
+                            return;
+                          }
+                          CustomLoading().show();
+                          Map params = Map<String, dynamic>.from({
+                            'deptId': dep.id,
+                            'position': post['value'],
+                            'nickName': name,
+                            'sex': sex == Sex.boy ? '0' : '1',
+                            'phonenumber': phoneStr,
+                            'password': pwd,
+                            'joinDate': date,
+                            'code': sendCode,
+                          });
+                          if (headImgPath != null &&
+                              (avatar == null || avatar.length == 0)) {
+                            uploadImaVM.upLoadReportImages(
+                              [headImgPath],
+                              callBack: (strImg) {
+                                if (strImg != null && strImg.length > 0) {
+                                  avatar = strImg[0];
+                                  params['avatar'] = avatar;
+                                  regist(params);
+                                }
+                              },
+                            );
+                          } else {
+                            if (avatar != null && avatar.length > 0) {
+                              params['avatar'] = avatar;
+                            }
+                            regist(params);
+                          }
+                        },
+                      ),
+                      SizedBox(
+                        height: 40,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              )
             ],
           ),
-          SizedBox(
-            height: 20,
-          ),
-          CustomSubmitButton(
-            title: '提交注册',
-            style: TextStyle(fontSize: 16, color: Colors.white),
-            height: 50,
-            buttonClick: () {
-              if (dep == null || dep.id == null) {
-                ShowToast.normal('请选择您的部门');
-                return;
-              }
-              if (post == null || post['value'] == null) {
-                ShowToast.normal('请选择您的职位');
-                return;
-              }
-              if (date == null || date.length == 0) {
-                ShowToast.normal('请选择您的入职日期');
-                return;
-              }
-              if (name == null || name.length == 0) {
-                ShowToast.normal('请输入您的姓名');
-                return;
-              }
-
-              if (phoneStr == null || phoneStr.length == 0) {
-                ShowToast.normal('请输入您的手机号');
-                return;
-              }
-              if (pwd == null || pwd.length == 0) {
-                ShowToast.normal('请输入密码');
-                return;
-              }
-              if (pwd.length < 6) {
-                ShowToast.normal('密码小于6位，请重新输入');
-                return;
-              }
-              if (pwd.length > 18) {
-                ShowToast.normal('密码大于18位，请重新输入');
-                return;
-              }
-              if (confirmPwd == null || confirmPwd.length == 0) {
-                ShowToast.normal('请输入确认密码');
-                return;
-              }
-              if (confirmPwd != pwd) {
-                ShowToast.normal('两次密码输入不一致');
-                return;
-              }
-              if (sendCode == null || sendCode.length == 0) {
-                ShowToast.normal('请输入验证码');
-                return;
-              }
-              if (!agree) {
-                ShowToast.normal('请阅读并同意《隐私政策》');
-                return;
-              }
-              CustomLoading().show();
-              Map params = Map<String, dynamic>.from({
-                'deptId': dep.id,
-                'position': post['value'],
-                'nickName': name,
-                'sex': sex == Sex.boy ? '0' : '1',
-                'phonenumber': phoneStr,
-                'password': pwd,
-                'joinDate': date,
-                'code': sendCode,
-              });
-              if (headImgPath != null &&
-                  (avatar == null || avatar.length == 0)) {
-                uploadImaVM.upLoadReportImages(
-                  [headImgPath],
-                  callBack: (strImg) {
-                    if (strImg != null && strImg.length > 0) {
-                      avatar = strImg[0];
-                      params['avatar'] = avatar;
-                      regist(params);
-                    }
-                  },
-                );
-              } else {
-                if (avatar != null && avatar.length > 0) {
-                  params['avatar'] = avatar;
-                }
-                regist(params);
-              }
-            },
-          ),
-          SizedBox(
-            height: 40,
-          ),
-        ],
+        ),
       ),
     );
   }

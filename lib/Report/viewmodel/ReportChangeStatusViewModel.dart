@@ -25,6 +25,29 @@ class ReportChangeStatusViewModel {
     );
   }
 
+  reportReceive(Map params, Function(bool success) success) {
+    Http().post(
+      Urls.reportReceive,
+      params,
+      success: (json) {
+        if (json['code'] == 200) {
+          if (success != null) {
+            success(true);
+          }
+        } else {
+          if (success != null) {
+            success(false);
+          }
+        }
+      },
+      fail: (reason, code) {
+        if (success != null) {
+          success(false);
+        }
+      },
+    );
+  }
+
   takelookRequest(Map params, Function(bool success) success) {
     Http().post(
       Urls.reportTakelook,

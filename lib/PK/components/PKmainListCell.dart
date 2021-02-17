@@ -86,7 +86,7 @@ class _PKmainListCellState extends State<PKmainListCell> {
                           width: widthScale * 3,
                         ),
                         Container(
-                          width: selfWidth * 0.5 - widthScale * 4,
+                          width: selfWidth * 0.5 - widthScale * 6,
                           child: Text(
                             widget.cellData['name'] ?? '',
                             maxLines: 100,
@@ -99,13 +99,13 @@ class _PKmainListCellState extends State<PKmainListCell> {
                       children: [
                         Container(
                           alignment: Alignment.centerRight,
-                          width: selfWidth * 0.5 - widthScale * 4,
+                          width: selfWidth * 0.5 - widthScale * 2,
                           child: Text(
                             '时间：' +
                                 (widget.cellData['startTime'] ?? '') +
                                 ' 至 ' +
                                 (widget.cellData['endTime'] ?? ''),
-                            style: TextStyle(fontSize: 10, color: jm_text_gray),
+                            style: jm_text_black_style10,
                             maxLines: 100,
                           ),
                         ),
@@ -147,7 +147,11 @@ class _PKmainListCellState extends State<PKmainListCell> {
               width: margin,
             ),
             Image.asset(
-                'assets/images/icon/icon_pk_rank${(i + 1).toString()}.png'),
+              'assets/images/icon/icon_pk_rank${(i + 1).toString()}.png',
+              width: widthScale * 6,
+              height: widthScale * 8,
+              fit: BoxFit.fill,
+            ),
             SizedBox(width: widthScale * 4),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -193,11 +197,19 @@ class _PKmainListCellState extends State<PKmainListCell> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text('查看详情'),
-          Icon(
-            Icons.chevron_right,
-            size: 23,
-            color: jm_line_color,
+          SizedBox(
+            width: 5,
+          ),
+          Image.asset(
+            'assets/images/icon/icon_arrow_right.png',
+            height: 15,
+            width: 15,
           )
+          // Icon(
+          //   Icons.chevron_right,
+          //   size: 23,
+          //   color: jm_text_gray,
+          // )
         ],
       ),
     ));

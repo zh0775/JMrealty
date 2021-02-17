@@ -82,7 +82,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
       name = model['name'];
     }
     if (model['sex'] != null) {
-      sex = model['sex'] == 0 ? '先生' : '女士';
+      sex = model['sex'] == 0 ? '男士' : '女士';
     }
     if (model['type'] != null) {
       houseType = model['type'];
@@ -264,7 +264,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
           child: Row(
             children: [
               frameText('联系客户',
-                  width: SizeConfig.blockSizeHorizontal * 15,
+                  width: SizeConfig.blockSizeHorizontal * 16.5,
                   height: lineHeight - 10,
                   fontSize: 15,
                   textColor: Colors.black),

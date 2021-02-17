@@ -63,6 +63,8 @@ class Http {
         UserDefault.saveStr(ACCESS_TOKEN, null);
         UserDefault.saveStr(USERINFO, null);
         Global.toLogin(isLogin: true);
+      } else if (res.statusCode == 404) {
+        ShowToast.normal('系统正在升级');
       }
     }));
     return dio;
@@ -96,13 +98,9 @@ class Http {
         }
       });
     } catch (e) {
-      if (e.response.statusCode == 403) {
-        UserDefault.saveStr(ACCESS_TOKEN, null);
-        Global.toLogin(isLogin: true);
-      }
       print('e ===== $e');
       if (fail != null) {
-        if (e.response.data != null) {
+        if (e.response != null && e.response.data != null) {
           fail(((e.response.data)['msg']) ?? '', -1);
         }
       }
@@ -133,13 +131,9 @@ class Http {
         }
       });
     } catch (e) {
-      if (e.response.statusCode == 403) {
-        UserDefault.saveStr(ACCESS_TOKEN, null);
-        Global.toLogin(isLogin: true);
-      }
       print('e ===== $e');
       if (fail != null) {
-        if (e.response.data != null) {
+        if (e.response != null && e.response.data != null) {
           fail(((e.response.data)['msg']) ?? '', -1);
         }
       }
@@ -170,13 +164,9 @@ class Http {
         }
       });
     } catch (e) {
-      if (e.response.statusCode == 403) {
-        UserDefault.saveStr(ACCESS_TOKEN, null);
-        Global.toLogin(isLogin: true);
-      }
       print('e ===== $e');
       if (fail != null) {
-        if (e.response.data != null) {
+        if (e.response != null && e.response.data != null) {
           fail(((e.response.data)['msg']) ?? '', -1);
         }
       }
@@ -207,10 +197,6 @@ class Http {
         }
       });
     } catch (e) {
-      if (e.response.statusCode == 403) {
-        UserDefault.saveStr(ACCESS_TOKEN, null);
-        Global.toLogin(isLogin: true);
-      }
       print('e ===== $e');
       if (fail != null) {
         if (e.response.data != null) {

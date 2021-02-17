@@ -35,6 +35,7 @@ class _ClientState extends State<Client> {
   Map value2 = {'title': '类型', 'value': '-1'};
   Map value3 = {'title': '面积', 'value': '-1'};
   Map value4 = {'title': '更新时间', 'value': '0'};
+  Map value5 = {'title': '来源', 'value': '-1'};
   Map selectData;
   EventBus eventBus = EventBus();
   ClientListSelect1ViewModel topSelectVM = ClientListSelect1ViewModel();
@@ -174,7 +175,7 @@ class _ClientState extends State<Client> {
                                 '待跟进',
                                 style: jm_text_black_style14,
                               ),
-                              waitFollowCount > 0
+                              waitFollowCount != null && waitFollowCount > 0
                                   ? Positioned(
                                       right: -11,
                                       top: -6,
@@ -187,7 +188,9 @@ class _ClientState extends State<Client> {
                                             borderRadius:
                                                 BorderRadius.circular(9)),
                                         child: Text(
-                                          waitFollowCount.toString(),
+                                          waitFollowCount > 99
+                                              ? '99'
+                                              : waitFollowCount.toString(),
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 10),
@@ -337,52 +340,71 @@ class _ClientState extends State<Client> {
                                 bottom:
                                     BorderSide(width: 1, color: jm_line_color)),
                           ),
-                          child: Row(
-                            children: [
-                              topButton(value4['title'], 4, () {
-                                setState(() {
-                                  currentSelectIndex = 4;
-                                  selectExpand = !selectExpand;
-                                });
-                              }),
-                              topButton(
-                                  value1['title'] == '全部'
-                                      ? '级别'
-                                      : value1['title'],
-                                  1, () {
-                                setState(() {
-                                  currentSelectIndex = 1;
-                                  selectExpand = !selectExpand;
-                                });
-                              }),
-                              topButton(
-                                  value2['title'] == '全部'
-                                      ? '类型'
-                                      : value2['title'],
-                                  2, () {
-                                setState(() {
-                                  currentSelectIndex = 2;
-                                  selectExpand = !selectExpand;
-                                });
-                              }),
-                              topButton(
-                                  value3['title'] == '全部'
-                                      ? '面积'
-                                      : value3['title'],
-                                  3, () {
-                                setState(() {
-                                  currentSelectIndex = 3;
-                                  selectExpand = !selectExpand;
-                                });
-                              })
-                            ],
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: widthScale * 3),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                topButton(value4['title'], 4, () {
+                                  setState(() {
+                                    currentSelectIndex = 4;
+                                    selectExpand = !selectExpand;
+                                  });
+                                }),
+                                topButton(
+                                    value1['title'] == '全部'
+                                        ? '级别'
+                                        : value1['title'],
+                                    1, () {
+                                  setState(() {
+                                    currentSelectIndex = 1;
+                                    selectExpand = !selectExpand;
+                                  });
+                                }),
+                                topButton(
+                                    value2['title'] == '全部'
+                                        ? '类型'
+                                        : value2['title'],
+                                    2, () {
+                                  setState(() {
+                                    currentSelectIndex = 2;
+                                    selectExpand = !selectExpand;
+                                  });
+                                }),
+                                topButton(
+                                    value3['title'] == '全部'
+                                        ? '面积'
+                                        : value3['title'],
+                                    3, () {
+                                  setState(() {
+                                    currentSelectIndex = 3;
+                                    selectExpand = !selectExpand;
+                                  });
+                                }),
+                                topButton(
+                                    value5['title'] == '全部'
+                                        ? '来源'
+                                        : value5['title'],
+                                    5, () {
+                                  setState(() {
+                                    currentSelectIndex = 5;
+                                    selectExpand = !selectExpand;
+                                  });
+                                }),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     )),
                 selectExpand
                     ? Positioned(
-                        top: filterBarHeight, left: 0, child: getSelectView())
+                        top: filterBarHeight,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: getSelectView())
                     : Container(width: 0.0, height: 0.0)
               ],
             ),
@@ -404,6 +426,9 @@ class _ClientState extends State<Client> {
         break;
       case 4:
         currentValue = value4;
+        break;
+      case 5:
+        currentValue = value5;
         break;
       default:
     }
@@ -437,7 +462,20 @@ class _ClientState extends State<Client> {
       );
       textButtons.add(button);
     }
-    return SingleChildScrollView(
+    return
+        // ListView.builder(
+        //   itemCount: textButtons != null ? textButtons.length : 0,
+        //   itemBuilder: (context, index) {
+        //     return Container(
+        //       width: SizeConfig.screenWidth,
+        //       color: Colors.white,
+        //       child: textButtons[index],
+        //     );
+        //   },
+        // );
+
+        SingleChildScrollView(
+      physics: ClampingScrollPhysics(),
       child: Container(
         width: SizeConfig.screenWidth,
         // height: cHeight,
@@ -459,22 +497,23 @@ class _ClientState extends State<Client> {
           // border:
           //     Border(bottom: BorderSide(width: 0.5, color: jm_line_color))
         ),
-        width: SizeConfig.screenWidth / 4,
+        // width: SizeConfig.screenWidth / 5,
         height: filterBarHeight,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               title,
+              overflow: TextOverflow.clip,
               style: TextStyle(
                   color: currentSelectIndex == index && selectExpand
                       ? jm_appTheme
                       : jm_text_black,
-                  fontSize: 14),
+                  fontSize: 12),
             ),
             Icon(
               Icons.arrow_drop_down_outlined,
-              size: SizeConfig.blockSizeHorizontal * 5,
+              size: SizeConfig.blockSizeHorizontal * 4,
               color: jm_text_gray,
             )
           ],
@@ -498,6 +537,9 @@ class _ClientState extends State<Client> {
       case 4:
         key = 'time';
         break;
+      case 5:
+        key = 'source';
+        break;
     }
     return selectList(selectData != null ? (selectData[key] ?? []) : [],
         (Map item) {
@@ -513,6 +555,9 @@ class _ClientState extends State<Client> {
           break;
         case 4:
           value4 = item;
+          break;
+        case 5:
+          value5 = item;
           break;
       }
       setState(() {
@@ -539,6 +584,10 @@ class _ClientState extends State<Client> {
     params['orderByTimeType'] =
         // value4['value'] == '0' ? 'update_time' : 'visitDate';
         int.parse(value4['value']);
+    if (value5['value'] != '-1') {
+      params['sourceId'] =
+          value5['value'] is int ? value5['value'] : int.parse(value5['value']);
+    }
     print('params ==== $params');
     eventBus.emit(NOTIFY_CLIENT_LIST_REFRASH, params);
   }
@@ -616,6 +665,9 @@ class _ClientListState extends State<ClientList>
 
       if (arg['orderByTimeType'] != null) {
         statusParams['orderByTimeType'] = arg['orderByTimeType'];
+      }
+      if (arg['sourceId'] != null) {
+        statusParams['sourceId'] = arg['sourceId'];
       }
 
       loadList();

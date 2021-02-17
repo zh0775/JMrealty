@@ -129,7 +129,7 @@ class _PKaddState extends State<PKadd> {
                   ),
                 ],
               ),
-              JMline(width: SizeConfig.screenWidth, height: 0.5),
+              JMline(width: SizeConfig.screenWidth, height: 1),
               CustomTextF(
                 labelText: 'PK赛名称',
                 placeholder: '请输入PK赛名称',
@@ -138,11 +138,11 @@ class _PKaddState extends State<PKadd> {
                   pkName = value;
                 },
               ),
-              JMline(width: selfWidth, height: 0.5),
+              JMline(width: selfWidth, height: 1),
               getDateWidget(title: '开始时间', start: true),
-              JMline(width: selfWidth, height: 0.5),
+              JMline(width: selfWidth, height: 1),
               getDateWidget(title: '结束时间', start: false),
-              JMline(width: selfWidth, height: 0.5),
+              JMline(width: selfWidth, height: 1),
               // SelectView(
               //   title: 'PK赛类型',
               //   dataList: pkType,
@@ -165,6 +165,7 @@ class _PKaddState extends State<PKadd> {
                   });
                 },
               ),
+              JMline(width: selfWidth, height: 1),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,100 +192,115 @@ class _PKaddState extends State<PKadd> {
                                 unitList != null && unitList.length > 0 ? 6 : 0,
                           ),
                           ...getUnitList(),
-                          RawMaterialButton(
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
-                              key: ValueKey('addUnit_button'),
-                              constraints: BoxConstraints(
-                                  maxHeight: lineHeight,
-                                  maxWidth: 50,
-                                  minHeight: 40),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.add,
-                                    size: 15,
-                                    color: jm_appTheme,
-                                  ),
-                                  Text(
-                                    '添加',
-                                    style: jm_text_apptheme_style13,
-                                  )
-                                ],
-                              ),
-                              onPressed: () {
-                                // ShowDepNode(
-                                //     size: Size(
-                                //       SizeConfig.blockSizeHorizontal * 80,
-                                //       SizeConfig.blockSizeVertical * 80,
-                                //     ),
-                                //     treeData: treeData,
-                                //     nodeSelected: (TreeNode node) {
-                                //       setState(() {
-                                //         unitList.add(node);
-                                //       });
-                                //     }).show();
-                                if (pkTypeValue == null) {
-                                  ShowToast.normal('请选择PK赛类型');
-                                  return;
-                                }
-                                if (pkTypeValue == '0') {
-                                  push(
-                                      DepSelectView(
-                                        treeData: treeData,
-                                        singleSelect: false,
-                                        nodesSelected: (nodes) {
-                                          if (mounted) {
-                                            setState(() {
-                                              unitList.addAll(nodes);
-                                              unitDistinct();
-                                            });
-                                          }
-                                        },
-                                      ),
-                                      context);
-                                } else {
-                                  push(
-                                      CustomWebV(
-                                        path: WebPath.searchUser,
-                                        isMultiple: false,
-                                        returnSearchList: (searchDataList) {
-                                          if (searchDataList != null &&
-                                              searchDataList.length > 0) {
-                                            for (var i = 0;
-                                                i < searchDataList.length;
-                                                i++) {
-                                              Map item = searchDataList[i];
-                                              print('item === $item');
-                                              bool isHave = false;
-                                              unitList.forEach((element) {
-                                                if (element['userId'] ==
-                                                    item['userId']) {
-                                                  isHave = true;
-                                                }
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical:
+                                    unitList != null && unitList.length > 0
+                                        ? 10
+                                        : 0),
+                            child: RawMaterialButton(
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                                key: ValueKey('addUnit_button'),
+                                constraints: BoxConstraints(
+                                    maxHeight: lineHeight,
+                                    maxWidth: 60,
+                                    minHeight: 30),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                    side: BorderSide(
+                                        width: 1, color: jm_appTheme)),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.add,
+                                      size: 15,
+                                      color: jm_appTheme,
+                                    ),
+                                    Text(
+                                      '添加',
+                                      style: jm_text_apptheme_style13,
+                                    ),
+                                    SizedBox(
+                                      width: 2,
+                                    ),
+                                  ],
+                                ),
+                                onPressed: () {
+                                  // ShowDepNode(
+                                  //     size: Size(
+                                  //       SizeConfig.blockSizeHorizontal * 80,
+                                  //       SizeConfig.blockSizeVertical * 80,
+                                  //     ),
+                                  //     treeData: treeData,
+                                  //     nodeSelected: (TreeNode node) {
+                                  //       setState(() {
+                                  //         unitList.add(node);
+                                  //       });
+                                  //     }).show();
+                                  if (pkTypeValue == null) {
+                                    ShowToast.normal('请选择PK赛类型');
+                                    return;
+                                  }
+                                  if (pkTypeValue == '0') {
+                                    push(
+                                        DepSelectView(
+                                          treeData: treeData,
+                                          singleSelect: false,
+                                          nodesSelected: (nodes) {
+                                            if (mounted) {
+                                              setState(() {
+                                                unitList.addAll(nodes);
+                                                unitDistinct();
                                               });
-                                              if (!isHave) {
-                                                unitList.add(item);
-                                              }
-                                              // // if (isHave || userInfo['userId'] == item['userId']) {
-                                              // //   return;
-                                              // // }
-                                              // if (!isHave) {
-                                              //   reportShopPartnerBOList.add({
-                                              //     'userId': item['userId'],
-                                              //     'userName': item['userName'],
-                                              //     'userPhone': item['phoneNumber'],
-                                              //     'ratio': 0
-                                              //   });
-                                              // }
                                             }
-                                            setState(() {});
-                                          }
-                                        },
-                                      ),
-                                      context);
-                                }
-                              })
+                                          },
+                                        ),
+                                        context);
+                                  } else {
+                                    push(
+                                        CustomWebV(
+                                          path: WebPath.searchUser,
+                                          isMultiple: false,
+                                          returnSearchList: (searchDataList) {
+                                            if (searchDataList != null &&
+                                                searchDataList.length > 0) {
+                                              for (var i = 0;
+                                                  i < searchDataList.length;
+                                                  i++) {
+                                                Map item = searchDataList[i];
+                                                print('item === $item');
+                                                bool isHave = false;
+                                                unitList.forEach((element) {
+                                                  if (element['userId'] ==
+                                                      item['userId']) {
+                                                    isHave = true;
+                                                  }
+                                                });
+                                                if (!isHave) {
+                                                  unitList.add(item);
+                                                }
+                                                // // if (isHave || userInfo['userId'] == item['userId']) {
+                                                // //   return;
+                                                // // }
+                                                // if (!isHave) {
+                                                //   reportShopPartnerBOList.add({
+                                                //     'userId': item['userId'],
+                                                //     'userName': item['userName'],
+                                                //     'userPhone': item['phoneNumber'],
+                                                //     'ratio': 0
+                                                //   });
+                                                // }
+                                              }
+                                              setState(() {});
+                                            }
+                                          },
+                                        ),
+                                        context);
+                                  }
+                                }),
+                          )
                         ],
                       ),
                       SizedBox(
@@ -295,7 +311,7 @@ class _PKaddState extends State<PKadd> {
                   )
                 ],
               ),
-              JMline(width: selfWidth, height: 0.5),
+              JMline(width: selfWidth, height: 1),
               DropdownSelectV(
                 labelText: 'PK赛指标',
                 dataList: targetDataList ?? [],
@@ -368,7 +384,7 @@ class _PKaddState extends State<PKadd> {
               //     )
               //   ],
               // ),
-              JMline(width: selfWidth, height: 0.5),
+              JMline(width: selfWidth, height: 1),
               SizedBox(
                 height: 10,
               ),
@@ -421,7 +437,7 @@ class _PKaddState extends State<PKadd> {
                   });
                 },
               ),
-              JMline(width: selfWidth, height: 0.5),
+              JMline(width: selfWidth, height: 1),
               SizedBox(
                 height: 10,
               ),
@@ -590,7 +606,7 @@ class _PKaddState extends State<PKadd> {
             ),
           ),
           Container(
-            width: selfWidth - labelWidth - widthScale * 8,
+            width: selfWidth - labelWidth - widthScale * 7,
             padding: EdgeInsets.only(left: 10),
             child: Text(
               start
@@ -603,8 +619,8 @@ class _PKaddState extends State<PKadd> {
           ),
           Image.asset(
             'assets/images/icon/icon_arrow_right.png',
-            height: widthScale * 8,
-            width: widthScale * 8,
+            height: widthScale * 4,
+            width: widthScale * 4,
           )
         ],
       ),

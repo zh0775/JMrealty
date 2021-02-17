@@ -17,6 +17,7 @@ class ClientListSelect1ViewModel extends BaseViewModel {
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '103'}),
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '104'}),
       Http().getDio().get(Urls.searchDic, queryParameters: {'dictId': '130'}),
+      Http().getDio().get(Urls.allTypeByCostomer),
     ]).then((List e) {
       // print('e111 ==== $e');//[true,true,false]
       for (var i = 0; i < e.length; i++) {
@@ -34,13 +35,24 @@ class ClientListSelect1ViewModel extends BaseViewModel {
           case 3:
             key = 'time';
             break;
+          case 4:
+            key = 'source';
+            break;
         }
         Map res = new Map<String, dynamic>.from((e[i]).data);
         // print('res === $res');
         if (res['code'] == 200) {
-          List reList = (res['data']).map((value) {
-            return value;
-          }).toList();
+          List reList = [];
+          if (key == 'source') {
+            reList = ((res['data'])['customersOfSource']).map((value) {
+              return value;
+            }).toList();
+          } else {
+            reList = (res['data']).map((value) {
+              return value;
+            }).toList();
+          }
+
           // print('reList === $reList');
           if (key != 'time') {
             selectData[key] = <Map<String, dynamic>>[

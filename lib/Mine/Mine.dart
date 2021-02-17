@@ -213,7 +213,12 @@ class _MineState extends State<Mine> {
                 getCell('退出登录', 'assets/images/icon/icon_mine_logout.png', () {
                   CustomAlert(content: '确定要退出登录吗？').show(
                     confirmClick: () {
-                      JPush().stopPush();
+                      final jpush = JPush();
+                      jpush.deleteAlias();
+                      jpush.cleanTags();
+                      // jpush.clearAllNotifications();
+                      // jpush.setBadge(0);
+                      // jpush.stopPush();
                       UserDefault.saveStr(USERINFO, null);
                       UserDefault.saveStr(ACCESS_TOKEN, null).then((value) {
                         if (value) {

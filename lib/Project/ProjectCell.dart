@@ -205,6 +205,9 @@ class _ProjectCellState extends State<ProjectCell> {
       case 2:
         return '售罄';
         break;
+      case 3:
+        return '暂停';
+        break;
       default:
         return '';
     }

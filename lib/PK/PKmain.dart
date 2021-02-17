@@ -93,8 +93,11 @@ class _PKmainState extends State<PKmain> {
                 child: TabBar(
                     indicatorSize: TabBarIndicatorSize.label,
                     indicatorColor: tabColor,
+                    labelStyle: jm_text_black_bold_style15,
+                    unselectedLabelStyle: jm_text_black_style15,
                     indicatorWeight: 3.0,
-                    indicatorPadding: EdgeInsets.only(bottom: 5),
+                    indicatorPadding:
+                        EdgeInsets.only(bottom: 5, left: 16, right: 16),
                     // onTap: (value) {
                     //   print('value === $value');
                     // },

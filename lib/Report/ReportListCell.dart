@@ -25,7 +25,8 @@ enum ReportCellButtonStatus {
   sign, // 签约
   chargeback, // 退单
   disputed, // 争议单
-  check, // 审核
+  check, // 审核,
+  receive, // 接收,
 }
 
 class ReportListCell extends StatefulWidget {
@@ -80,6 +81,7 @@ class _ReportListCellState extends State<ReportListCell> {
         }
       },
       onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
         push(
             ReportDetail(
               data: widget.data,
@@ -332,13 +334,14 @@ class _ReportListCellState extends State<ReportListCell> {
   Widget getButtons() {
     List buttonsType = [];
     switch (status) {
-      // case 0:
-      //   buttonsType = [
-      //     // ReportCellButtonStatus.takeLook,
-      //     // ReportCellButtonStatus.upload,
-      //     // ReportCellButtonStatus.invalid
-      //   ];
-      //   break;
+      case 0:
+        buttonsType = [
+          ReportCellButtonStatus.receive,
+          // ReportCellButtonStatus.takeLook,
+          // ReportCellButtonStatus.upload,
+          // ReportCellButtonStatus.invalid
+        ];
+        break;
       case 5:
         buttonsType = [
           ReportCellButtonStatus.takeLook,
@@ -432,6 +435,26 @@ class _ReportListCellState extends State<ReportListCell> {
     String titlt = '带看';
     TextStyle textStyle = jm_text_black_style13;
     switch (buttonStatus) {
+      case ReportCellButtonStatus.receive:
+        buttonClick = () {
+          CustomAlert(title: '接收', content: '是否确认接收').show(
+            confirmClick: () {
+              Map<String, dynamic> params = {
+                'beforeStatus': widget.data['status'],
+                'reportId': widget.data['id'],
+                'visaTime':
+                    DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())
+              };
+              reportChangeStatusVM.reportReceive(params, (success) {
+                if (success && widget.needRefrash != null) {
+                  widget.needRefrash();
+                }
+              });
+            },
+          );
+        };
+        titlt = '接收';
+        break;
       case ReportCellButtonStatus.takeLook:
         buttonClick = () {
           CustomAlert(content: '是否添加到已带看').show(
@@ -574,7 +597,10 @@ class _ReportListCellState extends State<ReportListCell> {
       ),
       textStyle: textStyle,
       child: Text(titlt),
-      onPressed: buttonClick,
+      onPressed: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+        buttonClick();
+      },
     );
   }
 

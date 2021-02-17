@@ -15,13 +15,11 @@ import Flutter
 //    window?.rootViewController = UINavigationController(rootViewController: viewController)
 //    window?.makeKeyAndVisible()
     
-    
+    Thread.sleep(forTimeInterval: 1.0)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions);
   }
     
-    override func applicationDidFinishLaunching(_ application: UIApplication) {
-        Thread.sleep(forTimeInterval: 1)
-    }
+
 }
 
 

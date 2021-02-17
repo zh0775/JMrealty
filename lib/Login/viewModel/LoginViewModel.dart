@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:JMrealty/Home/viewModel/HomeViewModel.dart';
 import 'package:JMrealty/Login/model/PostListModel.dart';
 import 'package:JMrealty/Login/model/login_model.dart';
@@ -97,6 +99,7 @@ class LoginViewModel extends BaseViewModel {
     return dataList;
   }
 
+  List<TreeNode> treeNodes = [];
   loadRegistDeptSelectList({Function(List<TreeNode> value) success}) {
     state = BaseState.LOADING;
     notifyListeners();
@@ -105,14 +108,25 @@ class LoginViewModel extends BaseViewModel {
       {},
       success: (json) {
         if (json['code'] == 200) {
-          compute(decodeDepListToList, json).then((value) {
-            depTreeDataList = value;
-            if (success != null) {
-              success(depTreeDataList);
-            }
-            state = BaseState.CONTENT;
-            notifyListeners();
-          });
+          treeNodes = [];
+          // treeNodeFormat
+          treeNodeFormat(0, treeNodes, json['data'] ?? []);
+          if (success != null) {
+            success(treeNodes);
+          }
+          state = BaseState.CONTENT;
+          notifyListeners();
+          // compute(
+          //   decodeDepListToList,
+          //   json,
+          // ).then((value) {
+          //   depTreeDataList = value;
+          //   if (success != null) {
+          //     success(depTreeDataList);
+          //   }
+          //   state = BaseState.CONTENT;
+          //   notifyListeners();
+          // });
         } else {
           if (success != null) {
             success(null);
@@ -130,6 +144,22 @@ class LoginViewModel extends BaseViewModel {
       },
       after: () {},
     );
+  }
+
+  treeNodeFormat(int level, List nodelist, List jsonList) {
+    jsonList.forEach((e) {
+      TreeNode node = TreeNode(
+          id: e['id'],
+          label: e['label'],
+          expand: true,
+          selected: false,
+          treeLevel: level,
+          children: []);
+      nodelist.add(node);
+      if (e['children'] != null && e['children'].length > 0) {
+        treeNodeFormat((level + 1), node.children, e['children']);
+      }
+    });
   }
 
   static List<TreeNode> decodeDepListToList(dynamic json) {

@@ -67,6 +67,9 @@ class Urls {
 
   // 获取当天待跟进的客户数量
   static const String countProgress = '/customer/progress/countProgress';
+  // 获取待接收的报备数量
+  static const String selectReportCountByStatus =
+      'customer/report/selectReportCountByStatus';
 
   // 强制提醒获取接口
   static const String findOvertime = '/customer/progress/findOvertime';
@@ -89,6 +92,8 @@ class Urls {
   static const String reportDetail = '/customer/report/findDetailsById';
   // 上传带看单
   static const String reportUploadRecord = '/customer/status/upload';
+  // 接收
+  static const String reportReceive = 'customer/status/receive';
   // 已成交
   static const String reportSuccess = '/customer/shop/subscription';
   // 退单

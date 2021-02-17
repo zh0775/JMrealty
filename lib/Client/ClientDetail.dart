@@ -30,7 +30,7 @@ class _ClientDetailState extends State<ClientDetail> {
   double widthScale;
   double contentWidth;
   double lineHeight1;
-  String sex = '先生';
+  String sex = '男士';
 
   Map clientInfo;
 
@@ -226,7 +226,7 @@ class _ClientDetailState extends State<ClientDetail> {
                             padding: EdgeInsets.symmetric(
                                 horizontal: widthScale * 3),
                             child: Text(
-                              customerVO['sex'] == 0 ? '先生' : '女士',
+                              customerVO['sex'] == 0 ? '男士' : '女士',
                               style: jm_text_black_style13,
                             ),
                           ),
@@ -453,10 +453,13 @@ class _ClientDetailState extends State<ClientDetail> {
                 children: [
                   Row(
                     children: [
-                      Image.asset('assets/images/icon/' +
-                          (isFollow
-                              ? 'icon_clientdetail_follow.png'
-                              : 'icon_clientdetail_take.png')),
+                      Image.asset(
+                        'assets/images/icon/' +
+                            (isFollow
+                                ? 'icon_clientdetail_follow.png'
+                                : 'icon_clientdetail_take.png'),
+                        width: widthScale * 7,
+                      ),
                       SizedBox(
                         width: widthScale * 1,
                       ),

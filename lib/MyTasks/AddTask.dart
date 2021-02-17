@@ -129,7 +129,7 @@ class _AddTaskState extends State<AddTask> {
                   ),
                   DropdownSelectV(
                     // margin: margin,
-                    width: selfWidth - widthScale * 6,
+                    width: selfWidth + widthScale * 2,
                     dataList: typeList,
                     must: true,
                     placeholder: '请选择任务类型',
@@ -141,10 +141,10 @@ class _AddTaskState extends State<AddTask> {
                       });
                     },
                   ),
-                  Icon(
-                    Icons.keyboard_arrow_right,
-                    size: widthScale * 6,
-                  )
+                  // Icon(
+                  //   Icons.keyboard_arrow_right,
+                  //   size: widthScale * 6,
+                  // )
                 ],
               ),
               JMline(width: selfWidth, height: 0.5),
@@ -163,9 +163,10 @@ class _AddTaskState extends State<AddTask> {
                   ),
                   DropdownSelectV(
                     // margin: margin,
+
                     must: true,
                     labelStyle: jm_text_black_bold_style15,
-                    width: selfWidth - widthScale * 6,
+                    width: selfWidth + widthScale * 2,
                     dataList: urgencyList ?? [],
                     placeholder: '请选择紧急程度',
                     labelText: '紧急程度',
@@ -175,10 +176,10 @@ class _AddTaskState extends State<AddTask> {
                       });
                     },
                   ),
-                  Icon(
-                    Icons.keyboard_arrow_right,
-                    size: widthScale * 6,
-                  )
+                  // Icon(
+                  //   Icons.keyboard_arrow_right,
+                  //   size: widthScale * 6,
+                  // )
                 ],
               ),
               JMline(width: selfWidth, height: 0.5),
@@ -402,9 +403,14 @@ class _AddTaskState extends State<AddTask> {
                 dateData ?? (start ? '请选择发布时间' : '请选择结束时间'),
                 style: textStyle,
               )),
-          Icon(
-            Icons.keyboard_arrow_right,
-            size: widthScale * 6,
+          SizedBox(
+            width: widthScale,
+          ),
+          Image.asset(
+            'assets/images/icon/icon_arrow_right.png',
+            height: widthScale * 4,
+            width: widthScale * 4,
+            fit: BoxFit.fill,
           )
         ],
       ),

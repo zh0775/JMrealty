@@ -3,6 +3,7 @@ import 'package:JMrealty/base/image_loader.dart';
 import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/tTools.dart';
 import 'package:flutter/material.dart';
 
 class PKdetail extends StatefulWidget {
@@ -14,6 +15,7 @@ class PKdetail extends StatefulWidget {
 
 class _PKdetailState extends State<PKdetail> {
   PKviewModel pkVM = PKviewModel();
+  final GlobalKey _key1 = GlobalKey();
   double widthScale;
   double margin;
   double selfWidth;
@@ -44,258 +46,306 @@ class _PKdetailState extends State<PKdetail> {
     outMargin = widthScale * 4;
     selfWidth = SizeConfig.screenWidth - margin * 2;
     return Scaffold(
-      backgroundColor: jm_appTheme,
-      // appBar: CustomAppbar(
-      //   title: 'PK赛详情',
-      // ),
-      body: SingleChildScrollView(
-        physics: ClampingScrollPhysics(),
-        child: Column(
+        backgroundColor: jm_appTheme,
+        // appBar: CustomAppbar(
+        //   title: 'PK赛详情',
+        // ),
+        body: Stack(
           children: [
-            Container(
-              height: 70,
-              width: SizeConfig.screenWidth,
-              child: Stack(
-                overflow: Overflow.visible,
-                children: [
-                  Positioned(
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: 184,
-                      child: Image.asset(
-                        'assets/images/icon/bg_appbar_04.png',
-                        fit: BoxFit.fill,
-                      )),
-                  Padding(
-                    padding: EdgeInsets.only(top: 40),
-                    child: Align(
-                      child: Text(
-                        'PK赛详情',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 35, left: widthScale * 3),
-                      child: Align(
-                          alignment: Alignment.topLeft,
-                          child: jm_naviBack_icon),
-                    ),
-                  )
-                ],
+            Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                height: 184,
+                child: Image.asset(
+                  'assets/images/icon/bg_appbar_04.png',
+                  fit: BoxFit.fill,
+                )),
+            Padding(
+              padding: EdgeInsets.only(top: 40),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Text(
+                  'PK赛详情',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
             ),
-            Align(
-              child: Container(
-                margin: EdgeInsets.only(top: margin),
-                constraints: BoxConstraints(
-                  maxWidth: selfWidth,
-                  minWidth: selfWidth,
-                  // minHeight: SizeConfig.screenHeight * 50,
-                ),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(widthScale * 4),
-                    color: Colors.white),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 13,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          width: widthScale * 16,
-                          height: 28,
-                          child: Stack(
-                            overflow: Overflow.visible,
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Padding(
+                padding: EdgeInsets.only(top: 35, left: widthScale * 3),
+                child: Align(
+                    alignment: Alignment.topLeft, child: jm_naviBack_icon),
+              ),
+            ),
+            // ClampingScrollPhysics(),
+            Positioned(
+              top: 85,
+              right: 0,
+              left: 0,
+              bottom: 20,
+              child: Column(
+                children: [
+                  Align(
+                    child: Container(
+                      // margin: EdgeInsets.only(top: margin),
+                      constraints: BoxConstraints(
+                        maxWidth: selfWidth,
+                        minWidth: selfWidth,
+                        // minHeight: SizeConfig.screenHeight * 50,
+                      ),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(widthScale * 4),
+                          color: Colors.white),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 13,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  width: widthScale * 17,
-                                  height: 25,
-                                  child: Image.asset(
-                                    'assets/images/icon/icon_pk_status_bg.png',
-                                    fit: BoxFit.fill,
-                                  )),
-                              Positioned(
-                                right: 0,
-                                top: -1,
-                                width: widthScale * 17,
-                                height: 25,
-                                child: Center(
-                                  child: Text(
-                                    jm_getPKStatus(
-                                        widget.pkData['status'] ?? 0),
-                                    style: jm_text_black_bold_style11,
-                                  ),
+                              Container(
+                                width: widthScale * 16,
+                                height: 28,
+                                child: Stack(
+                                  overflow: Overflow.visible,
+                                  children: [
+                                    Positioned(
+                                        right: 0,
+                                        top: 0,
+                                        width: widthScale * 17,
+                                        height: 25,
+                                        child: Image.asset(
+                                          'assets/images/icon/icon_pk_status_bg.png',
+                                          fit: BoxFit.fill,
+                                        )),
+                                    Positioned(
+                                      right: 0,
+                                      top: -1,
+                                      width: widthScale * 17,
+                                      height: 25,
+                                      child: Center(
+                                        child: Text(
+                                          jm_getPKStatus(
+                                              widget.pkData['status'] ?? 0),
+                                          style: jm_text_black_bold_style11,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          width: outMargin,
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: outMargin,
-                            ),
-                            Container(
-                              width: widthScale * 33,
-                              // constraints:
-                              //     BoxConstraints(minWidth: widthScale * 33),
-                              child: Text(
-                                widget.pkData['name'] ?? '',
-                                // '搜已佛寺度佛isU盾佛isU盾噢ifUS噢ID富哦is杜甫爱神的箭拉会计师的徕卡技术的',
-                                maxLines: 100,
-                                style: jm_text_black_bold_style16,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              '时间：' +
-                                  (widget.pkData['startTime'] ?? '') +
-                                  ' 至 ' +
-                                  (widget.pkData['endTime'] ?? ''),
-                              style: jm_text_gray_style11,
-                            ),
-                            SizedBox(
-                              width: outMargin,
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    JMline(width: selfWidth, height: 0.5),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    medel != null &&
-                            medel['icon'] != null &&
-                            (medel['icon'] as String).length > 0
-                        ? Row(
-                            children: [
-                              // SizedBox(
-                              //   height: 10,
-                              // ),
                               SizedBox(
                                 width: outMargin,
                               ),
-                              // Text(
-                              //   'PK赛奖章',
-                              //   style: jm_text_gray_style14,
-                              // ),
-                              // SizedBox(
-                              //   width: widthScale * 7,
-                              // ),
-                              SizedBox(
-                                width: widthScale * 6,
-                                height: widthScale * 8,
-                                child: ImageLoader(
-                                  medel['icon'],
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                              // Container(
-                              //     width: widthScale * 49,
-                              //     child: Text(
-                              //       medel['name'] ?? '',
-                              //       style: jm_text_gray_style14,
-                              //     )),
                             ],
-                          )
-                        : NoneV(),
-                    SizedBox(
-                      height: 5,
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: outMargin,
+                                  ),
+                                  Container(
+                                    width: widthScale * 33,
+                                    // constraints:
+                                    //     BoxConstraints(minWidth: widthScale * 33),
+                                    child: Text(
+                                      widget.pkData['name'] ?? '',
+                                      // '搜已佛寺度佛isU盾佛isU盾噢ifUS噢ID富哦is杜甫爱神的箭拉会计师的徕卡技术的',
+                                      maxLines: 100,
+                                      style: jm_text_black_bold_style16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    '时间：' +
+                                        (widget.pkData['startTime'] ?? '') +
+                                        ' 至 ' +
+                                        (widget.pkData['endTime'] ?? ''),
+                                    style: jm_text_gray_style11,
+                                  ),
+                                  SizedBox(
+                                    width: outMargin,
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          JMline(width: selfWidth, height: 1),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          medel != null &&
+                                  medel['icon'] != null &&
+                                  (medel['icon'] as String).length > 0
+                              ? Row(
+                                  children: [
+                                    // SizedBox(
+                                    //   height: 10,
+                                    // ),
+                                    SizedBox(
+                                      width: outMargin,
+                                    ),
+                                    // Text(
+                                    //   'PK赛奖章',
+                                    //   style: jm_text_gray_style14,
+                                    // ),
+                                    // SizedBox(
+                                    //   width: widthScale * 7,
+                                    // ),
+                                    SizedBox(
+                                      width: widthScale * 5,
+                                      height: widthScale * 8,
+                                      child: ImageLoader(
+                                        medel['icon'],
+                                        // fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                    // Container(
+                                    //     width: widthScale * 49,
+                                    //     child: Text(
+                                    //       medel['name'] ?? '',
+                                    //       style: jm_text_gray_style14,
+                                    //     )),
+                                  ],
+                                )
+                              : NoneV(),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            children: [
+                              SizedBox(
+                                height: 10,
+                              ),
+                              SizedBox(
+                                width: outMargin,
+                              ),
+                              Text(
+                                'PK赛奖励',
+                                style: jm_text_gray_style14,
+                              ),
+                              SizedBox(
+                                width: widthScale * 7,
+                              ),
+                              Container(
+                                  width: widthScale * 55,
+                                  child: Text(
+                                    widget.pkData['award'] ?? '',
+                                    style: jm_text_black_style14,
+                                  )),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: outMargin,
+                              ),
+                              Text(
+                                'PK赛规则',
+                                style: jm_text_gray_style14,
+                              ),
+                              SizedBox(
+                                width: widthScale * 7,
+                              ),
+                              Container(
+                                  width: widthScale * 55,
+                                  child: Text(
+                                    widget.pkData['rule'] ?? '',
+                                    style: jm_text_black_style14,
+                                    maxLines: 100,
+                                  )),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          // JMline(
+                          //   width: selfWidth,
+                          //   height: 0.5,
+                          //   key: _key1,
+                          // ),
+                          Container(
+                            // flex: 2,
+                            // width: SizeConfig.screenWidth,
+                            height: scrollHeight(),
+                            child: SingleChildScrollView(
+                              physics: ClampingScrollPhysics(),
+                              // clipBehavior: Clip.antiAliasWithSaveLayer,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  ...getCell(),
+                                ],
+                              ),
+                            ),
+                          ),
+                          // SizedBox(
+                          //   height: 10,
+                          // )
+                        ],
+                      ),
                     ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          height: 10,
-                        ),
-                        SizedBox(
-                          width: outMargin,
-                        ),
-                        Text(
-                          'PK赛奖励',
-                          style: jm_text_gray_style14,
-                        ),
-                        SizedBox(
-                          width: widthScale * 7,
-                        ),
-                        Container(
-                            width: widthScale * 55,
-                            child: Text(
-                              widget.pkData['award'] ?? '',
-                              style: jm_text_black_style14,
-                            )),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: outMargin,
-                        ),
-                        Text(
-                          'PK赛规则',
-                          style: jm_text_gray_style14,
-                        ),
-                        SizedBox(
-                          width: widthScale * 7,
-                        ),
-                        Container(
-                            width: widthScale * 55,
-                            child: Text(
-                              widget.pkData['rule'] ?? '',
-                              style: jm_text_black_style14,
-                              maxLines: 100,
-                            )),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    JMline(width: selfWidth, height: 0.5),
-                    ...getCell(),
-                    SizedBox(
-                      height: 10,
-                    )
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ),
+            )
           ],
-        ),
-      ),
-    );
+        ));
+  }
+
+  double scrollHeight() {
+    double nameHeight = calculateTextHeight(widget.pkData['name'] ?? '',
+        jm_text_black_bold_style16, widthScale * 33, 100);
+    double awardHeight = calculateTextHeight(widget.pkData['award'] ?? '',
+        jm_text_black_style14, widthScale * 55, 100);
+    double ruleHeight = calculateTextHeight(widget.pkData['rule'] ?? '',
+        jm_text_black_style14, widthScale * 55, 100);
+    double height = SizeConfig.screenHeight -
+        20 -
+        1 -
+        85 -
+        20 -
+        13 -
+        28 -
+        16 -
+        nameHeight -
+        widthScale * 8 -
+        5 -
+        awardHeight -
+        10 -
+        ruleHeight -
+        10;
+
+    // RenderBox renderBox = _key1.currentContext?.findRenderObject();
+    // if (renderBox == null) {
+    //   return 0;
+    // }
+    // Offset screen = renderBox.localToGlobal(Offset.zero);
+    // return screen.dy;
+    return height;
   }
 
   List<Widget> getCell() {

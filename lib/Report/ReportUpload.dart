@@ -314,14 +314,14 @@ class _ReportUploadState extends State<ReportUpload> {
             width: outMargin,
           ),
           Container(
-            width: widthScale * 25,
+            width: widthScale * 28,
             child: Text(
               '备注',
               style: jm_text_gray_style15,
             ),
           ),
           Container(
-            width: SizeConfig.screenWidth - outMargin * 2 - widthScale * 25,
+            width: SizeConfig.screenWidth - outMargin * 2 - widthScale * 28,
             child: Text(
               widget.data['remarks'] == null ||
                       widget.data['remarks'].length == 0

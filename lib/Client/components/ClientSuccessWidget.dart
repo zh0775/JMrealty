@@ -1,5 +1,6 @@
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/tTools.dart';
 import 'package:flutter/material.dart';
 
 class ClientSuccessWidget extends StatelessWidget {
@@ -172,6 +173,40 @@ class ClientSuccessWidget extends StatelessWidget {
               ],
             ),
             SizedBox(
+              height: 6,
+            ),
+            Row(
+              children: [
+                SizedBox(
+                  width: margin,
+                ),
+                Text(
+                  '报备单已回款佣金/报备单应得佣金',
+                  style: jm_text_gray_style15,
+                )
+              ],
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Row(
+              children: [
+                SizedBox(
+                  width: margin,
+                ),
+                Text(
+                  (successData['collectionAmount'] != null
+                          ? (numberFormat(successData['collectionAmount']))
+                          : '0.00') +
+                      '/' +
+                      (successData['commission'] != null
+                          ? (numberFormat(successData['commission']) + '元')
+                          : '0.0元'),
+                  style: jm_text_black_style15,
+                )
+              ],
+            ),
+            SizedBox(
               height: i == 0 ? 15 : 10,
             ),
             Row(children: [
@@ -213,16 +248,44 @@ class ClientSuccessWidget extends StatelessWidget {
                       : '',
                   style: jm_text_black_style15,
                 ),
+                // SizedBox(
+                //   width: widthScale * 4,
+                // ),
+                // Text(
+                //   commissionData['userCommission'] != null
+                //       ? ((commissionData['userCommission']).toString() + '元')
+                //       : '',
+                //   style: jm_text_black_style15,
+                // )
+              ],
+            ),
+            SizedBox(
+              height: 3,
+            ),
+            Row(
+              children: [
                 SizedBox(
-                  width: widthScale * 4,
+                  width: margin,
                 ),
                 Text(
-                  commissionData['userCommission'] != null
-                      ? ((commissionData['userCommission']).toString() + '元')
-                      : '',
+                  '已得佣金/应得佣金：',
+                  style: jm_text_gray_style15,
+                ),
+                Text(
+                  (commissionData['commissionAmount'] != null
+                          ? (numberFormat(commissionData['commissionAmount']))
+                          : '0.00') +
+                      '/' +
+                      (commissionData['userCommission'] != null
+                          ? (numberFormat(commissionData['userCommission']) +
+                              '元')
+                          : '0.0元'),
                   style: jm_text_black_style15,
-                )
+                ),
               ],
+            ),
+            SizedBox(
+              height: 3,
             ),
             SizedBox(
               height: i == commissionList.length - 1 ? 20 : 0,

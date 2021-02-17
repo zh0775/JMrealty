@@ -6,20 +6,23 @@ import 'package:flutter/material.dart';
 
 class EmptyView extends StatelessWidget {
   final String tips;
-  const EmptyView({this.tips = '暂无内容'});
+  final double height;
+  const EmptyView({this.tips = '暂无内容', this.height});
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     double widthScale = SizeConfig.blockSizeHorizontal;
+    double selfHeight = height;
+    if (selfHeight == null) {
+      selfHeight = SizeConfig.screenHeight - kToolbarHeight - 20;
+    }
     return Container(
       width: SizeConfig.screenWidth,
-      height: SizeConfig.screenHeight - kToolbarHeight - 20,
+      height: selfHeight,
       child: Center(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
-              height: SizeConfig.blockSizeVertical * 10,
-            ),
             Container(
               width: widthScale * 51,
               height: widthScale * 39,
@@ -31,6 +34,9 @@ class EmptyView extends StatelessWidget {
             Text(
               tips,
               style: jm_text_gray_style15,
+            ),
+            SizedBox(
+              height: SizeConfig.blockSizeVertical * 5,
             ),
           ],
         ),

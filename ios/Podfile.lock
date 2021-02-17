@@ -22,7 +22,8 @@ PODS:
     - JCore (< 3.0.0, >= 2.0.0)
   - jpush_flutter (0.0.2):
     - Flutter
-    - JPush
+    - JCore (= 2.4.0)
+    - JPush (= 3.4.0)
   - multi_image_picker (4.7.14):
     - BSImagePicker (~> 2.10.3)
     - Flutter
@@ -111,7 +112,7 @@ SPEC CHECKSUMS:
   image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
   JCore: a29e4b0ee54e1301446dc02d8e1c350404108b34
   JPush: defaa108c38806f6efdcfaf4c416854d25fca8e5
-  jpush_flutter: 69133df35eaf9135e540549b154d992c44f8ee44
+  jpush_flutter: 364b245849348e05377d67295d0896ddd664a896
   multi_image_picker: c068931d08240565e0615fb01437d16984909183
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c

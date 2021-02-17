@@ -134,6 +134,10 @@ class _ReportDetailState extends State<ReportDetail> {
         ),
         ...getRemark(),
         SizedBox(
+          height: labelSpace,
+        ),
+        getReportRule(),
+        SizedBox(
           height: 15,
         ),
         JMline(width: SizeConfig.screenWidth, height: 1),
@@ -394,6 +398,28 @@ class _ReportDetailState extends State<ReportDetail> {
     );
   }
 
+  Widget getReportRule() {
+    return Row(
+      children: [
+        SizedBox(
+          width: outMargin,
+        ),
+        getLabel('报备规则'),
+        Container(
+          width: SizeConfig.screenWidth - outMargin * 2 - widthScale * 28,
+          child: Text(
+            widget.data['reportRemark'] == null ||
+                    widget.data['reportRemark'].length == 0
+                ? '-'
+                : widget.data['reportRemark'],
+            style: jm_text_black_style15,
+            maxLines: 100,
+          ),
+        )
+      ],
+    );
+  }
+
   List<Widget> getRemark() {
     return [
       Row(
@@ -404,7 +430,7 @@ class _ReportDetailState extends State<ReportDetail> {
           ),
           getLabel('备注'),
           Container(
-            width: SizeConfig.screenWidth - outMargin * 2 - widthScale * 25,
+            width: SizeConfig.screenWidth - outMargin * 2 - widthScale * 28,
             child: Text(
               widget.data['remarks'] == null ||
                       widget.data['remarks'].length == 0
@@ -416,31 +442,13 @@ class _ReportDetailState extends State<ReportDetail> {
           )
         ],
       ),
-      // SizedBox(
-      //   height: labelSpace,
-      // ),
-      // Row(
-      //   children: [
-      //     SizedBox(
-      //       width: outMargin,
-      //     ),
-      //     Container(
-      //       width: SizeConfig.screenWidth - outMargin * 2,
-      //       child: Text(
-      //         widget.data['remarks'] ?? '-',
-      //         style: jm_text_black_style15,
-      //         maxLines: 100,
-      //       ),
-      //     )
-      //   ],
-      // )
     ];
   }
 
   // label
   Widget getLabel(String title) {
     return Container(
-      width: widthScale * 25,
+      width: widthScale * 28,
       child: Text(
         title,
         style: jm_text_gray_style15,
