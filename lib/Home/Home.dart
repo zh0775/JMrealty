@@ -16,6 +16,7 @@ import 'package:JMrealty/Report/Report.dart';
 import 'package:JMrealty/Report/SmartReport.dart';
 import 'package:JMrealty/base/image_loader.dart';
 import 'package:JMrealty/components/AppWait.dart';
+import 'package:JMrealty/components/CustomWebPlugin.dart';
 import 'package:JMrealty/components/CustomWebV.dart';
 import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/components/ReadMe.dart';
@@ -369,10 +370,10 @@ class _HomeState extends State<Home> {
                     return SmartReport();
                   }));
                 } else if (buttonData['path'] == 'app:summary:list') {
-                  _goToNativePage();
+                  // _goToNativePage();
                   // 每日总结
                   // push(CustomWebPlugin(path: WebPaths.summary), context);
-                  // push(CustomWebV(path: WebPath.summary), context);
+                  push(CustomWebV(path: WebPath.summary), context);
                 } else if (buttonData['path'] == 'app:Top of the list:list') {
                   // 榜单
 

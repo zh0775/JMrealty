@@ -2,11 +2,10 @@ import 'dart:async';
 
 import 'package:JMrealty/components/CustomAppBar.dart';
 import 'package:JMrealty/components/EmptyView.dart';
-import 'package:JMrealty/components/NoneV.dart';
+import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/services/http_config.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
-import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -42,7 +41,7 @@ class CustomWebV extends StatefulWidget {
   _CustomWebVState createState() => _CustomWebVState();
 }
 
-class _CustomWebVState extends State<CustomWebV> with WidgetsBindingObserver {
+class _CustomWebVState extends State<CustomWebV> {
   EventBus _bus = EventBus();
   WebViewController _controller;
   // final Completer<WebViewController> _controller =
@@ -50,19 +49,10 @@ class _CustomWebVState extends State<CustomWebV> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      // setState(() {
-      // 键盘高度：大于零，键盘弹出，否则，键盘隐藏
-      // print(MediaQuery.of(context).viewInsets.bottom);
-      print(SizeConfig.screenHeight);
-      // });
-    });
-    // WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-    // WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -70,30 +60,72 @@ class _CustomWebVState extends State<CustomWebV> with WidgetsBindingObserver {
   Widget build(BuildContext ctx) {
     // print('bottom ==== ${MediaQuery.of(ctx).viewInsets.bottom}');
     print('url == ${WEB_URL + getPath(widget.path)}');
-    return Scaffold(
-        appBar: widget.path == WebPath.searchUser
-            ? CustomAppbar(
-                title: '搜索用户',
-              )
-            : PreferredSize(child: NoneV(), preferredSize: Size.zero),
-        body: FutureBuilder<Widget>(
-          future: getView(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasData) {
-                return snapshot.data;
+    return widget.path == WebPath.searchUser
+        ? Scaffold(
+            appBar: CustomAppbar(
+              title: '搜索用户',
+            ),
+            body: FutureBuilder<Widget>(
+              future: getView(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasData) {
+                    return snapshot.data;
+                  } else {
+                    return EmptyView(
+                      tips: '出现错误',
+                    );
+                  }
+                } else {
+                  return EmptyView(
+                    tips: '请稍等',
+                  );
+                }
+              },
+            ))
+        : FutureBuilder<Widget>(
+            future: getView(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasData) {
+                  return snapshot.data;
+                } else {
+                  return EmptyView(
+                    tips: '出现错误',
+                  );
+                }
               } else {
                 return EmptyView(
-                  tips: '出现错误',
+                  tips: '请稍等',
                 );
               }
-            } else {
-              return EmptyView(
-                tips: '请稍等',
-              );
-            }
-          },
-        ));
+            },
+          );
+
+    // Scaffold(
+    //     appBar: widget.path == WebPath.searchUser
+    //         ? CustomAppbar(
+    //             title: '搜索用户',
+    //           )
+    //         : PreferredSize(child: NoneV(), preferredSize: Size.zero),
+    //     body: FutureBuilder<Widget>(
+    //       future: getView(),
+    //       builder: (context, snapshot) {
+    //         if (snapshot.connectionState == ConnectionState.done) {
+    //           if (snapshot.hasData) {
+    //             return snapshot.data;
+    //           } else {
+    //             return EmptyView(
+    //               tips: '出现错误',
+    //             );
+    //           }
+    //         } else {
+    //           return EmptyView(
+    //             tips: '请稍等',
+    //           );
+    //         }
+    //       },
+    //     ));
   }
 
   Future<Widget> getView() async {
@@ -159,6 +191,7 @@ class _CustomWebVState extends State<CustomWebV> with WidgetsBindingObserver {
           _getJavascriptChannel(context),
           _backJavascriptChannel(context),
           _searchListJavascriptChannel(context),
+          _callPhoneNumJavascriptChannel(context),
         ].toSet(),
       );
     } else {
@@ -178,6 +211,15 @@ class _CustomWebVState extends State<CustomWebV> with WidgetsBindingObserver {
             _bus.emit(NOTIFY_LOGIN_SUCCESS);
           }
           back();
+        });
+  }
+
+  JavascriptChannel _callPhoneNumJavascriptChannel(BuildContext context) {
+    return JavascriptChannel(
+        name: "callPhoneNum",
+        onMessageReceived: (JavascriptMessage message) {
+          print('callPhoneNum === ${message.message}');
+          callPhone(message.message);
         });
   }
 

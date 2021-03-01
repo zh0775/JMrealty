@@ -7,6 +7,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   final PreferredSizeWidget bottom;
   final Widget flexibleSpace;
   final List<Widget> actions;
+  final Color shadowColor;
   @override
   // final Size preferredSize;
   const CustomAppbar(
@@ -14,11 +15,13 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       this.backClick,
       this.flexibleSpace,
       this.actions = const [],
+      this.shadowColor,
       // this.preferredSize = const Size.fromHeight(kToolbarHeight+ bottom.preferredSize),
       this.bottom});
   @override
   Widget build(BuildContext context) {
     return AppBar(
+        shadowColor: shadowColor,
         flexibleSpace: flexibleSpace != null
             ? flexibleSpace
             : Container(

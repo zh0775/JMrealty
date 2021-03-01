@@ -61,6 +61,7 @@ class _LevelTargetSettingState extends State<LevelTargetSetting> {
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: Scaffold(
           appBar: CustomAppbar(
+            shadowColor: Colors.transparent,
             title: '规则设置',
           ),
           body: SingleChildScrollView(

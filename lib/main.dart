@@ -34,6 +34,10 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    Future.delayed(Duration.zero, () {
+      precacheImage(
+          AssetImage('assets/images/icon/screen-1242x2688.png'), context);
+    });
     super.initState();
     registJPush();
   }

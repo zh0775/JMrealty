@@ -1,4 +1,5 @@
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:ui' as ui;
@@ -102,7 +103,7 @@ String hiddenPhone(String phone) {
 
   if (phone != null && phone.length >= 11) {
     String sub = phone.substring(0, 3);
-    String end = phone.substring(8, 11);
+    String end = phone.substring(7, 11);
     result = '$sub****$end';
   }
 
@@ -380,8 +381,8 @@ String copyString(Map reportData) {
       '''客户电话：${reportData['isSensitive'] == 1 ? hiddenPhone(reportData['customerPhone']) : reportData['customerPhone'] ?? ''}\n''';
   copyStr += '''报备日期：${reportData['createTime'] ?? ''}\n''';
   copyStr += '''报备服务点：${reportData['deptName'] ?? ''}\n''';
+  copyStr += '''备注：${reportData['remarks'] ?? '无'}\n''';
   // copyStr += '''身份证后六位（选填）：$id\n''';
-
   // copyStr += '产品类型：' + (reportData['purpose'] ?? '' + '\n');
   // copyStr += '报备公司：' + (reportData['company'] ?? '' + '\n');
   // copyStr += '报备员工：' + (reportData['employeeName'] ?? '' + '\n');
@@ -392,4 +393,188 @@ String copyString(Map reportData) {
   // copyStr += '身份证后六位（选填）：' + id + '\n';
   print('copyStr === $copyStr');
   return copyStr;
+}
+
+Color getPurposeColor(String purpose) {
+  switch (purpose) {
+    case '住宅':
+      return Color(0x330CBD74);
+      break;
+    case '商铺':
+      return Color(0x33FE6F54);
+      break;
+    case '公寓':
+      return Color(0x331890FF);
+      break;
+    case '其他':
+      return Color(0x33F5A623);
+      break;
+    default:
+  }
+}
+
+Color getSexBgColor(dynamic sex) {
+  int tmpSex;
+  if (sex is String) {
+    tmpSex = int.parse(sex);
+  } else {
+    tmpSex = sex;
+  }
+
+  switch (tmpSex) {
+    case 0:
+      return Color(0x3362677D);
+      break;
+    case 1:
+      return Color(0x33FE6F54);
+      break;
+  }
+}
+
+Color getSexTextColor(dynamic sex) {
+  int tmpSex;
+  if (sex is String) {
+    tmpSex = int.parse(sex);
+  } else {
+    tmpSex = sex;
+  }
+  switch (tmpSex) {
+    case 0:
+      return Color(0xFF62677D);
+      break;
+    case 1:
+      return Color(0xffFE6F54);
+      break;
+  }
+}
+
+Widget contactsButton(title, phoneNum,
+    {TextStyle style = jm_text_black_style15}) {
+  return RawMaterialButton(
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      constraints: BoxConstraints(minWidth: 0, minHeight: 30),
+      splashColor: Colors.transparent,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: SizeConfig.blockSizeHorizontal * 28,
+            child: Text(
+              title + '：',
+              style: jm_text_gray_style15,
+            ),
+          ),
+          Text(
+            phoneNum,
+            style: style,
+          ),
+          SizedBox(
+            width: SizeConfig.blockSizeHorizontal * 2,
+          ),
+          Image.asset(
+            'assets/images/icon_client_phone.png',
+            // height: SizeConfig.blockSizeHorizontal * 5,
+            width: SizeConfig.blockSizeHorizontal * 5,
+          )
+        ],
+      ),
+      onPressed: () {
+        callPhone(phoneNum);
+      });
+}
+
+List<Widget> contactsFormat(List projectContact) {
+  TextStyle style = jm_text_gray_style15;
+  List<Widget> list = [];
+  List<Widget> str1 = [];
+  List<Widget> str2 = [];
+  List<Widget> str3 = [];
+  List<Widget> str4 = [];
+
+  if (projectContact != null && projectContact.length > 0) {
+    projectContact.forEach((e) {
+      switch (e['contactType'] ?? -1) {
+        case 0:
+          {
+            if (str1.length == 0) {
+              str1.add(Text(
+                '项目驻场',
+                style: style,
+              ));
+            }
+            str1.add(contactsButton(
+                e['contactName'] ?? "", e['contactPhone'] ?? ""));
+          }
+          break;
+        case 1:
+          {
+            if (str2.length == 0) {
+              str2.add(Text(
+                '项目负责人',
+                style: style,
+              ));
+            }
+            str2.add(contactsButton(
+                e['contactName'] ?? "", e['contactPhone'] ?? ""));
+          }
+          break;
+        case 2:
+          {
+            if (str3.length == 0) {
+              str3.add(Text(
+                '项目经理',
+                style: style,
+              ));
+            }
+            str3.add(contactsButton(
+                e['contactName'] ?? "", e['contactPhone'] ?? ""));
+          }
+          break;
+        case 3:
+          {
+            if (str4.length == 0) {
+              str4.add(Text(
+                '项目总监',
+                style: style,
+              ));
+            }
+            str4.add(contactsButton(
+                e['contactName'] ?? "", e['contactPhone'] ?? ""));
+          }
+          break;
+        default:
+      }
+    });
+    if (str1.length > 0) {
+      list.addAll(str1);
+      list.add(SizedBox(
+        height: 8,
+      ));
+    }
+    if (str2.length > 0) {
+      list.addAll(str2);
+      list.add(SizedBox(
+        height: 8,
+      ));
+    }
+    if (str3.length > 0) {
+      list.addAll(str3);
+      list.add(SizedBox(
+        height: 8,
+      ));
+    }
+    if (str4.length > 0) {
+      list.addAll(str4);
+      list.add(SizedBox(
+        height: 8,
+      ));
+    }
+    // switch () {
+    //   case :
+
+    //     break;
+    //   default:
+    // }
+  }
+  return list;
 }

@@ -160,70 +160,72 @@ class _ReportSearchState extends State<ReportSearch> {
                     child: Row(
                       children: [
                         timeWidget(isStart: true),
-                        JMline(width: 1, height: timeHeight),
-                        timeWidget(isStart: false)
+                        // JMline(width: 1, height: timeHeight),
+                        timeWidget(isStart: false),
+                        projectWidget()
+                        // JMline(width: 1, height: timeHeight),
                       ],
                     ))),
+            // Positioned(
+            //     top: searchBarHeight + timeHeight,
+            //     left: 0,
+            //     right: 0,
+            //     height: projetHeight,
+            //     child: GestureDetector(
+            //       behavior: HitTestBehavior.opaque,
+            //       onTap: () {
+            //         FocusScope.of(context).requestFocus(FocusNode());
+            //         if (projectListData == null ||
+            //             projectListData.length == 0) {
+            //           getProjectListFilter();
+            //         }
+            //         setState(() {
+            //           selectExpand = !selectExpand;
+            //         });
+            //       },
+            //       child: Container(
+            //         decoration: BoxDecoration(
+            //             color: Colors.white,
+            //             border: Border(
+            //                 bottom:
+            //                     BorderSide(width: 1, color: jm_line_color))),
+            //         child: Row(
+            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //           children: [
+            //             Row(
+            //               children: [
+            //                 SizedBox(
+            //                   width: widthScale * 4,
+            //                 ),
+            //                 Text(
+            //                   '项目',
+            //                   style: jm_text_gray_style14,
+            //                 ),
+            //                 SizedBox(
+            //                   width: widthScale * 4,
+            //                 ),
+            //                 Text(
+            //                   currentSelectProject['title'],
+            //                   style: selectExpand
+            //                       ? jm_text_apptheme_style15
+            //                       : jm_text_black_style15,
+            //                 ),
+            //               ],
+            //             ),
+            //             Padding(
+            //               padding: EdgeInsets.only(right: widthScale * 3),
+            //               child: Icon(
+            //                 Icons.arrow_drop_down,
+            //                 size: widthScale * 6.5,
+            //                 color: jm_text_gray,
+            //               ),
+            //             )
+            //           ],
+            //         ),
+            //       ),
+            //     )),
             Positioned(
                 top: searchBarHeight + timeHeight,
-                left: 0,
-                right: 0,
-                height: projetHeight,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    if (projectListData == null ||
-                        projectListData.length == 0) {
-                      getProjectListFilter();
-                    }
-                    setState(() {
-                      selectExpand = !selectExpand;
-                    });
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border(
-                            bottom:
-                                BorderSide(width: 1, color: jm_line_color))),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: widthScale * 4,
-                            ),
-                            Text(
-                              '项目',
-                              style: jm_text_gray_style14,
-                            ),
-                            SizedBox(
-                              width: widthScale * 4,
-                            ),
-                            Text(
-                              currentSelectProject['title'],
-                              style: selectExpand
-                                  ? jm_text_apptheme_style15
-                                  : jm_text_black_style15,
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(right: widthScale * 3),
-                          child: Icon(
-                            Icons.arrow_drop_down,
-                            size: widthScale * 6.5,
-                            color: jm_text_gray,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                )),
-            Positioned(
-                top: searchBarHeight + timeHeight + projetHeight,
                 left: 0,
                 right: 0,
                 // bottom: 0,
@@ -289,7 +291,7 @@ class _ReportSearchState extends State<ReportSearch> {
                 )),
             selectExpand
                 ? Positioned(
-                    top: searchBarHeight + timeHeight + projetHeight,
+                    top: searchBarHeight + timeHeight,
                     left: 0,
                     right: 0,
                     bottom: 0,
@@ -347,13 +349,72 @@ class _ReportSearchState extends State<ReportSearch> {
     return list;
   }
 
+  Widget projectWidget() {
+    TextStyle textStyle;
+    String text = currentSelectProject['title'] ?? '';
+    if (currentSelectProject['value'] != null) {
+      textStyle = jm_text_black_style14;
+    } else {
+      textStyle = TextStyle(color: jm_placeholder_color, fontSize: 15);
+    }
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+        FocusScope.of(context).requestFocus(FocusNode());
+        if (projectListData == null || projectListData.length == 0) {
+          getProjectListFilter();
+        }
+        setState(() {
+          selectExpand = !selectExpand;
+        });
+      },
+      child: Container(
+        width: SizeConfig.screenWidth / 3,
+        height: timeHeight,
+        child: Row(
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                SizedBox(
+                  width: widthScale * 3,
+                ),
+                SizedBox(
+                  width: widthScale * 23.5,
+                  child: Text(
+                    text,
+                    style: textStyle,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(
+                  Icons.arrow_drop_down,
+                  size: widthScale * 6.5,
+                  color: jm_text_gray,
+                ),
+                SizedBox(
+                    // width: widthScale * 6,
+                    ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget timeWidget({bool isStart = true}) {
     TextStyle textStyle;
     String text;
     if (isStart) {
       if (startTime != null && startTime.length > 0) {
         text = startTime;
-        textStyle = jm_text_black_style15;
+        textStyle = jm_text_black_style14;
       } else {
         text = '开始时间';
         textStyle = TextStyle(color: jm_placeholder_color, fontSize: 15);
@@ -361,7 +422,7 @@ class _ReportSearchState extends State<ReportSearch> {
     } else {
       if (endTime != null && endTime.length > 0) {
         text = endTime;
-        textStyle = jm_text_black_style15;
+        textStyle = jm_text_black_style14;
       } else {
         text = '结束时间';
         textStyle = TextStyle(color: jm_placeholder_color, fontSize: 15);
@@ -375,7 +436,7 @@ class _ReportSearchState extends State<ReportSearch> {
         showDatePick(isStart: isStart);
       },
       child: Container(
-        width: SizeConfig.screenWidth / 2 - 1,
+        width: SizeConfig.screenWidth / 3 - widthScale * 1,
         height: timeHeight,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -383,7 +444,7 @@ class _ReportSearchState extends State<ReportSearch> {
             Row(
               children: [
                 SizedBox(
-                  width: widthScale * 6,
+                  width: widthScale * 4,
                 ),
                 Text(
                   text,
@@ -399,8 +460,8 @@ class _ReportSearchState extends State<ReportSearch> {
                   color: jm_text_gray,
                 ),
                 SizedBox(
-                  width: widthScale * 6,
-                ),
+                    // width: widthScale * 6,
+                    ),
               ],
             )
           ],
@@ -420,6 +481,21 @@ class _ReportSearchState extends State<ReportSearch> {
         lastDate: DateTime.now().add(Duration(days: 365 * 3)),
         locale: Locale('zh'));
     if (date == null) return;
+
+    if (startTime != null && endTime != null) {
+      if (isStart) {
+        if (dateFormat.parse(endTime).isBefore(date)) {
+          ShowToast.normal('结束时间需大于开始时间');
+          return;
+        }
+      } else {
+        if (dateFormat.parse(startTime).isAfter(date)) {
+          ShowToast.normal('结束时间需大于开始时间');
+          return;
+        }
+      }
+    }
+
     setState(() {
       isStart
           ? startTime = dateFormat.format(date)

@@ -42,10 +42,12 @@ class _HomeNaviBarState extends State<HomeNaviBar> {
         ),
       ),
       Positioned(
-          left: SizeConfig.blockSizeHorizontal * 6,
-          top: 64,
+          right: SizeConfig.blockSizeHorizontal * 6,
+          top: 56,
           child: ProjectSearchBar(
             text: '搜索项目',
+            height: 48,
+            width: SizeConfig.blockSizeHorizontal * 34,
             toProjectSearch: true,
           ))
     ]);

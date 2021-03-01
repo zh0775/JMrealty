@@ -12,6 +12,8 @@ import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/tTools.dart';
+import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
@@ -267,12 +269,12 @@ class _ClientDetailState extends State<ClientDetail> {
 
   getClientInfo(Map customerVO, Map clientData) {
     String phone = '';
-    if (customerVO['phone'] != null) {
-      phone = customerVO['isSensitive'] == 1 &&
-              (customerVO['phone'] as String).length > 7
-          ? (customerVO['phone'] as String).replaceRange(3, 7, '****')
-          : customerVO['phone'];
-    }
+    // if (customerVO['phone'] != null) {
+    //   phone = customerVO['isSensitive'] == 1 &&
+    //           (customerVO['phone'] as String).length > 7
+    //       ? (customerVO['phone'] as String).replaceRange(3, 7, '****')
+    //       : customerVO['phone'];
+    // }
     return Container(
         color: Colors.white,
         width: SizeConfig.screenWidth,
@@ -298,13 +300,20 @@ class _ClientDetailState extends State<ClientDetail> {
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               constraints: BoxConstraints(minHeight: 0),
               onPressed: () {
-                callPhone(phone);
+                if (customerVO['phone'] == null ||
+                    customerVO['phone'].length == 0) {
+                  ShowToast.normal('电话号码错误');
+                  return;
+                }
+                callPhone(customerVO['phone']);
               },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    phone,
+                    (customerVO['isSensitive'] ?? 0) == 1
+                        ? hiddenPhone(customerVO['phone'] ?? '')
+                        : customerVO['phone'] ?? '',
                     style: TextStyle(fontSize: 17, color: jm_text_black),
                   ),
                   SizedBox(

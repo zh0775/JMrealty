@@ -39,6 +39,7 @@ class _MessageTypeListState extends State<MessageTypeList> {
     return Scaffold(
       backgroundColor: jm_bg_gray_color,
       appBar: CustomAppbar(
+        shadowColor: Colors.transparent,
         title: jm_getMessageTypeStr(widget.noticeType),
       ),
       body: EasyRefresh(

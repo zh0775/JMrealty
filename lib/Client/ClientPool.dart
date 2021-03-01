@@ -61,6 +61,7 @@ class _ClientPoolState extends State<ClientPool> {
     // print('key === $key');
     return Scaffold(
         appBar: AppBar(
+          shadowColor: Colors.transparent,
           flexibleSpace: Container(
             decoration: BoxDecoration(
                 image: DecorationImage(
@@ -194,6 +195,7 @@ class _ClientPoolState extends State<ClientPool> {
                   ? Positioned(
                       top: filterBarHeight * 2,
                       left: 0,
+                      bottom: 0,
                       child: selectList(selectData[key] ?? [], (Map item) {
                         switch (currentSelectIndex) {
                           case 1:
@@ -284,6 +286,7 @@ class _ClientPoolState extends State<ClientPool> {
         child: Container(
           width: SizeConfig.screenWidth,
           height: buttonHeight,
+          color: Colors.white,
           alignment: Alignment.centerLeft,
           padding: EdgeInsets.only(left: SizeConfig.blockSizeHorizontal * 12),
           child: Text(e['title'],
@@ -292,30 +295,40 @@ class _ClientPoolState extends State<ClientPool> {
       );
       textButtons.add(button);
     }
-    return Container(
-      width: SizeConfig.screenWidth,
-      // height: cHeight,
-      color: Colors.white,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [...textButtons],
+    return GestureDetector(
+      onTap: () {
+        if (selectExpand) {
+          setState(() {
+            selectExpand = !selectExpand;
+          });
+        }
+      },
+      child: Container(
+        width: SizeConfig.screenWidth,
+        // height: cHeight,
+        color: Colors.black12,
+        child: SingleChildScrollView(
+          physics: ClampingScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [...textButtons],
+          ),
         ),
+        // child: GridView.count(
+        //   //水平子Widget之间间距
+        //   // crossAxisSpacing: 0.0,
+        //   //垂直子Widget之间间距
+        //   // mainAxisSpacing: 1.0,
+        //   //GridView内边距
+        //   padding: EdgeInsets.all(0.0),
+        //   //一行的Widget数量
+        //   crossAxisCount: 2,
+        //   //子Widget宽高比例
+        //   childAspectRatio: SizeConfig.screenWidth / 2.0 / buttonHeight,
+        //   //子Widget列表
+        //   children: [...textButtons],
+        // ),
       ),
-      // child: GridView.count(
-      //   //水平子Widget之间间距
-      //   // crossAxisSpacing: 0.0,
-      //   //垂直子Widget之间间距
-      //   // mainAxisSpacing: 1.0,
-      //   //GridView内边距
-      //   padding: EdgeInsets.all(0.0),
-      //   //一行的Widget数量
-      //   crossAxisCount: 2,
-      //   //子Widget宽高比例
-      //   childAspectRatio: SizeConfig.screenWidth / 2.0 / buttonHeight,
-      //   //子Widget列表
-      //   children: [...textButtons],
-      // ),
     );
   }
 }

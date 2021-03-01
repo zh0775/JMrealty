@@ -71,46 +71,65 @@ class _StartAppPageState extends State<StartAppPage> {
             return Stack(
               children: [
                 Positioned(
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    child:
-                        // Image.network(
-                        //   model.startImgUrl,
-                        //   fit:
-                        //   BoxFit.fill,
-                        //   loadingBuilder: (context, child, loadingProgress) {
-                        //     return Image.asset(
-                        //       'assets/images/icon/screen-1242x2688.jpg',
-                        //       fit: BoxFit.fill,
-                        //     );
-                        //   },
-                        //   frameBuilder:
-                        //       (context, child, frame, wasSynchronouslyLoaded) {
-                        //     return Image.asset(
-                        //       'assets/images/icon/screen-1242x2688.jpg',
-                        //       fit: BoxFit.fill,
-                        //     );
-                        //   },
-                        // )
-                        ImageLoader(
-                      model.startImgUrl,
-                      height: SizeConfig.screenHeight,
-                      fit: BoxFit.fill,
-                      placeholder: (context, url) {
-                        return Image.asset(
-                          'assets/images/icon/screen-1242x2688.jpg',
-                          fit: BoxFit.fill,
-                        );
-                      },
-                      errorWidget: (context, url, error) {
-                        return Image.asset(
-                          'assets/images/icon/screen-1242x2688.jpg',
-                          fit: BoxFit.fill,
-                        );
-                      },
-                    )),
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  child:
+                      // Image.network(
+                      //   model.startImgUrl,
+                      //   fit:
+                      //   BoxFit.fill,
+                      //   loadingBuilder: (context, child, loadingProgress) {
+                      //     return Image.asset(
+                      //       'assets/images/icon/screen-1242x2688.jpg',
+                      //       fit: BoxFit.fill,
+                      //     );
+                      //   },
+                      //   frameBuilder:
+                      //       (context, child, frame, wasSynchronouslyLoaded) {
+                      //     return Image.asset(
+                      //       'assets/images/icon/screen-1242x2688.jpg',
+                      //       fit: BoxFit.fill,
+                      //     );
+                      //   },
+                      // )
+                      Image.network(
+                    model.startImgUrl,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      return Image.asset(
+                        'assets/images/icon/screen-1242x2688.png',
+                        fit: BoxFit.fill,
+                        gaplessPlayback: true,
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/images/icon/screen-1242x2688.png',
+                        fit: BoxFit.fill,
+                        gaplessPlayback: true,
+                      );
+                    },
+                    gaplessPlayback: true,
+                  ),
+                  //     ImageLoader(
+                  //   model.startImgUrl,
+                  //   height: SizeConfig.screenHeight,
+                  //   fit: BoxFit.fill,
+                  //   placeholder: (context, url) {
+                  //     return Image.asset(
+                  //       'assets/images/icon/screen-1242x2688.png',
+                  //       fit: BoxFit.fill,
+                  //     );
+                  //   },
+                  //   errorWidget: (context, url, error) {
+                  //     return Image.asset(
+                  //       'assets/images/icon/screen-1242x2688.png',
+                  //       fit: BoxFit.fill,
+                  //     );
+                  //   },
+                  // )
+                ),
                 waitTime <= 3
                     ? Positioned(
                         right: 15,
@@ -151,9 +170,21 @@ class _StartAppPageState extends State<StartAppPage> {
             );
           }
           return Container(
-            color: Colors.white,
+            // color: Colors.white,
+            child: Image.asset(
+              'assets/images/icon/screen-1242x2688.png',
+              fit: BoxFit.fill,
+              gaplessPlayback: true,
+            ),
           );
         });
+    //   Container(
+    // // color: Colors.white,
+    // child: Image.asset(
+    //   'assets/images/icon/screen-1242x2688.png',
+    //   fit: BoxFit.fill,
+    // ),
+    // );
   }
 
   toMain(BuildContext context) {

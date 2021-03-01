@@ -1,12 +1,15 @@
 import 'package:JMrealty/Home/viewModel/HomeViewModel.dart';
 import 'package:JMrealty/Mine/About.dart';
 import 'package:JMrealty/Mine/LevelTargetSetting.dart';
+import 'package:JMrealty/Mine/More.dart';
 import 'package:JMrealty/Mine/SetTargetView.dart';
 import 'package:JMrealty/Mine/components/MineTop.dart';
 import 'package:JMrealty/Mine/viewModel/MineViewModel.dart';
 import 'package:JMrealty/components/CustomAlert.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/const/Default.dart';
+import 'package:JMrealty/services/Urls.dart';
+import 'package:JMrealty/services/http.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -210,24 +213,27 @@ class _MineState extends State<Mine> {
                     margin: margin,
                     width: SizeConfig.screenWidth - margin,
                     height: 0.5),
-                getCell('退出登录', 'assets/images/icon/icon_mine_logout.png', () {
-                  CustomAlert(content: '确定要退出登录吗？').show(
-                    confirmClick: () {
-                      final jpush = JPush();
-                      jpush.deleteAlias();
-                      jpush.cleanTags();
-                      // jpush.clearAllNotifications();
-                      // jpush.setBadge(0);
-                      // jpush.stopPush();
-                      UserDefault.saveStr(USERINFO, null);
-                      UserDefault.saveStr(ACCESS_TOKEN, null).then((value) {
-                        if (value) {
-                          Global.toLogin();
-                        }
-                      });
-                    },
-                  );
+                getCell('更多', 'assets/images/icon/icon_mine_more.png', () {
+                  push(More(), context);
                 }),
+                // getCell('退出登录', 'assets/images/icon/icon_mine_logout.png', () {
+                //   CustomAlert(content: '确定要退出登录吗？').show(
+                //     confirmClick: () {
+                //       final jpush = JPush();
+                //       jpush.deleteAlias();
+                //       jpush.cleanTags();
+                //       // jpush.clearAllNotifications();
+                //       // jpush.setBadge(0);
+                //       // jpush.stopPush();
+                //       UserDefault.saveStr(USERINFO, null);
+                //       UserDefault.saveStr(ACCESS_TOKEN, null).then((value) {
+                //         if (value) {
+                //           Global.toLogin();
+                //         }
+                //       });
+                //     },
+                //   );
+                // }),
                 JMline(
                     margin: margin,
                     width: SizeConfig.screenWidth - margin,

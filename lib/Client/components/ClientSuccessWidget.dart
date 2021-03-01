@@ -127,7 +127,11 @@ class ClientSuccessWidget extends StatelessWidget {
       getInfoRow('备注', successData['remark'] ?? '',
           widthScale: widthScale, lineHeight: lineHeight, margin: margin),
       SizedBox(
-        height: 15,
+        height: 10,
+      ),
+      JMline(width: SizeConfig.screenWidth, height: 1),
+      SizedBox(
+        height: 10,
       ),
       ...getCommissionRow(widthScale, margin)
     ];
@@ -138,76 +142,148 @@ class ClientSuccessWidget extends StatelessWidget {
     List<Widget> widgetList = [];
     if (successData['reportShopPartnerVO'] != null &&
         successData['reportShopPartnerVO'] is List) {
-      // widgetList.add(
-
-      // );
       List commissionList = successData['reportShopPartnerVO'];
+      Map relicyRuleInfo = successData['relicyRuleInfo'] != null &&
+              successData['relicyRuleInfo'].length > 0
+          ? (successData['relicyRuleInfo'])[0]
+          : {};
+      widgetList.add(Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: margin,
+              ),
+              Text(
+                '佣金规则',
+                style: jm_text_gray_style15,
+              ),
+              SizedBox(
+                width: widthScale * 11.5,
+              ),
+              Container(
+                width: widthScale * 60,
+                child: Text(
+                  relicyRuleInfo['remark'] ?? '',
+                  style: jm_text_black_style15,
+                ),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 6,
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: margin,
+              ),
+              Text(
+                '报备单已回款佣金/报备单应得佣金',
+                style: jm_text_gray_style15,
+              )
+            ],
+          ),
+          SizedBox(
+            height: 3,
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: margin,
+              ),
+              Text(
+                (successData['collectionAmount'] != null
+                        ? (numberFormat(successData['collectionAmount']))
+                        : '0.0') +
+                    '/' +
+                    (successData['commission'] != null
+                        ? (numberFormat(successData['commission']) + '元')
+                        : '0.0元'),
+                style: jm_text_black_style15,
+              )
+            ],
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: margin,
+                height: commLine,
+              ),
+              Container(
+                width: widthScale * 26,
+                child: Text(
+                  '现金奖',
+                  style: jm_text_gray_style15,
+                ),
+              ),
+              Text(
+                successData['cashAward'] != null
+                    ? ((successData['cashAward']).toString() + '元')
+                    : '',
+                style: jm_text_black_style15,
+              ),
+              // SizedBox(
+              //   width: widthScale * 4,
+              // ),
+              // Text(
+              //   commissionData['userCommission'] != null
+              //       ? ((commissionData['userCommission']).toString() + '元')
+              //       : '',
+              //   style: jm_text_black_style15,
+              // )
+            ],
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: margin,
+              ),
+              Text(
+                '报备单总回款佣金/报备单总佣金',
+                style: jm_text_gray_style15,
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 3,
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: margin,
+              ),
+              Text(
+                numberFormat((successData['cashAward'] ?? 0.0) +
+                        (successData['collectionAmount'] ?? 0.0)) +
+                    '/' +
+                    numberFormat(((successData['cashAward'] ?? 0) +
+                        (successData['commission'] ?? 0.0))) +
+                    '元',
+                style: jm_text_black_style15,
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+        ],
+      ));
+
       for (var i = 0; i < commissionList.length; i++) {
-        Map relicyRuleInfo = successData['relicyRuleInfo'] != null &&
-                successData['relicyRuleInfo'].length > i
-            ? (successData['relicyRuleInfo'])[i]
-            : {};
         Map commissionData = commissionList[i];
         widgetList.add(Column(
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: margin,
-                ),
-                Text(
-                  '佣金规则',
-                  style: jm_text_gray_style15,
-                ),
-                SizedBox(
-                  width: widthScale * 11.5,
-                ),
-                Container(
-                  width: widthScale * 60,
-                  child: Text(
-                    relicyRuleInfo['remark'] ?? '',
-                    style: jm_text_black_style15,
-                  ),
-                )
-              ],
-            ),
+            JMline(width: SizeConfig.screenWidth, height: 1),
             SizedBox(
-              height: 6,
-            ),
-            Row(
-              children: [
-                SizedBox(
-                  width: margin,
-                ),
-                Text(
-                  '报备单已回款佣金/报备单应得佣金',
-                  style: jm_text_gray_style15,
-                )
-              ],
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Row(
-              children: [
-                SizedBox(
-                  width: margin,
-                ),
-                Text(
-                  (successData['collectionAmount'] != null
-                          ? (numberFormat(successData['collectionAmount']))
-                          : '0.00') +
-                      '/' +
-                      (successData['commission'] != null
-                          ? (numberFormat(successData['commission']) + '元')
-                          : '0.0元'),
-                  style: jm_text_black_style15,
-                )
-              ],
-            ),
-            SizedBox(
-              height: i == 0 ? 15 : 10,
+              height: i == 0 ? 10 : 10,
             ),
             Row(children: [
               SizedBox(
@@ -268,13 +344,23 @@ class ClientSuccessWidget extends StatelessWidget {
                   width: margin,
                 ),
                 Text(
-                  '已得佣金/应得佣金：',
+                  '已得佣金/应得佣金',
                   style: jm_text_gray_style15,
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 3,
+            ),
+            Row(
+              children: [
+                SizedBox(
+                  width: margin,
                 ),
                 Text(
                   (commissionData['commissionAmount'] != null
                           ? (numberFormat(commissionData['commissionAmount']))
-                          : '0.00') +
+                          : '0.0') +
                       '/' +
                       (commissionData['userCommission'] != null
                           ? (numberFormat(commissionData['userCommission']) +
@@ -283,9 +369,6 @@ class ClientSuccessWidget extends StatelessWidget {
                   style: jm_text_black_style15,
                 ),
               ],
-            ),
-            SizedBox(
-              height: 3,
             ),
             SizedBox(
               height: i == commissionList.length - 1 ? 20 : 0,

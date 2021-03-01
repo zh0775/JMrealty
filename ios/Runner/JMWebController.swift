@@ -17,7 +17,6 @@ class JMWebController: UIViewController,WKUIDelegate,WKNavigationDelegate,WKScri
         self.url = webUrl
         self.json = jsjson
 //        uivc = uiVC
-        
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

@@ -139,7 +139,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
                         ConstrainedBox(
                           constraints: BoxConstraints(
                             minWidth: 0,
-                            maxWidth: widthScale * 36,
+                            maxWidth: widthScale * 33,
                           ),
                           child: Text(
                             name,
@@ -264,7 +264,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
           child: Row(
             children: [
               frameText('联系客户',
-                  width: SizeConfig.blockSizeHorizontal * 16.5,
+                  width: SizeConfig.blockSizeHorizontal * 17.5,
                   height: lineHeight - 10,
                   fontSize: 15,
                   textColor: Colors.black),

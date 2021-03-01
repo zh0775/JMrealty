@@ -203,4 +203,9 @@ class Urls {
   static const String updateSign = '/system/user/updateSign';
   // 奖章列表
   static const String medalList = '/comps/detail/findByUserId';
+
+  // 退出登录
+  static const String logout = '/auth/logout';
+  // 离职
+  static const String dimission = '/system/user/quit';
 }

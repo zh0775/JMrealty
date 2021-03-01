@@ -3,6 +3,7 @@ import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:JMrealty/utils/tTools.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class ReporProjecttInfo extends StatefulWidget {
   final Map data;
@@ -182,18 +183,50 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
             SizedBox(
               width: outMargin,
             ),
-            widget.isDetail
-                ? SelectableText(
-                    widget.data['customerName'] ?? '无',
-                    style: TextStyle(
-                        color: jm_text_black, fontSize: 17, height: 1.2),
-                  )
-                : Text(
-                    widget.data['customerName'] ?? '无',
-                    style: jm_text_black_bold_style16,
-                  ),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: 0,
+                maxWidth: widget.isDetail
+                    ? widthScale * 40
+                    : (widget.isCopy != null && widget.isCopy
+                        ? widthScale * 26
+                        : widthScale * 38),
+              ),
+              child: widget.isDetail
+                  ? SelectableText(
+                      widget.data['customerName'] ?? '无',
+                      style: TextStyle(
+                        color: jm_text_black,
+                        fontSize: 17,
+                      ),
+                    )
+                  : Text(
+                      widget.data['customerName'] ?? '无',
+                      style: jm_text_black_bold_style16,
+                    ),
+            ),
             SizedBox(
               width: widthScale * 2,
+            ),
+            widget.data['customerSex'] != null
+                ? Container(
+                    decoration: BoxDecoration(
+                      color: getSexBgColor(widget.data['customerSex']),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      child: Text(
+                        widget.data['customerSex'] == 0 ? '男士' : '女士',
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: getSexTextColor(widget.data['customerSex'])),
+                      ),
+                    ),
+                  )
+                : NoneV(),
+            SizedBox(
+              width: widget.data['customerSex'] != null ? widthScale * 2 : 0,
             ),
             widget.isDetail
                 ? SelectableText(
@@ -259,7 +292,7 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
             ? SelectableText(
                 contentText,
                 style: heightAdjust && widget.isDetail
-                    ? TextStyle(fontSize: 16, color: textColor, height: 1.3)
+                    ? TextStyle(fontSize: 16, color: textColor)
                     : TextStyle(fontSize: 16, color: textColor),
               )
             : Text(
@@ -274,14 +307,14 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
         use != null && use.length > 0
             ? Container(
                 decoration: BoxDecoration(
-                  color: jm_appTheme,
+                  color: getPurposeColor(use),
                   borderRadius: BorderRadius.circular(widthScale * 1.5),
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   child: Text(
                     use,
-                    style: TextStyle(fontSize: 14, color: Colors.white),
+                    style: TextStyle(fontSize: 14, color: Color(0xff62677D)),
                   ),
                 ),
               )

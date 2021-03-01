@@ -7,9 +7,14 @@ const MAX_COUNT = 0x7fffffff;
 
 class NoticeView extends StatefulWidget {
   final List dataList;
+  final bool needDelay;
   final Function(int index) noticeClick;
   final Size size;
-  const NoticeView({this.dataList = const [], this.noticeClick, this.size});
+  const NoticeView(
+      {this.dataList = const [],
+      this.noticeClick,
+      this.size,
+      this.needDelay = false});
   @override
   _NoticeViewState createState() => _NoticeViewState();
 }
@@ -38,7 +43,13 @@ class _NoticeViewState extends State<NoticeView> {
     //     curve: Curves.fastOutSlowIn, //跳转动画
     //   );
     // });
-    start();
+    if (widget.needDelay) {
+      Future.delayed(Duration(seconds: 1), () {
+        start();
+      });
+    } else {
+      start();
+    }
     super.initState();
   }
 

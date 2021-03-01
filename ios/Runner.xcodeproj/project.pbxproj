@@ -10,10 +10,11 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
+		793E182A25DF5C0F00FFA297 /* 19781610413938_.pic_hd-3@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 793E182825DF5C0F00FFA297 /* 19781610413938_.pic_hd-3@3x.png */; };
+		793E182B25DF5C0F00FFA297 /* 19781610413938_.pic_hd-3@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 793E182925DF5C0F00FFA297 /* 19781610413938_.pic_hd-3@2x.png */; };
 		795833CC25CAA62F0028D6B2 /* JMWebController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795833CB25CAA62F0028D6B2 /* JMWebController.swift */; };
 		79C7F9EF25CBEB3A0097C762 /* JMViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C7F9EE25CBEB3A0097C762 /* JMViewController.swift */; };
 		79CBD7F725CD425500911377 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 79CBD7F625CD425500911377 /* LaunchScreen.storyboard */; };
-		79CBD7F925CD435C00911377 /* 19781610413938_.pic_hd-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 79CBD7F825CD435C00911377 /* 19781610413938_.pic_hd-3.png */; };
 		90F04470D8F48BFFD06CB87F /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8125DA90956FA4C4C22CAD3A /* Pods_Runner.framework */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
@@ -38,11 +39,12 @@
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		793E182825DF5C0F00FFA297 /* 19781610413938_.pic_hd-3@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "19781610413938_.pic_hd-3@3x.png"; sourceTree = "<group>"; };
+		793E182925DF5C0F00FFA297 /* 19781610413938_.pic_hd-3@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "19781610413938_.pic_hd-3@2x.png"; sourceTree = "<group>"; };
 		7947F777258D04F0001D698E /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		795833CB25CAA62F0028D6B2 /* JMWebController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JMWebController.swift; sourceTree = "<group>"; };
 		79C7F9EE25CBEB3A0097C762 /* JMViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JMViewController.swift; sourceTree = "<group>"; };
 		79CBD7F625CD425500911377 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		79CBD7F825CD435C00911377 /* 19781610413938_.pic_hd-3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "19781610413938_.pic_hd-3.png"; sourceTree = "<group>"; };
 		79E3E809258DA79E006E50A9 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		8125DA90956FA4C4C22CAD3A /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,7 +104,8 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
-				79CBD7F825CD435C00911377 /* 19781610413938_.pic_hd-3.png */,
+				793E182925DF5C0F00FFA297 /* 19781610413938_.pic_hd-3@2x.png */,
+				793E182825DF5C0F00FFA297 /* 19781610413938_.pic_hd-3@3x.png */,
 				7947F777258D04F0001D698E /* Runner.entitlements */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
@@ -202,9 +205,10 @@
 			files = (
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				79CBD7F725CD425500911377 /* LaunchScreen.storyboard in Resources */,
+				793E182A25DF5C0F00FFA297 /* 19781610413938_.pic_hd-3@3x.png in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
-				79CBD7F925CD435C00911377 /* 19781610413938_.pic_hd-3.png in Resources */,
+				793E182B25DF5C0F00FFA297 /* 19781610413938_.pic_hd-3@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -368,7 +372,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 0;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VXYJW7GPBB;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -385,7 +389,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				MARKETING_VERSION = 1.0.12;
+				MARKETING_VERSION = 1.0.15;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jm.correspondent;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -517,7 +521,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 0;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VXYJW7GPBB;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -534,7 +538,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				MARKETING_VERSION = 1.0.12;
+				MARKETING_VERSION = 1.0.15;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jm.correspondent;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = NO;
@@ -555,7 +559,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 0;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VXYJW7GPBB;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -572,7 +576,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				MARKETING_VERSION = 1.0.12;
+				MARKETING_VERSION = 1.0.15;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jm.correspondent;
 				PRODUCT_NAME = "$(TARGET_NAME)";

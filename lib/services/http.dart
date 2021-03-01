@@ -97,7 +97,7 @@ class Http {
           after();
         }
       });
-    } catch (e) {
+    } on DioError catch (e) {
       print('e ===== $e');
       if (fail != null) {
         if (e.response != null && e.response.data != null) {
@@ -130,7 +130,7 @@ class Http {
           after();
         }
       });
-    } catch (e) {
+    } on DioError catch (e) {
       print('e ===== $e');
       if (fail != null) {
         if (e.response != null && e.response.data != null) {
@@ -163,7 +163,7 @@ class Http {
           after();
         }
       });
-    } catch (e) {
+    } on DioError catch (e) {
       print('e ===== $e');
       if (fail != null) {
         if (e.response != null && e.response.data != null) {
@@ -196,7 +196,7 @@ class Http {
           after();
         }
       });
-    } catch (e) {
+    } on DioError catch (e) {
       print('e ===== $e');
       if (fail != null) {
         if (e.response.data != null) {
@@ -266,7 +266,7 @@ class Http {
           resList(values);
           // print('images---value--- ====$value');
         });
-      } catch (e) {
+      } on DioError catch (e) {
         resList([]);
         print('e ===== $e');
       }

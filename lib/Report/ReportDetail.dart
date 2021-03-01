@@ -114,45 +114,62 @@ class _ReportDetailState extends State<ReportDetail> {
 
   Widget getBody(BuildContext context, Map mapData) {
     Map projectInfo = mapData['reportInfoVO'] ?? {};
-    return ListView(
-      children: [
-        ReportStatusBar(
-            statusNo: (mapData['reportInfoVO'])['status'] ?? null,
-            statusData: mapData['reportStatuses'] ?? null),
-        JMline(width: SizeConfig.screenWidth, height: 1),
-        SizedBox(
-          height: 20,
-        ),
-        ReporProjecttInfo(
-          data: widget.data,
-          width: SizeConfig.screenWidth,
-          margin: outMargin,
-          labelSpace: labelSpace,
-        ),
-        SizedBox(
-          height: labelSpace,
-        ),
-        ...getRemark(),
-        SizedBox(
-          height: labelSpace,
-        ),
-        getReportRule(),
-        SizedBox(
-          height: 15,
-        ),
-        JMline(width: SizeConfig.screenWidth, height: 1),
-        // SizedBox(
-        //   height: 15,
-        // ),
-
-        ...getPhotoInfo(mapData['reportStatuses'] ?? []),
-        (mapData['reportShopDetailVO'])['id'] != null
-            ? getSuccessWidget(mapData)
-            : Container(
-                width: 0.0,
-                height: 0.0,
-              )
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          ReportStatusBar(
+              statusNo: (mapData['reportInfoVO'])['status'] ?? null,
+              statusData: mapData['reportStatuses'] ?? null),
+          JMline(width: SizeConfig.screenWidth, height: 1),
+          SizedBox(
+            height: 20,
+          ),
+          ReporProjecttInfo(
+            data: widget.data,
+            width: SizeConfig.screenWidth,
+            margin: outMargin,
+            labelSpace: labelSpace,
+          ),
+          SizedBox(
+            height: labelSpace,
+          ),
+          ...getRemark(),
+          SizedBox(
+            height: labelSpace,
+          ),
+          getReportRule(),
+          SizedBox(
+            height: labelSpace,
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: outMargin,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...contactsFormat(mapData['projectContactVOList']),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          JMline(width: SizeConfig.screenWidth, height: 1),
+          SizedBox(
+            height: 15,
+          ),
+          ...getPhotoInfo(mapData['reportStatuses'] ?? []),
+          (mapData['reportShopDetailVO'])['id'] != null
+              ? getSuccessWidget(mapData)
+              : Container(
+                  width: 0.0,
+                  height: 0.0,
+                )
+        ],
+      ),
     );
   }
 
@@ -400,6 +417,7 @@ class _ReportDetailState extends State<ReportDetail> {
 
   Widget getReportRule() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
           width: outMargin,
@@ -413,7 +431,6 @@ class _ReportDetailState extends State<ReportDetail> {
                 ? '-'
                 : widget.data['reportRemark'],
             style: jm_text_black_style15,
-            maxLines: 100,
           ),
         )
       ],
@@ -431,13 +448,13 @@ class _ReportDetailState extends State<ReportDetail> {
           getLabel('备注'),
           Container(
             width: SizeConfig.screenWidth - outMargin * 2 - widthScale * 28,
-            child: Text(
+            child: SelectableText(
               widget.data['remarks'] == null ||
                       widget.data['remarks'].length == 0
                   ? '-'
                   : widget.data['remarks'],
               style: jm_text_black_style15,
-              maxLines: 100,
+              // maxLines: ,
             ),
           )
         ],

@@ -29,9 +29,11 @@ class _SmartReportState extends State<SmartReport> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppbar(
+          shadowColor: Colors.transparent,
           title: '智能报备',
         ),
         body: SingleChildScrollView(
+          physics: ClampingScrollPhysics(),
           child: Align(
             child: Container(
               margin: EdgeInsets.only(top: margin),
@@ -49,10 +51,11 @@ class _SmartReportState extends State<SmartReport> {
                       constraints: BoxConstraints(
                           minWidth: SizeConfig.screenWidth - margin * 2,
                           maxWidth: SizeConfig.screenWidth - margin * 2,
-                          minHeight: SizeConfig.blockSizeVertical * 85 - 90),
+                          minHeight: SizeConfig.blockSizeVertical * 85 - 90,
+                          maxHeight: SizeConfig.blockSizeVertical * 85 - 90),
                       // margin: EdgeInsets.only(top: margin),
                       child: CupertinoTextField(
-                        maxLines: 16,
+                        maxLines: null,
                         decoration: BoxDecoration(
                             color: jm_bg_gray_color,
                             borderRadius:
@@ -78,7 +81,7 @@ class _SmartReportState extends State<SmartReport> {
                     height: 30,
                   ),
                   CustomSubmitButton(
-                    margin: margin,
+                    // margin: margin,
                     height: 45,
                     title: '识别',
                     buttonClick: () {
@@ -105,8 +108,8 @@ class _SmartReportState extends State<SmartReport> {
                     },
                   ),
                   SizedBox(
-                    height: 20,
-                  ),
+                      // height: 20,
+                      ),
                 ],
               ),
             ),

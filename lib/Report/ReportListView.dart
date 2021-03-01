@@ -16,7 +16,8 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 class ReportListView extends StatefulWidget {
   final int status;
   final bool isCopy;
-  ReportListView({@required this.status, this.isCopy = false});
+  final Map buttonAuth;
+  ReportListView({@required this.status, this.isCopy = false, this.buttonAuth});
   @override
   _ReportListViewState createState() => _ReportListViewState();
 }
@@ -108,6 +109,7 @@ class _ReportListViewState extends State<ReportListView>
           return ReportListCell(
             data: dataList[index],
             index: index,
+            buttonAuth: widget.buttonAuth,
             needRefrash: () {
               bus.emit(NOTIFY_REPORT_LIST_REFRASH);
             },

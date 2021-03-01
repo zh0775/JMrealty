@@ -1,3 +1,5 @@
+import 'dart:convert' as convert;
+
 import 'package:JMrealty/Project/ProjectViewModel.dart';
 import 'package:JMrealty/Report/ReportListView.dart';
 import 'package:JMrealty/Report/ReportSearch.dart';
@@ -5,6 +7,7 @@ import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/material.dart';
 
 class Report extends StatefulWidget {
@@ -23,12 +26,34 @@ class _ReportState extends State<Report> {
   bool showMenu = false;
   Map currentSelect = {'title': '所有项目', 'value': null};
   List projectListData = [];
+  Map reportAuth = {};
   @override
   void initState() {
     getProjectListFilter();
+    menus();
     // projectIndex = 0;
     // tabCtr = TabController(length: null, vsync: null)
     super.initState();
+  }
+
+  void menus() async {
+    dynamic value = await UserDefault.get(HOME_MENUS);
+    if (value == null) return;
+    List menus = convert.jsonDecode(value);
+
+    menus.forEach((e) {
+      if (e['path'] == 'app,main' && e['menu'] != null) {
+        (e['menu'] as List).forEach((e2) {
+          if (e2['path'] == 'app:report:list' && e2['menu'] != null) {
+            (e2['menu'] as List).forEach((e3) {
+              // print('${e3['path']}');
+              reportAuth[e3['perms']] = e3;
+            });
+          }
+        });
+      }
+    });
+    setState(() {});
   }
 
   void getProjectListFilter() {
@@ -237,19 +262,32 @@ class _ReportState extends State<Report> {
                     ),
                     Expanded(
                       child: TabBarView(children: [
-                        ReportListView(status: 0, isCopy: isCopy),
-                        ReportListView(status: 5, isCopy: isCopy),
-                        ReportListView(status: 10, isCopy: isCopy),
-                        ReportListView(status: 20, isCopy: isCopy),
-                        ReportListView(status: 22, isCopy: isCopy),
-                        ReportListView(status: 21, isCopy: isCopy),
-                        ReportListView(status: 30, isCopy: isCopy),
-                        ReportListView(status: 40, isCopy: isCopy),
-                        ReportListView(status: 50, isCopy: isCopy),
-                        ReportListView(status: 60, isCopy: isCopy),
-                        ReportListView(status: 63, isCopy: isCopy),
-                        ReportListView(status: 70, isCopy: isCopy),
-                        ReportListView(status: 80, isCopy: isCopy),
+                        ReportListView(
+                            status: 0, isCopy: isCopy, buttonAuth: reportAuth),
+                        ReportListView(
+                            status: 5, isCopy: isCopy, buttonAuth: reportAuth),
+                        ReportListView(
+                            status: 10, isCopy: isCopy, buttonAuth: reportAuth),
+                        ReportListView(
+                            status: 20, isCopy: isCopy, buttonAuth: reportAuth),
+                        ReportListView(
+                            status: 22, isCopy: isCopy, buttonAuth: reportAuth),
+                        ReportListView(
+                            status: 21, isCopy: isCopy, buttonAuth: reportAuth),
+                        ReportListView(
+                            status: 30, isCopy: isCopy, buttonAuth: reportAuth),
+                        ReportListView(
+                            status: 40, isCopy: isCopy, buttonAuth: reportAuth),
+                        ReportListView(
+                            status: 50, isCopy: isCopy, buttonAuth: reportAuth),
+                        ReportListView(
+                            status: 60, isCopy: isCopy, buttonAuth: reportAuth),
+                        ReportListView(
+                            status: 63, isCopy: isCopy, buttonAuth: reportAuth),
+                        ReportListView(
+                            status: 70, isCopy: isCopy, buttonAuth: reportAuth),
+                        ReportListView(
+                            status: 80, isCopy: isCopy, buttonAuth: reportAuth),
                       ]),
                     )
                   ],

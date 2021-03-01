@@ -607,16 +607,7 @@ class _AddReportState extends State<AddReport> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '提前' +
-              projectData['reportBeforeTime']?.toString() +
-              '分钟报备，' +
-              (projectData['isSensitive'] == null
-                  ? ''
-                  : (projectData['isSensitive'] == 1 ? '手机号前三后四，' : '全号报备，')) +
-              (projectData['reportProtect'] != null
-                  ? '有效保护期' + projectData['reportProtect'].toString() + '天，'
-                  : '') +
-              '以看房确认单为准。',
+          projectData['reportRemark'] ?? '',
           style: jm_text_black_style14,
         ),
         ...contactsFormat(),

@@ -1,11 +1,16 @@
 import 'package:JMrealty/Third/material_floating_search_bar.dart';
+import 'package:JMrealty/components/CustomPullFooter.dart';
+import 'package:JMrealty/components/CustomPullHeader.dart';
+import 'package:JMrealty/components/EmptyView.dart';
 import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/services/Urls.dart';
 import 'package:JMrealty/services/http.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
+import 'package:JMrealty/utils/tTools.dart';
 import 'package:JMrealty/utils/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:intl/intl.dart';
 
 // import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -58,14 +63,19 @@ class CustomSearchView extends StatefulWidget {
 }
 
 class _CustomSearchViewState extends State<CustomSearchView> {
+  GlobalKey easyRefreshKey = GlobalKey();
   double widthScale;
   double margin;
   double selfWidth;
-  double cellheight = 45;
+  double cellheight = 50;
   FuzzySearchViewModel searchVM = FuzzySearchViewModel();
   final controller = FloatingSearchBarController();
   BuildContext searchBarCtx;
   List searchDataList = [];
+  int totalData = 0;
+  int pageNum = 1;
+  int pageSize = 10;
+  String searchText;
   @override
   void dispose() {
     controller.dispose();
@@ -74,8 +84,8 @@ class _CustomSearchViewState extends State<CustomSearchView> {
 
   @override
   void initState() {
-    // controller.query = widget.text;
-    getSearchList(widget.text);
+    searchText = widget.text ?? '';
+    getSearchList(searchText);
 
     Future.delayed(Duration(milliseconds: 100), () {
       controller.open();
@@ -109,92 +119,163 @@ class _CustomSearchViewState extends State<CustomSearchView> {
         MediaQuery.of(context).orientation == Orientation.portrait;
 
     return FloatingSearchBar(
-      hint: widget.hintText,
-      // title: Text(widget.text),
-      // closeOnBackdropTap: false,
-      controller: controller,
-      // autocorrect: true,
-      // backdropColor: Colors.transparent,
-      scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
-      transitionDuration: const Duration(milliseconds: 300),
-      transitionCurve: Curves.easeInOut,
-      physics: const BouncingScrollPhysics(),
-      axisAlignment: isPortrait ? 0.0 : -1.0,
-      openAxisAlignment: 0.0,
-      automaticallyImplyBackButton: false,
-      maxWidth: isPortrait ? 600 : 500,
-      debounceDelay: const Duration(milliseconds: 500),
-      onQueryChanged: (query) {
-        getSearchList(query);
-      },
-      // body: GestureDetector(
-      //     onTap: () {
-      //       if (Navigator.canPop(context)) {
-      //         Navigator.pop(context);
-      //       }
-      //     },
-      //     child: Container(
-      //       color: Colors.black.withOpacity(0.2),
-      //     )),
-      clickDropBg: () {
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context);
-        }
-      },
-      leadingActions: [
-        RawMaterialButton(
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          onPressed: () {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-          },
-          splashColor: Colors.transparent,
-          constraints: BoxConstraints(minWidth: 30),
-          child: Icon(
-            Icons.arrow_back,
-            size: 25,
+        hint: widget.hintText,
+        // title: Text(widget.text),
+        // closeOnBackdropTap: false,
+        controller: controller,
+        // autocorrect: true,
+        // backdropColor: Colors.transparent,
+        scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
+        transitionDuration: const Duration(milliseconds: 300),
+        transitionCurve: Curves.easeInOut,
+        physics: const BouncingScrollPhysics(),
+        axisAlignment: isPortrait ? 0.0 : -1.0,
+        openAxisAlignment: 0.0,
+        automaticallyImplyBackButton: false,
+        maxWidth: isPortrait ? 600 : 500,
+        debounceDelay: const Duration(milliseconds: 500),
+        onQueryChanged: (query) {
+          searchText = query ?? '';
+          getSearchList(searchText);
+        },
+        // body: GestureDetector(
+        //     onTap: () {
+        //       if (Navigator.canPop(context)) {
+        //         Navigator.pop(context);
+        //       }
+        //     },
+        //     child: Container(
+        //       color: Colors.black.withOpacity(0.2),
+        //     )),
+        clickDropBg: () {
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
+        },
+        leadingActions: [
+          Image.asset(
+            'assets/images/icon/icon_fuzzy_search.png',
+            width: widthScale * 6,
           ),
-        )
-      ],
-      // Specify a custom transition to be used for
-      // animating between opened and closed stated.
-      transition: CircularFloatingSearchBarTransition(),
-      actions: [
-        // FloatingSearchBarAction(
-        //   showIfOpened: false,
-        //   child: CircularButton(
-        //     icon: const Icon(Icons.place),
-        //     onPressed: () {},
-        //   ),
-        // ),
-        // FloatingSearchBarAction(
-        //   showIfOpened: false,
-        //   child: CircularButton(
-        //     icon: const Icon(Icons.place),
-        //     onPressed: () {},
-        //   ),
-        // ),
-        FloatingSearchBarAction.searchToClear(
-          showIfClosed: false,
-        ),
-      ],
-      builder: (context, transition) {
-        return
-            // Container(
-            //   color: Colors.black12,
-            // );
-            ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Material(
-            color: Colors.transparent,
-            elevation: 4.0,
-            child: Column(
-                mainAxisSize: MainAxisSize.min, children: [...getCell()]),
-          ),
-        );
-      },
-    );
+        ],
+
+        // Specify a custom transition to be used for
+        // animating between opened and closed stated.
+        transition: CircularFloatingSearchBarTransition(),
+        actions: [
+          // FloatingSearchBarAction(
+          //   showIfOpened: false,
+          //   child: CircularButton(
+          //     icon: const Icon(Icons.place),
+          //     onPressed: () {},
+          //   ),
+          // ),
+          // FloatingSearchBarAction(
+          //   showIfOpened: false,
+          //   child: CircularButton(
+          //     icon: const Icon(Icons.place),
+          //     onPressed: () {},
+          //   ),
+          // ),
+          // FloatingSearchBarAction.searchToClear(
+          //   showIfClosed: false,
+          // ),
+          RawMaterialButton(
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              onPressed: () {
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+              },
+              splashColor: Colors.transparent,
+              constraints: BoxConstraints(minWidth: 30),
+              child: Padding(
+                padding: EdgeInsets.only(right: 5),
+                child: Text('取消',
+                    style: TextStyle(
+                      color: Color(0xff62677D),
+                      fontSize: 16,
+                    )),
+              )
+              // Icon(
+              //   Icons.arrow_back,
+              //   size: 25,
+              // ),
+              )
+        ],
+        builder: (context, transition) {
+          return ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Material(
+                color: Colors.white,
+                // elevation: 4.0,
+                child: Container(
+                  // color: Colors.white,
+                  width: SizeConfig.screenWidth,
+                  height: searchDataList != null
+                      ? (searchDataList.length >= 10
+                          ? cellheight * 10
+                          : searchDataList.length * cellheight)
+                      : 0,
+                  child: EasyRefresh(
+                    // controller: pullCtr,
+                    header: CustomPullHeader(),
+                    footer: CustomPullFooter(),
+                    emptyWidget:
+                        searchDataList == null || searchDataList.length == 0
+                            ? EmptyView()
+                            : null,
+                    key: easyRefreshKey,
+                    onRefresh: () async {
+                      getSearchList(searchText);
+                      // loadList();
+                    },
+                    onLoad: searchDataList != null &&
+                            searchDataList.length >= totalData
+                        ? null
+                        : () async {
+                            pageNum++;
+                            getSearchList(searchText, isLoad: true);
+                          },
+                    child: ListView.builder(
+                        itemCount:
+                            searchDataList == null ? 0 : searchDataList.length,
+                        itemBuilder: (context, index) {
+                          Map data = searchDataList[index];
+                          if (widget.searchUrl == Urls.projectFuzzySearch) {
+                            return projectCell(data);
+                          } else if (widget.searchUrl ==
+                              Urls.clientFuzzySearch) {
+                            return clientCell(data);
+                          } else {
+                            return GestureDetector(
+                              onTap: () {
+                                if (widget.cellClick != null) {
+                                  widget.cellClick(data);
+                                }
+                                if (Navigator.canPop(context)) {
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: Container(
+                                height: cellheight,
+                                color: Colors.white,
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 18.0),
+                                  child: Text(
+                                    data[widget.namekey] ?? '',
+                                    style: jm_text_black_style15,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        }),
+                  ),
+                ),
+              ));
+        });
   }
 
   List<Widget> getCell() {
@@ -255,39 +336,46 @@ class _CustomSearchViewState extends State<CustomSearchView> {
             border:
                 Border(bottom: BorderSide(width: 1, color: jm_bg_gray_color))),
         child: Row(
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(
-              width: margin,
+            Row(
+              children: [
+                SizedBox(
+                  width: margin,
+                ),
+                Text(
+                  data['name'] ?? '',
+                  style: jm_text_black_bold_style15,
+                ),
+                SizedBox(
+                  width: widthScale * 3,
+                ),
+                data['sex'] != null
+                    ? Container(
+                        decoration: BoxDecoration(
+                          color: getSexBgColor(data['sex']),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          child: Text(
+                            data['sex'] == 0 ? '男士' : '女士',
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: getSexTextColor(data['sex'])),
+                          ),
+                        ),
+                      )
+                    : NoneV(),
+              ],
             ),
-            SizedBox(
-              width: widthScale * 26,
+            Padding(
+              padding: EdgeInsets.only(right: margin),
               child: Text(
-                data['name'] ?? '',
+                data['phone'] ?? '',
                 style: jm_text_black_bold_style15,
               ),
-            ),
-            data['sex'] != null
-                ? Container(
-                    decoration: BoxDecoration(
-                      color: jm_appTheme,
-                      borderRadius: BorderRadius.circular(widthScale * 1.5),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      child: Text(
-                        data['sex'] == 0 ? '男士' : '女士',
-                        style: TextStyle(fontSize: 14, color: Colors.white),
-                      ),
-                    ),
-                  )
-                : NoneV(),
-            SizedBox(
-              width: widthScale * 2,
-            ),
-            Text(
-              data['phone'] ?? '',
-              style: jm_text_black_bold_style15,
             )
           ],
         ),
@@ -302,7 +390,7 @@ class _CustomSearchViewState extends State<CustomSearchView> {
           return;
         }
         if (data['status'] == 3) {
-          ShowToast.normal('该项目已暂停，请选择其他项目');
+          ShowToast.normal('该项目已于${data['pauseTime']}暂停报备');
           return;
         } else {
           if (widget.cellClick != null) {
@@ -328,28 +416,63 @@ class _CustomSearchViewState extends State<CustomSearchView> {
                 SizedBox(
                   width: margin,
                 ),
-                Text(
-                  data['name'] ?? '',
-                  style: jm_text_black_style15,
-                ),
-                SizedBox(
-                  width: widthScale * 2,
-                ),
-                data['purpose'] != null && data['purpose'].length > 0
-                    ? Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(widthScale * 2),
-                            color: jm_appTheme),
-                        child: Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          child: Text(
-                            data['purpose'] ?? '',
-                            style: TextStyle(fontSize: 14, color: Colors.white),
-                          ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      data['name'] ?? '',
+                      style: data['status'] != null && data['status'] == 3
+                          ? TextStyle(
+                              color: Color.fromRGBO(0, 0, 0, 0.3),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold)
+                          : jm_text_black_bold_style16,
+                    ),
+                    SizedBox(
+                      height: 2,
+                    ),
+                    Row(
+                      children: [
+                        data['purpose'] != null && data['purpose'].length > 0
+                            ? Container(
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(widthScale),
+                                    color: getPurposeColor(data['purpose'])),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 2),
+                                  child: Text(
+                                    data['purpose'] ?? '',
+                                    style: TextStyle(
+                                        fontSize: 14, color: jm_text_black),
+                                  ),
+                                ),
+                              )
+                            : NoneV(),
+                        SizedBox(
+                          width: widthScale * 2,
                         ),
-                      )
-                    : NoneV()
+                        Text(
+                          data['province'] ?? '',
+                          style: jm_text_black_style14,
+                        ),
+                        // SizedBox(
+                        //   width: widthScale * 1,
+                        // ),
+                        Text(
+                          data['city'] ?? '',
+                          style: jm_text_black_style14,
+                        ),
+                        Text(
+                          data['region'] ?? '',
+                          style: jm_text_black_style14,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ],
             ),
             Row(
@@ -358,37 +481,47 @@ class _CustomSearchViewState extends State<CustomSearchView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(widthScale * 2),
-                          color: jm_appTheme),
-                      child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        child: Text(
-                          data['statusName'] ?? '',
-                          style: TextStyle(fontSize: 14, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: data['status'] != null &&
-                              data['status'] == 3 &&
-                              data['pauseTime'] != null &&
-                              data['pauseTime'].length > 0
-                          ? 5
-                          : 0,
-                    ),
                     data['status'] != null &&
                             data['status'] == 3 &&
                             data['pauseTime'] != null &&
                             data['pauseTime'].length > 0
                         ? Text(
                               pauseTimeFormat(data['pauseTime']),
-                              style: jm_text_gray_style13,
+                              style: TextStyle(
+                                  color: Color(0xff8A8B8C), fontSize: 14),
                             ) ??
                             ''
-                        : NoneV()
+                        : NoneV(),
+                    SizedBox(
+                      height: data['status'] != null &&
+                              data['status'] == 3 &&
+                              data['pauseTime'] != null &&
+                              data['pauseTime'].length > 0
+                          ? 2
+                          : 0,
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                                color: data['status'] != null &&
+                                        data['status'] == 3
+                                    ? Color(0xffD8D8D8)
+                                    : jm_appTheme,
+                                borderRadius: BorderRadius.circular(4))),
+                        SizedBox(
+                          width: 7,
+                        ),
+                        Text(data['statusName'] ?? '',
+                            style: data['status'] != null && data['status'] == 3
+                                ? TextStyle(
+                                    color: Color(0xffD8D8D8), fontSize: 16)
+                                : jm_text_black_style16),
+                      ],
+                    )
                   ],
                 ),
                 SizedBox(
@@ -430,47 +563,55 @@ class _CustomSearchViewState extends State<CustomSearchView> {
     }
   }
 
-  getSearchList(String text) {
-    searchVM.fuzzySearchRequest(
-      widget.searchUrl,
-      text,
-      widget.requestKey,
-      success: (dataList, success) {
-        if (success && mounted && dataList != null && dataList is List) {
-          setState(() {
+  getSearchList(String text, {bool isLoad = false}) {
+    if (!isLoad) {
+      pageNum = 1;
+    }
+    searchVM.fuzzySearchRequest(widget.searchUrl, text, widget.requestKey,
+        success: (dataList, success, total) {
+      if (success && mounted && dataList != null && dataList is List) {
+        totalData = total;
+        setState(() {
+          if (isLoad) {
+            searchDataList.addAll(dataList);
+          } else {
             searchDataList = dataList;
-          });
-        }
-      },
-      paging: widget.paging,
-    );
+          }
+        });
+      }
+    }, paging: widget.paging, size: pageSize, page: pageNum);
   }
 }
 
 class FuzzySearchViewModel {
   fuzzySearchRequest(String url, String name, String nameKey,
-      {Function(List dataList, bool success) success, bool paging}) {
+      {Function(List dataList, bool success, int total) success,
+      bool paging,
+      int size,
+      int page}) {
     Http().get(
       url,
-      Map<String, dynamic>.from({nameKey: name}),
+      Map<String, dynamic>.from(
+          {nameKey: name, 'pageSize': size, 'pageNum': page}),
       success: (json) {
         if (json['code'] == 200) {
           if (success != null) {
             if (paging) {
-              success((json['data'])['rows'], true);
+              success((json['data'])['rows'] ?? [], true,
+                  (json['data'])['total'] ?? 0);
             } else {
-              success(json['data'], true);
+              success(json['data'], true, json['total'] ?? 0);
             }
           }
         } else {
           if (success != null) {
-            success(null, false);
+            success(null, false, 0);
           }
         }
       },
       fail: (reason, code) {
         if (success != null) {
-          success(null, false);
+          success(null, false, 0);
         }
       },
     );

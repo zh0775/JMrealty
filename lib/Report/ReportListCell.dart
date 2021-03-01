@@ -34,6 +34,7 @@ class ReportListCell extends StatefulWidget {
   final Map data;
   final int index;
   final bool copyStatus;
+  final Map buttonAuth;
   final Function(Map data, bool add) copyItem;
   final Function(Map data) copyOneItem;
   ReportListCell(
@@ -41,6 +42,7 @@ class ReportListCell extends StatefulWidget {
       this.index,
       this.needRefrash,
       this.copyItem,
+      this.buttonAuth,
       this.copyStatus = false,
       this.copyOneItem});
   @override
@@ -335,62 +337,121 @@ class _ReportListCellState extends State<ReportListCell> {
     List buttonsType = [];
     switch (status) {
       case 0:
-        buttonsType = [
-          ReportCellButtonStatus.receive,
-          // ReportCellButtonStatus.takeLook,
-          // ReportCellButtonStatus.upload,
-          // ReportCellButtonStatus.invalid
-        ];
+        if (widget.buttonAuth['app:report:list:receive'] != null) {
+          buttonsType.add(ReportCellButtonStatus.receive);
+        }
+        // buttonsType = [
+        //   ReportCellButtonStatus.receive,
+        //   // ReportCellButtonStatus.takeLook,
+        //   // ReportCellButtonStatus.upload,
+        //   // ReportCellButtonStatus.invalid
+        // ];
         break;
       case 5:
-        buttonsType = [
-          ReportCellButtonStatus.takeLook,
-          ReportCellButtonStatus.upload,
-          ReportCellButtonStatus.invalid
-        ];
+        if (widget.buttonAuth['app:report:list:see'] != null) {
+          buttonsType.add(ReportCellButtonStatus.takeLook);
+        }
+        if (widget.buttonAuth['app:report:list:upload'] != null) {
+          buttonsType.add(ReportCellButtonStatus.upload);
+        }
+        if (widget.buttonAuth['app:report:list:invalid'] != null) {
+          buttonsType.add(ReportCellButtonStatus.invalid);
+        }
+        // buttonsType = [
+        //   ReportCellButtonStatus.takeLook,
+        //   ReportCellButtonStatus.upload,
+        //   ReportCellButtonStatus.invalid
+        // ];
         break;
       case 10:
-        buttonsType = [
-          ReportCellButtonStatus.upload,
-        ];
+        if (widget.buttonAuth['app:report:list:upload'] != null) {
+          buttonsType.add(ReportCellButtonStatus.upload);
+        }
+        // buttonsType = [
+        //   ReportCellButtonStatus.upload,
+        // ];
         break;
       case 20:
-        buttonsType = [
-          ReportCellButtonStatus.appointment,
-          ReportCellButtonStatus.buy,
-          ReportCellButtonStatus.disputed,
-        ];
+        if (widget.buttonAuth['app:report:list:order'] != null) {
+          buttonsType.add(ReportCellButtonStatus.appointment);
+        }
+        if (widget.buttonAuth['app:report:list:deal'] != null) {
+          buttonsType.add(ReportCellButtonStatus.buy);
+        }
+        if (widget.buttonAuth['app:report:list:dispute'] != null) {
+          buttonsType.add(ReportCellButtonStatus.disputed);
+        }
+        // buttonsType = [
+        //   ReportCellButtonStatus.appointment,
+        //   ReportCellButtonStatus.buy,
+        //   ReportCellButtonStatus.disputed,
+        // ];
         break;
       case 22:
-        buttonsType = [
-          ReportCellButtonStatus.check,
-        ];
+        if (widget.buttonAuth['app:report:list:review appointment'] != null) {
+          buttonsType.add(ReportCellButtonStatus.check);
+        }
+        // buttonsType = [
+        //   ReportCellButtonStatus.check,
+        // ];
         break;
       case 24:
-        buttonsType = [
-          ReportCellButtonStatus.check,
-        ];
+        if (widget.buttonAuth['app:report:list:check the transaction'] !=
+            null) {
+          buttonsType.add(ReportCellButtonStatus.check);
+        }
+        // buttonsType = [
+        //   ReportCellButtonStatus.check,
+        // ];
         break;
       case 21:
-        buttonsType = [
-          ReportCellButtonStatus.buy,
-        ];
+        if (widget.buttonAuth['app:report:list:deal'] != null) {
+          buttonsType.add(ReportCellButtonStatus.buy);
+        }
+        // buttonsType = [
+        //   ReportCellButtonStatus.buy,
+        // ];
         break;
       case 30:
-        buttonsType = [
-          ReportCellButtonStatus.sign,
-          ReportCellButtonStatus.chargeback,
-        ];
+        if (widget.buttonAuth['app:report:list:sign up'] != null) {
+          buttonsType.add(ReportCellButtonStatus.sign);
+        }
+        if (widget.buttonAuth['app:report::list:Chargeback'] != null) {
+          buttonsType.add(ReportCellButtonStatus.chargeback);
+        }
+        // buttonsType = [
+        //   ReportCellButtonStatus.sign,
+        //   ReportCellButtonStatus.chargeback,
+        // ];
         break;
       case 63:
-        buttonsType = [
-          ReportCellButtonStatus.upload,
-          ReportCellButtonStatus.buy,
-          ReportCellButtonStatus.appointment,
-        ];
+        if (widget.buttonAuth['app:report:list:upload'] != null) {
+          buttonsType.add(ReportCellButtonStatus.upload);
+        }
+        if (widget.buttonAuth['app:report:list:deal'] != null) {
+          buttonsType.add(ReportCellButtonStatus.buy);
+        }
+        if (widget.buttonAuth['app:report:list:order'] != null) {
+          buttonsType.add(ReportCellButtonStatus.appointment);
+        }
+        // buttonsType = [
+        //   ReportCellButtonStatus.upload,
+        //   ReportCellButtonStatus.buy,
+        //   ReportCellButtonStatus.appointment,
+        // ];
         break;
     }
     List<Widget> buttons = [];
+    // takeLook, // 带看
+    // invalid, // 失效
+    // upload, // 上传
+    // appointment, // 预约
+    // buy, // 认购
+    // sign, // 签约
+    // chargeback, // 退单
+    // disputed, // 争议单
+    // check, // 审核,
+    // receive, // 接收,
     buttonsType.forEach((e) {
       buttons.add(getStatusButton(e));
     });

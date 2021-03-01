@@ -64,6 +64,7 @@ class _HomeAnnoState extends State<HomeAnno> {
                           NoticeView(
                             dataList: widget.dataList ?? [],
                             noticeClick: widget.noticeClick,
+                            needDelay: true,
                             size: Size(SizeConfig.screenWidth - 40 - 60 - 70,
                                 announcementHeght),
                           )

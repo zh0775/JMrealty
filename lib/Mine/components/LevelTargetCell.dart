@@ -178,7 +178,7 @@ class _LevelTargetCellState extends State<LevelTargetCell> {
                       CustomTextF(
                         keyboardType: TextInputType.number,
                         placeholder: widget.isEmpty ? '请输入' : '',
-                        width: selfWidth - widthScale * (3 * 6 + 17 + 18) - 14,
+                        width: selfWidth - widthScale * (3 * 6 + 17 + 18) - 15,
                         height: 40,
                         text: widget.isEmpty
                             ? (data['amount']?.toString() ?? '')
