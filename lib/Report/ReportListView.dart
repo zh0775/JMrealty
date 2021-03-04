@@ -2,6 +2,7 @@ import 'package:JMrealty/Report/viewmodel/ReportListViewModel.dart';
 import 'package:JMrealty/components/CustomPullFooter.dart';
 import 'package:JMrealty/components/CustomPullHeader.dart';
 import 'package:JMrealty/components/EmptyView.dart';
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/tTools.dart';
@@ -17,7 +18,12 @@ class ReportListView extends StatefulWidget {
   final int status;
   final bool isCopy;
   final Map buttonAuth;
-  ReportListView({@required this.status, this.isCopy = false, this.buttonAuth});
+  final int selfUserId;
+  ReportListView(
+      {@required this.status,
+      this.isCopy = false,
+      this.buttonAuth,
+      this.selfUserId});
   @override
   _ReportListViewState createState() => _ReportListViewState();
 }
@@ -109,18 +115,19 @@ class _ReportListViewState extends State<ReportListView>
           return ReportListCell(
             data: dataList[index],
             index: index,
+            selfUserId: widget.selfUserId,
             buttonAuth: widget.buttonAuth,
             needRefrash: () {
               bus.emit(NOTIFY_REPORT_LIST_REFRASH);
             },
-            copyItem: (data, add) {
+            copyItem: (data, add, needShowPhone) {
               if (add) {
                 copyList.add(data);
               } else {
                 copyList.remove(data);
               }
             },
-            copyOneItem: (data) {
+            copyOneItem: (data, needShowPhone) {
               ShowToast.normal('已复制');
               Clipboard.setData(ClipboardData(text: copyString(data)));
 

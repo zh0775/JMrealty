@@ -29,6 +29,7 @@ class ImageLoader extends StatelessWidget {
         fadeInDuration: Duration(milliseconds: 1),
         placeholderFadeInDuration: Duration(milliseconds: 1),
         fadeOutDuration: Duration(milliseconds: 1),
+
         imageUrl: imgUrl,
         // height: this.height,
         placeholder: placeholder,

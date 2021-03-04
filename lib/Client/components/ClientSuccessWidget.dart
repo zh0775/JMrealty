@@ -196,11 +196,11 @@ class ClientSuccessWidget extends StatelessWidget {
               Text(
                 (successData['collectionAmount'] != null
                         ? (numberFormat(successData['collectionAmount']))
-                        : '0.0') +
-                    '/' +
+                        : '0.00') +
+                    '元/' +
                     (successData['commission'] != null
                         ? (numberFormat(successData['commission']) + '元')
-                        : '0.0元'),
+                        : '0.00元'),
                 style: jm_text_black_style15,
               )
             ],
@@ -223,7 +223,7 @@ class ClientSuccessWidget extends StatelessWidget {
               ),
               Text(
                 successData['cashAward'] != null
-                    ? ((successData['cashAward']).toString() + '元')
+                    ? (numberFormat(successData['cashAward']) + '元')
                     : '',
                 style: jm_text_black_style15,
               ),
@@ -261,11 +261,11 @@ class ClientSuccessWidget extends StatelessWidget {
                 width: margin,
               ),
               Text(
-                numberFormat((successData['cashAward'] ?? 0.0) +
-                        (successData['collectionAmount'] ?? 0.0)) +
-                    '/' +
-                    numberFormat(((successData['cashAward'] ?? 0) +
-                        (successData['commission'] ?? 0.0))) +
+                numberFormat((successData['cashAward'] ?? 0.00) +
+                        (successData['collectionAmount'] ?? 0.00)) +
+                    '元/' +
+                    numberFormat(((successData['cashAward'] ?? 0.00) +
+                        (successData['commission'] ?? 0.00))) +
                     '元',
                 style: jm_text_black_style15,
               ),
@@ -360,12 +360,12 @@ class ClientSuccessWidget extends StatelessWidget {
                 Text(
                   (commissionData['commissionAmount'] != null
                           ? (numberFormat(commissionData['commissionAmount']))
-                          : '0.0') +
-                      '/' +
+                          : '0.00') +
+                      '元/' +
                       (commissionData['userCommission'] != null
                           ? (numberFormat(commissionData['userCommission']) +
                               '元')
-                          : '0.0元'),
+                          : '0.00元'),
                   style: jm_text_black_style15,
                 ),
               ],

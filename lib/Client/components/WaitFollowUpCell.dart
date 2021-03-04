@@ -56,6 +56,7 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
   String newFollowTime = '';
   String clientIntention = '';
   String clientPhoneNum = '';
+  bool addToPhoneReport = false;
   Map model;
   @override
   void initState() {
@@ -78,11 +79,19 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
     cellWidth = SizeConfig.screenWidth;
     widthScale = SizeConfig.blockSizeHorizontal;
 
+    if (model['area'] == null &&
+        model['paymentsBudget'] == null &&
+        model['source'] == null) {
+      addToPhoneReport = true;
+    } else {
+      addToPhoneReport = false;
+    }
+
     if (model['name'] != null) {
       name = model['name'];
     }
     if (model['sex'] != null) {
-      sex = model['sex'] == 0 ? '男士' : '女士';
+      sex = model['sex'] == 0 ? '先生' : '女士';
     }
     if (model['type'] != null) {
       houseType = model['type'];
@@ -177,24 +186,26 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
                         ),
                         SizedBox(
                             width: SizeConfig.blockSizeHorizontal * 2), // 房子类型
-                        Container(
-                          // width: SizeConfig.blockSizeHorizontal * 12,
-                          // height: lineHeight - 10,
-                          decoration: BoxDecoration(
-                              color: Color.fromRGBO(243, 249, 255, 1),
-                              borderRadius:
-                                  BorderRadius.circular((lineHeight - 10) / 2)),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: widthScale * 2, vertical: 3),
-                            child: Center(
-                              child: Text(
-                                houseType ?? '',
-                                style: jm_text_black_style12,
+                        houseType.length == 0
+                            ? NoneV()
+                            : Container(
+                                // width: SizeConfig.blockSizeHorizontal * 12,
+                                // height: lineHeight - 10,
+                                decoration: BoxDecoration(
+                                    color: Color.fromRGBO(243, 249, 255, 1),
+                                    borderRadius: BorderRadius.circular(
+                                        (lineHeight - 10) / 2)),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: widthScale * 2, vertical: 3),
+                                  child: Center(
+                                    child: Text(
+                                      houseType ?? '',
+                                      style: jm_text_black_style12,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                     Row(
@@ -207,27 +218,30 @@ class _WaitFollowUpCellState extends State<WaitFollowUpCell> {
             SizedBox(
               height: lineSpace,
             ),
-            Container(
-              // height: lineHeight - 5,
-              width: cellWidth,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: SizeConfig.blockSizeHorizontal * 16,
-                  ),
-                  // 房间数量
-                  Container(
-                    width: SizeConfig.blockSizeHorizontal * (100 - 16.5 - 4),
-                    // height: 40,
-                    // color: Colors.red,
-                    child: Text(
-                      '${model['area'] ?? '-'} | ${model['paymentsBudget'] ?? '-'} | ${model['source'] ?? '-'}',
-                      style: jm_text_black_style13,
+            addToPhoneReport
+                ? NoneV()
+                : Container(
+                    // height: lineHeight - 5,
+                    width: cellWidth,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: SizeConfig.blockSizeHorizontal * 16,
+                        ),
+                        // 房间数量
+                        Container(
+                          width:
+                              SizeConfig.blockSizeHorizontal * (100 - 16.5 - 4),
+                          // height: 40,
+                          // color: Colors.red,
+                          child: Text(
+                            '${model['area'] ?? '-'} | ${model['paymentsBudget'] ?? '-'} | ${model['source'] ?? '-'}',
+                            style: jm_text_black_style13,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
             SizedBox(
               height: lineSpace,
             ),

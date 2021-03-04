@@ -107,7 +107,7 @@ class _HomeState extends State<Home> {
   List gladNotices = [];
   int reportReceiveCount = 0;
   EventBus _eventBus = EventBus();
-
+  Map userInfoData = {};
   @override
   void deactivate() {
     // print('deactivate === home_deactivate');
@@ -153,6 +153,7 @@ class _HomeState extends State<Home> {
             Map userInfo = convert.jsonDecode(value);
             if (userInfo != null && userInfo.isNotEmpty) {
               // 获取消息
+              userInfoData = Map.from(userInfo);
               homeVM.getHomeNotice(
                   Map<String, dynamic>.from({
                     'userId': userInfo['userId'],
@@ -337,12 +338,14 @@ class _HomeState extends State<Home> {
                 if (buttonData['path'] == 'app:main:report:list') {
                   // 新增报备
                   Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                    return AddReport();
+                    return AddReport(selfUserId: userInfoData['userId']);
                   }));
                 } else if (buttonData['path'] == 'app:report:list') {
                   // 报备记录
                   Navigator.of(context).push(CupertinoPageRoute(builder: (_) {
-                    return Report();
+                    return Report(
+                      selfUserId: userInfoData['userId'],
+                    );
                   }));
                 } else if (buttonData['path'] == 'app:pk competition:list') {
                   // PK赛

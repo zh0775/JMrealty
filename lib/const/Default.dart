@@ -151,10 +151,10 @@ Color jm_getReportStatusColor(int status) {
   Color statusColor = jm_text_black;
   switch (status) {
     case 0:
-      statusColor = jm_text_black;
+      statusColor = jm_appTheme;
       break;
     case 5:
-      statusColor = jm_text_black;
+      statusColor = jm_appTheme;
       break;
     case 10:
       statusColor = jm_appTheme;
@@ -410,6 +410,7 @@ class CustomInput extends StatefulWidget {
   final String searchUrl;
   final String requestKey;
   final String nameKey;
+  final int maxLength;
   final Function(Map data) showListClick;
   final Function(String value) valueChange;
   final Function(String value, _CustomInputState state) valueChangeAndShowList;
@@ -424,6 +425,7 @@ class CustomInput extends StatefulWidget {
       this.title = '',
       this.otherWidth,
       this.valueChange,
+      this.maxLength,
       this.controller,
       this.lineHeight = 50,
       this.labelWidth,
@@ -594,6 +596,7 @@ class _CustomInputState extends State<CustomInput>
                               enabled: widget.enable,
                               keyboardType: widget.keyboardType,
                               maxLines: 1,
+                              maxLength: widget.maxLength,
                               style: widget.textStyle,
                               textInputAction:
                                   widget.valueChangeAndShowList != null
@@ -619,6 +622,9 @@ class _CustomInputState extends State<CustomInput>
                                     borderRadius: BorderRadius.zero,
                                     borderSide: BorderSide.none),
                               ),
+                              buildCounter: (context,
+                                      {currentLength, isFocused, maxLength}) =>
+                                  null,
                               onChanged: (value) {
                                 selfValue = value;
                                 if (widget.valueChange != null) {
@@ -862,7 +868,7 @@ class _SexCellState extends State<SexCell> {
             }
           },
           child: Text(
-            buttonSex == Sex.boy ? '男士' : '女士',
+            buttonSex == Sex.boy ? '先生' : '女士',
             style: TextStyle(
                 height: 1.28,
                 // textBaseline: TextBaseline.alphabetic,

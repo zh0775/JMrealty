@@ -21,7 +21,8 @@ import 'dart:convert' as convert;
 
 class AddReport extends StatefulWidget {
   final Map userData;
-  const AddReport({this.userData});
+  final int selfUserId;
+  const AddReport({this.userData, this.selfUserId});
   @override
   _AddReportState createState() => _AddReportState();
 }
@@ -538,7 +539,8 @@ class _AddReportState extends State<AddReport> {
                     if (e['name'] == null ||
                         e['name']?.length == 0 ||
                         e['phone'] == null ||
-                        e['phone']?.length == 0) {
+                        e['phone']?.length == 0 ||
+                        e['phone'].length < 11) {
                       infoDeficiency = true;
                     }
                     // print(e);
@@ -582,8 +584,9 @@ class _AddReportState extends State<AddReport> {
                           confirmClick: () {
                             Future.delayed(
                                 Duration.zero,
-                                () => Navigator.of(context)
-                                    .popAndPushNamed(Routes.report_list));
+                                () => Navigator.of(context).popAndPushNamed(
+                                      Routes.report_list,
+                                    ));
                           },
                         );
                       }
@@ -1004,6 +1007,7 @@ class _ClientSourceWidgetState extends State<ClientSourceWidget> {
                 textStyle: jm_text_black_style15,
                 title: '手机号',
                 hintText: '请输入客户手机号码',
+                maxLength: 11,
                 keyboardType: TextInputType.number,
                 text: clientData != null && clientData['phone'] != null
                     ? clientData['phone']

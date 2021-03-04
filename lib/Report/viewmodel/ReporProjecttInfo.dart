@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:JMrealty/components/CustomButton.dart';
 import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
@@ -12,12 +15,16 @@ class ReporProjecttInfo extends StatefulWidget {
   final double margin;
   final double labelSpace;
   final bool isDetail;
+  final int selfUserId;
+  final Function(bool showPhone) showPhone;
   const ReporProjecttInfo({
     this.isDetail = true,
     this.data,
     this.isCopy = false,
     this.width,
+    this.selfUserId,
     this.margin,
+    this.showPhone,
     this.labelSpace = 3,
   });
   @override
@@ -30,8 +37,34 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
   double outMargin;
   // double labelSpace;
   double selfWidth;
+  bool needShowTmButton = false;
+  bool showPhone = false;
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant ReporProjecttInfo oldWidget) {
+    // if (oldWidget.selfUserId != widget.selfUserId ||
+    //     oldWidget.data['employeeId'] != widget.data['employeeId']) {
+    //   print('needShowTmButton ==== $needShowTmButton');
+
+    // }
+    super.didUpdateWidget(oldWidget);
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (widget.data['isSensitive'] != null &&
+        widget.data['isSensitive'] == 1 &&
+        widget.data['employeeId'] != null &&
+        widget.selfUserId != null &&
+        widget.data['employeeId'] == widget.selfUserId) {
+      needShowTmButton = true;
+    } else {
+      needShowTmButton = false;
+    }
     SizeConfig().init(context);
     widthScale = SizeConfig.blockSizeHorizontal;
     outMargin = widget.margin ?? widthScale * 6;
@@ -61,19 +94,24 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
           SizedBox(
             height: widget.labelSpace,
           ),
-          widget.data['projectBeforeTime'] != null
-              ? getProjectInfoCell(
-                  '最早到场时间', widget.data['projectBeforeTime'] ?? '')
-              : NoneV(),
+          widget.data['status'] == 0 && !widget.isDetail
+              ? NoneV()
+              : getProjectInfoCell(
+                  '最早到场时间', widget.data['projectBeforeTime'] ?? ''),
           SizedBox(
-            height: widget.data['projectBeforeTime'] != null
-                ? widget.labelSpace
-                : 0,
+            height: widget.data['status'] == 0 && !widget.isDetail
+                ? 0
+                : widget.labelSpace,
           ),
-          updateCell(),
-          getProjectInfoCell('报备保护期', widget.data['projectProtect'] ?? '-'),
+          widget.data['status'] != 0 ? updateCell() : NoneV(),
+          widget.data['status'] == 0 && !widget.isDetail
+              ? NoneV()
+              : getProjectInfoCell(
+                  '报备保护期', widget.data['projectProtect'] ?? '-'),
           SizedBox(
-            height: widget.labelSpace,
+            height: widget.data['status'] == 0 && !widget.isDetail
+                ? 0
+                : widget.labelSpace,
           ),
           getProjectInfoCell('报备状态', statusText,
               textColor: jm_getReportStatusColor(widget.data['status'] ?? -1)),
@@ -170,11 +208,25 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
 
     return Padding(
       padding: EdgeInsets.only(bottom: widget.labelSpace),
-      child: getProjectInfoCell(title, widget.data['updateTime'] ?? '-'),
+      child: getProjectInfoCell(title, widget.data['reportStatusTime'] ?? '-'),
     );
   }
 
   Widget getTitle() {
+    String customerPhone = '';
+    if (needShowTmButton) {
+      if (showPhone) {
+        customerPhone = widget.data['customerPhone'] ?? '';
+      } else {
+        customerPhone = hiddenPhone(widget.data['customerPhone']);
+      }
+    } else {
+      customerPhone = (widget.data['isSensitive'] ?? 0) == 1
+          ? hiddenPhone(widget.data['customerPhone'])
+          : widget.data['customerPhone'] ?? '';
+    }
+
+    double showTMbuttonWidth = needShowTmButton ? widthScale * 10 : 0;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -187,14 +239,15 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
               constraints: BoxConstraints(
                 minWidth: 0,
                 maxWidth: widget.isDetail
-                    ? widthScale * 40
+                    ? widthScale * 40 - showTMbuttonWidth
                     : (widget.isCopy != null && widget.isCopy
-                        ? widthScale * 26
-                        : widthScale * 38),
+                        ? widthScale * 26 - showTMbuttonWidth
+                        : widthScale * 38 - showTMbuttonWidth),
               ),
               child: widget.isDetail
                   ? SelectableText(
                       widget.data['customerName'] ?? '无',
+                      scrollPhysics: NeverScrollableScrollPhysics(),
                       style: TextStyle(
                         color: jm_text_black,
                         fontSize: 17,
@@ -217,7 +270,10 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       child: Text(
-                        widget.data['customerSex'] == 0 ? '男士' : '女士',
+                        widget.data['customerSex'] == 0 ||
+                                widget.data['customerSex'] == '0'
+                            ? '先生'
+                            : '女士',
                         style: TextStyle(
                             fontSize: 12,
                             color: getSexTextColor(widget.data['customerSex'])),
@@ -230,17 +286,32 @@ class _ReporProjecttInfoState extends State<ReporProjecttInfo> {
             ),
             widget.isDetail
                 ? SelectableText(
-                    (widget.data['isSensitive'] ?? 0) == 1
-                        ? hiddenPhone(widget.data['customerPhone'])
-                        : widget.data['customerPhone'] ?? '',
+                    customerPhone,
                     style: jm_text_black_style17,
                   )
                 : Text(
-                    (widget.data['isSensitive'] ?? 0) == 1
-                        ? hiddenPhone(widget.data['customerPhone'])
-                        : widget.data['customerPhone'] ?? '',
+                    customerPhone,
                     style: jm_text_black_bold_style16,
+                  ),
+            needShowTmButton
+                ? CustomButton(
+                    onPressed: () {
+                      setState(() {
+                        showPhone = !showPhone;
+                        if (widget.showPhone != null) {
+                          widget.showPhone(showPhone);
+                        }
+                      });
+                    },
+                    // width: showTMbuttonWidth - widthScale * 2,
+                    child: Image.asset(
+                      showPhone
+                          ? 'assets/images/icon/icon_showpass.png'
+                          : 'assets/images/icon/icon_hidepass.png',
+                      width: showTMbuttonWidth - widthScale * 2,
+                    ),
                   )
+                : NoneV()
             // SelectableText(
             //   (widget.data['isSensitive'] ?? 0) == 1
             //       ? hiddenPhone(widget.data['customerPhone'])

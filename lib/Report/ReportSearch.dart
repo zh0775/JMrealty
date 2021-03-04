@@ -17,6 +17,9 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:intl/intl.dart';
 
 class ReportSearch extends StatefulWidget {
+  final Map buttonAuth;
+  final int selfUserId;
+  const ReportSearch({this.buttonAuth = const {}, this.selfUserId});
   @override
   _ReportSearchState createState() => _ReportSearchState();
 }
@@ -262,6 +265,8 @@ class _ReportSearchState extends State<ReportSearch> {
                       return ReportListCell(
                         data: dataList[index],
                         index: index,
+                        selfUserId: widget.selfUserId,
+                        buttonAuth: widget.buttonAuth,
                         needRefrash: () {
                           loadList();
                         },
@@ -272,7 +277,7 @@ class _ReportSearchState extends State<ReportSearch> {
                         //     copyList.remove(data);
                         //   }
                         // },
-                        copyOneItem: (data) {
+                        copyOneItem: (data, showPhone) {
                           ShowToast.normal('已复制');
                           Clipboard.setData(
                               ClipboardData(text: copyString(data)));

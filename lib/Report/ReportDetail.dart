@@ -19,7 +19,8 @@ import 'package:flutter/material.dart';
 
 class ReportDetail extends StatefulWidget {
   final Map data;
-  ReportDetail({@required this.data});
+  final int selfUserId;
+  ReportDetail({@required this.data, this.selfUserId});
   @override
   _ReportDetailState createState() => _ReportDetailState();
 }
@@ -33,6 +34,7 @@ class _ReportDetailState extends State<ReportDetail> {
   double outMargin;
   double labelSpace;
   String mark;
+
   dynamic img;
   @override
   void initState() {
@@ -129,6 +131,7 @@ class _ReportDetailState extends State<ReportDetail> {
             width: SizeConfig.screenWidth,
             margin: outMargin,
             labelSpace: labelSpace,
+            selfUserId: widget.selfUserId,
           ),
           SizedBox(
             height: labelSpace,

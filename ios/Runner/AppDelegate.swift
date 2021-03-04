@@ -15,7 +15,7 @@ import Flutter
 //    window?.rootViewController = UINavigationController(rootViewController: viewController)
 //    window?.makeKeyAndVisible()
     
-    Thread.sleep(forTimeInterval: 3.0);
+//    Thread.sleep(forTimeInterval: 3.0);
     return super.application(application, didFinishLaunchingWithOptions: launchOptions);
   }
     

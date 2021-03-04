@@ -1,3 +1,4 @@
+import 'package:JMrealty/components/NoneV.dart';
 import 'package:JMrealty/const/Default.dart';
 import 'package:JMrealty/utils/sizeConfig.dart';
 import 'package:flutter/material.dart';
@@ -27,12 +28,14 @@ class CustomTextF extends StatefulWidget {
   final FocusNode focusNode;
   final double leftTextPadding;
   final Function() labelClick;
+  final int maxLength;
   const CustomTextF(
       {Key key,
       this.hideText = false,
       this.onlyTap = false,
       this.labelClick,
       this.width,
+      this.maxLength,
       this.margin,
       this.height = 50,
       this.hintStyle =
@@ -131,6 +134,7 @@ class _CustomTextFState extends State<CustomTextF> {
                 },
                 child: TextField(
                   key: _key,
+                  maxLength: widget.maxLength,
                   obscureText: widget.hideText,
                   textAlign: TextAlign.left,
                   textAlignVertical: TextAlignVertical.center,
@@ -165,6 +169,8 @@ class _CustomTextFState extends State<CustomTextF> {
                         // borderRadius: widget.borderRadius,
                         borderSide: widget.border),
                   ),
+                  buildCounter:
+                      (context, {currentLength, isFocused, maxLength}) => null,
                   onChanged: (value) {
                     selfValue = value;
                     if (widget.valueChange != null) {

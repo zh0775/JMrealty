@@ -9,22 +9,35 @@ import 'package:JMrealty/services/Urls.dart';
 class AppStartViewModel extends BaseViewModel {
   String startImgUrl;
 
-  load() {
+  load({Function(bool success, String imgUrl) success}) {
     state = BaseState.LOADING;
     notifyListeners();
     Http().get(Urls.appStartImg, {}, success: (json) {
       // print(jsonEncode(json).toString());
-      String imgUrl =
-          (json['data']) != null ? (json['data'])['pictureUrl'] : '';
-      // print('imgUrl === $imgUrl');
-      if (imgUrl != null) {
-        startImgUrl = imgUrl;
-        state = BaseState.CONTENT;
+      if (json['code'] == 200) {
+        if (success != null) {
+          success(true, (json['data'])['pictureUrl'] ?? '');
+        }
       } else {
-        state = BaseState.EMPTY;
+        if (success != null) {
+          success(false, null);
+        }
       }
+
+      // String imgUrl =
+      //     (json['data']) != null ? (json['data'])['pictureUrl'] : '';
+      // // print('imgUrl === $imgUrl');
+      // if (imgUrl != null) {
+      //   startImgUrl = imgUrl;
+      //   state = BaseState.CONTENT;
+      // } else {
+      //   state = BaseState.EMPTY;
+      // }
       notifyListeners();
     }, fail: (reason, code) {
+      if (success != null) {
+        success(false, null);
+      }
       state = BaseState.FAIL;
       notifyListeners();
       // print(reason);

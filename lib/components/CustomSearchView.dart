@@ -68,6 +68,8 @@ class _CustomSearchViewState extends State<CustomSearchView> {
   double margin;
   double selfWidth;
   double cellheight = 50;
+  double projectCellheight;
+  double clientCellheight;
   FuzzySearchViewModel searchVM = FuzzySearchViewModel();
   final controller = FloatingSearchBarController();
   BuildContext searchBarCtx;
@@ -76,6 +78,7 @@ class _CustomSearchViewState extends State<CustomSearchView> {
   int pageNum = 1;
   int pageSize = 10;
   String searchText;
+
   @override
   void dispose() {
     controller.dispose();
@@ -84,6 +87,8 @@ class _CustomSearchViewState extends State<CustomSearchView> {
 
   @override
   void initState() {
+    projectCellheight = cellheight + 10;
+    clientCellheight = cellheight;
     searchText = widget.text ?? '';
     getSearchList(searchText);
 
@@ -204,6 +209,18 @@ class _CustomSearchViewState extends State<CustomSearchView> {
               )
         ],
         builder: (context, transition) {
+          double realCellHeight = cellheight;
+          if (widget.searchUrl == Urls.projectFuzzySearch) {
+            realCellHeight = projectCellheight;
+          } else if (widget.searchUrl == Urls.clientFuzzySearch) {
+            realCellHeight = clientCellheight;
+          }
+          int maxCount = 10;
+          double screenMaxCount =
+              (SizeConfig.screenHeight - 90) / realCellHeight;
+          if (screenMaxCount < 10) {
+            maxCount = screenMaxCount ~/ 1;
+          }
           return ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Material(
@@ -213,9 +230,9 @@ class _CustomSearchViewState extends State<CustomSearchView> {
                   // color: Colors.white,
                   width: SizeConfig.screenWidth,
                   height: searchDataList != null
-                      ? (searchDataList.length >= 10
-                          ? cellheight * 10
-                          : searchDataList.length * cellheight)
+                      ? (searchDataList.length >= maxCount
+                          ? realCellHeight * maxCount
+                          : searchDataList.length * realCellHeight)
                       : 0,
                   child: EasyRefresh(
                     // controller: pullCtr,
@@ -330,7 +347,7 @@ class _CustomSearchViewState extends State<CustomSearchView> {
       },
       child: Container(
         width: SizeConfig.screenWidth,
-        height: cellheight,
+        height: clientCellheight,
         decoration: BoxDecoration(
             color: Colors.white,
             border:
@@ -360,7 +377,7 @@ class _CustomSearchViewState extends State<CustomSearchView> {
                           padding:
                               EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           child: Text(
-                            data['sex'] == 0 ? '男士' : '女士',
+                            data['sex'] == 0 ? '先生' : '女士',
                             style: TextStyle(
                                 fontSize: 12,
                                 color: getSexTextColor(data['sex'])),
@@ -403,7 +420,7 @@ class _CustomSearchViewState extends State<CustomSearchView> {
       },
       child: Container(
         width: SizeConfig.screenWidth,
-        height: cellheight + 10,
+        height: projectCellheight,
         decoration: BoxDecoration(
             color: Colors.white,
             border:

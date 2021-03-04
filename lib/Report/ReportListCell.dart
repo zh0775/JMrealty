@@ -35,14 +35,16 @@ class ReportListCell extends StatefulWidget {
   final int index;
   final bool copyStatus;
   final Map buttonAuth;
-  final Function(Map data, bool add) copyItem;
-  final Function(Map data) copyOneItem;
+  final int selfUserId;
+  final Function(Map data, bool add, bool copyNeedShowPhone) copyItem;
+  final Function(Map data, bool copyNeedShowPhone) copyOneItem;
   ReportListCell(
       {@required this.data,
       this.index,
+      this.selfUserId,
       this.needRefrash,
       this.copyItem,
-      this.buttonAuth,
+      this.buttonAuth = const {},
       this.copyStatus = false,
       this.copyOneItem});
   @override
@@ -58,6 +60,7 @@ class _ReportListCellState extends State<ReportListCell> {
   double insideMargin;
   double labelSpace;
   int status;
+  bool copyNeedShowPhone = false;
   @override
   void initState() {
     labelSpace = 4;
@@ -79,7 +82,9 @@ class _ReportListCellState extends State<ReportListCell> {
     return GestureDetector(
       onLongPress: () {
         if (!widget.copyStatus && widget.copyOneItem != null) {
-          widget.copyOneItem(widget.data);
+          widget.copyOneItem(
+              Map.from({'showPhone': copyNeedShowPhone, ...widget.data}),
+              copyNeedShowPhone);
         }
       },
       onTap: () {
@@ -87,6 +92,7 @@ class _ReportListCellState extends State<ReportListCell> {
         push(
             ReportDetail(
               data: widget.data,
+              selfUserId: widget.selfUserId,
             ),
             context);
       },
@@ -112,8 +118,12 @@ class _ReportListCellState extends State<ReportListCell> {
               children: [
                 copyView(),
                 ReporProjecttInfo(
+                    showPhone: (showPhone) {
+                      copyNeedShowPhone = showPhone;
+                    },
                     data: widget.data,
                     isDetail: false,
+                    selfUserId: widget.selfUserId,
                     isCopy: widget.data['isCopy'] != null &&
                             widget.data['isCopy'] == 1
                         ? true
@@ -155,7 +165,11 @@ class _ReportListCellState extends State<ReportListCell> {
                   checkCopyValue = selected;
                 });
                 if (widget.copyItem != null) {
-                  widget.copyItem(widget.data, checkCopyValue);
+                  widget.copyItem(
+                      Map.from(
+                          {'showPhone': copyNeedShowPhone, ...widget.data}),
+                      checkCopyValue,
+                      copyNeedShowPhone);
                 }
               },
             ),

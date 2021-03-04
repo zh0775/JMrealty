@@ -11,6 +11,7 @@ class AppWait {
     // BuildContext context = Global.navigatorKey.currentContext;
     RenderBox renderBox = context.findRenderObject();
     var size = renderBox.size;
+
     // Widget c = Container();
     return OverlayEntry(
         builder: (context) => Positioned(
@@ -38,6 +39,7 @@ class AppWait {
   hide() {
     if (isShow) {
       _overlayEntry.remove();
+      _overlayEntry = null;
       isShow = false;
     }
   }

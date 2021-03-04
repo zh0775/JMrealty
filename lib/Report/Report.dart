@@ -11,6 +11,8 @@ import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/material.dart';
 
 class Report extends StatefulWidget {
+  final int selfUserId;
+  const Report({this.selfUserId});
   @override
   _ReportState createState() => _ReportState();
 }
@@ -27,13 +29,30 @@ class _ReportState extends State<Report> {
   Map currentSelect = {'title': '所有项目', 'value': null};
   List projectListData = [];
   Map reportAuth = {};
+  String userId = '';
+  int selfUserId = -1;
   @override
   void initState() {
     getProjectListFilter();
     menus();
+
+    if (widget.selfUserId == null) {
+      this.getSelfuserId();
+    } else {
+      selfUserId = widget.selfUserId;
+    }
     // projectIndex = 0;
     // tabCtr = TabController(length: null, vsync: null)
     super.initState();
+  }
+
+  void getSelfuserId() async {
+    String u = await UserDefault.get(USERINFO);
+    if (u == null) return;
+    Map userInfo = convert.jsonDecode(u);
+    setState(() {
+      selfUserId = userInfo['userId'];
+    });
   }
 
   void menus() async {
@@ -118,7 +137,12 @@ class _ReportState extends State<Report> {
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 constraints:
                     BoxConstraints(minHeight: 0, minWidth: widthScale * 8),
-                onPressed: () => push(ReportSearch(), context),
+                onPressed: () => push(
+                    ReportSearch(
+                      selfUserId: selfUserId,
+                      buttonAuth: reportAuth,
+                    ),
+                    context),
                 child: Icon(
                   Icons.search,
                   color: Colors.white,
@@ -148,6 +172,7 @@ class _ReportState extends State<Report> {
               tabs: [
                 getTab(jm_getReportStatusStr(0)),
                 getTab(jm_getReportStatusStr(5)),
+                getTab(jm_getReportStatusStr(70)),
                 getTab(jm_getReportStatusStr(10)),
                 getTab(jm_getReportStatusStr(20)),
                 getTab(jm_getReportStatusStr(22)),
@@ -157,7 +182,6 @@ class _ReportState extends State<Report> {
                 getTab(jm_getReportStatusStr(50)),
                 getTab(jm_getReportStatusStr(60)),
                 getTab(jm_getReportStatusStr(63)),
-                getTab(jm_getReportStatusStr(70)),
                 getTab(jm_getReportStatusStr(80)),
               ],
             )),
@@ -263,31 +287,71 @@ class _ReportState extends State<Report> {
                     Expanded(
                       child: TabBarView(children: [
                         ReportListView(
-                            status: 0, isCopy: isCopy, buttonAuth: reportAuth),
+                          status: 0,
+                          isCopy: isCopy,
+                          buttonAuth: reportAuth,
+                          selfUserId: selfUserId,
+                        ),
                         ReportListView(
-                            status: 5, isCopy: isCopy, buttonAuth: reportAuth),
+                            status: 5,
+                            isCopy: isCopy,
+                            buttonAuth: reportAuth,
+                            selfUserId: selfUserId),
                         ReportListView(
-                            status: 10, isCopy: isCopy, buttonAuth: reportAuth),
+                            status: 70,
+                            isCopy: isCopy,
+                            buttonAuth: reportAuth,
+                            selfUserId: selfUserId),
                         ReportListView(
-                            status: 20, isCopy: isCopy, buttonAuth: reportAuth),
+                            status: 10,
+                            isCopy: isCopy,
+                            buttonAuth: reportAuth,
+                            selfUserId: selfUserId),
                         ReportListView(
-                            status: 22, isCopy: isCopy, buttonAuth: reportAuth),
+                            status: 20,
+                            isCopy: isCopy,
+                            buttonAuth: reportAuth,
+                            selfUserId: selfUserId),
                         ReportListView(
-                            status: 21, isCopy: isCopy, buttonAuth: reportAuth),
+                            status: 22,
+                            isCopy: isCopy,
+                            buttonAuth: reportAuth,
+                            selfUserId: selfUserId),
                         ReportListView(
-                            status: 30, isCopy: isCopy, buttonAuth: reportAuth),
+                            status: 21,
+                            isCopy: isCopy,
+                            buttonAuth: reportAuth,
+                            selfUserId: selfUserId),
                         ReportListView(
-                            status: 40, isCopy: isCopy, buttonAuth: reportAuth),
+                            status: 30,
+                            isCopy: isCopy,
+                            buttonAuth: reportAuth,
+                            selfUserId: selfUserId),
                         ReportListView(
-                            status: 50, isCopy: isCopy, buttonAuth: reportAuth),
+                            status: 40,
+                            isCopy: isCopy,
+                            buttonAuth: reportAuth,
+                            selfUserId: selfUserId),
                         ReportListView(
-                            status: 60, isCopy: isCopy, buttonAuth: reportAuth),
+                            status: 50,
+                            isCopy: isCopy,
+                            buttonAuth: reportAuth,
+                            selfUserId: selfUserId),
                         ReportListView(
-                            status: 63, isCopy: isCopy, buttonAuth: reportAuth),
+                            status: 60,
+                            isCopy: isCopy,
+                            buttonAuth: reportAuth,
+                            selfUserId: selfUserId),
                         ReportListView(
-                            status: 70, isCopy: isCopy, buttonAuth: reportAuth),
+                            status: 63,
+                            isCopy: isCopy,
+                            buttonAuth: reportAuth,
+                            selfUserId: selfUserId),
                         ReportListView(
-                            status: 80, isCopy: isCopy, buttonAuth: reportAuth),
+                            status: 80,
+                            isCopy: isCopy,
+                            buttonAuth: reportAuth,
+                            selfUserId: selfUserId),
                       ]),
                     )
                   ],

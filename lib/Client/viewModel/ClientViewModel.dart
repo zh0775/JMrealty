@@ -71,8 +71,12 @@ class ClientViewModel extends BaseViewModel {
           if (reqSuccess != null) {
             reqSuccess(false);
           }
+
+          if (json['msg'] != null) {
+            ShowToast.normal(json['msg']);
+          }
         }
-        // ShowToast.normal(json['msg']);
+
         // notifyListeners();
       },
       fail: (reason, code) {

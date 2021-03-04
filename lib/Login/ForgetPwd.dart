@@ -98,6 +98,7 @@ class _ForgetPwdState extends State<ForgetPwd> {
             placeholder: '请输入手机号',
             keyboardType: TextInputType.number,
             needClean: true,
+            maxLengs: 11,
             valueChange: (value) {
               forgetParams['phonenumber'] = value;
               checkLogin();
@@ -252,7 +253,7 @@ class _ForgetPwdState extends State<ForgetPwd> {
 
   checkLogin() {
     if (forgetParams['phonenumber'] != null &&
-        forgetParams['phonenumber'].length >= 10 &&
+        forgetParams['phonenumber'].length > 10 &&
         forgetParams['password'] != null &&
         forgetParams['password'].length >= 6 &&
         !loginEnable) {
@@ -262,7 +263,7 @@ class _ForgetPwdState extends State<ForgetPwd> {
     }
 
     if ((forgetParams['phonenumber'] == null ||
-            forgetParams['phonenumber'].length < 10 ||
+            forgetParams['phonenumber'].length < 11 ||
             forgetParams['password'] == null ||
             forgetParams['password'].length < 6) &&
         loginEnable) {

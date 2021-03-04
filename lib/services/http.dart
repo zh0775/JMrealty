@@ -197,6 +197,7 @@ class Http {
         }
       });
     } on DioError catch (e) {
+      handleError(e);
       print('e ===== $e');
       if (fail != null) {
         if (e.response.data != null) {
@@ -267,6 +268,7 @@ class Http {
           // print('images---value--- ====$value');
         });
       } on DioError catch (e) {
+        handleError(e);
         resList([]);
         print('e ===== $e');
       }
@@ -297,6 +299,8 @@ class Http {
     //   }
     // }
   }
+
+  void handleError(DioError e) {}
 
   void log(Dio _dio) {
     _dio.interceptors

@@ -6,6 +6,7 @@ import 'package:JMrealty/Login/viewModel/LoginViewModel.dart';
 import 'package:JMrealty/Report/viewmodel/ReportUploadViewModel.dart';
 import 'package:JMrealty/base/base_viewmodel.dart';
 import 'package:JMrealty/base/provider_widget.dart';
+import 'package:JMrealty/components/CustomButton.dart';
 import 'package:JMrealty/components/CustomLoading.dart';
 import 'package:JMrealty/components/CustomSubmitButton.dart';
 import 'package:JMrealty/components/SelectImageView.dart';
@@ -52,6 +53,7 @@ class _LoginState extends State<Login> {
   bool loginEnable = false;
   SelectImageView imgSelectV; // 选择图片视图
   bool isForget = false;
+  bool showLoginPass = false;
 
   @override
   void dispose() {
@@ -175,8 +177,8 @@ class _LoginState extends State<Login> {
                       //   color: jm_line_color,
                       // ),
                       // controller: Tex,
-                      clearButtonMode: OverlayVisibilityMode.always,
-
+                      clearButtonMode: OverlayVisibilityMode.editing,
+                      maxLength: 11,
                       keyboardType: TextInputType.number,
                       placeholderStyle:
                           TextStyle(color: jm_placeholder_color, fontSize: 15),
@@ -228,6 +230,23 @@ class _LoginState extends State<Login> {
                       //   color: jm_line_color,
                       // ),
                       // controller: Tex,
+                      suffix: Padding(
+                        padding: EdgeInsets.only(
+                            right: SizeConfig.blockSizeHorizontal * 3),
+                        child: CustomButton(
+                          onPressed: () {
+                            setState(() {
+                              showLoginPass = !showLoginPass;
+                            });
+                          },
+                          child: Image.asset(
+                            showLoginPass
+                                ? 'assets/images/icon/icon_showpass.png'
+                                : 'assets/images/icon/icon_hidepass.png',
+                            width: SizeConfig.blockSizeHorizontal * 5,
+                          ),
+                        ),
+                      ),
                       placeholderStyle:
                           TextStyle(color: jm_placeholder_color, fontSize: 15),
                       controller:
@@ -239,7 +258,7 @@ class _LoginState extends State<Login> {
                       )),
                       decoration: BoxDecoration(color: Colors.transparent),
                       padding: EdgeInsets.symmetric(horizontal: 20),
-                      obscureText: true,
+                      obscureText: !showLoginPass,
                       placeholder: '请输入6~18位密码',
                       // clearButtonMode: OverlayVisibilityMode.always,
                       onChanged: (value) {
@@ -725,7 +744,7 @@ class _LoginState extends State<Login> {
           }
         },
         child: Text(
-          sex ? '男士' : '女士',
+          sex ? '先生' : '女士',
           style: TextStyle(
               textBaseline: TextBaseline.alphabetic,
               fontSize: 16,
@@ -857,7 +876,7 @@ class _LoginState extends State<Login> {
 
   checkLogin() {
     if (phoneNumString != null &&
-        phoneNumString.length >= 10 &&
+        phoneNumString.length > 10 &&
         password != null &&
         password.length >= 6 &&
         !loginEnable) {
@@ -867,7 +886,7 @@ class _LoginState extends State<Login> {
     }
 
     if ((phoneNumString == null ||
-            phoneNumString.length < 10 ||
+            phoneNumString.length < 11 ||
             password == null ||
             password.length < 6) &&
         loginEnable) {

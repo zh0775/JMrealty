@@ -32,7 +32,7 @@ class _ClientDetailState extends State<ClientDetail> {
   double widthScale;
   double contentWidth;
   double lineHeight1;
-  String sex = '男士';
+  String sex = '先生';
 
   Map clientInfo;
 
@@ -228,7 +228,7 @@ class _ClientDetailState extends State<ClientDetail> {
                             padding: EdgeInsets.symmetric(
                                 horizontal: widthScale * 3),
                             child: Text(
-                              customerVO['sex'] == 0 ? '男士' : '女士',
+                              customerVO['sex'] == 0 ? '先生' : '女士',
                               style: jm_text_black_style13,
                             ),
                           ),

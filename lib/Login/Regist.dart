@@ -53,6 +53,7 @@ class _RegistState extends State<Regist> {
   String pwd = '';
   String confirmPwd = '';
   String sendCode = '';
+  bool showClearPhone = false;
 
   @override
   void initState() {
@@ -273,10 +274,12 @@ class _RegistState extends State<Regist> {
                               labelText: '手机号',
                               placeholder: '请输入手机号',
                               // text: phoneStr ?? '',
+                              maxLength: 11,
                               width: widthScale * 80,
                               controller: phoneTextCtr,
                               must: true,
                               keyboardType: TextInputType.number,
+
                               valueChange: (value) {
                                 phoneStr = value;
                               },
@@ -401,6 +404,10 @@ class _RegistState extends State<Regist> {
 
                           if (phoneStr == null || phoneStr.length == 0) {
                             ShowToast.normal('请输入您的手机号');
+                            return;
+                          }
+                          if (!isMobilePhoneNumber(phoneStr)) {
+                            ShowToast.normal('请输入正确的的手机号码');
                             return;
                           }
                           if (pwd == null || pwd.length == 0) {

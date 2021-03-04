@@ -8,6 +8,7 @@ import 'package:JMrealty/utils/EventBus.dart';
 import 'package:JMrealty/utils/notify_default.dart';
 import 'package:JMrealty/utils/user_default.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:convert' as convert;
 
@@ -192,6 +193,7 @@ class _CustomWebVState extends State<CustomWebV> {
           _backJavascriptChannel(context),
           _searchListJavascriptChannel(context),
           _callPhoneNumJavascriptChannel(context),
+          _copyStrJavascriptChannel(context)
         ].toSet(),
       );
     } else {
@@ -220,6 +222,16 @@ class _CustomWebVState extends State<CustomWebV> {
         onMessageReceived: (JavascriptMessage message) {
           print('callPhoneNum === ${message.message}');
           callPhone(message.message);
+        });
+  }
+
+  JavascriptChannel _copyStrJavascriptChannel(BuildContext context) {
+    return JavascriptChannel(
+        name: "copyStr",
+        onMessageReceived: (JavascriptMessage message) {
+          print('copyStr === ${message.message}');
+          // callPhone(message.message);
+          Clipboard.setData(ClipboardData(text: message.message));
         });
   }
 

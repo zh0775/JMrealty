@@ -6,9 +6,13 @@ import 'dart:ui' as ui;
 
 /// 手机号正则表达式->true匹配
 bool isMobilePhoneNumber(String value) {
-  RegExp mobile = new RegExp(r"(0|86|17951)?(1[0-9][0-9])[0-9]{8}");
-
-  return mobile.hasMatch(value);
+  // RegExp mobile = new RegExp(r"(0|86|17951)?(1[0-9][0-9])[0-9]{8}");
+  if (value.length == 11) {
+    return true;
+  } else {
+    return false;
+  }
+  // return mobile.hasMatch(value);
 }
 
 // 是否为数字
@@ -271,20 +275,32 @@ String getStatusString(int status) {
 
 // NumberFormat('0,000').format(widget.data['amount'] ?? 0)
 String numberFormat(dynamic number) {
-  if (number == null) return '';
+  if (number == null) return '0.00';
   if (number is int || number is double) {
-    if (number < 1000) return number.toString();
+    if (number < 1000) {
+      List l2 = number.toString().split('.');
+      if (l2.length > 1) {
+        return number.toString() + (l2[1].length < 2 ? '0' : '');
+      } else {
+        return number.toString() + '.00';
+      }
+    }
     List l = number.toString().split('.');
     if (l.length > 1) {
+      String decimals = l[1];
+      if (decimals.length < 2) {
+        decimals += '0';
+      }
+
       return NumberFormat('0,000').format(int.parse(l[0])).toString() +
           '.' +
-          l[1];
+          decimals;
     } else {
-      return NumberFormat('0,000').format(number);
+      return NumberFormat('0,000').format(number) + '.00';
     }
     // List l = number.
   }
-  return '';
+  return '0.00';
 }
 
 Size calculateTextSize(
@@ -356,6 +372,25 @@ String copyString(Map reportData) {
               .substring((reportData['customerNumber']).length - 6)
           : reportData['customerNumber'])
       : '';
+  String sex = '';
+  if (reportData['customerSex'] != null) {
+    if (reportData['customerSex'] == 0 || reportData['customerSex'] == '0') {
+      sex = '先生';
+    } else if (reportData['customerSex'] == 1 ||
+        reportData['customerSex'] == '1') {
+      sex = '女士';
+    }
+  }
+
+  String customerPhone = '';
+
+  if (reportData['showPhone'] != null && reportData['showPhone'] == true) {
+    customerPhone = reportData['customerPhone'] ?? '';
+  } else {
+    customerPhone = reportData['isSensitive'] == 1
+        ? hiddenPhone(reportData['customerPhone'])
+        : reportData['customerPhone'] ?? '';
+  }
   // String copyStr = '''
   // 报备楼盘：${reportData['projectName'] ?? ''}
   // 产品类型：${reportData['purpose'] ?? ''}
@@ -376,9 +411,8 @@ String copyString(Map reportData) {
 
   copyStr += '''报备员工：${reportData['employeeName'] ?? ''}\n''';
   copyStr += '''员工电话：${reportData['employeePhone'] ?? ''}\n''';
-  copyStr += '''报备客户：${reportData['customerName'] ?? ''}\n''';
-  copyStr +=
-      '''客户电话：${reportData['isSensitive'] == 1 ? hiddenPhone(reportData['customerPhone']) : reportData['customerPhone'] ?? ''}\n''';
+  copyStr += '''报备客户：${(reportData['customerName'] ?? '') + sex}\n''';
+  copyStr += '''客户电话：${customerPhone}\n''';
   copyStr += '''报备日期：${reportData['createTime'] ?? ''}\n''';
   copyStr += '''报备服务点：${reportData['deptName'] ?? ''}\n''';
   copyStr += '''备注：${reportData['remarks'] ?? '无'}\n''';

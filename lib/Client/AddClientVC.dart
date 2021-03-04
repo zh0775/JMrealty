@@ -47,7 +47,7 @@ class _AddClientVCState extends State<AddClientVC>
   // ClientModel clientModel = ClientModel();
   String housesName;
   Map<String, dynamic> addClientParams = {};
-  bool clientIsMan = true; // 是否男士
+  bool clientIsMan = true; // 是否先生
   Sex clientSex = Sex.boy;
   bool sensitive = false; //是否脱敏
   double otherWidth;
@@ -421,6 +421,7 @@ class _AddClientVCState extends State<AddClientVC>
                   CustomTextF(
                     text: addClientParams['phone'] ?? '',
                     placeholder: '请输入手机号',
+                    maxLength: 11,
                     keyboardType: TextInputType.number,
                     valueChange: (value) {
                       addClientParams['phone'] = value;
@@ -811,6 +812,25 @@ class _AddClientVCState extends State<AddClientVC>
                   CustomSubmitButton(
                     buttonClick: () {
                       FocusScope.of(context).requestFocus(FocusNode());
+
+                      if (addClientParams['name'] == null ||
+                          addClientParams['name'].length == 0) {
+                        ShowToast.normal('请输入客户姓名');
+                        return;
+                      }
+
+                      if (addClientParams['phone'] == null ||
+                          addClientParams['phone'].length == 0) {
+                        ShowToast.normal('请输入客户手机号');
+                        return;
+                      }
+
+                      if (!isMobilePhoneNumber(addClientParams['phone'])) {
+                        ShowToast.normal('请输入正确的手机号');
+                        return;
+                      }
+                      // if ()
+
                       CustomAlert(title: '提示', content: '是否确认提交？').show(
                           confirmClick: () {
                         UserDefault.get(USERINFO).then((value) {

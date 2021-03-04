@@ -57,76 +57,89 @@ class _DepSelectViewState extends State<DepSelectView> {
           Navigator.pop(context);
         },
       ),
-      body: Column(
+      body: Stack(
         children: [
-          SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            height: SizeConfig.screenHeight - kToolbarHeight - 10 - 80 - 20,
-            width: SizeConfig.screenWidth,
-            child: Scrollbar(
-              child: SingleChildScrollView(
-                primary: true,
-                child: Column(
-                  children: [...treeNodes()],
+          // SizedBox(
+          //   height: 10,
+          // ),
+          Positioned(
+            top: 10,
+            right: 0,
+            left: 0,
+            bottom: 80,
+            child: SizedBox(
+              // height:
+              //     SizeConfig.screenHeight - kToolbarHeight - 10 - 80 - 20 - 24,
+              // width: SizeConfig.screenWidth,
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  primary: true,
+                  child: Column(
+                    children: [...treeNodes()],
+                  ),
                 ),
               ),
             ),
           ),
-          Container(
-            color: Colors.white,
-            width: SizeConfig.screenWidth,
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
             height: 80,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                RawMaterialButton(
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  constraints:
-                      BoxConstraints(minWidth: widthScale * 40, minHeight: 50),
-                  elevation: 0.5,
-                  highlightElevation: 1.0,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(widthScale * 1.5)),
-                  child: Text(
-                    '取消',
-                    style: jm_text_black_style17,
+            child: Container(
+              color: Colors.white,
+              width: SizeConfig.screenWidth,
+              height: 80,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RawMaterialButton(
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    constraints: BoxConstraints(
+                        minWidth: widthScale * 40, minHeight: 50),
+                    elevation: 0.5,
+                    highlightElevation: 1.0,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(widthScale * 1.5)),
+                    child: Text(
+                      '取消',
+                      style: jm_text_black_style17,
+                    ),
+                    fillColor: jm_bg_gray_color,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
-                  fillColor: jm_bg_gray_color,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                SizedBox(
-                  width: widthScale * 5,
-                ),
-                RawMaterialButton(
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  constraints:
-                      BoxConstraints(minWidth: widthScale * 40, minHeight: 50),
-                  elevation: 0.5,
-                  highlightElevation: 1.0,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(widthScale * 1.5)),
-                  child: Text(
-                    '确定',
-                    style: TextStyle(color: Colors.white, fontSize: 17),
+                  SizedBox(
+                    width: widthScale * 5,
                   ),
-                  fillColor: jm_appTheme,
-                  onPressed: () {
-                    if (widget.nodesSelected != null) {
-                      widget.nodesSelected(seletedNodes);
-                    }
-                    if (widget.nodeSelected != null &&
-                        seletedNodes != null &&
-                        seletedNodes.length > 0) {
-                      widget.nodeSelected(seletedNodes[0]);
-                    }
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
+                  RawMaterialButton(
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    constraints: BoxConstraints(
+                        minWidth: widthScale * 40, minHeight: 50),
+                    elevation: 0.5,
+                    highlightElevation: 1.0,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(widthScale * 1.5)),
+                    child: Text(
+                      '确定',
+                      style: TextStyle(color: Colors.white, fontSize: 17),
+                    ),
+                    fillColor: jm_appTheme,
+                    onPressed: () {
+                      if (widget.nodesSelected != null) {
+                        widget.nodesSelected(seletedNodes);
+                      }
+                      if (widget.nodeSelected != null &&
+                          seletedNodes != null &&
+                          seletedNodes.length > 0) {
+                        widget.nodeSelected(seletedNodes[0]);
+                      }
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
             ),
           )
         ],
